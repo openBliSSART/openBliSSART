@@ -1,15 +1,15 @@
 openBliSSART is a set of C++ libraries and tools that provides "Blind Source
 Separation for Audio Recognition Tasks".
 
-You can build the corresponding documentation by either issuing "make html" or
+You can build the corresponding documentation either by issuing "make html" or
 explicitly running doxygen on doc/doxygen.cfg.
 
 There is also a manual in the directory doc/manual which you can compile using
 LaTeX ("latex manual").
 
-If you want to use openBLISSART for your research, please cite the following
+If you want to use openBLiSSART for your research, please cite the following
 paper:
-Björn Schuller, Florian Eyben, Gerhard Rigoll: "Blind Enhancement of the
+Bjoern Schuller, Florian Eyben, Gerhard Rigoll: "Blind Enhancement of the
 Rhythmic and Harmonic Sections by NMF: Does it help?", Invited Talk, to appear
 in Proc. International Conference on Acoustics (NAG/DAGA 2009), including the
 35th German Annual Conference on Acoustics, Acoustical Society of the

@@ -39,6 +39,5 @@ SUBDIRS = LibLinAlg \
 		  labeller \
           cleanup \
           export \
-		  nmdtool \
           include 
 
