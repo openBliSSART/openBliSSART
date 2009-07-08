@@ -380,7 +380,18 @@ FeatureExtractor::computeNMDGain(FeatureExtractor::FeatureMap& target,
         nComponents = (unsigned int) nmdObjectIDs.size();
     }
     TargetedDeconvolver d(data, nComponents, nmdObjectIDs);
-    d.keepWConstant(true);
+
+    // All components initialized => keep whole W matrix constant
+    if ((unsigned int)nComponents == nmdObjectIDs.size()) {
+        d.keepWConstant(true);
+    }
+    // Some components randomized => only keep corresponding W cols constant
+    else {
+        for (unsigned int c = 0; c < nmdObjectIDs.size(); ++c) {
+            d.keepWColumnConstant(c, true);
+        }
+    }
+
     d.factorize(nIterations, 0);
     const Matrix& h = d.getH();
     // NMD gains are only saved for the components that have been initialized
