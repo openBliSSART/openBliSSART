@@ -396,17 +396,16 @@ FeatureExtractor::computeNMDGain(FeatureExtractor::FeatureMap& target,
     const Matrix& h = d.getH();
     // NMD gains are only saved for the components that have been initialized
     // from the response.
-    // Also, NMD gains are normalized such that the gains from the initialized
-    // components sum to 1.
+    // Also, NMD gains are normalized such that they sum to 1.
     double totalLength = 0.0;
     double* lengths = new double[nmdObjectIDs.size()];
     unsigned int compIndex = 0;
-    for (vector<int>::const_iterator itr = nmdObjectIDs.begin();
-        itr != nmdObjectIDs.end(); ++itr, ++compIndex) 
-    {
+    for (; compIndex < h.rows(); ++compIndex) {
         double l = h.nthRow(compIndex).length();
         totalLength += l;
-        lengths[compIndex] = l;
+        if (compIndex < nmdObjectIDs.size()) {
+            lengths[compIndex] = l;
+        }
     }
     compIndex = 0;
     for (vector<int>::const_iterator itr = nmdObjectIDs.begin();
