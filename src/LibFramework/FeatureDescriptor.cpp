@@ -1,5 +1,5 @@
 //
-// $Id: FeatureDescriptor.cpp 901 2009-07-08 08:49:10Z felix $
+// $Id: FeatureDescriptor.cpp 868 2009-06-16 15:03:40Z felix $
 //
 // This file is part of openBliSSART.
 //
@@ -143,6 +143,8 @@ bool FeatureDescriptor::isValidFeature(const std::string& name,
         "stddev_mfcc",
         "stddev_mfccD",
         "stddev_mfccA",
+        // TODO: remove this before release
+        "nmd_gain",
         0
     };
     const char* validNamesGains[] = {

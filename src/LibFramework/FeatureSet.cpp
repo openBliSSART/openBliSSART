@@ -1,5 +1,5 @@
 //
-// $Id: FeatureSet.cpp 901 2009-07-08 08:49:10Z felix $
+// $Id: FeatureSet.cpp 870 2009-06-16 18:49:19Z felix $
 //
 // This file is part of openBliSSART.
 //
@@ -244,6 +244,29 @@ FeatureSet FeatureSet::getStandardSet()
                 if (config.getBool("blissart.features." + typeName + ".mfccA", true)) {
                     fs.add(FeatureDescriptor("stddev_mfccA", *matrixType, i));
                 }
+            }
+        }
+        if (config.getBool("blissart.features." + typeName + ".nmd_gain", false)) {
+            int responseID = config.getInt(
+                "blissart.features." + typeName + ".nmd_gain.response");
+            int nComponents = config.getInt(
+                "blissart.features." + typeName + ".nmd_gain.components", 0);
+            DatabaseSubsystem& dbs = BasicApplication::instance().getSubsystem<DatabaseSubsystem>();
+            ResponsePtr response = dbs.getResponse(responseID);
+            if (response.isNull()) {
+                throw Poco::InvalidArgumentException(
+                    "Invalid response ID for NMD gain (" + typeName + "): "
+                    + Poco::NumberFormatter::format(responseID));
+            }
+            Response::LabelMap labels = response->labels;
+            if (nComponents == 0) {
+                nComponents = (int) labels.size();
+            }
+            for (Response::LabelMap::const_iterator itr = labels.begin();
+                itr != labels.end(); ++itr)
+            {
+                fs.add(FeatureDescriptor("nmd_gain", *matrixType,
+                    responseID, nComponents, itr->first));
             }
         }
         ++matrixType;

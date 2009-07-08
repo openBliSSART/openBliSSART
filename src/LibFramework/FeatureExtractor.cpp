@@ -1,5 +1,5 @@
 //
-// $Id: FeatureExtractor.cpp 901 2009-07-08 08:49:10Z felix $
+// $Id: FeatureExtractor.cpp 870 2009-06-16 18:49:19Z felix $
 //
 // This file is part of openBliSSART.
 //
@@ -336,10 +336,75 @@ FeatureExtractor::extract(DataDescriptor::Type type, const Matrix &data)
             }
         }
 
+        // NMD gain
+        if (type != DataDescriptor::Spectrum &&
+            config.getBool("blissart.features." + typeName + ".nmd_gain", false)) 
+        {
+            int responseID = config.getInt(
+                "blissart.features.magnitudematrix.nmd_gain.response");
+            int nIterations = config.getInt(
+                "blissart.features.magnitudematrix.nmd_gain.iterations", 200);
+            unsigned int nComponents = config.getInt(
+                "blissart.features.magnitudematrix.nmd_gain.components", 0);
+            computeNMDGain(result, data, responseID, nComponents, nIterations, type);
+        }
+    
     } // type == Spectrum || type == MagnitudeMatrix || 
       // type == DataDescriptor::MelMatrix
 
     return result;
+}
+
+
+void
+FeatureExtractor::computeNMDGain(FeatureExtractor::FeatureMap& target, 
+                                 const Matrix& data,
+                                 int responseID, int nComponents,
+                                 int nIterations,
+                                 DataDescriptor::Type type)
+{
+    DatabaseSubsystem& dbs = BasicApplication::instance().
+        getSubsystem<DatabaseSubsystem>();
+    ResponsePtr response = dbs.getResponse(responseID);
+    if (response.isNull()) {
+        throw Poco::InvalidArgumentException("Invalid response ID: " +
+            Poco::NumberFormatter::format(responseID));
+    }
+    vector<int> nmdObjectIDs;
+    for (Response::LabelMap::const_iterator itr = response->labels.begin();
+        itr != response->labels.end(); ++itr)
+    {
+        nmdObjectIDs.push_back(itr->first);
+    }
+    if (nComponents == 0) {
+        nComponents = (unsigned int) nmdObjectIDs.size();
+    }
+    TargetedDeconvolver d(data, nComponents, nmdObjectIDs);
+    d.keepWConstant(true);
+    d.factorize(nIterations, 0);
+    const Matrix& h = d.getH();
+    // NMD gains are only saved for the components that have been initialized
+    // from the response.
+    // Also, NMD gains are normalized such that the gains from the initialized
+    // components sum to 1.
+    double totalLength = 0.0;
+    double* lengths = new double[nmdObjectIDs.size()];
+    unsigned int compIndex = 0;
+    for (vector<int>::const_iterator itr = nmdObjectIDs.begin();
+        itr != nmdObjectIDs.end(); ++itr, ++compIndex) 
+    {
+        double l = h.nthRow(compIndex).length();
+        totalLength += l;
+        lengths[compIndex] = l;
+    }
+    compIndex = 0;
+    for (vector<int>::const_iterator itr = nmdObjectIDs.begin();
+        itr != nmdObjectIDs.end(); ++itr, ++compIndex) 
+    {
+        // TODO: Include iterations parameter
+        target[FeatureDescriptor("nmd_gain", type,
+            responseID, nComponents, *itr)] = lengths[compIndex] / totalLength;
+    }
 }
 
 
