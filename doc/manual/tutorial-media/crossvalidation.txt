@@ -1,0 +1,14 @@
+Validated 320 samples with 10-fold cross validation.
+
+Confusion matrix
+
+       predicted
+real   Music  Speech 
+Music  179    1      
+Speech 0      140    
+
+Accuracy = 0.996875
+Recalls:
+Music  0.994444
+Speech 1
+Mean recall: 0.997222

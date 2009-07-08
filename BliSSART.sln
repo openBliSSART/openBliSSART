@@ -1,0 +1,223 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Testsuite", "src\Testsuite\Testsuite.vcproj", "{C52FBEEC-4FCD-4A08-8BCB-E75E166194FF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{094AE1BE-4478-4234-AD41-81D8EC4B8D5E} = {094AE1BE-4478-4234-AD41-81D8EC4B8D5E}
+		{3623E3C3-571E-424B-89A4-025166C0DFBD} = {3623E3C3-571E-424B-89A4-025166C0DFBD}
+		{1C0DD473-A8D1-4108-9FE9-E7AD814BE1BF} = {1C0DD473-A8D1-4108-9FE9-E7AD814BE1BF}
+		{5C16CF43-50EC-49F2-853E-A5B988A72E6E} = {5C16CF43-50EC-49F2-853E-A5B988A72E6E}
+		{DE9D8B16-7A50-45F5-AEE5-451DFA4881B8} = {DE9D8B16-7A50-45F5-AEE5-451DFA4881B8}
+		{7AA1B327-1B79-4F3C-9CEC-607B743763D8} = {7AA1B327-1B79-4F3C-9CEC-607B743763D8}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibICA", "src\LibICA\LibICA.vcproj", "{5C16CF43-50EC-49F2-853E-A5B988A72E6E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{094AE1BE-4478-4234-AD41-81D8EC4B8D5E} = {094AE1BE-4478-4234-AD41-81D8EC4B8D5E}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibNMF", "src\LibNMF\LibNMF.vcproj", "{7AA1B327-1B79-4F3C-9CEC-607B743763D8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{094AE1BE-4478-4234-AD41-81D8EC4B8D5E} = {094AE1BE-4478-4234-AD41-81D8EC4B8D5E}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "icatool", "src\icatool\icatool.vcproj", "{DDE62538-D14B-4038-9E82-0C6896C13DE7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3623E3C3-571E-424B-89A4-025166C0DFBD} = {3623E3C3-571E-424B-89A4-025166C0DFBD}
+		{094AE1BE-4478-4234-AD41-81D8EC4B8D5E} = {094AE1BE-4478-4234-AD41-81D8EC4B8D5E}
+		{5C16CF43-50EC-49F2-853E-A5B988A72E6E} = {5C16CF43-50EC-49F2-853E-A5B988A72E6E}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Includes", "Includes", "{3C7D8CB2-612D-4F6B-881D-CA5520A9855C}"
+	ProjectSection(SolutionItems) = preProject
+		src\include\baseName.h = src\include\baseName.h
+		src\include\blissart\BinaryReader.h = src\include\blissart\BinaryReader.h
+		src\include\blissart\BinaryWriter.h = src\include\blissart\BinaryWriter.h
+		src\include\common.h = src\include\common.h
+		src\include\types.h = src\include\types.h
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibFeature", "src\LibFeature\LibFeature.vcproj", "{DE9D8B16-7A50-45F5-AEE5-451DFA4881B8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{094AE1BE-4478-4234-AD41-81D8EC4B8D5E} = {094AE1BE-4478-4234-AD41-81D8EC4B8D5E}
+	EndProjectSection
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup_openBliSSART", "win32\SetupBliSSART\SetupBliSSART.vdproj", "{BDE9C59F-49EC-4F86-A69F-04F6FAAFE124}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "browser", "src\browser\browser.vcproj", "{9ED4390C-ABF8-32BA-96D9-1941D808C60C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1C0DD473-A8D1-4108-9FE9-E7AD814BE1BF} = {1C0DD473-A8D1-4108-9FE9-E7AD814BE1BF}
+		{094AE1BE-4478-4234-AD41-81D8EC4B8D5E} = {094AE1BE-4478-4234-AD41-81D8EC4B8D5E}
+		{3623E3C3-571E-424B-89A4-025166C0DFBD} = {3623E3C3-571E-424B-89A4-025166C0DFBD}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibAudio", "src\LibAudio\LibAudio.vcproj", "{3623E3C3-571E-424B-89A4-025166C0DFBD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{094AE1BE-4478-4234-AD41-81D8EC4B8D5E} = {094AE1BE-4478-4234-AD41-81D8EC4B8D5E}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibFramework", "src\LibFramework\LibFramework.vcproj", "{1C0DD473-A8D1-4108-9FE9-E7AD814BE1BF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5C16CF43-50EC-49F2-853E-A5B988A72E6E} = {5C16CF43-50EC-49F2-853E-A5B988A72E6E}
+		{DE9D8B16-7A50-45F5-AEE5-451DFA4881B8} = {DE9D8B16-7A50-45F5-AEE5-451DFA4881B8}
+		{7AA1B327-1B79-4F3C-9CEC-607B743763D8} = {7AA1B327-1B79-4F3C-9CEC-607B743763D8}
+		{094AE1BE-4478-4234-AD41-81D8EC4B8D5E} = {094AE1BE-4478-4234-AD41-81D8EC4B8D5E}
+		{3623E3C3-571E-424B-89A4-025166C0DFBD} = {3623E3C3-571E-424B-89A4-025166C0DFBD}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibLinAlg", "src\LibLinAlg\LibLinAlg.vcproj", "{094AE1BE-4478-4234-AD41-81D8EC4B8D5E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fextool", "src\fextool\fextool.vcproj", "{A10E5A06-ACCA-4AD7-9D7A-74FB6935562B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1C0DD473-A8D1-4108-9FE9-E7AD814BE1BF} = {1C0DD473-A8D1-4108-9FE9-E7AD814BE1BF}
+		{094AE1BE-4478-4234-AD41-81D8EC4B8D5E} = {094AE1BE-4478-4234-AD41-81D8EC4B8D5E}
+		{DE9D8B16-7A50-45F5-AEE5-451DFA4881B8} = {DE9D8B16-7A50-45F5-AEE5-451DFA4881B8}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cvtool", "src\cvtool\cvtool.vcproj", "{A6F91537-4688-44D0-A7C1-FAE7D7A94AC4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1C0DD473-A8D1-4108-9FE9-E7AD814BE1BF} = {1C0DD473-A8D1-4108-9FE9-E7AD814BE1BF}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "septool", "src\septool\septool.vcproj", "{54A9B204-4938-4EB3-BD1A-4302FA0B0A95}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3623E3C3-571E-424B-89A4-025166C0DFBD} = {3623E3C3-571E-424B-89A4-025166C0DFBD}
+		{1C0DD473-A8D1-4108-9FE9-E7AD814BE1BF} = {1C0DD473-A8D1-4108-9FE9-E7AD814BE1BF}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "labeller", "src\labeller\labeller.vcproj", "{DE60F1EB-5AB3-46F5-89AC-B5878DF73004}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "export", "src\export\export.vcproj", "{26AC1F5C-AE73-4EE5-8C09-5078FB286233}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cleanup", "src\cleanup\cleanup.vcproj", "{150BC9F1-4699-4E7E-BC3D-8AD5E01B8B23}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C52FBEEC-4FCD-4A08-8BCB-E75E166194FF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C52FBEEC-4FCD-4A08-8BCB-E75E166194FF}.Debug|Win32.Build.0 = Debug|Win32
+		{C52FBEEC-4FCD-4A08-8BCB-E75E166194FF}.Release|Win32.ActiveCfg = Release|Win32
+		{C52FBEEC-4FCD-4A08-8BCB-E75E166194FF}.Release|Win32.Build.0 = Release|Win32
+		{5C16CF43-50EC-49F2-853E-A5B988A72E6E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5C16CF43-50EC-49F2-853E-A5B988A72E6E}.Debug|Win32.Build.0 = Debug|Win32
+		{5C16CF43-50EC-49F2-853E-A5B988A72E6E}.Release|Win32.ActiveCfg = Release|Win32
+		{5C16CF43-50EC-49F2-853E-A5B988A72E6E}.Release|Win32.Build.0 = Release|Win32
+		{7AA1B327-1B79-4F3C-9CEC-607B743763D8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7AA1B327-1B79-4F3C-9CEC-607B743763D8}.Debug|Win32.Build.0 = Debug|Win32
+		{7AA1B327-1B79-4F3C-9CEC-607B743763D8}.Release|Win32.ActiveCfg = Release|Win32
+		{7AA1B327-1B79-4F3C-9CEC-607B743763D8}.Release|Win32.Build.0 = Release|Win32
+		{DDE62538-D14B-4038-9E82-0C6896C13DE7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DDE62538-D14B-4038-9E82-0C6896C13DE7}.Debug|Win32.Build.0 = Debug|Win32
+		{DDE62538-D14B-4038-9E82-0C6896C13DE7}.Release|Win32.ActiveCfg = Release|Win32
+		{DDE62538-D14B-4038-9E82-0C6896C13DE7}.Release|Win32.Build.0 = Release|Win32
+		{DE9D8B16-7A50-45F5-AEE5-451DFA4881B8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DE9D8B16-7A50-45F5-AEE5-451DFA4881B8}.Debug|Win32.Build.0 = Debug|Win32
+		{DE9D8B16-7A50-45F5-AEE5-451DFA4881B8}.Release|Win32.ActiveCfg = Release|Win32
+		{DE9D8B16-7A50-45F5-AEE5-451DFA4881B8}.Release|Win32.Build.0 = Release|Win32
+		{BDE9C59F-49EC-4F86-A69F-04F6FAAFE124}.Debug|Win32.ActiveCfg = Debug
+		{BDE9C59F-49EC-4F86-A69F-04F6FAAFE124}.Release|Win32.ActiveCfg = Release
+		{9ED4390C-ABF8-32BA-96D9-1941D808C60C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9ED4390C-ABF8-32BA-96D9-1941D808C60C}.Debug|Win32.Build.0 = Debug|Win32
+		{9ED4390C-ABF8-32BA-96D9-1941D808C60C}.Release|Win32.ActiveCfg = Release|Win32
+		{9ED4390C-ABF8-32BA-96D9-1941D808C60C}.Release|Win32.Build.0 = Release|Win32
+		{3623E3C3-571E-424B-89A4-025166C0DFBD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3623E3C3-571E-424B-89A4-025166C0DFBD}.Debug|Win32.Build.0 = Debug|Win32
+		{3623E3C3-571E-424B-89A4-025166C0DFBD}.Release|Win32.ActiveCfg = Release|Win32
+		{3623E3C3-571E-424B-89A4-025166C0DFBD}.Release|Win32.Build.0 = Release|Win32
+		{1C0DD473-A8D1-4108-9FE9-E7AD814BE1BF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1C0DD473-A8D1-4108-9FE9-E7AD814BE1BF}.Debug|Win32.Build.0 = Debug|Win32
+		{1C0DD473-A8D1-4108-9FE9-E7AD814BE1BF}.Release|Win32.ActiveCfg = Release|Win32
+		{1C0DD473-A8D1-4108-9FE9-E7AD814BE1BF}.Release|Win32.Build.0 = Release|Win32
+		{094AE1BE-4478-4234-AD41-81D8EC4B8D5E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{094AE1BE-4478-4234-AD41-81D8EC4B8D5E}.Debug|Win32.Build.0 = Debug|Win32
+		{094AE1BE-4478-4234-AD41-81D8EC4B8D5E}.Release|Win32.ActiveCfg = Release|Win32
+		{094AE1BE-4478-4234-AD41-81D8EC4B8D5E}.Release|Win32.Build.0 = Release|Win32
+		{A10E5A06-ACCA-4AD7-9D7A-74FB6935562B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A10E5A06-ACCA-4AD7-9D7A-74FB6935562B}.Debug|Win32.Build.0 = Debug|Win32
+		{A10E5A06-ACCA-4AD7-9D7A-74FB6935562B}.Release|Win32.ActiveCfg = Release|Win32
+		{A10E5A06-ACCA-4AD7-9D7A-74FB6935562B}.Release|Win32.Build.0 = Release|Win32
+		{A6F91537-4688-44D0-A7C1-FAE7D7A94AC4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A6F91537-4688-44D0-A7C1-FAE7D7A94AC4}.Debug|Win32.Build.0 = Debug|Win32
+		{A6F91537-4688-44D0-A7C1-FAE7D7A94AC4}.Release|Win32.ActiveCfg = Release|Win32
+		{A6F91537-4688-44D0-A7C1-FAE7D7A94AC4}.Release|Win32.Build.0 = Release|Win32
+		{54A9B204-4938-4EB3-BD1A-4302FA0B0A95}.Debug|Win32.ActiveCfg = Debug|Win32
+		{54A9B204-4938-4EB3-BD1A-4302FA0B0A95}.Debug|Win32.Build.0 = Debug|Win32
+		{54A9B204-4938-4EB3-BD1A-4302FA0B0A95}.Release|Win32.ActiveCfg = Release|Win32
+		{54A9B204-4938-4EB3-BD1A-4302FA0B0A95}.Release|Win32.Build.0 = Release|Win32
+		{DE60F1EB-5AB3-46F5-89AC-B5878DF73004}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DE60F1EB-5AB3-46F5-89AC-B5878DF73004}.Debug|Win32.Build.0 = Debug|Win32
+		{DE60F1EB-5AB3-46F5-89AC-B5878DF73004}.Release|Win32.ActiveCfg = Release|Win32
+		{DE60F1EB-5AB3-46F5-89AC-B5878DF73004}.Release|Win32.Build.0 = Release|Win32
+		{26AC1F5C-AE73-4EE5-8C09-5078FB286233}.Debug|Win32.ActiveCfg = Debug|Win32
+		{26AC1F5C-AE73-4EE5-8C09-5078FB286233}.Debug|Win32.Build.0 = Debug|Win32
+		{26AC1F5C-AE73-4EE5-8C09-5078FB286233}.Release|Win32.ActiveCfg = Release|Win32
+		{26AC1F5C-AE73-4EE5-8C09-5078FB286233}.Release|Win32.Build.0 = Release|Win32
+		{150BC9F1-4699-4E7E-BC3D-8AD5E01B8B23}.Debug|Win32.ActiveCfg = Debug|Win32
+		{150BC9F1-4699-4E7E-BC3D-8AD5E01B8B23}.Debug|Win32.Build.0 = Debug|Win32
+		{150BC9F1-4699-4E7E-BC3D-8AD5E01B8B23}.Release|Win32.ActiveCfg = Release|Win32
+		{150BC9F1-4699-4E7E-BC3D-8AD5E01B8B23}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(Qt) = preSolution
+		Integration = True
+	EndGlobalSection
+	GlobalSection(Qt) = preSolution
+		Integration = True
+	EndGlobalSection
+	GlobalSection(Qt) = preSolution
+		Integration = True
+	EndGlobalSection
+	GlobalSection(Qt) = preSolution
+		Integration = True
+	EndGlobalSection
+	GlobalSection(Qt) = preSolution
+		Integration = True
+	EndGlobalSection
+	GlobalSection(Qt) = preSolution
+		Integration = True
+	EndGlobalSection
+	GlobalSection(Qt) = preSolution
+		Integration = True
+	EndGlobalSection
+	GlobalSection(Qt) = preSolution
+		Integration = True
+	EndGlobalSection
+	GlobalSection(Qt) = preSolution
+		Integration = True
+	EndGlobalSection
+	GlobalSection(Qt) = preSolution
+		Integration = True
+	EndGlobalSection
+	GlobalSection(Qt) = preSolution
+		Integration = True
+	EndGlobalSection
+	GlobalSection(Qt) = preSolution
+		Integration = True
+	EndGlobalSection
+	GlobalSection(Qt) = preSolution
+		Integration = True
+	EndGlobalSection
+	GlobalSection(Qt) = preSolution
+		Integration = True
+	EndGlobalSection
+	GlobalSection(Qt) = preSolution
+		Integration = True
+	EndGlobalSection
+	GlobalSection(Qt) = preSolution
+		Integration = True
+	EndGlobalSection
+	GlobalSection(Qt) = preSolution
+		Integration = True
+	EndGlobalSection
+	GlobalSection(Qt) = preSolution
+		Integration = True
+	EndGlobalSection
+	GlobalSection(Qt) = preSolution
+		Integration = True
+	EndGlobalSection
+EndGlobal

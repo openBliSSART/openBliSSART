@@ -1,0 +1,91 @@
+%
+% $Id: manual.tex 864 2009-06-11 11:48:53Z felix $ %
+% vim:set expandtab tabstop=4 shiftwidth=4:
+%
+
+
+\documentclass[a4paper,11pt]{article}
+\usepackage{amsfonts,amsthm,amsmath,amssymb,amsbsy,hyperref,float}
+\usepackage{graphicx,verbatim,framed}
+\usepackage[latin1]{inputenc}
+
+
+\floatplacement{figure}{H}
+\floatplacement{table}{H}
+
+
+\newcommand{\setR}{\ensuremath{\mathbb{R}}}
+\newcommand{\setN}{\ensuremath{\mathbb{N}}}
+\newcommand{\bigO}{\mathcal{O}}
+\newcommand{\myspan}{\mbox{span}}
+\newcommand{\bv}[1]{\ensuremath{\mbox{\boldmath$#1$}}}
+
+\setcounter{secnumdepth}{2}
+
+
+\sloppy
+\raggedbottom
+\frenchspacing
+\clubpenalties 3 10000 10000 100
+\widowpenalties 3 10000 10000 100
+
+
+\hyphenation{openBliSSART}
+
+
+\author{
+    Felix Weninger\thanks{felix@weninger.de}\\TU M\"unchen
+    \and Alexander Lehmann\thanks{lehmanna@in.tum.de}\\TU M\"unchen
+    \and Bj\"orn Schuller\thanks{schuller@tum.de}\\TU M\"unchen
+}
+\date{February 2009}
+\title{
+    openBliSSART\\[0.5cm]
+    User Manual
+}
+
+
+\begin{document}
+
+
+\maketitle
+
+
+\newpage
+
+
+\tableofcontents
+
+
+\newpage
+
+
+\section{Overview}
+\label{section:Overview}
+\input{overview}
+
+
+\newpage
+
+
+\section{Tutorial}
+\label{section:Tutorial}
+\input{tutorial}
+
+
+\newpage
+
+
+\section{Reference manual}
+\label{section:RefManual}
+\input{reference_manual}
+
+
+\clearpage
+
+
+\bibliographystyle{IEEEbib}
+\bibliography{bibliography}
+
+
+\end{document}

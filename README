@@ -1,0 +1,5 @@
+openBliSSART is a set of C++ libraries and tools that provides "Blind Source
+Separation for Audio Recognition Tasks".
+
+You can build the corresponding documentation by either issuing "make html" or
+explicitly running doxygen on doc/doxygen.cfg.

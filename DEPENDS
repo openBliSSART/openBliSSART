@@ -1,0 +1,10 @@
+openBliSSART depends on the following libraries:
+
+- Poco Enterprise v1.3.4+ (incl. support for SQLite), http://pocoproject.org
+- Simple Direct Media Layer, http://libsdl.org
+- SDL_sound, http://icculus.org/SDL_sound
+- Qt 4.4.3+, http://www.qtsoftware.com
+- Fastest Fourier Transform in the West, http://www.fftw.org
+
+Additionaly, performance can be vastly improved by installing the `Automatically
+Tuned Linear Algebra Software' package, available at http://www.netlib.org/atlas.

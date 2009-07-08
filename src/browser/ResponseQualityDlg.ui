@@ -1,0 +1,106 @@
+<ui version="4.0" >
+ <class>ResponseQualityDlg</class>
+ <widget class="QDialog" name="ResponseQualityDlg" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>421</width>
+    <height>375</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Response Quality Feedback</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <item>
+    <widget class="QTreeWidget" name="twFeatures" >
+     <property name="alternatingRowColors" >
+      <bool>true</bool>
+     </property>
+     <property name="sortingEnabled" >
+      <bool>true</bool>
+     </property>
+     <property name="columnCount" >
+      <number>4</number>
+     </property>
+     <column>
+      <property name="text" >
+       <string>Type</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>E[x]</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Var[x]</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Entities</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pbSave" >
+       <property name="text" >
+        <string>Export to Weka</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pbClose" >
+       <property name="text" >
+        <string>Close</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>twFeatures</tabstop>
+  <tabstop>pbSave</tabstop>
+  <tabstop>pbClose</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>pbClose</sender>
+   <signal>clicked()</signal>
+   <receiver>ResponseQualityDlg</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>360</x>
+     <y>348</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>371</x>
+     <y>-14</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

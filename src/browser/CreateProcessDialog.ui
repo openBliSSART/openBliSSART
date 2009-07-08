@@ -1,0 +1,340 @@
+<ui version="4.0" >
+ <class>CreateProcessDialog</class>
+ <widget class="QDialog" name="CreateProcessDialog" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>734</width>
+    <height>566</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Import audio files</string>
+  </property>
+  <layout class="QGridLayout" >
+   <item rowspan="2" row="0" column="0" >
+    <widget class="QGroupBox" name="groupBox_2" >
+     <property name="title" >
+      <string>Files</string>
+     </property>
+     <layout class="QHBoxLayout" >
+      <property name="leftMargin" >
+       <number>0</number>
+      </property>
+      <property name="topMargin" >
+       <number>0</number>
+      </property>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="blissart::FilesSelectionWidget" native="1" name="filesSelectionWidget" >
+        <property name="minimumSize" >
+         <size>
+          <width>250</width>
+          <height>400</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="1" >
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
+      <string>Parameters</string>
+     </property>
+     <layout class="QGridLayout" >
+      <item row="1" column="0" >
+       <widget class="QLabel" name="lbWindowFunction" >
+        <property name="text" >
+         <string>Window function:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>cbWindowFunction</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="QComboBox" name="cbWindowFunction" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLabel" name="lbWindowSize" >
+        <property name="text" >
+         <string>Window size (ms):</string>
+        </property>
+        <property name="buddy" >
+         <cstring>sbWindowSize</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" >
+       <widget class="QSpinBox" name="sbWindowSize" >
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="minimum" >
+         <number>10</number>
+        </property>
+        <property name="maximum" >
+         <number>1000</number>
+        </property>
+        <property name="singleStep" >
+         <number>5</number>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1" >
+       <widget class="QDoubleSpinBox" name="dsbOverlap" >
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="maximum" >
+         <double>0.990000000000000</double>
+        </property>
+        <property name="singleStep" >
+         <double>0.100000000000000</double>
+        </property>
+        <property name="value" >
+         <double>0.500000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0" >
+       <widget class="QLabel" name="lbNumComponents" >
+        <property name="text" >
+         <string>Number of components:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>sbNumComponents</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1" >
+       <widget class="QSpinBox" name="sbNumComponents" >
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="minimum" >
+         <number>1</number>
+        </property>
+        <property name="maximum" >
+         <number>50</number>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0" >
+       <widget class="QLabel" name="lbNumThreads" >
+        <property name="text" >
+         <string>Number of threads:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>sbNumThreads</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1" >
+       <widget class="QSpinBox" name="sbNumThreads" >
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="minimum" >
+         <number>1</number>
+        </property>
+        <property name="maximum" >
+         <number>16</number>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0" >
+       <widget class="QLabel" name="lbMaxIterations" >
+        <property name="text" >
+         <string>Maximum iterations:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>sbMaxIterations</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="1" >
+       <widget class="QSpinBox" name="sbMaxIterations" >
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="minimum" >
+         <number>50</number>
+        </property>
+        <property name="maximum" >
+         <number>1000</number>
+        </property>
+        <property name="singleStep" >
+         <number>50</number>
+        </property>
+        <property name="value" >
+         <number>500</number>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" >
+       <widget class="QLabel" name="lbAlgorithm" >
+        <property name="text" >
+         <string>Algorithm:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1" >
+       <widget class="QComboBox" name="cbAlgorithm" />
+      </item>
+      <item row="0" column="0" >
+       <widget class="QLabel" name="lbProcessing" >
+        <property name="text" >
+         <string>Processing steps:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QComboBox" name="cbProcessing" >
+        <item>
+         <property name="text" >
+          <string>Fourier Transform + NMF</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Fourier Transform + NMD</string>
+         </property>
+        </item>
+        <item>
+         <property name="text" >
+          <string>Fourier Transform only</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="6" column="0" >
+       <widget class="QLabel" name="lbNumSpectra" >
+        <property name="text" >
+         <string>Number of spectra:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1" >
+       <widget class="QSpinBox" name="sbNumSpectra" >
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="minimum" >
+         <number>1</number>
+        </property>
+        <property name="maximum" >
+         <number>200</number>
+        </property>
+        <property name="value" >
+         <number>25</number>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" >
+       <widget class="QLabel" name="lbOverlap" >
+        <property name="text" >
+         <string>Overlap:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>dsbOverlap</cstring>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="0" colspan="2" >
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>blissart::FilesSelectionWidget</class>
+   <extends>QWidget</extends>
+   <header>FilesSelectionWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>cbWindowFunction</tabstop>
+  <tabstop>sbWindowSize</tabstop>
+  <tabstop>cbAlgorithm</tabstop>
+  <tabstop>dsbOverlap</tabstop>
+  <tabstop>sbNumComponents</tabstop>
+  <tabstop>sbNumThreads</tabstop>
+  <tabstop>sbMaxIterations</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>CreateProcessDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>224</x>
+     <y>584</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>CreateProcessDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>292</x>
+     <y>590</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

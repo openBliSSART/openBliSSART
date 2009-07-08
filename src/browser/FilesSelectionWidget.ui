@@ -1,0 +1,46 @@
+<ui version="4.0" >
+ <class>FilesSelectionWidget</class>
+ <widget class="QWidget" name="FilesSelectionWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>256</width>
+    <height>440</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" colspan="2" >
+    <widget class="QListWidget" name="lwFiles" >
+     <property name="selectionMode" >
+      <enum>QAbstractItemView::ExtendedSelection</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QPushButton" name="pbAddFiles" >
+     <property name="text" >
+      <string>Add files</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QPushButton" name="pbRemoveSelected" >
+     <property name="text" >
+      <string>Remove selected</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>lwFiles</tabstop>
+  <tabstop>pbAddFiles</tabstop>
+  <tabstop>pbRemoveSelected</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
