@@ -1,3 +1,6 @@
 src/*/*.user
 *.ncb
 *.suo
+bin/*
+build/*
+src/browser/browser.vcproj

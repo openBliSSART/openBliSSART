@@ -1,5 +1,5 @@
 //
-// $Id: FeatureExtractor.h 901 2009-07-08 08:49:10Z felix $
+// $Id: FeatureExtractor.h 855 2009-06-09 16:15:50Z alex $
 //
 // This file is part of openBliSSART.
 //
@@ -89,6 +89,16 @@ public:
     void setGainsFrequency(double freq);
 
 private:
+    /** 
+     * Computes the length of the rows of the gains matrix of a NMD of the 
+     * given Matrix which is initialized with a response.
+     * This method is not in LibFeature, since it depends on the database
+     * and would thus make LibFeature depend on LibFramework.
+     */
+    void computeNMDGain(FeatureMap& target, const linalg::Matrix& data,
+        int responseID, int nComponents, int nIterations,
+        DataDescriptor::Type type);
+
     double     _sampleFreq;
     double     _gainsFreq;
 };
