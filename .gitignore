@@ -1,9 +1,13 @@
 !acbuild/m4
+*.ncb
+*.suo
+*.user
 Makefile
 Makefile.in
 acbuild/*
 aclocal.m4
 autom4te.cache/
+bin
 build/
 config.h
 config.h.in

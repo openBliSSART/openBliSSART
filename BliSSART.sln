@@ -1,6 +1,15 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Includes", "Includes", "{3C7D8CB2-612D-4F6B-881D-CA5520A9855C}"
+	ProjectSection(SolutionItems) = preProject
+		src\include\baseName.h = src\include\baseName.h
+		src\include\blissart\BinaryReader.h = src\include\blissart\BinaryReader.h
+		src\include\blissart\BinaryWriter.h = src\include\blissart\BinaryWriter.h
+		src\include\common.h = src\include\common.h
+		src\include\types.h = src\include\types.h
+	EndProjectSection
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Testsuite", "src\Testsuite\Testsuite.vcproj", "{C52FBEEC-4FCD-4A08-8BCB-E75E166194FF}"
 	ProjectSection(ProjectDependencies) = postProject
 		{094AE1BE-4478-4234-AD41-81D8EC4B8D5E} = {094AE1BE-4478-4234-AD41-81D8EC4B8D5E}
@@ -26,15 +35,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "icatool", "src\icatool\icat
 		{3623E3C3-571E-424B-89A4-025166C0DFBD} = {3623E3C3-571E-424B-89A4-025166C0DFBD}
 		{094AE1BE-4478-4234-AD41-81D8EC4B8D5E} = {094AE1BE-4478-4234-AD41-81D8EC4B8D5E}
 		{5C16CF43-50EC-49F2-853E-A5B988A72E6E} = {5C16CF43-50EC-49F2-853E-A5B988A72E6E}
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Includes", "Includes", "{3C7D8CB2-612D-4F6B-881D-CA5520A9855C}"
-	ProjectSection(SolutionItems) = preProject
-		src\include\baseName.h = src\include\baseName.h
-		src\include\blissart\BinaryReader.h = src\include\blissart\BinaryReader.h
-		src\include\blissart\BinaryWriter.h = src\include\blissart\BinaryWriter.h
-		src\include\common.h = src\include\common.h
-		src\include\types.h = src\include\types.h
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibFeature", "src\LibFeature\LibFeature.vcproj", "{DE9D8B16-7A50-45F5-AEE5-451DFA4881B8}"
