@@ -1,6 +1,4 @@
 //
-// $Id: FastICA.h 873 2009-06-24 15:55:46Z alex $
-//
 // This file is part of openBliSSART.
 //
 // Copyright (c) 2007-2009, Alexander Lehmann <lehmanna@in.tum.de>

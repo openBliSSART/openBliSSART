@@ -1,6 +1,4 @@
 dnl
-dnl $Id: ax_check_poco.m4 860 2009-06-10 12:57:12Z alex $
-dnl
 dnl This file is part of openBliSSART.
 dnl
 dnl Copyright (c) 2007-2009, Alexander Lehmann <lehmanna@in.tum.de>

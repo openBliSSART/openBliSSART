@@ -1,6 +1,4 @@
 //
-// $Id: SeparationTask.cpp 895 2009-07-06 13:38:27Z felix $
-//
 // This file is part of openBliSSART.
 //
 // Copyright (c) 2007-2009, Alexander Lehmann <lehmanna@in.tum.de>

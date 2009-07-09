@@ -1,6 +1,4 @@
 #
-# $Id: configure.ac 860 2009-06-10 12:57:12Z alex $
-#
 # This file is part of openBliSSART.
 #
 # Copyright (c) 2007-2009, Alexander Lehmann <lehmanna@in.tum.de>

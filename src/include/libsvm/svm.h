@@ -1,4 +1,3 @@
-#ifndef _LIBSVM_H
 #define _LIBSVM_H
 
 #ifdef __cplusplus
