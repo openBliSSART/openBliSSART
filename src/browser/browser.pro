@@ -1,4 +1,6 @@
 #
+# $Id: browser.pro 858 2009-06-10 08:24:44Z alex $
+#
 # This file is part of openBliSSART.
 #
 # Copyright (c) 2007-2009, Alexander Lehmann <lehmanna@in.tum.de>

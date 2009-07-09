@@ -1,4 +1,6 @@
 //
+// $Id: FeatureDescriptor.cpp 901 2009-07-08 08:49:10Z felix $
+//
 // This file is part of openBliSSART.
 //
 // Copyright (c) 2007-2009, Alexander Lehmann <lehmanna@in.tum.de>

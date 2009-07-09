@@ -1,4 +1,6 @@
 ##
+## $Id: Makefile.am 759 2009-05-15 07:48:40Z alex $
+##
 ## This file is part of openBliSSART.
 ##
 ## Copyright (c) 2007-2009, Alexander Lehmann <lehmanna@in.tum.de>

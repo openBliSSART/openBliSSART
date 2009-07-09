@@ -1,4 +1,6 @@
 //
+// $Id: Sound.h 872 2009-06-23 14:57:23Z felix $
+//
 // This file is part of openBliSSART.
 //
 // Copyright (c) 2007-2009, Alexander Lehmann <lehmanna@in.tum.de>

@@ -1,4 +1,6 @@
 //
+// $Id: ProgressInterface.h 896 2009-07-06 13:50:33Z felix $
+//
 // This file is part of openBliSSART.
 //
 // Copyright (c) 2007-2009, Alexander Lehmann <lehmanna@in.tum.de>
