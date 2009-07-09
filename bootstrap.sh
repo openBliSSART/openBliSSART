@@ -1,6 +1,3 @@
-#!/bin/bash
-#
-# $Id: bootstrap.sh 855 2009-06-09 16:15:50Z alex $
 #
 # This file is part of openBliSSART.
 #

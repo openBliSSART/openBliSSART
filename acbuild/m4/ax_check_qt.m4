@@ -1,6 +1,4 @@
 dnl
-dnl $Id: ax_check_qt.m4 858 2009-06-10 08:24:44Z alex $
-dnl
 dnl This file is part of openBliSSART.
 dnl
 dnl Copyright (c) 2007-2009, Alexander Lehmann <lehmanna@in.tum.de>
@@ -37,7 +35,7 @@ AC_DEFUN([AX_CHECK_QT],
        [AS_HELP_STRING([--with-qt-prefix=<prefix>],
           [where to look for Qt @<@default=/usr/local/Trolltech/current@:>@])],
        [QT_PREFIX="$with_qt_prefix"],
-       [QT_PREFIX=/usr/local/Trolltech/current]
+       [QT_PREFIX=/usr]
     ) dnl AC_ARG_WITH
     
     dnl If the specified QT_PREFIX doesn't exist we try to fall back on

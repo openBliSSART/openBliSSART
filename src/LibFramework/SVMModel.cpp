@@ -1,6 +1,4 @@
 //
-// $Id: SVMModel.cpp 870 2009-06-16 18:49:19Z felix $
-//
 // This file is part of openBliSSART.
 //
 // Copyright (c) 2007-2009, Alexander Lehmann <lehmanna@in.tum.de>

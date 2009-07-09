@@ -1,6 +1,4 @@
 //
-// $Id: PlaybackThread.cpp 855 2009-06-09 16:15:50Z alex $
-//
 // This file is part of openBliSSART.
 //
 // Copyright (c) 2007-2009, Alexander Lehmann <lehmanna@in.tum.de>

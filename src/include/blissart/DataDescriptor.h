@@ -1,6 +1,4 @@
 //
-// $Id: DataDescriptor.h 868 2009-06-16 15:03:40Z felix $
-//
 // This file is part of openBliSSART.
 //
 // Copyright (c) 2007-2009, Alexander Lehmann <lehmanna@in.tum.de>

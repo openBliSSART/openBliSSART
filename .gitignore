@@ -15,7 +15,7 @@ d2u.sh
 doc/Makefile
 doc/Makefile.in
 libtool
-m4/*
+m4/*.m4
 mmd.sh
 src/*/*.la
 src/*/*.lo
