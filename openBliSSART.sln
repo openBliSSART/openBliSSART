@@ -1,5 +1,4 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
+﻿Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Includes", "Includes", "{3C7D8CB2-612D-4F6B-881D-CA5520A9855C}"
 	ProjectSection(SolutionItems) = preProject
@@ -42,7 +41,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibFeature", "src\LibFeatur
 		{094AE1BE-4478-4234-AD41-81D8EC4B8D5E} = {094AE1BE-4478-4234-AD41-81D8EC4B8D5E}
 	EndProjectSection
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup_openBliSSART", "win32\SetupBliSSART\SetupBliSSART.vdproj", "{BDE9C59F-49EC-4F86-A69F-04F6FAAFE124}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup_openBliSSART", "win32\Setup_openBliSSART\Setup_openBliSSART.vdproj", "{BDE9C59F-49EC-4F86-A69F-04F6FAAFE124}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "browser", "src\browser\browser.vcproj", "{9BBD562E-AD3B-3311-9735-7F679F0DEE54}"
 	ProjectSection(ProjectDependencies) = postProject

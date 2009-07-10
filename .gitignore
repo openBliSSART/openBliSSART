@@ -42,3 +42,5 @@ src/icatool/icatool
 src/labeller/labeller
 src/septool/septool
 stamp-h1
+win32/Setup_openBliSSART/Release
+win32/Setup_openBliSSART/Debug
