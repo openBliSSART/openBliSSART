@@ -929,7 +929,7 @@
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.1.0"
+        "ProductVersion" = "8:1.1.1"
         "Manufacturer" = "8:Technical University of Munich"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
