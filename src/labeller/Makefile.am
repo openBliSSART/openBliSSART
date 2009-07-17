@@ -24,9 +24,9 @@
 
 bin_PROGRAMS = labeller
 
-labeller_LDADD = @POCO_LDFLAGS@ -lPocoFoundation -lPocoUtil -lPocoXML \
-                 $(top_srcdir)/src/LibFramework/libFramework.la 
-
+labeller_LDADD = $(top_srcdir)/src/LibFramework/libFramework.la \
+				 @POCO_LDFLAGS@ -lPocoFoundation -lPocoUtil -lPocoXML
+                 
 labeller_CPPFLAGS = -I../include @POCO_CPPFLAGS@
 
 labeller_SOURCES = main.cpp

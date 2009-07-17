@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>icatool</name>
+	<name>cvtool</name>
 	<comment></comment>
 	<projects>
 		<project>LibAudio</project>
-		<project>LibICA</project>
-		<project>LibLinAlg</project>
+		<project>LibFeature</project>
+		<project>LibFramework</project>
+		<project>LibNMF</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

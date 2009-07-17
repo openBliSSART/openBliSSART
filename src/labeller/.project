@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>icatool</name>
+	<name>labeller</name>
 	<comment></comment>
 	<projects>
-		<project>LibAudio</project>
-		<project>LibICA</project>
-		<project>LibLinAlg</project>
+		<project>LibFramework</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
