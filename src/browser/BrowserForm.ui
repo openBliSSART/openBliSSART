@@ -180,7 +180,7 @@
  </customwidgets>
  <tabstops>
   <tabstop>treeWidget</tabstop>
-  <tabstop>pbCreateProcess</tabstop>
+  <tabstop>pbImportAudio</tabstop>
   <tabstop>pbCreateLabel</tabstop>
   <tabstop>pbCreateResponse</tabstop>
   <tabstop>pbSave</tabstop>

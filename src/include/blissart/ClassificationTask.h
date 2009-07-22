@@ -1,6 +1,4 @@
 //
-// $Id: ClassificationTask.h 877 2009-06-26 11:19:45Z felix $
-//
 // This file is part of openBliSSART.
 //
 // Copyright (c) 2007-2009, Alexander Lehmann <lehmanna@in.tum.de>

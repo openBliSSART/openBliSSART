@@ -1,6 +1,4 @@
 #
-# $Id: configure.ac 860 2009-06-10 12:57:12Z alex $
-#
 # This file is part of openBliSSART.
 #
 # Copyright (c) 2007-2009, Alexander Lehmann <lehmanna@in.tum.de>
@@ -25,7 +23,7 @@
 #
 
 AC_PREREQ(2.13)
-AC_INIT([openBliSSART], [1.0], [lehmanna@in.tum.de])
+AC_INIT([openBliSSART], [1.1.1], [lehmanna@in.tum.de])
 AC_CONFIG_SRCDIR([src/septool/main.cpp])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([acbuild])
@@ -136,6 +134,5 @@ AC_CONFIG_FILES([Makefile
                  src/labeller/Makefile
                  src/export/Makefile
                  src/cleanup/Makefile
-                 src/nmdtool/Makefile
                  src/browser/Makefile])
 AC_OUTPUT

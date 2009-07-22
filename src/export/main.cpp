@@ -1,6 +1,4 @@
 //
-// $Id: main.cpp 871 2009-06-23 14:10:13Z felix $
-//
 // This file is part of openBliSSART.
 //
 // Copyright (c) 2007-2009, Alexander Lehmann <lehmanna@in.tum.de>

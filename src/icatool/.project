@@ -3,6 +3,9 @@
 	<name>icatool</name>
 	<comment></comment>
 	<projects>
+		<project>LibAudio</project>
+		<project>LibICA</project>
+		<project>LibLinAlg</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

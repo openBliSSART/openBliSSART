@@ -1,6 +1,4 @@
 #
-# $Id: Makefile.am 326 2008-05-30 06:42:40Z alex $
-#
 
 .PHONY: html-local mostly-clean
 
