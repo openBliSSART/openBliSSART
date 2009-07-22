@@ -1,4 +1,5 @@
-﻿Microsoft Visual Studio Solution File, Format Version 10.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Includes", "Includes", "{3C7D8CB2-612D-4F6B-881D-CA5520A9855C}"
 	ProjectSection(SolutionItems) = preProject
@@ -90,6 +91,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "export", "src\export\export
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cleanup", "src\cleanup\cleanup.vcproj", "{150BC9F1-4699-4E7E-BC3D-8AD5E01B8B23}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nmdtool", "src\nmdtool\nmdtool.vcproj", "{5F7BCAB7-856E-4A6F-9A2E-060323745F2F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -158,6 +161,10 @@ Global
 		{150BC9F1-4699-4E7E-BC3D-8AD5E01B8B23}.Debug|Win32.Build.0 = Debug|Win32
 		{150BC9F1-4699-4E7E-BC3D-8AD5E01B8B23}.Release|Win32.ActiveCfg = Release|Win32
 		{150BC9F1-4699-4E7E-BC3D-8AD5E01B8B23}.Release|Win32.Build.0 = Release|Win32
+		{5F7BCAB7-856E-4A6F-9A2E-060323745F2F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5F7BCAB7-856E-4A6F-9A2E-060323745F2F}.Debug|Win32.Build.0 = Debug|Win32
+		{5F7BCAB7-856E-4A6F-9A2E-060323745F2F}.Release|Win32.ActiveCfg = Release|Win32
+		{5F7BCAB7-856E-4A6F-9A2E-060323745F2F}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
