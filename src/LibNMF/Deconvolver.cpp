@@ -132,29 +132,6 @@ void Deconvolver::factorize(unsigned int maxSteps, double eps,
     _numSteps = 0;
     while (_numSteps < maxSteps) {
 
-        if (!_wConstant) {
-            // Update Lambda and V / Lambda
-            computeLambda();
-            _v.elementWiseDivision(_lambda, &vOverLambda);
-
-            // Update all W_t
-            hShifted = _h;
-            for (unsigned int t = 0; t < _t; ++t) {
-                for (unsigned int j = 0; j < _w[t]->cols(); ++j) {
-                    if (!_wColConstant[j]) {
-                        // Precalculation of sum of row j of H
-                        double hRowSum = hShifted.rowSum(j);
-                        for (unsigned int i = 0; i < _w[t]->rows(); ++i) {
-                            _w[t]->at(i, j) *= 
-                                Matrix::dotRowRow(hShifted, j, vOverLambda, i) 
-                                / hRowSum;
-                        }
-                    }
-                }
-                hShifted.shiftColumnsRight();
-            }
-        }
-
         // Update Lambda and V / Lambda
         computeLambda();
         _v.elementWiseDivision(_lambda, &vOverLambda);
@@ -185,6 +162,29 @@ void Deconvolver::factorize(unsigned int maxSteps, double eps,
         for (unsigned int j = 0; j < _h.cols(); ++j) {
             for (unsigned int i = 0; i < _h.rows(); ++i) {
                 _h(i, j) *= hUpdate(i, j) / (double) _t;
+            }
+        }
+
+        if (!_wConstant) {
+            // Update Lambda and V / Lambda
+            computeLambda();
+            _v.elementWiseDivision(_lambda, &vOverLambda);
+
+            // Update all W_t
+            hShifted = _h;
+            for (unsigned int t = 0; t < _t; ++t) {
+                for (unsigned int j = 0; j < _w[t]->cols(); ++j) {
+                    if (!_wColConstant[j]) {
+                        // Precalculation of sum of row j of H
+                        double hRowSum = hShifted.rowSum(j);
+                        for (unsigned int i = 0; i < _w[t]->rows(); ++i) {
+                            _w[t]->at(i, j) *= 
+                                Matrix::dotRowRow(hShifted, j, vOverLambda, i) 
+                                / hRowSum;
+                        }
+                    }
+                }
+                hShifted.shiftColumnsRight();
             }
         }
 

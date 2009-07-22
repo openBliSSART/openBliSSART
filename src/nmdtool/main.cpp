@@ -68,9 +68,6 @@ public:
         _scripted(false),
         _responseID(0),
         _nComponents(0),
-        _extractMFCC(false),
-        _mfccD(false),
-        _mfccA(false),
         _nIterations(100),
         _transformation(NMDGainsTask::NoTransformation)
     {
@@ -136,6 +133,13 @@ protected:
             .validator(new validators::RangeValidator<int>(1)));
 
         options.addOption(
+            Option("all-components", "a",
+                   "Saves the gains for all components, including the noise "
+                   "ones. Otherwise only gains for initialized components "
+                   "are saved.",
+                   false));
+
+        options.addOption(
             Option("transform", "t",
                    "Transforms NMD gains. Available methods are \"linear\" "
                    "(normalize each column such that it sums to 1) "
@@ -150,23 +154,6 @@ protected:
                    false, "<number>", true)
             .validator(new validators::RangeValidator<int>(1))
             .binding("blissart.nmdtool.index_count"));
-
-        options.addOption(
-            Option("mfcc", "m",
-                   "Extracts MFCCs and adds them to each column.",
-                   false));
-
-        options.addOption(
-            Option("delta", "d",
-                   "Computes delta coefficients. "
-                   "Implies MFCC extraction.",
-                   false));
-
-        options.addOption(
-            Option("acc", "a",
-                   "Computes delta-delta (acceleration) coefficients. "
-                   "Implies extraction of MFCC and delta coefficients.",
-                   false));
 
         options.addOption(
             Option("iter", "i",
@@ -196,6 +183,9 @@ protected:
         else if (name == "components") {
             _nComponents = Poco::NumberParser::parse(value);
         }
+        else if (name == "all-components") {
+            _allComponents = true;
+        }
         else if (name == "transform") {
             if (value[0] == 'l') {
                 _transformation = NMDGainsTask::UnitSum;
@@ -206,15 +196,6 @@ protected:
             else if (value[0] == 'm') {
                 _transformation = NMDGainsTask::MaximalIndices;
             }
-        }
-        else if (name == "mfcc") {
-            _extractMFCC = true;
-        }
-        else if (name == "delta") {
-            _extractMFCC = _mfccD = true;
-        }
-        else if (name == "acc") {
-            _extractMFCC = _mfccD = _mfccA = true;
         }
     }
 
@@ -254,11 +235,6 @@ protected:
         initializeTaskManager<ThreadedApplication>();
 
         // Setup parameters for NMDGainsTasks.
-        NMDGainsTask::AdditionalFeatures addFeatures = NMDGainsTask::NoMFCC;
-        if (_mfccA) addFeatures = NMDGainsTask::MFCC_A;
-        else if (_mfccD) addFeatures = NMDGainsTask::MFCC_D;
-        else if (_extractMFCC) addFeatures = NMDGainsTask::MFCC;
-
         for (vector<string>::const_iterator itr = inputFiles.begin();
             itr != inputFiles.end(); ++itr)
         {
@@ -267,8 +243,8 @@ protected:
                     _nComponents,
                     _nIterations,
                     clObjs,
-                    _transformation,
-                    addFeatures)
+                    _allComponents,
+                    _transformation)
             );
         }
 
@@ -285,9 +261,7 @@ private:
     bool _scripted;
     int  _responseID;
     int  _nComponents;
-    bool _extractMFCC;
-    bool _mfccD;
-    bool _mfccA;
+    bool _allComponents;
     int  _nIterations;
     NMDGainsTask::TransformationMethod _transformation;
 };

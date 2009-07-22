@@ -42,13 +42,6 @@ class NMDGainsTask : public blissart::FTTask, blissart::ProgressObserver
 {
 public:
     typedef enum {
-        NoMFCC,
-        MFCC,
-        MFCC_D,
-        MFCC_A
-    } AdditionalFeatures;
-
-    typedef enum {
         NoTransformation,
         UnitSum,
         LogDCT,
@@ -58,7 +51,8 @@ public:
     NMDGainsTask(const std::string &fileName,
         int nrOfComponents, int maxIterations,
         const std::vector<blissart::ClassificationObjectPtr>& initObjects,
-        TransformationMethod method, AdditionalFeatures addFeatures);
+        bool allComponents,
+        TransformationMethod method);
 
     virtual ~NMDGainsTask();
 
@@ -70,7 +64,6 @@ public:
 
 private:
     void performNMD();
-    void calcFeatures();
 
     /**
      * Stores the calculated feature matrices (gains, MFCC) in the database.
@@ -84,13 +77,9 @@ private:
     int                             _nrOfComponents;
     int                             _maxIterations;
 
+    bool                            _allComponents;
     blissart::linalg::Matrix*       _gainsMatrix;
     TransformationMethod            _transformation;
-
-    AdditionalFeatures              _addFeatures;
-    blissart::linalg::Matrix*       _mfcc;
-    blissart::linalg::Matrix*       _mfccD;
-    blissart::linalg::Matrix*       _mfccA;
 
     int                             _myUniqueID;
 };

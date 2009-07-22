@@ -45,19 +45,16 @@ using blissart::linalg::Matrix;
 NMDGainsTask::NMDGainsTask(const string& fileName,
                            int nrOfComponents, int maxIterations,
                            const vector<ClassificationObjectPtr>& initObj,
-                           TransformationMethod method,
-                           AdditionalFeatures addFeatures) :
+                           bool allComponents,
+                           TransformationMethod method) :
 FTTask("NMDGainsTask", fileName),
 _initObjects(initObj),
 _deconvolver(0),
 _nrOfComponents(nrOfComponents),
 _maxIterations(maxIterations),
+_allComponents(allComponents),
 _gainsMatrix(0),
 _transformation(method),
-_addFeatures(addFeatures),
-_mfcc(0),
-_mfccD(0),
-_mfccA(0),
 _myUniqueID(retrieveUniqueID())
 {
 }
@@ -65,18 +62,6 @@ _myUniqueID(retrieveUniqueID())
 
 NMDGainsTask::~NMDGainsTask()
 {
-    if (_mfcc) {
-        delete _mfcc;
-        _mfcc = 0;
-    }
-    if (_mfccD) {
-        delete _mfccD;
-        _mfccD = 0;
-    }
-    if (_mfccA) {
-        delete _mfccA;
-        _mfccA = 0;
-    }
     if (_gainsMatrix) {
         delete _gainsMatrix;
         _gainsMatrix = 0;
@@ -124,9 +109,6 @@ void NMDGainsTask::runTask()
         // Mandatory check.
         if (isCancelled())
             break;
-
-        // Calculate desired additional features.
-        calcFeatures();
 
         // Mandatory check.
         if (isCancelled())
@@ -178,28 +160,33 @@ void NMDGainsTask::performNMD()
     _deconvolver->factorize(_maxIterations, 0, this);
     const Matrix& h = _deconvolver->getH();
 
-    // The gains matrix contains only gains from initialized components.
+    // The number of "relevant" components can be the number of initialized
+    // components only or simply the number of NMD components.
+    unsigned int relevantComponents = _allComponents ? 
+        _nrOfComponents : 
+        (unsigned int)_initObjects.size();
+
     if (_transformation == MaximalIndices) {
         int indexCount = BasicApplication::instance().config().
             getInt("blissart.nmdtool.index_count", 5);
         _gainsMatrix = new Matrix(indexCount, h.cols());
     }
     else {
-        _gainsMatrix = new Matrix((unsigned int)_initObjects.size(), h.cols());
+        _gainsMatrix = new Matrix(relevantComponents, h.cols());
     }
 
     logger().debug(nameAndTaskID() + " calculating gains matrix.");
     // Transform gains if desired.
     if (_transformation == UnitSum) {
         for (unsigned int j = 0; j < h.cols(); ++j) {
-            // Compute length of all gains belonging to initialized components.
+            // Compute length of all gains belonging to "relevant" components.
             double initSum = 0.0;
-            for (unsigned int i = 0; i < _initObjects.size(); ++i) {
+            for (unsigned int i = 0; i < relevantComponents; ++i) {
                 double x = h.at(i, j);
                 initSum += x;
             }
             // Normalize gains such that they sum up to 1.
-            for (unsigned int i = 0; i < _initObjects.size(); ++i) {
+            for (unsigned int i = 0; i < relevantComponents; ++i) {
                 _gainsMatrix->setAt(i, j, h.at(i, j) / initSum);
             }
 
@@ -207,12 +194,12 @@ void NMDGainsTask::performNMD()
     }
     else if (_transformation == LogDCT) {
         static const double pi = 4.0 * atan(1.0);
-        const double normalization = sqrt(2.0 / (double)_initObjects.size());
+        const double normalization = sqrt(2.0 / (double)relevantComponents);
         for (unsigned int j = 0; j < h.cols(); ++j) {
-            for (unsigned int i = 0; i < _initObjects.size(); ++i) {
+            for (unsigned int i = 0; i < relevantComponents; ++i) {
                 double dctCoeff = 0.0;
-                for (unsigned int m = 0; m < _initObjects.size(); ++m) {
-                    double x = pi * (double)i / (double)_initObjects.size() *
+                for (unsigned int m = 0; m < relevantComponents; ++m) {
+                    double x = pi * (double)i / (double)relevantComponents *
                         ((double) m + 0.5);
                     if (h.at(m, j) < 1e-6) {
                         dctCoeff += cos(x) * log(1e-6);
@@ -237,7 +224,7 @@ void NMDGainsTask::performNMD()
             for (unsigned int k = 0; k < indexCount; ++k) {
                 double max = 0.0; // H is non-negative
                 int maxIndex = 0;
-                for (unsigned int i = 0; i < _initObjects.size(); ++i) {
+                for (unsigned int i = 0; i < relevantComponents; ++i) {
                     if (indices.find(i) != indices.end()) {
                         continue;
                     }
@@ -253,34 +240,9 @@ void NMDGainsTask::performNMD()
         }
     }
     else {
-        for (unsigned int j = 0; j < h.cols(); ++j) {
-            for (unsigned int i = 0; i < _initObjects.size(); ++i) {
+        for (unsigned int j = 0; j < _gainsMatrix->cols(); ++j) {
+            for (unsigned int i = 0; i < _gainsMatrix->rows(); ++i) {
                 _gainsMatrix->setAt(i, j, h.at(i, j));
-            }
-        }
-    }
-}
-
-
-void NMDGainsTask::calcFeatures()
-{
-    if (_addFeatures == MFCC || _addFeatures == MFCC_D ||
-        _addFeatures == MFCC_A)
-    {
-        logger().debug(nameAndTaskID() + " computing features.");
-        Poco::Util::LayeredConfiguration& cfg = BasicApplication::instance().
-            config();
-        _mfcc = feature::computeMFCC(
-                amplitudeMatrix(),
-                sampleRate(),
-                cfg.getInt("blissart.global.mfcc.count", 13),
-                cfg.getInt("blissart.global.mel_bands", 26),
-                cfg.getInt("blissart.global.mfcc.lifter", 22));
-        if (_addFeatures == MFCC_D || _addFeatures == MFCC_A) {
-            int theta = cfg.getInt("blissart.global.deltaregression.theta", 2);
-            _mfccD = feature::deltaRegression(*_mfcc, theta);
-            if (_addFeatures == MFCC_A) {
-                _mfccA = feature::deltaRegression(*_mfccD, theta);
             }
         }
     }
@@ -306,28 +268,6 @@ void NMDGainsTask::storeComponents() const
     ddGains->processID = process->processID;
     dbs.createDataDescriptor(ddGains);
     sts.store(*_gainsMatrix, ddGains);
-
-    if (_addFeatures == MFCC || _addFeatures == MFCC_D ||
-        _addFeatures == MFCC_A)
-    {
-        DataDescriptorPtr ddMFCC = new DataDescriptor;
-        ddMFCC->type = DataDescriptor::FeatureMatrix;
-        ddMFCC->processID = process->processID;
-        ++ddMFCC->index;
-        dbs.createDataDescriptor(ddMFCC);
-        sts.store(*_mfcc, ddMFCC);
-
-        if (_addFeatures == MFCC_D || _addFeatures == MFCC_A) {
-            ++ddMFCC->index;
-            dbs.createDataDescriptor(ddMFCC);
-            sts.store(*_mfccD, ddMFCC);
-            if (_addFeatures == MFCC_A) {
-                ++ddMFCC->index;
-                dbs.createDataDescriptor(ddMFCC);
-                sts.store(*_mfccA, ddMFCC);
-            }
-        }
-    }
 }
 
 
