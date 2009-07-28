@@ -67,7 +67,9 @@ public:
         _presetLabelID(0),
         _maxIter(100),
         _algName("Multiplicative update (divergence)"),
+        _cfName("Extended KL divergence"),
         _nmfAlgorithm(NMFTask::MUDivergence),
+        _nmdCostFunction(NMDTask::ExtendedKLDivergence),
         _nrComponents(20),
         _nrSpectra(5),
         _preserveInit(false),
@@ -204,6 +206,13 @@ protected:
             .validator(new RegExpValidator("dist|div|gradient")));
 
         options.addOption(
+            Option("cost-function", "f",
+                   "NMD cost function. Must be one of \"dist\" or \"div\". "
+                   "Default is \"div\".",
+                   false, "<name>", true)
+            .validator(new RegExpValidator("dist|div")));
+
+        options.addOption(
             Option("components", "c",
                    "The number of components. Default is " +
                    NumberFormatter::format(_nrComponents),
@@ -308,6 +317,16 @@ protected:
             else if (value == "gradient") {
                 _nmfAlgorithm = NMFTask::GradientDescent;
                 _algName = "Gradient descent";
+            }
+        }
+        else if (name == "cost-function") {
+            if (value == "dist") {
+                _nmdCostFunction = NMDTask::EuclideanDistance;
+                _cfName = "Euclidean distance";
+            }
+            else if (value == "div") {
+                _nmdCostFunction = NMDTask::ExtendedKLDivergence;
+                _cfName = "Extended KL divergence";
             }
         }
         else if (name == "components") {
@@ -440,6 +459,10 @@ protected:
             cout << setw(20) << "Algorithm: " << _algName << endl;
         }
 
+        if (_separationMethod == SeparationTask::NMD) {
+            cout << setw(20) << "Cost function:" << _cfName << endl;
+        }
+
         cout << setw(20) << "# of components: " << _nrComponents << endl;
 
         if (_separationMethod == SeparationTask::NMD) {
@@ -493,7 +516,7 @@ protected:
 
             case SeparationTask::NMD:
                 newSepTask = new NMDTask(
-                    *it, _dataKind,
+                    *it, _dataKind, _nmdCostFunction,
                     _nrComponents, _nrSpectra, _maxIter,_epsilon, _volatile
                 );
                 break;
@@ -584,7 +607,9 @@ private:
     int                _presetLabelID;
     int                _maxIter;
     string             _algName;
+    string             _cfName;
     NMFTask::Algorithm _nmfAlgorithm;
+    NMDTask::CostFunction _nmdCostFunction;
     int                _nrComponents;
     int                _nrSpectra;
     vector<int>        _initObjectIDs;

@@ -47,6 +47,15 @@ class LibFramework_API NMDTask : public SeparationTask,
 {
 public:
     /**
+     * TODO: Document me!
+     */
+    typedef enum {
+        EuclideanDistance,
+        ExtendedKLDivergence
+    } CostFunction;
+
+
+    /**
      * Constructs a new instance of NMDTask for the given parameters.
      * @param  fileName         the name of the input file
      * @param  dataKind         the type of data (spectrum or Mel spectrum) 
@@ -58,7 +67,7 @@ public:
      * @param  isVolatile       store the resulting components iff true
      */
     NMDTask(const std::string &fileName, DataKind dataKind,
-            int nrOfComponents, int nrOfSpectra,
+            CostFunction cf, int nrOfComponents, int nrOfSpectra,
             int maxIterations, double epsilon, bool isVolatile);
 
 
@@ -109,6 +118,7 @@ private:
 
 
     nmf::Deconvolver*  _deconvolver;
+    CostFunction       _cf;
 };
 
 

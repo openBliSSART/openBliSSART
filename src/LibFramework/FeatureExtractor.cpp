@@ -390,7 +390,7 @@ FeatureExtractor::computeNMDGain(FeatureExtractor::FeatureMap& target,
         }
     }
 
-    d.factorize(nIterations, 0);
+    d.factorizeKL(nIterations, 0);
     const Matrix& h = d.getH();
     // NMD gains are only saved for the components that have been initialized
     // from the response.

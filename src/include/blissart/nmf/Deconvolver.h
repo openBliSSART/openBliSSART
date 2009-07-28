@@ -29,6 +29,7 @@
 
 #include <common.h>
 #include <blissart/linalg/Matrix.h>
+#include <blissart/nmf/randomGenerator.h>
 #include <cassert>
 
 
@@ -43,7 +44,8 @@ namespace nmf {
 
 
 /**
- * Performs non-negative matrix deconvolution using Smaragdis' algorithm (2004).
+ * Performs non-negative matrix deconvolution minimizing either extended
+ * KL divergence (Smaragdis 2004) or Euclidean distance (Wang 2009).
  */
 class LibNMF_API Deconvolver
 {
@@ -55,7 +57,10 @@ public:
      * @param   r    the dimensionality of the factorization
      * @param   t    the desired number of W matrices
      */
-    Deconvolver(const blissart::linalg::Matrix& v, unsigned int r, unsigned int t);
+    Deconvolver(const blissart::linalg::Matrix& v, unsigned int r, 
+        unsigned int t,
+        blissart::linalg::Matrix::GeneratorFunction generator 
+        = gaussianRandomGenerator);
 
     /**
      * Destroys the Deconvolver object and frees all space used for matrices.
@@ -95,9 +100,10 @@ public:
     inline void keepWColumnConstant(unsigned int index, bool flag);
 
     /**
-     * Randomizes all W matrices.
+     * Generates all W matrices using the specified generator function.
      */
-    void randomizeW();
+    void generateW(blissart::linalg::Matrix::GeneratorFunction generator
+        = gaussianRandomGenerator);
 
     /**
      * Returns the H matrix.
@@ -112,7 +118,8 @@ public:
     /**
      * Randomizes the H matrix.
      */
-    void randomizeH();
+    void generateH(blissart::linalg::Matrix::GeneratorFunction generator
+        = gaussianRandomGenerator);
 
     /**
      * Returns the current value of Lambda (approximation of V).
@@ -125,15 +132,23 @@ public:
     void computeLambda();
 
     /**
-     * Performs NMD using a generalized Kulback-Leibler divergence.
+     * Performs NMD using a generalized Kulback-Leibler divergence,
+     * using Smaragdis' algorithm (2004).
      * Stops after the given number of iteration steps, or, if eps > 0,
      * if the relative error is smaller than eps.
      * If eps > 0, in each step the relative error is calculated, which
      * significantly slows down the NMF and should therefore not be used
      * in production code.
      */
-    void factorize(unsigned int maxSteps, double eps,
-                   ProgressObserver *observer = 0);
+    void factorizeKL(unsigned int maxSteps, double eps,
+                     ProgressObserver *observer = 0);
+
+    /** 
+     * Performs NMD minimizing squared Euclidean distance,
+     * according to Wang 2009.
+     */
+    void factorizeED(unsigned int maxSteps, double eps,
+                     ProgressObserver *observer = 0);
 
     /**
      * Returns the absolute error achieved in the last iteration,
@@ -156,6 +171,11 @@ public:
 protected:
     // Computes error of current approximation.
     void computeError();
+
+    // Helper function that sets the negative elements of a matrix
+    // to a small positive value.
+    void ensureNonnegativity(blissart::linalg::Matrix& m, 
+        double epsilon = 1e-9);
 
     const blissart::linalg::Matrix& _v;
     blissart::linalg::Matrix        _lambda;

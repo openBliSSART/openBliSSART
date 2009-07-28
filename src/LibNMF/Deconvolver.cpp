@@ -27,6 +27,7 @@
 #include <blissart/nmf/randomGenerator.h>
 #include <blissart/linalg/generators/generators.h>
 #include <blissart/ProgressObserver.h>
+#include <iostream>
 
 // Uncomment the following line if you want to generate output suitable for
 // gnuplot during factorization.
@@ -46,14 +47,15 @@ namespace blissart {
 namespace nmf {
 
 
-Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t) :
+Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t,
+                         Matrix::GeneratorFunction generator) :
     _v(v),
     _lambda(v.rows(), v.cols(), generators::zero),
     _w(new Matrix*[t]),
     _wConstant(false),
     _wColConstant(new bool[r]),
     _t(t),
-    _h(r, v.cols(), randomGenerator),
+    _h(r, v.cols(), generator),
     _numSteps(0),
     _absoluteError(-1),
     _relativeError(-1),
@@ -65,7 +67,7 @@ Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t) :
     for (unsigned int c = 0; c < r; ++c) {
         _wColConstant[c] = false;
     }
-    randomizeW();
+    generateW(generator);
 }
 
 
@@ -79,23 +81,23 @@ Deconvolver::~Deconvolver()
 }
 
 
-void Deconvolver::randomizeW()
+void Deconvolver::generateW(Matrix::GeneratorFunction generator)
 {
     for (unsigned int l = 0; l < _t; l++) {
         for (unsigned int i = 0; i < _w[l]->rows(); i++) {
             for (unsigned int j = 0; j < _w[l]->cols(); j++) {
-                _w[l]->at(i,j) = randomGenerator(i, j);
+                _w[l]->at(i,j) = generator(i, j);
             }
         }
     }
 }
 
 
-void Deconvolver::randomizeH()
+void Deconvolver::generateH(Matrix::GeneratorFunction generator)
 {
     for (unsigned int i = 0; i < _h.rows(); i++) {
         for (unsigned int j = 0; j < _h.cols(); j++) {
-            _h(i,j) = randomGenerator(i, j);
+            _h(i,j) = generator(i, j);
         }
     }
 }
@@ -116,8 +118,8 @@ void Deconvolver::setH(const Matrix& h)
 }
 
 
-void Deconvolver::factorize(unsigned int maxSteps, double eps,
-                           ProgressObserver *observer)
+void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
+                              ProgressObserver *observer)
 {
     Matrix vOverLambda(_v.rows(), _v.cols());
     Matrix hShifted(_h.rows(), _h.cols());
@@ -212,6 +214,114 @@ void Deconvolver::factorize(unsigned int maxSteps, double eps,
 }
 
 
+void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
+                              ProgressObserver *observer)
+{
+    Matrix hShifted(_h.rows(), _h.cols());
+    Matrix vShifted(_v.rows(), _v.cols());
+    Matrix lambdaShifted(_lambda.rows(), _lambda.cols());
+    Matrix hSum(_h.rows(), _h.cols());
+    Matrix wTransposed(_h.rows(), _v.rows());
+    Matrix wUpdateMatrixNom(_v.rows(), _h.rows());
+    Matrix wUpdateMatrixDenom(_v.rows(), _h.rows());
+    Matrix hUpdateMatrixNom(_h.rows(), _h.cols());
+    Matrix hUpdateMatrixDenom(_h.rows(), _h.cols());
+
+#ifdef GNUPLOT
+    std::ofstream os(GNUPLOT, std::ios_base::out | std::ios_base::trunc);
+#endif
+
+    _numSteps = 0;
+    while (_numSteps < maxSteps) {
+
+        // Compute approximation at the beginning and after the H update
+        computeLambda();
+
+        if (!_wConstant) {
+            // Update all W_t
+            hShifted = _h;
+            for (unsigned int t = 0; t < _t; ++t) {
+                Matrix lambdaHTransposed(_lambda);
+                // Calculate Lambda * (H shifted)^T
+                _lambda.multWithTransposedMatrix(hShifted, &wUpdateMatrixDenom);
+                // Calculate V * (H shifted)^T
+                _v.multWithTransposedMatrix(hShifted, &wUpdateMatrixNom);
+                // Calculate updated lambda, step 1
+                // (lambda not used in the following loop!)
+                _lambda.sub(*_w[t] * hShifted);
+                for (unsigned int j = 0; j < _w[t]->cols(); ++j) {
+                    if (!_wColConstant[j]) {
+                        for (unsigned int i = 0; i < _w[t]->rows(); ++i) {
+                            _w[t]->at(i, j) *= wUpdateMatrixNom(i, j) / 
+                                               wUpdateMatrixDenom(i, j);
+                        }
+                    }
+                }
+                // Calculate updated lambda, step 2
+                _lambda.add(*_w[t] * hShifted);
+                ensureNonnegativity(_lambda);
+                hShifted.shiftColumnsRight();
+                //std::cout << *_w[t] << std::endl;
+            }
+        }
+
+        // Calculate update matrix for H by averaging the updates corresponding
+        // to each W_t
+        hSum.zero();
+        lambdaShifted = _lambda;
+        vShifted = _v;
+        for (unsigned int t = 0; t < _t; ++t) {
+            // Calculate sum of updates
+            _w[t]->transpose(&wTransposed);
+            wTransposed.multWithMatrix(vShifted, &hUpdateMatrixNom);
+            //std::cout << hUpdateMatrixNom << std::endl;
+            wTransposed.multWithMatrix(lambdaShifted, &hUpdateMatrixDenom);
+            //std::cout << hUpdateMatrixDenom << std::endl;
+            for (unsigned int j = 0; j < _h.cols(); ++j) {
+                for (unsigned int i = 0; i < _h.rows(); ++i) {
+                    if (hUpdateMatrixNom(i, j) == 0.0 && hUpdateMatrixDenom(i, j) == 0.0) {
+                        hSum(i, j) += _h(i, j);
+                    }
+                    else {
+                        hSum(i, j) += _h(i, j) * hUpdateMatrixNom(i, j)
+                            / hUpdateMatrixDenom(i, j);
+                    }
+                }
+            }
+            vShifted.shiftColumnsLeft();
+            lambdaShifted.shiftColumnsLeft();
+        }
+        //std::cout << hSum << std::endl;
+
+        // Apply average update to H
+        for (unsigned int j = 0; j < _h.cols(); ++j) {
+            for (unsigned int i = 0; i < _h.rows(); ++i) {
+                _h(i, j) = hSum(i, j) / (double) _t;
+            }
+        }
+
+#ifdef GNUPLOT
+        computeError();
+        os << _relativeError << std::endl;
+#endif
+
+        if (eps > 0.0) {
+            computeError();
+            if (_relativeError < eps) break;
+        }
+
+        ++_numSteps;
+
+        // Call the ProgressObserver every once in a while (if applicable).
+        if (observer && _numSteps % 25 == 0)
+            observer->progressChanged((float)_numSteps / (float)maxSteps);
+    }
+    // Final call to the ProgressObserver (if applicable).
+    if (observer)
+        observer->progressChanged(1.0f);
+}
+
+
 void Deconvolver::computeLambda()
 {
     Matrix hShifted(_h);
@@ -231,6 +341,18 @@ void Deconvolver::computeError()
     errorMatrix.sub(_v);
     _absoluteError = errorMatrix.frobeniusNorm();
     _relativeError = _absoluteError / _vFrob;
+}
+
+
+void Deconvolver::ensureNonnegativity(Matrix &m, double epsilon)
+{
+    for (unsigned int j = 0; j < m.cols(); ++j) {
+        for (unsigned int i = 0; i < m.rows(); ++i) {
+            if (m(i, j) <= 0.0) {
+                m(i, j) = epsilon;
+            }
+        }
+    }
 }
 
 

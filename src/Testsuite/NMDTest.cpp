@@ -44,30 +44,60 @@ bool NMDTest::performTest()
     cout << "---" << endl;
 
     const unsigned int t = 3;
-    nmf::Deconvolver d(x, 10, t);
 
-    cout << "Performing NMD" << endl;
+    {
+        cout << "Performing NMD using KL divergence" << endl;
 
-    d.factorize(5000, 1e-3);
-    cout << "# steps: " << d.numSteps() << endl;
-    cout << "absolute error: " << d.absoluteError() << endl;
-    cout << "relative error: " << d.relativeError() << endl;
-    cout << endl;
-    for (unsigned int i = 0; i < t; ++i) {
-        cout << "W[" << i << "] = " << endl;
-        cout << d.getW(0) << endl;
+        nmf::Deconvolver d(x, 10, t);
+        d.factorizeKL(50, 1e-3);
+        cout << "# steps: " << d.numSteps() << endl;
+        cout << "absolute error: " << d.absoluteError() << endl;
+        cout << "relative error: " << d.relativeError() << endl;
+        cout << endl;
+        for (unsigned int i = 0; i < t; ++i) {
+            cout << "W[" << i << "] = " << endl;
+            cout << d.getW(0) << endl;
+        }
+        cout << "H = " << endl;
+        cout << d.getH() << endl;
+        cout << "Lambda = " << endl;
+        d.computeLambda();
+        Matrix l(d.getLambda());
+        cout << l << endl;
+        
+        for (unsigned int i = 0; i < x.rows(); i++) {
+            for (unsigned int j = 0; j < x.cols(); j++) {
+                if (!epsilonCheck(x(i,j), l(i,j), 1e-2))
+                    return false;
+            }
+        }
     }
-    cout << "H = " << endl;
-    cout << d.getH() << endl;
-    cout << "Lambda = " << endl;
-    d.computeLambda();
-    Matrix l(d.getLambda());
-    cout << l << endl;
-    
-    for (unsigned int i = 0; i < x.rows(); i++) {
-        for (unsigned int j = 0; j < x.cols(); j++) {
-            if (!epsilonCheck(x(i,j), l(i,j), 1e-2))
-                return false;
+
+    {
+        cout << "Performing NMD using Euclidean distance" << endl;
+
+        nmf::Deconvolver d(x, 10, t);
+        d.factorizeED(5000, 1e-3);
+        cout << "# steps: " << d.numSteps() << endl;
+        cout << "absolute error: " << d.absoluteError() << endl;
+        cout << "relative error: " << d.relativeError() << endl;
+        cout << endl;
+        for (unsigned int i = 0; i < t; ++i) {
+            cout << "W[" << i << "] = " << endl;
+            cout << d.getW(0) << endl;
+        }
+        cout << "H = " << endl;
+        cout << d.getH() << endl;
+        cout << "Lambda = " << endl;
+        d.computeLambda();
+        Matrix l(d.getLambda());
+        cout << l << endl;
+        
+        for (unsigned int i = 0; i < x.rows(); i++) {
+            for (unsigned int j = 0; j < x.cols(); j++) {
+                if (!epsilonCheck(x(i,j), l(i,j), 1e-2))
+                    return false;
+            }
         }
     }
 

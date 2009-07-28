@@ -23,12 +23,8 @@
 //
 
 
-#ifndef __BLISSART_NMF_RANDOMGENERATOR_H__
-#define __BLISSART_NMF_RANDOMGENERATOR_H__
-
-
-#include <cstdlib>
-#include <common.h>
+#include <blissart/nmf/randomGenerator.h>
+#include <cmath>
 
 
 namespace blissart {
@@ -36,23 +32,31 @@ namespace blissart {
 namespace nmf {
 
 
-/**
- * Static helper function for the randomized initialization
- * of matrices.
- * @return              a real value within [0.01, 0.02[
- */
-inline double uniformRandomGenerator(unsigned int, unsigned int)
+double gaussianRandomGenerator(unsigned int, unsigned int)
 {
-    return (1.0 + (double)rand() / (double)RAND_MAX) * 1e-2;
+    static bool haveNumber = false;
+    static double number;
+    if (haveNumber) {
+        haveNumber = false;
+        return number;
+    }
+    else {
+        double q = 2.0;
+        double x, y;
+        // Use Polar Method to obtain normally distributed random numbers.
+        while (q > 1.0) {
+            x = ((double)rand() / RAND_MAX) * 2.0 - 1.0;
+            y = ((double)rand() / RAND_MAX) * 2.0 - 1.0;
+            q = x * x + y * y;
+        }
+        double z = -2.0 * log(q) / q;
+        number = abs(y * sqrt(z));
+        haveNumber = true;
+        return abs(x * sqrt(z));
+    }
 }
-
-
-double LibNMF_API gaussianRandomGenerator(unsigned int, unsigned int);
 
 
 } // namespace nmf
 
 } // namespace blissart
-
-
-#endif // __BLISSART_NMF_RANDOMGENERATOR_H__

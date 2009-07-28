@@ -185,6 +185,7 @@ void CreateProcessDialog::accept()
         else if (_ui.cbProcessing->currentIndex() == 1) {
             task = new NMDTask(fileName.toStdString(),
                 SeparationTask::MagnitudeSpectrum,
+                NMDTask::ExtendedKLDivergence, // TODO: Add option for this
                 _ui.sbNumComponents->value(),
                 _ui.sbNumSpectra->value(),
                 _ui.sbMaxIterations->value(),

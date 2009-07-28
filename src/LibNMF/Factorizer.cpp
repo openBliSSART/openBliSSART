@@ -47,9 +47,9 @@ namespace nmf {
 
 Factorizer::Factorizer(const Matrix &v, unsigned int r) :
     _v(v),
-    _w(v.rows(), r, randomGenerator),
+    _w(v.rows(), r, uniformRandomGenerator),
     _wConstant(false),
-    _h(r, v.cols(), randomGenerator),
+    _h(r, v.cols(), uniformRandomGenerator),
     _numSteps(0),
     _absoluteError(-1),
     _relativeError(-1),
@@ -62,7 +62,7 @@ void Factorizer::randomizeFirst()
 {
     for (unsigned int i = 0; i < _w.rows(); i++) {
         for (unsigned int j = 0; j < _w.cols(); j++) {
-            _w(i,j) = randomGenerator(i, j);
+            _w(i,j) = uniformRandomGenerator(i, j);
         }
     }
 }
@@ -72,7 +72,7 @@ void Factorizer::randomizeSecond()
 {
     for (unsigned int i = 0; i < _h.rows(); i++) {
         for (unsigned int j = 0; j < _h.cols(); j++) {
-            _h(i,j) = randomGenerator(i, j);
+            _h(i,j) = uniformRandomGenerator(i, j);
         }
     }
 }

@@ -177,6 +177,10 @@
 				RelativePath=".\Factorizer.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\randomGenerator.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Headerdateien"

@@ -72,6 +72,12 @@ public:
 
 
     /**
+     * Type of a generator function for matrices.
+     */
+    typedef double (*GeneratorFunction)(unsigned int row, unsigned int column);
+
+
+    /**
      * @name Constructors
      * @{
      */
@@ -107,7 +113,7 @@ public:
 
 
     /**
-     * Constructs a Matrix with the specified dimensions and fills it's values
+     * Constructs a Matrix with the specified dimensions and fills its values
      * through the provided generator function.
      */
     Matrix(unsigned int rows, unsigned int cols,

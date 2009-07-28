@@ -157,7 +157,7 @@ void NMDGainsTask::performNMD()
 
     // Raise hell :)
     logger().debug(nameAndTaskID() + " performing NMD.");
-    _deconvolver->factorize(_maxIterations, 0, this);
+    _deconvolver->factorizeKL(_maxIterations, 0, this);
     const Matrix& h = _deconvolver->getH();
 
     // The number of "relevant" components can be the number of initialized
