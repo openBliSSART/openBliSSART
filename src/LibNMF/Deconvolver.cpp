@@ -27,7 +27,6 @@
 #include <blissart/nmf/randomGenerator.h>
 #include <blissart/linalg/generators/generators.h>
 #include <blissart/ProgressObserver.h>
-#include <iostream>
 
 // Uncomment the following line if you want to generate output suitable for
 // gnuplot during factorization.
@@ -61,6 +60,7 @@ Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t,
     _relativeError(-1),
     _vFrob(_v.frobeniusNorm())
 {
+    assert(t <= v.cols());
     for (unsigned int l = 0; l < _t; ++l) {
         _w[l] = new Matrix(v.rows(), r);
     }
@@ -226,6 +226,7 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
     Matrix wUpdateMatrixDenom(_v.rows(), _h.rows());
     Matrix hUpdateMatrixNom(_h.rows(), _h.cols());
     Matrix hUpdateMatrixDenom(_h.rows(), _h.cols());
+    double denom;
 
 #ifdef GNUPLOT
     std::ofstream os(GNUPLOT, std::ios_base::out | std::ios_base::trunc);
@@ -252,8 +253,9 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
                 for (unsigned int j = 0; j < _w[t]->cols(); ++j) {
                     if (!_wColConstant[j]) {
                         for (unsigned int i = 0; i < _w[t]->rows(); ++i) {
-                            _w[t]->at(i, j) *= wUpdateMatrixNom(i, j) / 
-                                               wUpdateMatrixDenom(i, j);
+                            denom = wUpdateMatrixDenom(i, j);
+                            if (denom <= 0.0) denom = 1e-9;
+                            _w[t]->at(i, j) *= wUpdateMatrixNom(i, j) / denom;
                         }
                     }
                 }
@@ -261,7 +263,6 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
                 _lambda.add(*_w[t] * hShifted);
                 ensureNonnegativity(_lambda);
                 hShifted.shiftColumnsRight();
-                //std::cout << *_w[t] << std::endl;
             }
         }
 
@@ -274,24 +275,17 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
             // Calculate sum of updates
             _w[t]->transpose(&wTransposed);
             wTransposed.multWithMatrix(vShifted, &hUpdateMatrixNom);
-            //std::cout << hUpdateMatrixNom << std::endl;
             wTransposed.multWithMatrix(lambdaShifted, &hUpdateMatrixDenom);
-            //std::cout << hUpdateMatrixDenom << std::endl;
             for (unsigned int j = 0; j < _h.cols(); ++j) {
                 for (unsigned int i = 0; i < _h.rows(); ++i) {
-                    if (hUpdateMatrixNom(i, j) == 0.0 && hUpdateMatrixDenom(i, j) == 0.0) {
-                        hSum(i, j) += _h(i, j);
-                    }
-                    else {
-                        hSum(i, j) += _h(i, j) * hUpdateMatrixNom(i, j)
-                            / hUpdateMatrixDenom(i, j);
-                    }
+                    denom = hUpdateMatrixDenom(i, j);
+                    if (denom <= 0.0) denom = 1e-9;
+                    hSum(i, j) += _h(i, j) * hUpdateMatrixNom(i, j) / denom;
                 }
             }
             vShifted.shiftColumnsLeft();
             lambdaShifted.shiftColumnsLeft();
         }
-        //std::cout << hSum << std::endl;
 
         // Apply average update to H
         for (unsigned int j = 0; j < _h.cols(); ++j) {

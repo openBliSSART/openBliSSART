@@ -318,6 +318,27 @@ public:
 
 
     /**
+     * A more versatile function for matrix multiplication.
+     * @param   other       the Matrix to multiply with
+     * @param   transpose   whether to transpose this matrix in multiplication
+     * @param   transposeOther whether to transpose the other matrix
+     * @param   m           the desired number of rows of the target
+     *                      (must be <= the #rows of this Matrix)
+     * @param   k           the desired dimension of the multiplication
+     *                      (length of the scalar products)
+     * @param   offset      the column offset of this Matrix, respectively
+     *                      the row offset of the other Matrix
+     * @param   n           the desired number of columns of the target
+     *                      (must be <= the #cols of the other Matrix)
+     */
+    void multWithMatrix(const Matrix& other, Matrix* target,
+        bool transpose, bool transposeOther,
+        unsigned int m, unsigned int k, unsigned int n,
+        unsigned int rowOffset, unsigned int colOffset,
+        unsigned int rowOffsetOther, unsigned int colOffsetOther) const;
+
+
+    /**
      * Multiplies this matrix by the given matrix' transpose.
      * @param   other       a Matrix
      * @return              the product of this matrix and the given
@@ -333,6 +354,9 @@ public:
      * @param   target      a pointer to a Matrix that will hold the results
      */
     void multWithTransposedMatrix(const Matrix& other, Matrix* target) const;
+
+    void multWithTransposedMatrix(const Matrix& other, Matrix* target,
+        unsigned int m, unsigned int k, unsigned int n) const;
 
 
     /**

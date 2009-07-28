@@ -292,6 +292,65 @@ double Matrix::frobeniusNorm() const
 }
 
 
+void Matrix::multWithMatrix(const Matrix& other, Matrix* target,
+                            bool transpose, bool transposeOther,
+                            unsigned int m, unsigned int k, unsigned int n,
+                            unsigned int rowOffset, 
+                            unsigned int colOffset,
+                            unsigned int rowOffsetOther,
+                            unsigned int colOffsetOther) const
+{
+    // FIXME: correct (transposed case?!) or drop
+    /*debug_assert(m <= this->_rows &&
+                 m <= target->_rows &&
+                 colOffset + k <= this->_cols &&
+                 colOffsetOther + n <= other._cols &&
+                 rowOffset + m <= this->_rows &&
+                 rowOffsetOther + k <= other._rows &&
+                 n <= this->_cols &&
+                 n <= target->_cols &&
+                 target != this &&
+                 target != &other);*/
+
+    CBLAS_TRANSPOSE tr      = transpose      ? CblasTrans : CblasNoTrans;
+    CBLAS_TRANSPOSE trOther = transposeOther ? CblasTrans : CblasNoTrans;
+#ifdef HAVE_CBLAS_H
+#  ifdef ISEP_ROW_MAJOR
+    cblas_dgemm(CblasRowMajor,
+                tr,             // A (m x k)
+                trOther,        // B (k x n)
+                m,
+                n,
+                k,
+                1.0,            // alpha
+                this->_data + rowOffset * this->_cols + colOffset,
+                this->_cols,    // lda
+                other._data + rowOffsetOther * other._cols + colOffsetOther,
+                other._cols,    // ldb
+                0.0,            // beta
+                target->_data,
+                target->_cols); // ldc
+#  else // !ISEP_ROW_MAJOR
+    cblas_dgemm(CblasColMajor,
+                tr,   // A (m x k)
+                trOther,   // B (k x n)
+                m,
+                n,
+                k,
+                1.0,            // alpha
+                this->_data + colOffset * this->_rows + rowOffset,
+                this->_rows,    // lda
+                other._data + colOffsetOther * other._rows + rowOffsetOther,
+                other._rows,    // ldb
+                0.0,            // beta
+                target->_data,
+                target->_rows); // ldc
+#  endif // ISEP_ROW_MAJOR
+#endif // HAVE_CBLAS_H
+    // FIXME: Implement this without ATLAS
+}
+
+
 void Matrix::multWithMatrix(const Matrix& other, Matrix* target) const
 {
     debug_assert(_cols == other._rows &&

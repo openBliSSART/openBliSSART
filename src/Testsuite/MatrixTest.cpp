@@ -311,6 +311,78 @@ bool MatrixTest::performTest()
             !epsilonCheck(B(1,0), 7) ||
             !epsilonCheck(B(1,1), 8.5))
             return false;
+
+        A.multWithMatrix(A, &B, false, true, A.rows(), A.cols(), B.cols(), 0, 0, 0, 0);
+        cout << "Result of A * A^T (method 3):" << endl << B;
+        if (!epsilonCheck(B(0,0), 19) ||
+            !epsilonCheck(B(0,1), 7) ||
+            !epsilonCheck(B(1,0), 7) ||
+            !epsilonCheck(B(1,1), 8.5))
+            return false;
+    }
+
+    // Submatrix multiplication
+    {
+        cout << "---" << endl << "Submatrix and transposed multiplication" << endl;
+        const double A_data[] = { 1, 4, 7, 1,
+                                  2, 5, 8, 4,
+                                  3, 6, 9, 7 };
+        const double B_data[] = { 1, 1, 1,
+                                  1, 2, 3,
+                                  3, 4, 1,
+                                  5, 6, 7 };
+        const double X_data[] = { 1, 0, 3, 4,
+                                  0, 2, 3, 4 };
+        const double H_data[] = { 1, 0, 2, 5,
+                                  0, 1, 0, 5 };
+        const double W_data[] = { 1, 2,
+                                  3, 4 };
+
+        Matrix A(3, 4, A_data);
+        Matrix B(4, 3, B_data);
+        Matrix X(2, 4, X_data);
+        Matrix H(2, 4, H_data);
+        Matrix W(2, 2, W_data);
+        Matrix C(3, 3);
+        Matrix D(2, 2);
+        Matrix E(2, 2);
+        Matrix XHT(2, 2);
+        Matrix WTX(2, 4);
+        WTX.zero();
+        A.multWithMatrix(B, &C);
+        A.multWithMatrix(B, &C,
+            false, false, 3, 3, 3,
+            0, 0, 0, 0);
+        A.multWithMatrix(B, &D,
+            false, false,
+            2, 2, 2,
+            1, 2, 1, 0);
+        A.multWithMatrix(B, &E,
+            false, true,
+            2, 1, 2,
+            1, 3, 2, 2);
+        X.multWithMatrix(H, &XHT, 
+            false, true,
+            2, 3, 2,
+            0, 1, 0, 0);
+        W.multWithMatrix(X, &WTX,
+            true, false,
+            2, 2, 3,
+            0, 0, 0, 1);
+        cout << "C = " << endl << C << "D = " << endl << D << "E = " << endl << E;
+        cout << "X*H(->1)^T = " << endl << XHT;
+        cout << "W^T*X(<-1) = " << endl << WTX;
+        return false;
+
+        const double C_corr_data[] = { 26, 37, 20,
+                                       31, 44, 25,
+                                       36, 51, 30 };
+        const double D_corr_data[] = { 20, 32, 30, 46};
+        const double E_corr_data[] = { 5, 35, 6, 42 };
+        Matrix C_corr(3, 3, C_corr_data);
+        Matrix D_corr(2, 2, D_corr_data);
+        Matrix E_corr(2, 2, E_corr_data);
+        if (C != C_corr || D != D_corr || E != E_corr) return false;
     }
 
     // Mean column vector
