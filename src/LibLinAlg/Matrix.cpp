@@ -298,19 +298,22 @@ void Matrix::multWithMatrix(const Matrix& other, Matrix* target,
                             unsigned int rowOffset, 
                             unsigned int colOffset,
                             unsigned int rowOffsetOther,
-                            unsigned int colOffsetOther) const
+                            unsigned int colOffsetOther,
+                            unsigned int rowOffsetTarget,
+                            unsigned int colOffsetTarget) const
 {
-    // FIXME: correct (transposed case?!) or drop
-    /*debug_assert(m <= this->_rows &&
+    debug_assert(m <= this->_rows &&
                  m <= target->_rows &&
-                 colOffset + k <= this->_cols &&
-                 colOffsetOther + n <= other._cols &&
-                 rowOffset + m <= this->_rows &&
-                 rowOffsetOther + k <= other._rows &&
                  n <= this->_cols &&
                  n <= target->_cols &&
+                 colOffset + k <= this->_cols &&
+                 colOffsetOther + n <= other._cols &&
+                 colOffsetTarget + n <= target->_cols &&
+                 rowOffset + m <= this->_rows &&
+                 rowOffsetOther + k <= other._rows &&
+                 rowOffsetTarget + m <= target->_rows &&
                  target != this &&
-                 target != &other);*/
+                 target != &other);
 
     CBLAS_TRANSPOSE tr      = transpose      ? CblasTrans : CblasNoTrans;
     CBLAS_TRANSPOSE trOther = transposeOther ? CblasTrans : CblasNoTrans;
@@ -328,7 +331,7 @@ void Matrix::multWithMatrix(const Matrix& other, Matrix* target,
                 other._data + rowOffsetOther * other._cols + colOffsetOther,
                 other._cols,    // ldb
                 0.0,            // beta
-                target->_data,
+                target->_data + rowOffsetTarget * target->_cols + colOffsetTarget,
                 target->_cols); // ldc
 #  else // !ISEP_ROW_MAJOR
     cblas_dgemm(CblasColMajor,
@@ -343,7 +346,7 @@ void Matrix::multWithMatrix(const Matrix& other, Matrix* target,
                 other._data + colOffsetOther * other._rows + rowOffsetOther,
                 other._rows,    // ldb
                 0.0,            // beta
-                target->_data,
+                target->_data + colOffsetTarget * target->_rows + rowOffsetTarget,
                 target->_rows); // ldc
 #  endif // ISEP_ROW_MAJOR
 #endif // HAVE_CBLAS_H

@@ -312,7 +312,8 @@ bool MatrixTest::performTest()
             !epsilonCheck(B(1,1), 8.5))
             return false;
 
-        A.multWithMatrix(A, &B, false, true, A.rows(), A.cols(), B.cols(), 0, 0, 0, 0);
+        A.multWithMatrix(A, &B, false, true, A.rows(), A.cols(), B.cols(), 
+            0, 0, 0, 0, 0, 0);
         cout << "Result of A * A^T (method 3):" << endl << B;
         if (!epsilonCheck(B(0,0), 19) ||
             !epsilonCheck(B(0,1), 7) ||
@@ -352,27 +353,27 @@ bool MatrixTest::performTest()
         A.multWithMatrix(B, &C);
         A.multWithMatrix(B, &C,
             false, false, 3, 3, 3,
-            0, 0, 0, 0);
+            0, 0, 0, 0, 0, 0);
         A.multWithMatrix(B, &D,
             false, false,
             2, 2, 2,
-            1, 2, 1, 0);
+            1, 2, 1, 0, 0, 0);
         A.multWithMatrix(B, &E,
             false, true,
             2, 1, 2,
-            1, 3, 2, 2);
+            1, 3, 2, 2, 0, 0);
         X.multWithMatrix(H, &XHT, 
             false, true,
             2, 3, 2,
-            0, 1, 0, 0);
+            0, 1, 0, 0, 0, 0);
         W.multWithMatrix(X, &WTX,
             true, false,
             2, 2, 3,
-            0, 0, 0, 1);
+            0, 0, 0, 1, 0, 1);
         cout << "C = " << endl << C << "D = " << endl << D << "E = " << endl << E;
         cout << "X*H(->1)^T = " << endl << XHT;
         cout << "W^T*X(<-1) = " << endl << WTX;
-        return false;
+        //return false;
 
         const double C_corr_data[] = { 26, 37, 20,
                                        31, 44, 25,

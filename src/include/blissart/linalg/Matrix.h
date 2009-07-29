@@ -318,24 +318,29 @@ public:
 
 
     /**
-     * A more versatile function for matrix multiplication.
+     * A more versatile function for matrix multiplication, supporting
+     * submatrices and transposing.
      * @param   other       the Matrix to multiply with
      * @param   transpose   whether to transpose this matrix in multiplication
      * @param   transposeOther whether to transpose the other matrix
-     * @param   m           the desired number of rows of the target
-     *                      (must be <= the #rows of this Matrix)
+     * @param   m           the number of rows (of this Matrix) to multiply
      * @param   k           the desired dimension of the multiplication
-     *                      (length of the scalar products)
-     * @param   offset      the column offset of this Matrix, respectively
-     *                      the row offset of the other Matrix
-     * @param   n           the desired number of columns of the target
-     *                      (must be <= the #cols of the other Matrix)
+     *                      (i.e. the number of columns of this Matrix,
+     *                       respectively the number of rows of the other 
+     *                       Matrix that should be multiplied)
+     * @param   n           the desired number of columns (of the other Matrix)
+     *                      to multiply
+     * @param   rowOffset   the row offset for this Matrix
+     * @param   colOffset   the column offset for this Matrix
+     * @param   rowOffsetOther   the row offset for the other Matrix
+     * @param   colOffsetOther   the column offset for the other Matrix
      */
     void multWithMatrix(const Matrix& other, Matrix* target,
         bool transpose, bool transposeOther,
         unsigned int m, unsigned int k, unsigned int n,
         unsigned int rowOffset, unsigned int colOffset,
-        unsigned int rowOffsetOther, unsigned int colOffsetOther) const;
+        unsigned int rowOffsetOther, unsigned int colOffsetOther,
+        unsigned int rowOffsetTarget, unsigned int colOffsetTarget) const;
 
 
     /**

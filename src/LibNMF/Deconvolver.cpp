@@ -217,11 +217,7 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
 void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
                               ProgressObserver *observer)
 {
-    Matrix hShifted(_h.rows(), _h.cols());
-    Matrix vShifted(_v.rows(), _v.cols());
-    Matrix lambdaShifted(_lambda.rows(), _lambda.cols());
     Matrix hSum(_h.rows(), _h.cols());
-    Matrix wTransposed(_h.rows(), _v.rows());
     Matrix wUpdateMatrixNom(_v.rows(), _h.rows());
     Matrix wUpdateMatrixDenom(_v.rows(), _h.rows());
     Matrix hUpdateMatrixNom(_h.rows(), _h.cols());
@@ -239,52 +235,102 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
         computeLambda();
 
         if (!_wConstant) {
-            // Update all W_t
-            hShifted = _h;
-            for (unsigned int t = 0; t < _t; ++t) {
-                Matrix lambdaHTransposed(_lambda);
-                // Calculate Lambda * (H shifted)^T
-                _lambda.multWithTransposedMatrix(hShifted, &wUpdateMatrixDenom);
-                // Calculate V * (H shifted)^T
-                _v.multWithTransposedMatrix(hShifted, &wUpdateMatrixNom);
-                // Calculate updated lambda, step 1
-                // (lambda not used in the following loop!)
-                _lambda.sub(*_w[t] * hShifted);
-                for (unsigned int j = 0; j < _w[t]->cols(); ++j) {
+            // Update all W[p]
+            for (unsigned int p = 0; p < _t; ++p) {
+                // Calculate V * (H shifted t spots to the right)^T 
+                // (nominator of the update matrix)
+                // In this case, zeros would be introduced in the first t rows
+                // of the second factor. We can simulate this by considering
+                // only the V columns starting from p.                
+                _v.multWithMatrix(_h, &wUpdateMatrixNom,
+                    // transpose H
+                    false, true, 
+                    // target dimension: MxR
+                    _v.rows(), _v.cols() - p, _h.rows(),
+                    0, p, 0, 0, 0, 0);
+                // Calculate Lambda * (H shifted t spots to the right)^T 
+                // (denominator of the update matrix)
+                // The same as above.
+                _lambda.multWithMatrix(_h, &wUpdateMatrixDenom,
+                    false, true,
+                    _v.rows(), _v.cols() - p, _h.rows(), 
+                    0, p, 0, 0, 0, 0);
+                // Efficient (difference-based) calculation of updated Lambda
+                // (step 1: subtraction of old W[p]*H)
+                // Due to Wang (2009)
+                Matrix wpH(_v.rows(), _v.cols());
+                // Fill W[p]*H with zeros in the first p columns
+                for (unsigned int j = 0; j < p; ++j) {
+                    for (unsigned int i = 0; i < wpH.rows(); ++i) {
+                        wpH(i, j) = 0.0;
+                    }
+                }
+                // Simulate multiplication with H shifted t spots to the right:
+                // only use N - p columns of H for the matrix product
+                // and store the result beginning at column p of W[p]*H
+                // (for this reason W[p]*H had to be filled with zeros)
+                _w[p]->multWithMatrix(_h, &wpH,
+                    false, false,
+                    _w[p]->rows(), _w[p]->cols(), _h.cols() - p,
+                    0, 0, 0, 0, 0, p);
+                // It is safe to overwrite Lambda, as it is not directly used 
+                // in the update loop.
+                _lambda.sub(wpH);
+                // Finally, the update loop is simple now.
+                for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
                     if (!_wColConstant[j]) {
-                        for (unsigned int i = 0; i < _w[t]->rows(); ++i) {
+                        for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
                             denom = wUpdateMatrixDenom(i, j);
                             if (denom <= 0.0) denom = 1e-9;
-                            _w[t]->at(i, j) *= wUpdateMatrixNom(i, j) / denom;
+                            _w[p]->at(i, j) *= wUpdateMatrixNom(i, j) / denom;
                         }
                     }
                 }
                 // Calculate updated lambda, step 2
-                _lambda.add(*_w[t] * hShifted);
+                // (addition of new W[p]*H)
+                // Same procedure as above ...
+                for (unsigned int j = 0; j < p; ++j) {
+                    for (unsigned int i = 0; i < wpH.rows(); ++i) {
+                        wpH(i, j) = 0.0;
+                    }
+                }
+                _w[p]->multWithMatrix(_h, &wpH,
+                    false, false,
+                    _w[p]->rows(), _w[p]->cols(), _h.cols() - p,
+                    0, 0, 0, 0, 0, p);
+                _lambda.add(wpH);
                 ensureNonnegativity(_lambda);
-                hShifted.shiftColumnsRight();
             }
         }
 
         // Calculate update matrix for H by averaging the updates corresponding
-        // to each W_t
+        // to each W[p]
         hSum.zero();
-        lambdaShifted = _lambda;
-        vShifted = _v;
-        for (unsigned int t = 0; t < _t; ++t) {
-            // Calculate sum of updates
-            _w[t]->transpose(&wTransposed);
-            wTransposed.multWithMatrix(vShifted, &hUpdateMatrixNom);
-            wTransposed.multWithMatrix(lambdaShifted, &hUpdateMatrixDenom);
+        for (unsigned int p = 0; p < _t; ++p) {
+            // Simulate multiplication of W[p] with V (shifted p spots to the
+            // left) by considering only the columns of V starting from p;
+            // We do not fill with zeros here, because we ignore the rightmost
+            // p columns of the nominator and denominator matrices in
+            // the update loop below.
+            _w[p]->multWithMatrix(_v, &hUpdateMatrixNom,
+                // transpose W[p]
+                true, false, 
+                // target dimension: R x (N-p)
+                _w[p]->cols(), _w[p]->rows(), _v.cols() - p,
+                0, 0, 0, p, 0, 0);
+            _w[p]->multWithMatrix(_lambda, &hUpdateMatrixDenom,
+                true, false, 
+                _w[p]->cols(), _w[p]->rows(), _v.cols() - p,
+                0, 0, 0, p, 0, 0);
+
             for (unsigned int j = 0; j < _h.cols(); ++j) {
                 for (unsigned int i = 0; i < _h.rows(); ++i) {
                     denom = hUpdateMatrixDenom(i, j);
+                    // Avoid division by zero
                     if (denom <= 0.0) denom = 1e-9;
                     hSum(i, j) += _h(i, j) * hUpdateMatrixNom(i, j) / denom;
                 }
             }
-            vShifted.shiftColumnsLeft();
-            lambdaShifted.shiftColumnsLeft();
         }
 
         // Apply average update to H
