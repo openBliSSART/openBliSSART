@@ -123,9 +123,9 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
 {
     Matrix vOverLambda(_v.rows(), _v.cols());
     Matrix hShifted(_h.rows(), _h.cols());
-    Matrix vOverLambdaShifted(_v.rows(), _v.cols());
     Matrix hUpdate(_h.rows(), _h.cols());
-    double *wtColSums = new double[_h.rows()];
+    Matrix oldLambda(_v.rows(), _v.cols());
+    double *wpColSums = new double[_h.rows()];
 
 #ifdef GNUPLOT
     std::ofstream os(GNUPLOT, std::ios_base::out | std::ios_base::trunc);
@@ -134,30 +134,74 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
     _numSteps = 0;
     while (_numSteps < maxSteps) {
 
-        // Update Lambda and V / Lambda
+        // Compute approximation at the beginning and after the H update
         computeLambda();
+        
+        // Compute V/Lambda.
+        _v.elementWiseDivision(_lambda, &vOverLambda);
+
+        // Compute difference between approximations in current and previous
+        // iteration in terms of Frobenius norm. Stop iteration if difference
+        // is sufficiently small.
+        if (_numSteps > 1 && eps > 0) {
+            Matrix lambdaDiff(_lambda);
+            lambdaDiff.sub(oldLambda);
+            double zeta = lambdaDiff.frobeniusNorm() / 
+                          oldLambda.frobeniusNorm();
+            if (zeta < eps) {
+                break;
+            }
+        }
+        oldLambda = _lambda;
+
+        if (!_wConstant) {
+            Matrix wpH(_v.rows(), _v.cols());
+            // Update all W_t
+            hShifted = _h;
+            for (unsigned int p = 0; p < _t; ++p) {
+                // Difference-based calculation of new Lambda
+                computeWpH(p, wpH);
+                _lambda.sub(wpH);
+                for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
+                    if (!_wColConstant[j]) {
+                        // Precalculation of sum of row j of H
+                        double hRowSum = hShifted.rowSum(j);
+                        for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
+                            _w[p]->at(i, j) *= 
+                                Matrix::dotRowRow(hShifted, j, vOverLambda, i) 
+                                / hRowSum;
+                        }
+                    }
+                }
+                computeWpH(p, wpH);
+                _lambda.add(wpH);
+                hShifted.shiftColumnsRight();
+            }
+        }
+
+        // Lambda has been updated, so just update V/Lambda now.
         _v.elementWiseDivision(_lambda, &vOverLambda);
 
         // Calculate update matrix for H by averaging the updates corresponding
         // to each W_t
         hUpdate.zero();
-        vOverLambdaShifted = vOverLambda;
-        for (unsigned int t = 0; t < _t; ++t) {
+        for (unsigned int p = 0; p < _t; ++p) {
             // Precalculation of column-sums of W_t
             for (unsigned int i = 0; i < _h.rows(); ++i) {
-                wtColSums[i] = _w[t]->colSum(i);
+                wpColSums[i] = _w[p]->colSum(i);
             }
 
             // Calculate sum of updates
-            for (unsigned int j = 0; j < _h.cols(); ++j) {
+            for (unsigned int j = 0; j < _h.cols() - p; ++j) {
                 for (unsigned int i = 0; i < _h.rows(); ++i) {
+                    // Instead of considering the jth column of V/Lambda
+                    // shifted p spots to the left, we consider the (j + p)th
+                    // column of V/Lambda itself.
                     hUpdate(i, j) += 
-                        Matrix::dotColCol(*_w[t], i, vOverLambdaShifted, j) / 
-                        wtColSums[i];
+                        Matrix::dotColCol(*_w[p], i, vOverLambda, j + p) / 
+                        wpColSums[i];
                 }
             }
-            
-            vOverLambdaShifted.shiftColumnsLeft();
         }
 
         // Apply average update to H
@@ -167,38 +211,10 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
             }
         }
 
-        if (!_wConstant) {
-            // Update Lambda and V / Lambda
-            computeLambda();
-            _v.elementWiseDivision(_lambda, &vOverLambda);
-
-            // Update all W_t
-            hShifted = _h;
-            for (unsigned int t = 0; t < _t; ++t) {
-                for (unsigned int j = 0; j < _w[t]->cols(); ++j) {
-                    if (!_wColConstant[j]) {
-                        // Precalculation of sum of row j of H
-                        double hRowSum = hShifted.rowSum(j);
-                        for (unsigned int i = 0; i < _w[t]->rows(); ++i) {
-                            _w[t]->at(i, j) *= 
-                                Matrix::dotRowRow(hShifted, j, vOverLambda, i) 
-                                / hRowSum;
-                        }
-                    }
-                }
-                hShifted.shiftColumnsRight();
-            }
-        }
-
 #ifdef GNUPLOT
         computeError();
         os << _relativeError << std::endl;
 #endif
-
-        if (eps > 0.0) {
-            computeError();
-            if (_relativeError < eps) break;
-        }
 
         ++_numSteps;
 
@@ -210,7 +226,7 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
     if (observer)
         observer->progressChanged(1.0f);
 
-    delete[] wtColSums;
+    delete[] wpColSums;
 }
 
 
@@ -222,6 +238,7 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
     Matrix wUpdateMatrixDenom(_v.rows(), _h.rows());
     Matrix hUpdateMatrixNom(_h.rows(), _h.cols());
     Matrix hUpdateMatrixDenom(_h.rows(), _h.cols());
+    Matrix oldLambda(_v.rows(), _v.cols());
     double denom;
 
 #ifdef GNUPLOT
@@ -233,6 +250,20 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
 
         // Compute approximation at the beginning and after the H update
         computeLambda();
+        
+        // Compute difference between approximations in current and previous
+        // iteration in terms of Frobenius norm. Stop iteration if difference
+        // is sufficiently small.
+        if (_numSteps > 1 && eps > 0) {
+            Matrix lambdaDiff(_lambda);
+            lambdaDiff.sub(oldLambda);
+            double zeta = lambdaDiff.frobeniusNorm() / 
+                          oldLambda.frobeniusNorm();
+            if (zeta < eps) {
+                break;
+            }
+        }
+        oldLambda = _lambda;
 
         if (!_wConstant) {
             // Update all W[p]
@@ -259,20 +290,7 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
                 // (step 1: subtraction of old W[p]*H)
                 // Due to Wang (2009)
                 Matrix wpH(_v.rows(), _v.cols());
-                // Fill W[p]*H with zeros in the first p columns
-                for (unsigned int j = 0; j < p; ++j) {
-                    for (unsigned int i = 0; i < wpH.rows(); ++i) {
-                        wpH(i, j) = 0.0;
-                    }
-                }
-                // Simulate multiplication with H shifted t spots to the right:
-                // only use N - p columns of H for the matrix product
-                // and store the result beginning at column p of W[p]*H
-                // (for this reason W[p]*H had to be filled with zeros)
-                _w[p]->multWithMatrix(_h, &wpH,
-                    false, false,
-                    _w[p]->rows(), _w[p]->cols(), _h.cols() - p,
-                    0, 0, 0, 0, 0, p);
+                computeWpH(p, wpH);
                 // It is safe to overwrite Lambda, as it is not directly used 
                 // in the update loop.
                 _lambda.sub(wpH);
@@ -288,16 +306,7 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
                 }
                 // Calculate updated lambda, step 2
                 // (addition of new W[p]*H)
-                // Same procedure as above ...
-                for (unsigned int j = 0; j < p; ++j) {
-                    for (unsigned int i = 0; i < wpH.rows(); ++i) {
-                        wpH(i, j) = 0.0;
-                    }
-                }
-                _w[p]->multWithMatrix(_h, &wpH,
-                    false, false,
-                    _w[p]->rows(), _w[p]->cols(), _h.cols() - p,
-                    0, 0, 0, 0, 0, p);
+                computeWpH(p, wpH);
                 _lambda.add(wpH);
                 ensureNonnegativity(_lambda);
             }
@@ -345,11 +354,6 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
         os << _relativeError << std::endl;
 #endif
 
-        if (eps > 0.0) {
-            computeError();
-            if (_relativeError < eps) break;
-        }
-
         ++_numSteps;
 
         // Call the ProgressObserver every once in a while (if applicable).
@@ -364,14 +368,31 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
 
 void Deconvolver::computeLambda()
 {
-    Matrix hShifted(_h);
-    Matrix whProd(_v.rows(), _v.cols());
+    Matrix wpH(_v.rows(), _v.cols());
     _lambda.zero();
-    for (unsigned int l = 0; l < _t; ++l) {
-        _w[l]->multWithMatrix(hShifted, &whProd);
-        _lambda.add(whProd);
-        hShifted.shiftColumnsRight();
+    for (unsigned int p = 0; p < _t; ++p) {
+        computeWpH(p, wpH);
+        _lambda.add(wpH);
     }
+}
+
+
+void Deconvolver::computeWpH(unsigned int p, Matrix& wpH)
+{
+    // Fill W[p]*H with zeros in the first p columns
+    for (unsigned int j = 0; j < p; ++j) {
+        for (unsigned int i = 0; i < wpH.rows(); ++i) {
+            wpH(i, j) = 0.0;
+        }
+    }
+    // Simulate multiplication with H shifted t spots to the right:
+    // only use N - p columns of H for the matrix product
+    // and store the result beginning at column p of W[p]*H
+    // (for this reason W[p]*H had to be filled with zeros)
+    _w[p]->multWithMatrix(_h, &wpH,
+        false, false,
+        _w[p]->rows(), _w[p]->cols(), _h.cols() - p,
+        0, 0, 0, 0, 0, p);
 }
 
 

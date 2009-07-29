@@ -174,10 +174,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Factorizer.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\randomGenerator.cpp"
 				>
 			</File>
@@ -189,10 +185,6 @@
 			>
 			<File
 				RelativePath="..\include\blissart\nmf\Deconvolver.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\blissart\nmf\Factorizer.h"
 				>
 			</File>
 			<File

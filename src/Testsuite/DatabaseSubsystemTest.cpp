@@ -238,7 +238,7 @@ bool DatabaseSubsystemTest::performTest()
         int clObjID = 0;
         {
             ClassificationObjectPtr clObj = new ClassificationObject;
-            clObj->type = ClassificationObject::NMFComponent;
+            clObj->type = ClassificationObject::NMDComponent;
             clObj->descrIDs.insert(descrID);
             clObj->labelIDs.insert(labels[0]->labelID);
             clObj->labelIDs.insert(labels[1]->labelID);
@@ -250,7 +250,7 @@ bool DatabaseSubsystemTest::performTest()
         {
             ClassificationObjectPtr clObj = 
                 database.getClassificationObject(clObjID);
-            if (clObj->type != ClassificationObject::NMFComponent ||
+            if (clObj->type != ClassificationObject::NMDComponent ||
                 clObj->descrIDs.size() != 1 ||
                 clObj->labelIDs.size() != 2)
             {
@@ -265,10 +265,10 @@ bool DatabaseSubsystemTest::performTest()
             clObj->labelIDs.erase(labels[0]->labelID);
             clObj->labelIDs.insert(labels[2]->labelID);
             clObj->descrIDs.erase(descrID);
-            clObj->type = ClassificationObject::NMDComponent;
+            clObj->type = ClassificationObject::Spectrogram;
             database.updateClassificationObject(clObj);
             clObj = database.getClassificationObject(clObjID);
-            if (clObj->type != ClassificationObject::NMDComponent)
+            if (clObj->type != ClassificationObject::Spectrogram)
                 return false;
             if (clObj->labelIDs.find(labels[0]->labelID) != clObj->labelIDs.end())
                 return false;
@@ -285,7 +285,7 @@ bool DatabaseSubsystemTest::performTest()
                 return false;
             // The type has to be reset to avoid constraint violation when
             // creating a response later on.
-            clObj->type = ClassificationObject::NMFComponent;
+            clObj->type = ClassificationObject::NMDComponent;
             database.updateClassificationObject(clObj);
         }
     
@@ -431,7 +431,7 @@ bool DatabaseSubsystemTest::performTest()
             FeaturePtr feature2 = new Feature(dataDescr2->descrID, "pf", 5.0);
             database.saveFeature(feature2);
             ClassificationObjectPtr clObj2 = new ClassificationObject;
-            clObj2->type = ClassificationObject::NMFComponent;
+            clObj2->type = ClassificationObject::NMDComponent;
             clObj2->descrIDs.insert(dataDescr2->descrID);
             database.createClassificationObject(clObj2);
             ResponsePtr response = database.getResponse(responseID);

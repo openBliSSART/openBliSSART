@@ -51,7 +51,6 @@ public:
      */
     typedef enum {
         Invalid = 0,
-        NMFComponent = 1,
         NMDComponent = 4,
         ImportedAudio = 3,
         Spectrogram = 5

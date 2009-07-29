@@ -24,7 +24,6 @@
 
 
 #include "CreateProcessDialog.h"
-#include <blissart/NMFTask.h>
 #include <blissart/NMDTask.h>
 #include <blissart/FTTask.h>
 
@@ -51,16 +50,15 @@ CreateProcessDialog::CreateProcessDialog(QWidget *parent) :
     _ui.cbWindowFunction->addItem(tr("Rectangle function"));
 
     // Do NOT change the order of the following items:
-    _ui.cbAlgorithm->addItem(tr("Gradient descent"));
-    _ui.cbAlgorithm->addItem(tr("Multiplicative update (distance)"));
-    _ui.cbAlgorithm->addItem(tr("Multiplicative update (divergence)"));
+    _ui.cbCostFunction->addItem(tr("Extended KL divergence"));
+    _ui.cbCostFunction->addItem(tr("Squared Euclidean distance"));
 
     LayeredConfiguration &config = BasicApplication::instance().config();
 
     _ui.cbWindowFunction->setCurrentIndex(
             config.getInt("browser.processCreation.windowFunction", 0));
-    _ui.cbAlgorithm->setCurrentIndex(
-            config.getInt("browser.processCreation.algorithm", 2));
+    _ui.cbCostFunction->setCurrentIndex(
+            config.getInt("browser.processCreation.costFunction", 0));
     _ui.sbWindowSize->setValue(
             config.getInt("browser.processCreation.windowSizeMS", 30));
     _ui.dsbOverlap->setValue(
@@ -84,26 +82,10 @@ CreateProcessDialog::CreateProcessDialog(QWidget *parent) :
 void CreateProcessDialog::on_cbProcessing_currentIndexChanged(int index)
 {
     switch (index) {
-        case 0: // STFT + NMF
+        case 0: // STFT + NMD
             _ui.lbAlgorithm->setVisible(true);
-            _ui.cbAlgorithm->setVisible(true);
-            _ui.cbAlgorithm->setEnabled(true);
-            _ui.lbMaxIterations->setVisible(true);
-            _ui.sbMaxIterations->setVisible(true);
-            _ui.sbMaxIterations->setEnabled(true);
-            _ui.lbNumComponents->setVisible(true);
-            _ui.sbNumComponents->setVisible(true);
-            _ui.sbNumComponents->setEnabled(true);
-            _ui.lbNumSpectra->setVisible(true);
-            _ui.sbNumSpectra->setVisible(true);
-            _ui.sbNumSpectra->setValue(1);
-            _ui.sbNumSpectra->setEnabled(false);
-            break;
-        case 1: // STFT + NMD
-            _ui.lbAlgorithm->setVisible(true);
-            _ui.cbAlgorithm->setVisible(true);
-            _ui.cbAlgorithm->setCurrentIndex(2); // divergence
-            _ui.cbAlgorithm->setEnabled(false);
+            _ui.cbCostFunction->setVisible(true);
+            _ui.cbCostFunction->setEnabled(true);
             _ui.lbMaxIterations->setVisible(true);
             _ui.sbMaxIterations->setVisible(true);
             _ui.sbMaxIterations->setEnabled(true);
@@ -114,9 +96,9 @@ void CreateProcessDialog::on_cbProcessing_currentIndexChanged(int index)
             _ui.sbNumSpectra->setVisible(true);
             _ui.sbNumSpectra->setEnabled(true);
             break;
-        case 2: // STFT only
+        case 1: // STFT only
             _ui.lbAlgorithm->setVisible(false);
-            _ui.cbAlgorithm->setVisible(false);
+            _ui.cbCostFunction->setVisible(false);
             _ui.lbMaxIterations->setVisible(false);
             _ui.sbMaxIterations->setVisible(false);
             _ui.lbNumComponents->setVisible(false);
@@ -147,14 +129,17 @@ void CreateProcessDialog::accept()
     default: throw Poco::NotImplementedException("Unknown window function.");
     }
 
-    // Determine the desired algorithm.
-    NMFTask::Algorithm algorithm;
-    switch (_ui.cbAlgorithm->currentIndex()) {
-    case 0: algorithm = NMFTask::GradientDescent; break;
-    case 1: algorithm = NMFTask::MUDistance; break;
-    case 2: // intentional fallthrough
+    // Determine the desired cost function.
+    NMDTask::CostFunction cf;
+    switch (_ui.cbCostFunction->currentIndex()) {
+    case 0: 
+        cf = NMDTask::ExtendedKLDivergence; 
+        break;
+    case 1: 
+        cf = NMDTask::EuclideanDistance; 
+        break;
     default:
-        algorithm = NMFTask::MUDivergence;
+        cf = NMDTask::ExtendedKLDivergence;
         break;
     }
 
@@ -171,21 +156,11 @@ void CreateProcessDialog::accept()
     foreach (const QString &fileName, fileNames) {
         // TODO: Data kind, ICA, other options (preemphasis etc.)
         FTTaskPtr task;
-        // STFT + NMF
-        if (_ui.cbProcessing->currentIndex() == 0) {
-            task = new NMFTask(fileName.toStdString(),
-                SeparationTask::MagnitudeSpectrum,
-                algorithm,
-                _ui.sbNumComponents->value(),
-                _ui.sbMaxIterations->value(),
-                0,
-                false);
-        }
         // STFT + NMD
-        else if (_ui.cbProcessing->currentIndex() == 1) {
+        if (_ui.cbProcessing->currentIndex() == 0) {
             task = new NMDTask(fileName.toStdString(),
                 SeparationTask::MagnitudeSpectrum,
-                NMDTask::ExtendedKLDivergence, // TODO: Add option for this
+                cf,
                 _ui.sbNumComponents->value(),
                 _ui.sbNumSpectra->value(),
                 _ui.sbMaxIterations->value(),

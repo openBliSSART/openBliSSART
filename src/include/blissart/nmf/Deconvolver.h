@@ -134,11 +134,8 @@ public:
     /**
      * Performs NMD using a generalized Kulback-Leibler divergence,
      * using Smaragdis' algorithm (2004).
-     * Stops after the given number of iteration steps, or, if eps > 0,
-     * if the relative error is smaller than eps.
-     * If eps > 0, in each step the relative error is calculated, which
-     * significantly slows down the NMF and should therefore not be used
-     * in production code.
+     * Setting eps > 0 significantly slows down the NMD and should therefore 
+     * not be used in production code.
      */
     void factorizeKL(unsigned int maxSteps, double eps,
                      ProgressObserver *observer = 0);
@@ -146,6 +143,8 @@ public:
     /** 
      * Performs NMD minimizing squared Euclidean distance,
      * according to Wang 2009.
+     * Setting eps > 0 significantly slows down the NMD and should therefore 
+     * not be used in production code.
      */
     void factorizeED(unsigned int maxSteps, double eps,
                      ProgressObserver *observer = 0);
@@ -171,6 +170,10 @@ public:
 protected:
     // Computes error of current approximation.
     void computeError();
+
+    // Helper function that efficiently computes the product of W[p] and H,
+    // where H is shifted p spots to the right.
+    void computeWpH(unsigned int p, blissart::linalg::Matrix& target);
 
     // Helper function that sets the negative elements of a matrix
     // to a small positive value.

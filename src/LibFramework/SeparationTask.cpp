@@ -164,14 +164,9 @@ void SeparationTask::storeComponents() const
     // for the sake of simplicity...
     ProcessPtr newProcess;
     switch (_separationMethod) {
-    case NMF:
-        newProcess = new Process("NMF", fileName(), sampleRate());
-        break;
-
     case NMD:
         newProcess = new Process("NMD", fileName(), sampleRate());
         break;
-
     default:
         throw Poco::NotImplementedException("Unknown separation method!");
     }
@@ -255,9 +250,6 @@ void SeparationTask::storeComponents() const
 
         componentObject->descrIDs.insert(gainsDescr->descrID);
         switch (_separationMethod) {
-        case NMF:
-            componentObject->type = ClassificationObject::NMFComponent;
-            break;
         case NMD:
             componentObject->type = ClassificationObject::NMDComponent;
             break;
@@ -293,7 +285,7 @@ void SeparationTask::exportComponents() const
                 componentGains.shiftRight();
             }
         }
-        // NMF case (separated for efficiency)
+        // "NMF" case (separated for efficiency)
         else {
             ColVector componentSpectrum = magnitudeSpectraMatrix(0).nthColumn(i);
             RowVector componentGains = gainsMatrix().nthRow(i);

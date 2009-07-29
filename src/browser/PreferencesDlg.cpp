@@ -44,9 +44,8 @@ PreferencesDlg::PreferencesDlg(QWidget *parent) : QDialog(parent)
     _ui.cbProcessCreationWindowFunction->addItem(tr("Rectangle function"));
 
     // Do NOT change the order of the following items:
-    _ui.cbAlgorithm->addItem(tr("Gradient descent"));
-    _ui.cbAlgorithm->addItem(tr("Multiplicative update (distance)"));
-    _ui.cbAlgorithm->addItem(tr("Multiplicative update (divergence)"));
+    _ui.cbCostFunction->addItem(tr("Extended KL divergence"));
+    _ui.cbCostFunction->addItem(tr("Squared Euclidean distance"));
 
     setupConfigMap();
     getConfig();
@@ -73,8 +72,8 @@ void PreferencesDlg::setupConfigMap()
                       "browser.processCreation.windowFunction");
     _configMap.insert(_ui.sbProcessCreationWindowSize,
                       "browser.processCreation.windowSizeMS");
-    _configMap.insert(_ui.cbAlgorithm,
-                      "browser.processCreation.algorithm");
+    _configMap.insert(_ui.cbCostFunction,
+                      "browser.processCreation.costFunction");
     _configMap.insert(_ui.dbsProcessCreationOverlap,
                       "browser.processCreation.overlap");
     _configMap.insert(_ui.sbProcessCreationNumComponents,

@@ -46,7 +46,6 @@ public:
      * Identifies the method to be used for component separation.
      */
     typedef enum {
-        NMF,
         NMD
     } SeparationMethod;
 

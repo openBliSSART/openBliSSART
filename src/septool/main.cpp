@@ -28,7 +28,6 @@
 #include <blissart/ThreadedApplication.h>
 #include <blissart/DatabaseSubsystem.h>
 #include <blissart/StorageSubsystem.h>
-#include <blissart/NMFTask.h>
 #include <blissart/NMDTask.h>
 #include <blissart/SeparationTask.h>
 #include <blissart/ClassificationTask.h>
@@ -68,7 +67,6 @@ public:
         _maxIter(100),
         _algName("Multiplicative update (divergence)"),
         _cfName("Extended KL divergence"),
-        _nmfAlgorithm(NMFTask::MUDivergence),
         _nmdCostFunction(NMDTask::ExtendedKLDivergence),
         _nrComponents(20),
         _nrSpectra(5),
@@ -80,7 +78,7 @@ public:
         _preemphasisCoeff(0.0),
         _zeroPadding(false),
         _removeDC(false),
-        _separationMethod(SeparationTask::NMF),
+        _separationMethod(SeparationTask::NMD),
         _dataKind(SeparationTask::MagnitudeSpectrum)
     {
         addSubsystem(new DatabaseSubsystem());
@@ -193,17 +191,9 @@ protected:
         options.addOption(
             Option("method", "m",
                    "The method to be used for component separation. "
-                   "Must be either \"nmf\", \"nmd\" or \"ica\". "
-                   "Default is \"nmf\".",
+                   "Currently, this option has no effect.",
                    false, "<method>", true)
-            .validator(new RegExpValidator("(nmf|ica|nmd)")));
-
-        options.addOption(
-            Option("algorithm", "a",
-                   "NMF algorithm. Must be one of \"dist\", \"div\" "
-                   "or \"gradient\". Default is \"div\".",
-                   false, "<algorithm>", true)
-            .validator(new RegExpValidator("dist|div|gradient")));
+            .validator(new RegExpValidator("nmd")));
 
         options.addOption(
             Option("cost-function", "f",
@@ -305,20 +295,6 @@ protected:
         else if (name == "volatile") {
             _volatile = true;
         }
-        else if (name == "algorithm") {
-            if (value == "div") {
-                _nmfAlgorithm = NMFTask::MUDivergence;
-                _algName = "Multiplicative update (divergence)";
-            }
-            else if (value == "dist") {
-                _nmfAlgorithm = NMFTask::MUDistance;
-                _algName = "Multiplicative update (distance)";
-            }
-            else if (value == "gradient") {
-                _nmfAlgorithm = NMFTask::GradientDescent;
-                _algName = "Gradient descent";
-            }
-        }
         else if (name == "cost-function") {
             if (value == "dist") {
                 _nmdCostFunction = NMDTask::EuclideanDistance;
@@ -379,9 +355,7 @@ protected:
             _exportPrefix = value;
         }
         else if (name == "method") {
-            if (value == "nmf")
-                _separationMethod = SeparationTask::NMF;
-            else if (value == "nmd")
+            if (value == "nmd")
                 _separationMethod = SeparationTask::NMD;
             else
                 throw Poco::NotImplementedException("Unknown separation method.");
@@ -431,7 +405,7 @@ protected:
                 " <options> FILE1 [FILE2 ...]\nwhere FILE can be one or more"
                 " WAV, MP3 or script file(s)\n");
             formatter.setHeader(
-                "SEPTool, a tool for blind source separation using NMF/NMD");
+                "SEPTool, a tool for blind source separation using NMD");
             formatter.format(cout);
             return EXIT_USAGE;
         }
@@ -441,9 +415,6 @@ protected:
              << endl << endl
              << setw(20) << "Method: ";
         switch (_separationMethod) {
-        case SeparationTask::NMF:
-            cout << "Non-Negative Matrix Factorization";
-            break;
         case SeparationTask::NMD:
             cout << "Non-Negative Matrix Deconvolution";
             break;
@@ -455,12 +426,8 @@ protected:
              << setw(20) << "Window size: " << _windowSize << " ms" << endl
              << setw(20) << "Overlap: " << _overlap << endl;
 
-        if (_separationMethod == SeparationTask::NMF) {
-            cout << setw(20) << "Algorithm: " << _algName << endl;
-        }
-
         if (_separationMethod == SeparationTask::NMD) {
-            cout << setw(20) << "Cost function:" << _cfName << endl;
+            cout << setw(20) << "Cost function: " << _cfName << endl;
         }
 
         cout << setw(20) << "# of components: " << _nrComponents << endl;
@@ -507,13 +474,6 @@ protected:
             // SeparationTask:
             SeparationTaskPtr newSepTask;
             switch (_separationMethod) {
-            case SeparationTask::NMF:
-                newSepTask = new NMFTask(
-                    *it, _dataKind,
-                    _nmfAlgorithm, _nrComponents, _maxIter,_epsilon, _volatile
-                );
-                break;
-
             case SeparationTask::NMD:
                 newSepTask = new NMDTask(
                     *it, _dataKind, _nmdCostFunction,
@@ -608,7 +568,6 @@ private:
     int                _maxIter;
     string             _algName;
     string             _cfName;
-    NMFTask::Algorithm _nmfAlgorithm;
     NMDTask::CostFunction _nmdCostFunction;
     int                _nrComponents;
     int                _nrSpectra;

@@ -115,8 +115,7 @@ AudioData* AudioObject::getAudioObject(ClassificationObjectPtr clo,
     }
 
     // NMFComponent | NMDComponent
-    else if (clo->type == ClassificationObject::NMFComponent ||
-             clo->type == ClassificationObject::NMDComponent)
+    else if (clo->type == ClassificationObject::NMDComponent)
     {
         // Iterate over all data descriptors in order to get the spectrum- and
         // gains-vectors as well as the phase-matrix.

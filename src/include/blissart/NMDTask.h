@@ -60,6 +60,7 @@ public:
      * @param  fileName         the name of the input file
      * @param  dataKind         the type of data (spectrum or Mel spectrum) 
      *                          which should be separated
+     * @param  costFunction     the cost function which should be minimized
      * @param  nrOfComponents   the desired number of components
      * @param  nrOfSpectra      the desired number of spectra per component
      * @param  maxIterations    the maximum number of iterations
@@ -72,7 +73,7 @@ public:
 
 
     /**
-     * Destructs an instance of NMFTask and frees all formerly allocated
+     * Destructs an instance of NMDTask and frees all formerly allocated
      * memory.
      */
     virtual ~NMDTask();

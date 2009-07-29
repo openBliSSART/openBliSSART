@@ -54,9 +54,6 @@ ClassificationObject::ClassificationObject(const ClassificationObject &other) :
 std::string ClassificationObject::strForType(ClassificationObject::Type type)
 {
     switch (type) {
-    case NMFComponent:
-        return "NMF Component";
-        break;
     case NMDComponent:
         return "NMD Component";
         break;

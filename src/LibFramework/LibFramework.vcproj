@@ -265,10 +265,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\NMFTask.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Process.cpp"
 				>
 			</File>
@@ -420,10 +416,6 @@
 			</File>
 			<File
 				RelativePath="..\include\blissart\NMDTask.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\blissart\NMFTask.h"
 				>
 			</File>
 			<File

@@ -72,7 +72,7 @@ public:
     int processID;
 
     /**
-     * A (usually short) name of the process, e.g. "NMF" or "ICA".
+     * A (usually short) name of the process, e.g. "NMD".
      */
     std::string name;
 
@@ -93,7 +93,7 @@ public:
 
     /**
      * Key-value pairs representing process parameters, e.g. window size for a
-     * FFT or number of components for NMF factorization.
+     * FFT or number of components for NMD factorization.
      */
     std::map<std::string, std::string> parameters;
 
