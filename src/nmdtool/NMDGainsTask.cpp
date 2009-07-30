@@ -156,8 +156,19 @@ void NMDGainsTask::performNMD()
     }
 
     // Raise hell :)
+    string cfName = BasicApplication::instance().config().
+        getString("blissart.nmdtool.costfunction", "div");
     logger().debug(nameAndTaskID() + " performing NMD.");
-    _deconvolver->factorizeKL(_maxIterations, 0, this);
+    if (cfName.substr(0, 3) == "div") {
+        _deconvolver->factorizeKL(_maxIterations, 0, this);
+    }
+    else if (cfName.substr(0, 4) == "dist") {
+        _deconvolver->factorizeED(_maxIterations, 0, this);
+    }
+    else {
+        throw Poco::InvalidArgumentException("Invalid cost function: " 
+            + cfName);
+    }
     const Matrix& h = _deconvolver->getH();
 
     // The number of "relevant" components can be the number of initialized

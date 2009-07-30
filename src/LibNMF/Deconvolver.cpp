@@ -124,7 +124,7 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
     Matrix vOverLambda(_v.rows(), _v.cols());
     Matrix hShifted(_h.rows(), _h.cols());
     Matrix hUpdate(_h.rows(), _h.cols());
-    Matrix oldLambda(_v.rows(), _v.cols());
+    Matrix* oldLambda;
     double *wpColSums = new double[_h.rows()];
 
 #ifdef GNUPLOT
@@ -140,28 +140,39 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
         // Compute V/Lambda.
         _v.elementWiseDivision(_lambda, &vOverLambda);
 
+        // FIXME: Duplicate code here
         // Compute difference between approximations in current and previous
         // iteration in terms of Frobenius norm. Stop iteration if difference
         // is sufficiently small.
-        if (_numSteps > 1 && eps > 0) {
-            Matrix lambdaDiff(_lambda);
-            lambdaDiff.sub(oldLambda);
-            double zeta = lambdaDiff.frobeniusNorm() / 
-                          oldLambda.frobeniusNorm();
-            if (zeta < eps) {
-                break;
+        // As this criterion needs additional space and calculations,
+        // only perform this computation if eps > 0.
+        if (eps > 0) {
+            if (_numSteps > 1) {
+                Matrix lambdaDiff(_lambda);
+                lambdaDiff.sub(*oldLambda);
+                double zeta = lambdaDiff.frobeniusNorm() / 
+                              oldLambda->frobeniusNorm();
+                if (zeta < eps) {
+                    break;
+                }
+                *oldLambda = _lambda;
+            }
+            else {
+                oldLambda = new Matrix(_lambda);
             }
         }
-        oldLambda = _lambda;
 
         if (!_wConstant) {
-            Matrix wpH(_v.rows(), _v.cols());
+            Matrix* wpH = 0;
             // Update all W_t
             hShifted = _h;
             for (unsigned int p = 0; p < _t; ++p) {
-                // Difference-based calculation of new Lambda
-                computeWpH(p, wpH);
-                _lambda.sub(wpH);
+                if (_t > 1) {
+                    wpH = new Matrix(_v.rows(), _v.cols());
+                    // Difference-based calculation of new Lambda
+                    computeWpH(p, *wpH);
+                    _lambda.sub(*wpH);
+                }
                 for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
                     if (!_wColConstant[j]) {
                         // Precalculation of sum of row j of H
@@ -173,13 +184,23 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
                         }
                     }
                 }
-                computeWpH(p, wpH);
-                _lambda.add(wpH);
+                if (_t > 1) {
+                    computeWpH(p, *wpH);
+                    _lambda.add(*wpH);
+                    delete wpH;
+                    ensureNonnegativity(_lambda);
+                }
                 hShifted.shiftColumnsRight();
             }
         }
 
-        // Lambda has been updated, so just update V/Lambda now.
+        // The standard method of computing Lambda is more efficient 
+        // for T = 1 (1 vs. 2 matrix multiplications).
+        if (_t == 1) {
+            computeLambda();
+        }
+
+        // Now Lambda has been updated in any case, so update V/Lambda now.
         _v.elementWiseDivision(_lambda, &vOverLambda);
 
         // Calculate update matrix for H by averaging the updates corresponding
