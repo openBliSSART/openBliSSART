@@ -54,8 +54,6 @@ testsuite_SOURCES = BinaryReaderWriterTest.cpp \
 					MatrixTest.h \
 					NMDTest.cpp \
 					NMDTest.h \
-					NMFFactorizerTest.cpp \
-					NMFFactorizerTest.h \
 					PCATest.cpp \
 					PCATest.h \
 					SVMModelTest.cpp \

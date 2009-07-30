@@ -61,7 +61,7 @@ AX_CHECK_POCO([yes], :, AC_ERROR([Need Poco Enterprise v1.3.4+!]))
 # TODO: Actually, Qt is only neccessary for the building the browser application.
 #       This should be taken into account as someone might only want to build the
 #       libraries and/or command-line tools.
-AX_CHECK_QT([4.4.2], :, AC_ERROR([Need Qt 4.4.2+!]))
+#AX_CHECK_QT([4.4.2], :, AC_ERROR([Need Qt 4.4.2+!]))
 AX_CHECK_SDL([1.2.12], :, AC_ERROR([Need SDL 1.2.12+!]))
 AX_CHECK_SDL_SOUND(:, AC_ERROR([Need SDL_sound!]))
 AX_CHECK_CBLAS
@@ -131,6 +131,7 @@ AC_CONFIG_FILES([Makefile
                  src/icatool/Makefile
                  src/include/Makefile
                  src/septool/Makefile
+                 src/nmdtool/Makefile
                  src/labeller/Makefile
                  src/export/Makefile
                  src/cleanup/Makefile

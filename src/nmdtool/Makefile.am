@@ -22,12 +22,13 @@
 ## openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-lib_LTLIBRARIES = libNMF.la
+bin_PROGRAMS = nmdtool
 
-libNMF_la_LIBADD = $(top_srcdir)/src/LibLinAlg/libLinAlg.la
+nmdtool_LDADD = $(top_srcdir)/src/LibAudio/libAudio.la \
+                $(top_srcdir)/src/LibFramework/libFramework.la \
+                @POCO_LDFLAGS@ -lPocoFoundation -lPocoUtil -lPocoXML
 
-libNMF_la_CPPFLAGS = -I../include
+nmdtool_CPPFLAGS = -I../include @POCO_CPPFLAGS@
 
-libNMF_la_CXXFLAGS = -fPIC
+nmdtool_SOURCES = main.cpp NMDGainsTask.cpp
 
-libNMF_la_SOURCES = Deconvolver.cpp randomGenerator.cpp

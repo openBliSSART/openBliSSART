@@ -6,9 +6,9 @@ Makefile
 Makefile.in
 acbuild/*
 aclocal.m4
-autom4te.cache/
+autom4te.cache
 bin
-build/
+build
 config.h
 config.h.in
 config.h.in~
@@ -41,6 +41,7 @@ src/fextool/fextool
 src/icatool/icatool
 src/labeller/labeller
 src/septool/septool
+src/nmdtool/nmdtool
 stamp-h1
 win32/Setup_openBliSSART/Release
 win32/Setup_openBliSSART/Debug

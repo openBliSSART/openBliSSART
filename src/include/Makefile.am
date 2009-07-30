@@ -51,7 +51,6 @@ nobase_include_HEADERS = baseName.h \
 						 blissart/Label.h \
 						 blissart/MinHeap.h \
 						 blissart/NMDTask.h \
-						 blissart/NMFTask.h \
 						 blissart/Process.h \
 						 blissart/ProgressInterface.h \
 						 blissart/ProgressObserver.h \
@@ -80,7 +79,6 @@ nobase_include_HEADERS = baseName.h \
 						 blissart/linalg/Vector.h \
 						 blissart/linalg/generators/generators.h \
 						 blissart/nmf/Deconvolver.h \
-						 blissart/nmf/Factorizer.h \
 						 blissart/nmf/randomGenerator.h \
 						 blissart/validators.h \
 						 libsvm/svm.h \

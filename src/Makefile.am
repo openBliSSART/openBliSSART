@@ -30,6 +30,7 @@ SUBDIRS = LibLinAlg \
           LibFramework \
           Testsuite \
 		  septool \
+          nmdtool \
           browser \
           cvtool \
           fextool \

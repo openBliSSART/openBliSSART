@@ -57,7 +57,6 @@ libFramework_la_SOURCES = AnovaFeatureSelector.cpp \
 						  HTKWriter.cpp \
 						  Label.cpp \
 						  NMDTask.cpp \
-						  NMFTask.cpp \
 						  Process.cpp \
 						  ProgressInterface.cpp \
 						  QueuedTaskManager.cpp \
