@@ -379,11 +379,20 @@ bool MatrixTest::performTest()
                                        31, 44, 25,
                                        36, 51, 30 };
         const double D_corr_data[] = { 20, 32, 30, 46};
-        const double E_corr_data[] = { 5, 35, 6, 42 };
+        const double E_corr_data[] = { 4, 28, 7, 49 };
+        const double XHT_corr_data[] = { 8, 3, 10, 3 };
+        const double WTX_corr_data[] = { 0, 6, 12, 16, 
+                                         0, 8, 18, 24 };
         Matrix C_corr(3, 3, C_corr_data);
         Matrix D_corr(2, 2, D_corr_data);
         Matrix E_corr(2, 2, E_corr_data);
-        if (C != C_corr || D != D_corr || E != E_corr) return false;
+        Matrix XHT_corr(2, 2, XHT_corr_data);
+        Matrix WTX_corr(2, 4, WTX_corr_data);
+        if (C != C_corr || D != D_corr || E != E_corr || 
+            XHT != XHT_corr || WTX != WTX_corr) 
+        {
+            return false;
+        }
     }
 
     // Mean column vector

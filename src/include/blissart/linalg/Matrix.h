@@ -51,12 +51,6 @@ class RowVector;
 // storage layout (default is column-major):
 //#define ISEP_ROW_MAJOR
 
-// Uncomment the following line if you want faster matrix multiplications.
-// Note that this only works in combination with column-major storage layout.
-#ifndef HAVE_CBLAS_H
-#  define ISEP_FAST_MATRIX_MULT
-#endif
-
 
 /**
  * Representation of real matrices.
@@ -310,7 +304,7 @@ public:
 
     /**
      * Performs matrix multiplication and stores the result in the given target
-     * matrix.
+     * matrix. This function is provided for convenience only.
      * @param   other       a Matrix
      * @param   target      a pointer to a Matrix that will hold the results
      */
@@ -318,18 +312,15 @@ public:
 
 
     /**
-     * A more versatile function for matrix multiplication, supporting
+     * A versatile function for matrix multiplication, supporting
      * submatrices and transposing.
      * @param   other       the Matrix to multiply with
+     * @param   target      a pointer to a Matrix holding the result
      * @param   transpose   whether to transpose this matrix in multiplication
      * @param   transposeOther whether to transpose the other matrix
-     * @param   m           the number of rows (of this Matrix) to multiply
+     * @param   m           the desired number of rows of the result
      * @param   k           the desired dimension of the multiplication
-     *                      (i.e. the number of columns of this Matrix,
-     *                       respectively the number of rows of the other 
-     *                       Matrix that should be multiplied)
-     * @param   n           the desired number of columns (of the other Matrix)
-     *                      to multiply
+     * @param   n           the desired number of columns of the result
      * @param   rowOffset   the row offset for this Matrix
      * @param   colOffset   the column offset for this Matrix
      * @param   rowOffsetOther   the row offset for the other Matrix
@@ -345,6 +336,8 @@ public:
 
     /**
      * Multiplies this matrix by the given matrix' transpose.
+     * This function is a wrapper for multWithMatrix and is provided for
+     * convenience only.
      * @param   other       a Matrix
      * @return              the product of this matrix and the given
      *                      matrix' transpose
@@ -355,13 +348,12 @@ public:
     /**
      * Multiplies this matrix by the given matrix' transpose and stores the
      * result in the given target matrix.
+     * This function is a wrapper for multWithMatrix and is provided for
+     * convenience only.
      * @param   other       a Matrix
      * @param   target      a pointer to a Matrix that will hold the results
      */
     void multWithTransposedMatrix(const Matrix& other, Matrix* target) const;
-
-    void multWithTransposedMatrix(const Matrix& other, Matrix* target,
-        unsigned int m, unsigned int k, unsigned int n) const;
 
 
     /**

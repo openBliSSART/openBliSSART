@@ -94,8 +94,8 @@ private:
      * and would thus make LibFeature depend on LibFramework.
      */
     void computeNMDGain(FeatureMap& target, const linalg::Matrix& data,
-        int responseID, int nComponents, int nIterations,
-        DataDescriptor::Type type);
+        int responseID, const std::string& costf, int nComponents, 
+        int nIterations, DataDescriptor::Type type);
 
     double     _sampleFreq;
     double     _gainsFreq;

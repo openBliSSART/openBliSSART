@@ -302,9 +302,10 @@ void Matrix::multWithMatrix(const Matrix& other, Matrix* target,
                             unsigned int rowOffsetTarget,
                             unsigned int colOffsetTarget) const
 {
-    debug_assert(m <= this->_rows &&
+    // TODO: Correct assertion for transposed case, or drop it.
+    /*debug_assert(m <= this->_rows &&
                  m <= target->_rows &&
-                 n <= this->_cols &&
+                 n <= other._cols &&
                  n <= target->_cols &&
                  colOffset + k <= this->_cols &&
                  colOffsetOther + n <= other._cols &&
@@ -313,11 +314,11 @@ void Matrix::multWithMatrix(const Matrix& other, Matrix* target,
                  rowOffsetOther + k <= other._rows &&
                  rowOffsetTarget + m <= target->_rows &&
                  target != this &&
-                 target != &other);
+                 target != &other);*/
 
+#ifdef HAVE_CBLAS_H
     CBLAS_TRANSPOSE tr      = transpose      ? CblasTrans : CblasNoTrans;
     CBLAS_TRANSPOSE trOther = transposeOther ? CblasTrans : CblasNoTrans;
-#ifdef HAVE_CBLAS_H
 #  ifdef ISEP_ROW_MAJOR
     cblas_dgemm(CblasRowMajor,
                 tr,             // A (m x k)
@@ -349,166 +350,59 @@ void Matrix::multWithMatrix(const Matrix& other, Matrix* target,
                 target->_data + colOffsetTarget * target->_rows + rowOffsetTarget,
                 target->_rows); // ldc
 #  endif // ISEP_ROW_MAJOR
+#else // !HAVE_CBLAS_H
+#    ifdef ISEP_ROW_MAJOR
+    for (unsigned int row = 0; row < m; row++) {
+        for (unsigned int col = 0; col < n; col++) {
+#    else // !ISEP_ROW_MAJOR
+    for (unsigned int col = 0; col < n; col++) {
+        for (unsigned int row = 0; row < m; row++) {
+#    endif // ISEP_ROW_MAJOR
+            unsigned int ri = row + rowOffset;
+            unsigned int ci = col + colOffset;
+            unsigned int riTarget = row + rowOffsetTarget;
+            unsigned int ciTarget = col + colOffsetTarget;
+            unsigned int riOther = row + rowOffsetOther;
+            unsigned int ciOther = col + colOffsetOther;
+            (*target)(riTarget, ciTarget) = 0;
+            for (unsigned int index = 0; index < k; index++) {
+                double x = transpose ? 
+                    this->at(index + colOffset, ri) : 
+                    this->at(ri, index + colOffset);
+                double y = transposeOther ? 
+                    other.at(ciOther, index + rowOffsetOther) : 
+                    other.at(index + rowOffsetOther, ciOther);
+                (*target)(riTarget, ciTarget) += x * y;
+            }
+        }
+    }
 #endif // HAVE_CBLAS_H
-    // FIXME: Implement this without ATLAS
 }
 
 
 void Matrix::multWithMatrix(const Matrix& other, Matrix* target) const
 {
-    debug_assert(_cols == other._rows &&
-                 target->_rows == _rows &&
-                 target->_cols == other._cols &&
-                 target != this &&
-                 target != &other);
-
-#ifdef HAVE_CBLAS_H
-#  ifdef ISEP_ROW_MAJOR
-    cblas_dgemm(CblasRowMajor,
-                CblasNoTrans,   // A (m x k)
-                CblasNoTrans,   // B (k x n)
-                target->_rows,  // m
-                target->_cols,  // n
-                this->_cols,    // k
-                1.0,            // alpha
-                this->_data,
-                this->_cols,    // lda
-                other._data,
-                other._cols,    // ldb
-                0.0,            // beta
-                target->_data,
-                target->_cols); // ldc
-#  else // !ISEP_ROW_MAJOR
-    cblas_dgemm(CblasColMajor,
-                CblasNoTrans,   // A (m x k)
-                CblasNoTrans,   // B (k x n)
-                target->_rows,  // m
-                target->_cols,  // n
-                this->_cols,    // k
-                1.0,            // alpha
-                this->_data,
-                this->_rows,    // lda
-                other._data,
-                other._rows,    // ldb
-                0.0,            // beta
-                target->_data,
-                target->_rows); // ldc
-#  endif // ISEP_ROW_MAJOR
-#else // !HAVE_CBLAS_H
-#  if defined(ISEP_FAST_MATRIX_MULT) && !defined(ISEP_ROW_MAJOR)
-    double* target_data_ptr = target->_data;
-    for (unsigned int j = 0; j < target->_cols; j++) {
-        for (unsigned int i = 0; i < target->_rows; i++) {
-            double* this_data_ptr = _data + i;
-            double* other_data_ptr = other._data + j * other._rows;
-            *target_data_ptr = 0;
-            for (unsigned int k = 0; k < _cols; k++) {
-                *target_data_ptr += *this_data_ptr * *other_data_ptr;
-                other_data_ptr++;
-                this_data_ptr += _rows;
-            }
-            target_data_ptr++;
-        }
-    }
-#  else // !ISEP_FAST_MATRIX_MULT || ISEP_ROW_MAJOR
-#    ifdef ISEP_ROW_MAJOR
-    for (unsigned int i = 0; i < target->_rows; i++) {
-        for (unsigned int j = 0; j < target->_cols; j++) {
-#    else // !ISEP_ROW_MAJOR
-    for (unsigned int j = 0; j < target->_cols; j++) {
-        for (unsigned int i = 0; i < target->_rows; i++) {
-#    endif // ISEP_ROW_MAJOR
-            (*target)(i,j) = 0;
-            for (unsigned int k = 0; k < _cols; k++) {
-                (*target)(i,j) += this->at(i,k) * other.at(k,j);
-            }
-        }
-    }
-#  endif // ISEP_FAST_MATRIX_MULT && !ISEP_ROW_MAJOR
-#endif // HAVE_CBLAS_H
-}
-
-
-Matrix Matrix::multWithTransposedMatrix(const Matrix& other) const
-{
-    debug_assert(_cols == other._cols);
-
-    Matrix result(_rows, other._rows);
-    multWithTransposedMatrix(other, &result);
-    return result;
+    multWithMatrix(other, target,
+        false, false,
+        this->_rows, this->_cols, other._cols,
+        0, 0, 0, 0, 0, 0);
 }
 
 
 void Matrix::multWithTransposedMatrix(const Matrix& other, Matrix* target) const
 {
-    debug_assert(_cols == other._cols &&
-                 target != this &&
-                 target != &other);
+    multWithMatrix(other, target,
+        false, true,
+        this->_rows, this->_cols, other._rows,
+        0, 0, 0, 0, 0, 0);
+}
 
-#ifdef HAVE_CBLAS_H
-#  ifdef ISEP_ROW_MAJOR
-    cblas_dgemm(CblasRowMajor,
-                CblasNoTrans,   // A (m x k)
-                CblasTrans,     // B (k x n)
-                target->_rows,  // m
-                target->_cols,  // n
-                this->_cols,    // k
-                1.0,            // alpha
-                this->_data,
-                this->_cols,    // lda
-                other._data,
-                other._cols,    // ldb
-                0.0,            // beta
-                target->_data,
-                target->_cols); // ldc
-#  else // !ISEP_ROW_MAJOR
-    cblas_dgemm(CblasColMajor,
-                CblasNoTrans,   // A (m x k)
-                CblasTrans,     // B (k x n)
-                target->_rows,  // m
-                target->_cols,  // n
-                this->_cols,    // k
-                1.0,            // alpha
-                this->_data,
-                this->_rows,    // lda
-                other._data,
-                other._rows,    // ldb
-                0.0,            // beta
-                target->_data,
-                target->_rows); // ldc
-#  endif // ISEP_ROW_MAJOR
-#else // !HAVE_CBLAS_H
-#  if defined(ISEP_FAST_MATRIX_MULT) && !defined(ISEP_ROW_MAJOR)
-    double* target_data_ptr = target->_data;
-    for (unsigned int j = 0; j < target->_cols; j++) {
-        for (unsigned int i = 0; i < target->_rows; i++) {
-            double* this_data_ptr = _data + i;
-            double* other_data_ptr = other._data + j;
-            *target_data_ptr = 0;
-            for (unsigned int k = 0; k < _cols; k++) {
-                *target_data_ptr += *this_data_ptr * *other_data_ptr;
-                other_data_ptr += other._rows;
-                this_data_ptr += _rows;
-            }
-            target_data_ptr++;
-        }
-    }
-#  else // !ISEP_FAST_MATRIX_MULT || ISEP_ROW_MAJOR
-#    ifdef ISEP_ROW_MAJOR
-    for (unsigned int i = 0; i < target->_rows; i++) {
-        for (unsigned int j = 0; j < target->_cols; j++) {
-#    else // !ISEP_ROW_MAJOR
-    for (unsigned int j = 0; j < target->_cols; j++) {
-        for (unsigned int i = 0; i < target->_rows; i++) {
-#    endif // ISEP_ROW_MAJOR
-            (*target)(i,j) = 0;
-            for (unsigned int k = 0; k < _cols; k++) {
-                (*target)(i,j) += this->at(i,k) * other.at(j,k);
-            }
-        }
-    }
-#  endif // ISEP_FAST_MATRIX_MULT && ISEP_ROW_MAJOR
-#endif
+
+Matrix Matrix::multWithTransposedMatrix(const Matrix& other) const
+{
+    Matrix result(_rows, other._rows);
+    multWithTransposedMatrix(other, &result);
+    return result;
 }
 
 

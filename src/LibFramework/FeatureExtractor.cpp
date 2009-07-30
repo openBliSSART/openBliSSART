@@ -339,12 +339,15 @@ FeatureExtractor::extract(DataDescriptor::Type type, const Matrix &data)
             config.getBool("blissart.features." + typeName + ".nmd_gain", false)) 
         {
             int responseID = config.getInt(
-                "blissart.features.magnitudematrix.nmd_gain.response");
+                "blissart.features." + typeName + ".nmd_gain.response");
             int nIterations = config.getInt(
-                "blissart.features.magnitudematrix.nmd_gain.iterations", 200);
+                "blissart.features." + typeName + ".nmd_gain.iterations", 200);
             unsigned int nComponents = config.getInt(
-                "blissart.features.magnitudematrix.nmd_gain.components", 0);
-            computeNMDGain(result, data, responseID, nComponents, nIterations, type);
+                "blissart.features." + typeName + ".nmd_gain.components", 0);
+            string cfName = config.getString(
+                "blissart.features." + typeName + ".nmd_gain.costfunction", "div");
+            computeNMDGain(result, data, responseID, cfName, 
+                nComponents, nIterations, type);
         }
     
     } // type == Spectrum || type == MagnitudeMatrix || 
@@ -357,8 +360,8 @@ FeatureExtractor::extract(DataDescriptor::Type type, const Matrix &data)
 void
 FeatureExtractor::computeNMDGain(FeatureExtractor::FeatureMap& target, 
                                  const Matrix& data,
-                                 int responseID, int nComponents,
-                                 int nIterations,
+                                 int responseID, const string& cfName,
+                                 int nComponents, int nIterations,
                                  DataDescriptor::Type type)
 {
     DatabaseSubsystem& dbs = BasicApplication::instance().
@@ -368,15 +371,18 @@ FeatureExtractor::computeNMDGain(FeatureExtractor::FeatureMap& target,
         throw Poco::InvalidArgumentException("Invalid response ID: " +
             Poco::NumberFormatter::format(responseID));
     }
+
     vector<int> nmdObjectIDs;
     for (Response::LabelMap::const_iterator itr = response->labels.begin();
         itr != response->labels.end(); ++itr)
     {
         nmdObjectIDs.push_back(itr->first);
     }
+
     if (nComponents == 0) {
         nComponents = (unsigned int) nmdObjectIDs.size();
     }
+
     TargetedDeconvolver d(data, nComponents, nmdObjectIDs);
 
     // All components initialized => keep whole W matrix constant
@@ -390,7 +396,17 @@ FeatureExtractor::computeNMDGain(FeatureExtractor::FeatureMap& target,
         }
     }
 
-    d.factorizeKL(nIterations, 0);
+    if (cfName.substr(0, 3) == "div") {
+        d.factorizeKL(nIterations, 0);
+    }
+    else if (cfName.substr(0, 4) == "dist") {
+        d.factorizeED(nIterations, 0);
+    }
+    else {
+        throw Poco::InvalidArgumentException("Invalid cost function: " +
+            cfName);
+    }
+
     const Matrix& h = d.getH();
     // NMD gains are only saved for the components that have been initialized
     // from the response.
