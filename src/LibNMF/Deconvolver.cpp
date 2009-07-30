@@ -238,7 +238,7 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
     Matrix wUpdateMatrixDenom(_v.rows(), _h.rows());
     Matrix hUpdateMatrixNom(_h.rows(), _h.cols());
     Matrix hUpdateMatrixDenom(_h.rows(), _h.cols());
-    Matrix oldLambda(_v.rows(), _v.cols());
+    Matrix* oldLambda = 0;
     double denom;
 
 #ifdef GNUPLOT
@@ -254,18 +254,26 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
         // Compute difference between approximations in current and previous
         // iteration in terms of Frobenius norm. Stop iteration if difference
         // is sufficiently small.
-        if (_numSteps > 1 && eps > 0) {
-            Matrix lambdaDiff(_lambda);
-            lambdaDiff.sub(oldLambda);
-            double zeta = lambdaDiff.frobeniusNorm() / 
-                          oldLambda.frobeniusNorm();
-            if (zeta < eps) {
-                break;
+        // As this criterion needs additional space and calculations,
+        // only perform this computation if eps > 0.
+        if (eps > 0) {
+            if (_numSteps > 1) {
+                Matrix lambdaDiff(_lambda);
+                lambdaDiff.sub(*oldLambda);
+                double zeta = lambdaDiff.frobeniusNorm() / 
+                              oldLambda->frobeniusNorm();
+                if (zeta < eps) {
+                    break;
+                }
+                *oldLambda = _lambda;
+            }
+            else {
+                oldLambda = new Matrix(_lambda);
             }
         }
-        oldLambda = _lambda;
 
         if (!_wConstant) {
+            Matrix* wpH = 0;
             // Update all W[p]
             for (unsigned int p = 0; p < _t; ++p) {
                 // Calculate V * (H shifted t spots to the right)^T 
@@ -286,14 +294,16 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
                     false, true,
                     _v.rows(), _v.cols() - p, _h.rows(), 
                     0, p, 0, 0, 0, 0);
-                // Efficient (difference-based) calculation of updated Lambda
-                // (step 1: subtraction of old W[p]*H)
-                // Due to Wang (2009)
-                Matrix wpH(_v.rows(), _v.cols());
-                computeWpH(p, wpH);
-                // It is safe to overwrite Lambda, as it is not directly used 
-                // in the update loop.
-                _lambda.sub(wpH);
+                if (_t > 1) {
+                    // Efficient (difference-based) calculation of updated Lambda
+                    // (step 1: subtraction of old W[p]*H)
+                    // Due to Wang (2009)
+                    wpH = new Matrix(_v.rows(), _v.cols());
+                    computeWpH(p, *wpH);
+                    // It is safe to overwrite Lambda, as it is not directly used 
+                    // in the update loop.
+                    _lambda.sub(*wpH);
+                }
                 // Finally, the update loop is simple now.
                 for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
                     if (!_wColConstant[j]) {
@@ -304,12 +314,21 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
                         }
                     }
                 }
-                // Calculate updated lambda, step 2
-                // (addition of new W[p]*H)
-                computeWpH(p, wpH);
-                _lambda.add(wpH);
-                ensureNonnegativity(_lambda);
+                if (_t > 1) {
+                    // Calculate updated lambda, step 2
+                    // (addition of new W[p]*H)
+                    computeWpH(p, *wpH);
+                    _lambda.add(*wpH);
+                    delete wpH;
+                    ensureNonnegativity(_lambda);
+                }
             }
+        }
+
+        // The standard method of computing Lambda is more efficient 
+        // for T = 1 (1 vs. 2 matrix multiplications).
+        if (_t == 1) {
+            computeLambda();
         }
 
         // Calculate update matrix for H by averaging the updates corresponding
@@ -363,6 +382,9 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
     // Final call to the ProgressObserver (if applicable).
     if (observer)
         observer->progressChanged(1.0f);
+
+    if (oldLambda)
+        delete oldLambda;
 }
 
 
