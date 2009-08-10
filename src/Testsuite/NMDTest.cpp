@@ -26,6 +26,8 @@
 #include <blissart/nmf/Deconvolver.h>
 #include <blissart/linalg/generators/generators.h>
 #include <iostream>
+#include <ctime>
+#include <cstdlib>
 
 
 using namespace std;
@@ -38,6 +40,8 @@ namespace Testing {
 
 bool NMDTest::performTest()
 {
+    srand((unsigned int) time(NULL));
+
     cout << "Creating 10x5 random matrix:" << endl;
     Matrix x(10, 5, generators::random);
     cout << x;
@@ -49,7 +53,7 @@ bool NMDTest::performTest()
         cout << "Performing NMD using KL divergence" << endl;
 
         nmf::Deconvolver d(x, 10, t);
-        d.factorizeKL(50, 1e-3);
+        d.factorizeKL(5000, 1e-5);
         cout << "# steps: " << d.numSteps() << endl;
         cout << "absolute error: " << d.absoluteError() << endl;
         cout << "relative error: " << d.relativeError() << endl;
@@ -77,7 +81,7 @@ bool NMDTest::performTest()
         cout << "Performing NMD using Euclidean distance" << endl;
 
         nmf::Deconvolver d(x, 10, t);
-        d.factorizeED(5000, 1e-3);
+        d.factorizeED(5000, 1e-5);
         cout << "# steps: " << d.numSteps() << endl;
         cout << "absolute error: " << d.absoluteError() << endl;
         cout << "relative error: " << d.relativeError() << endl;
@@ -95,7 +99,7 @@ bool NMDTest::performTest()
         
         for (unsigned int i = 0; i < x.rows(); i++) {
             for (unsigned int j = 0; j < x.cols(); j++) {
-                if (!epsilonCheck(x(i,j), l(i,j), 1e-2))
+                if (!epsilonCheck(x(i,j), l(i,j), 5e-2))
                     return false;
             }
         }
