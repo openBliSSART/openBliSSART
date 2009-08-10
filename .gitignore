@@ -37,6 +37,7 @@ src/browser/browser.vcproj
 src/cleanup/cleanup
 src/cvtool/cvtool
 src/export/export
+src/exportaudio/exportaudio
 src/fextool/fextool
 src/icatool/icatool
 src/labeller/labeller

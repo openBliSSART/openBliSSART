@@ -134,6 +134,7 @@ AC_CONFIG_FILES([Makefile
                  src/nmdtool/Makefile
                  src/labeller/Makefile
                  src/export/Makefile
+                 src/exportaudio/Makefile
                  src/cleanup/Makefile
                  src/browser/Makefile])
 AC_OUTPUT

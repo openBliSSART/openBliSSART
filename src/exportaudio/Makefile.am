@@ -22,22 +22,13 @@
 ## openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-SUBDIRS = LibLinAlg \
-          LibAudio \
-          LibFeature \
-          LibICA \
-          LibNMF \
-          LibFramework \
-          Testsuite \
-		  septool \
-          nmdtool \
-          browser \
-          cvtool \
-          fextool \
-          icatool \
-		  labeller \
-          cleanup \
-          export \
-          exportaudio \
-          include 
+bin_PROGRAMS = exportaudio
+
+exportaudio_LDADD = $(top_srcdir)/src/LibFramework/libFramework.la \
+               $(top_srcdir)/src/LibAudio/libAudio.la \
+                @POCO_LDFLAGS@ -lPocoFoundation -lPocoUtil -lPocoXML
+
+exportaudio_CPPFLAGS = -I../include @POCO_CPPFLAGS@
+
+exportaudio_SOURCES = main.cpp
 

@@ -50,9 +50,11 @@ double gaussianRandomGenerator(unsigned int, unsigned int)
             q = x * x + y * y;
         }
         double z = -2.0 * log(q) / q;
-        number = abs(y * sqrt(z));
+        // The std:: here is absolutely necessary to use the C++ (overloaded)
+        // version of this function!!!
+        number = std::abs(y * sqrt(z));
         haveNumber = true;
-        return abs(x * sqrt(z));
+        return std::abs(x * sqrt(z));
     }
 }
 

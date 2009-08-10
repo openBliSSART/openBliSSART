@@ -22,7 +22,7 @@
 ## openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-noinst_PROGRAMS = testsuite
+bin_PROGRAMS = testsuite
 
 testsuite_CPPFLAGS = -I../include
 

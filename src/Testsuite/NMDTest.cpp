@@ -43,7 +43,7 @@ bool NMDTest::performTest()
     srand((unsigned int) time(NULL));
 
     cout << "Creating 10x5 random matrix:" << endl;
-    Matrix x(10, 5, generators::random);
+    Matrix x(10, 5, nmf::gaussianRandomGenerator);
     cout << x;
     cout << "---" << endl;
 
