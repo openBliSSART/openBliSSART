@@ -114,7 +114,7 @@ double correlation(const Vector& v1, const Vector& v2)
 
 double autocorrelation(const Vector& data, unsigned int delay)
 {
-    if (delay > data.dim())
+    if (delay >= data.dim())
         return 0.0;
 
     double mu = mean(data);
