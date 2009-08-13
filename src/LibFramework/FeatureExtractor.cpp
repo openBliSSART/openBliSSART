@@ -198,8 +198,6 @@ FeatureExtractor::extract(DataDescriptor::Type type, const Matrix &data)
     
         // Sampled MFCC
         if ((mfcc || mfccD || mfccA) && nCoeff > 0) {
-            int frameCount = std::min<int>(maxFrameCount, data.cols());
-
             // We precompute MFCCs for all columns here, as we assume that 
             // in most cases, average MFCCs will be used too.
             cepstrogram = feature::computeMFCC(data, _sampleFreq, nCoeff, 
@@ -221,10 +219,12 @@ FeatureExtractor::extract(DataDescriptor::Type type, const Matrix &data)
                 // getStandardSet() uses the count from the config file
                 // as parameter and doesn't now about the matrix properties.
                 if (data.cols() > 1) {
-                    for (int frameIndex = 0; frameIndex < frameCount; ++frameIndex) 
+                    for (int frameIndex = 0; frameIndex < maxFrameCount; ++frameIndex) 
                     {
+                        // If the actual frame count is lower than maxFrameCount
+                        // a frame might be taken into account more than once.
                         unsigned int col = (unsigned int)
-                            ((double) frameIndex / (frameCount - 1) * (data.cols() - 1));
+                            ((double) frameIndex / (maxFrameCount - 1) * (data.cols() - 1));
                         if (mfcc) {
                             result[FeatureDescriptor("mfcc", type, 
                                 mfccIndex, maxFrameCount, frameIndex)] = 
