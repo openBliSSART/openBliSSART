@@ -28,6 +28,9 @@
 #include <blissart/linalg/generators/generators.h>
 #include <blissart/ProgressObserver.h>
 
+#include <stdexcept>
+#include <sstream>
+
 // Uncomment the following line if you want to generate output suitable for
 // gnuplot during factorization.
 //#define GNUPLOT "relative.plt"
@@ -60,7 +63,12 @@ Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t,
     _relativeError(-1),
     _vFrob(_v.frobeniusNorm())
 {
-    assert(t <= v.cols());
+    if (t > v.cols()) {
+        std::ostringstream errStr;
+        errStr << "Invalid number of spectra: " << t
+               << ": Matrix has only " << v.cols() << " columns!";
+        throw std::runtime_error(errStr.str());
+    }
     for (unsigned int l = 0; l < _t; ++l) {
         _w[l] = new Matrix(v.rows(), r);
     }

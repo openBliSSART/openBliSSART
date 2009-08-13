@@ -33,8 +33,10 @@
 #include <blissart/linalg/Matrix.h>
 
 #include <Poco/Exception.h>
+#include <Poco/LogStream.h>
 
 #include <sstream>
+#include <iostream>
 
 
 using namespace std;
@@ -66,7 +68,21 @@ void FeatureExtractionTask::runTask()
     for (vector<DataDescriptorPtr>::const_iterator itr = _ddVec.begin();
         itr != _ddVec.end() && !isCancelled(); ++itr)
     {
-        extract(*itr);
+        try {
+            extract(*itr);
+        }
+        catch (const Poco::Exception& exc) {
+            Poco::LogStream ls(logger());
+            ls.error();
+            ls << "Feature extraction failed for data descriptor #"
+               << (*itr)->descrID << ": " << exc.displayText() << endl;
+        }
+        catch (const std::exception& exc) {
+            Poco::LogStream ls(logger());
+            ls.error();
+            ls << "Feature extraction failed for data descriptor #"
+               << (*itr)->descrID << ": " << exc.what() << endl;
+        }
         incTotalProgress(1.0f);
         if (isCancelled())
             break;
