@@ -202,10 +202,10 @@ FeatureExtractor::extract(DataDescriptor::Type type, const Matrix &data)
             // in most cases, average MFCCs will be used too.
             cepstrogram = feature::computeMFCC(data, _sampleFreq, nCoeff, 
                 nBands, lowFreq, highFreq, lifter);
-            if ((mfccD || mfccA) && data.cols() > 1) {
+            if (mfccD || mfccA) {
                 cepstrogramD = feature::deltaRegression(*cepstrogram, theta);
             }
-            if (mfccA && data.cols() > 1) {
+            if (mfccA) {
                 cepstrogramA = feature::deltaRegression(*cepstrogramD, theta);
             }
             // Insert each desired MFCC into result structure.
@@ -218,7 +218,7 @@ FeatureExtractor::extract(DataDescriptor::Type type, const Matrix &data)
                 // Otherwise the feature won't be found later, as FeatureSet::
                 // getStandardSet() uses the count from the config file
                 // as parameter and doesn't now about the matrix properties.
-                if (data.cols() > 1) {
+                //if (data.cols() > 1) {
                     for (int frameIndex = 0; frameIndex < maxFrameCount; ++frameIndex) 
                     {
                         // If the actual frame count is lower than maxFrameCount
@@ -241,17 +241,17 @@ FeatureExtractor::extract(DataDescriptor::Type type, const Matrix &data)
                                 cepstrogramA->at(mfccIndex, col);
                         }
                     }
-                }
-                else if (mfcc) {
+                //}
+                //else if (mfcc) {
                     result[FeatureDescriptor("mfcc", type, 
                         mfccIndex, maxFrameCount, 0)] = cepstrogram->at(mfccIndex, 0);
-                }
+                //}
             }
         }
 
         // Average MFCCs, Delta- and Delta-Delta MFCCs
         if (config.getBool("blissart.features." + typeName + ".mean_mfcc", true) 
-            && nCoeff > 0 && data.cols() > 1) 
+            && nCoeff > 0) 
         {
             if (cepstrogram.isNull()) {
                 cepstrogram = feature::computeMFCC(data, _sampleFreq, nCoeff, nBands, 
@@ -295,7 +295,7 @@ FeatureExtractor::extract(DataDescriptor::Type type, const Matrix &data)
 
         // Standard deviation of MFCCs, Delta- and Delta-Delta MFCCs
         if (config.getBool("blissart.features." + typeName + ".stddev_mfcc", true) 
-            && nCoeff > 0 && data.cols() > 1) 
+            && nCoeff > 0) 
         {
             if (cepstrogram.isNull()) {
                 cepstrogram = feature::computeMFCC(data, _sampleFreq, nCoeff, nBands,
