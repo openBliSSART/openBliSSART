@@ -344,10 +344,12 @@ FeatureExtractor::extract(DataDescriptor::Type type, const Matrix &data)
                 "blissart.features." + typeName + ".nmd_gain.iterations", 200);
             unsigned int nComponents = config.getInt(
                 "blissart.features." + typeName + ".nmd_gain.components", 0);
+            bool allComponents = config.getBool(
+                "blissart.features." + typeName + ".nmd_gain.allcomponents", false);
             string cfName = config.getString(
                 "blissart.features." + typeName + ".nmd_gain.costfunction", "div");
             computeNMDGain(result, data, responseID, cfName, 
-                nComponents, nIterations, type);
+                nComponents, allComponents, nIterations, type);
         }
     
     } // type == Spectrum || type == MagnitudeMatrix || 
@@ -361,7 +363,8 @@ void
 FeatureExtractor::computeNMDGain(FeatureExtractor::FeatureMap& target, 
                                  const Matrix& data,
                                  int responseID, const string& cfName,
-                                 int nComponents, int nIterations,
+                                 int nComponents, bool allComponents,
+                                 int nIterations,
                                  DataDescriptor::Type type)
 {
     DatabaseSubsystem& dbs = BasicApplication::instance().
@@ -408,16 +411,19 @@ FeatureExtractor::computeNMDGain(FeatureExtractor::FeatureMap& target,
     }
 
     const Matrix& h = d.getH();
-    // NMD gains are only saved for the components that have been initialized
-    // from the response.
+    // If desired, NMD gains are only saved for the components that have been 
+    // initialized from the response.
     // Also, NMD gains are normalized such that they sum to 1.
     double totalLength = 0.0;
+    unsigned int relevantComponents = allComponents ? 
+                                      nComponents : 
+                                      nmdObjectIDs.size();
     double* lengths = new double[nmdObjectIDs.size()];
     unsigned int compIndex = 0;
     for (; compIndex < h.rows(); ++compIndex) {
         double l = h.nthRow(compIndex).length();
         totalLength += l;
-        if (compIndex < nmdObjectIDs.size()) {
+        if (compIndex < relevantComponents) {
             lengths[compIndex] = l;
         }
     }
@@ -428,6 +434,14 @@ FeatureExtractor::computeNMDGain(FeatureExtractor::FeatureMap& target,
         // TODO: Include iterations parameter
         target[FeatureDescriptor("nmd_gain", type,
             responseID, nComponents, *itr)] = lengths[compIndex] / totalLength;
+    }
+    // Gains from uninitialized components have the negative component index 
+    // as parameter.
+    while (compIndex < relevantComponents) {
+        target[FeatureDescriptor("nmd_gain", type,
+            responseID, nComponents, -((double)compIndex + 1))] = 
+            lengths[compIndex] / totalLength;
+        ++compIndex;
     }
 }
 

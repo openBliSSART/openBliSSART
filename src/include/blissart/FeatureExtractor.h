@@ -95,6 +95,7 @@ private:
      */
     void computeNMDGain(FeatureMap& target, const linalg::Matrix& data,
         int responseID, const std::string& costf, int nComponents, 
+        bool allComponents, 
         int nIterations, DataDescriptor::Type type);
 
     double     _sampleFreq;
