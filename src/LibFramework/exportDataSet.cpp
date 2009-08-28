@@ -97,7 +97,7 @@ bool exportDataSet(const DataSet& dataSet,
     for (map<int, LabelPtr>::const_iterator itr = classLabels.begin();
         itr != classLabels.end(); ++itr, ++i)
     {
-        outputFile << itr->second->text;
+        outputFile << '"' << itr->second->text << '"';
         if (i < classLabels.size() - 1)
             outputFile << ",";
     }
@@ -122,7 +122,8 @@ bool exportDataSet(const DataSet& dataSet,
             outputFile << dItr->components.find(*itr)->second;
             outputFile << ",";
         }
-        outputFile << classLabels[dItr->classLabel]->text << endl;
+        outputFile << '"' << classLabels[dItr->classLabel]->text << '"' 
+                   << endl;
     }
 
     outputFile.flush();
