@@ -414,7 +414,7 @@ FeatureExtractor::computeNMDGain(FeatureExtractor::FeatureMap& target,
     unsigned int relevantComponents = allComponents ? 
                                       nComponents : 
                                       nmdObjectIDs.size();
-    double* lengths = new double[nmdObjectIDs.size()];
+    double* lengths = new double[relevantComponents];
     unsigned int compIndex = 0;
     for (; compIndex < h.rows(); ++compIndex) {
         double l = h.nthRow(compIndex).length();
