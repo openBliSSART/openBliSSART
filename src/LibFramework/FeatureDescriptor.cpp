@@ -143,6 +143,7 @@ bool FeatureDescriptor::isValidFeature(const std::string& name,
         "stddev_mfccA",
         // TODO: remove this before release
         "nmd_gain",
+        "nmd_gain_label",
         0
     };
     const char* validNamesGains[] = {
