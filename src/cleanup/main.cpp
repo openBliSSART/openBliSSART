@@ -59,6 +59,17 @@ protected:
             Option("help", "h",
                    "Displays usage information",
                    false));
+
+        options.addOption(
+            Option("simulate", "s", 
+                   "Do not remove anything", 
+                   false));
+
+        options.addOption(
+            Option("remove-na", "a", 
+                   "Remove data belonging to data descriptors that are marked "
+                   "as not being available", 
+                   false));
     }
 
 
@@ -69,6 +80,12 @@ protected:
         if (name == "help") {
             _displayUsage = true;
             stopOptionsProcessing();
+        }
+        else if (name == "remove-na") {
+            _removeNA = true;
+        }
+        else if (name == "simulate") {
+            _simulate = true;
         }
     }
 
@@ -86,6 +103,8 @@ protected:
         }
         
         CleanupTask ct;
+        ct.setSimulation(_simulate);
+        ct.setRemoveNA  (_removeNA);
         ct.runTask();
         cout << "Removed " << ct.removedFiles().size() << " file(s)" << endl;
 
@@ -94,7 +113,9 @@ protected:
 
     
 private:
-    bool                 _displayUsage;
+    bool _displayUsage;
+    bool _removeNA;
+    bool _simulate;
 };
 
 
