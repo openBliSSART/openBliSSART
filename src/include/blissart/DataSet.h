@@ -113,6 +113,10 @@ void LibFramework_API
 sigmoidSmooth(DataSet& dataSet, double lower = -1.0, double upper = 1.0);
 
 
+void LibFramework_API
+upsample(DataSet& dataSet, std::map<int, int>& factors);
+
+
 } // namespace blissart
 
 
