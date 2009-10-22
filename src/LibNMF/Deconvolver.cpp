@@ -380,7 +380,7 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
                 _w[p]->cols(), _w[p]->rows(), _v.cols() - p,
                 0, 0, 0, p, 0, 0);
 
-            for (unsigned int j = 0; j < _h.cols(); ++j) {
+            for (unsigned int j = 0; j < _h.cols() - p; ++j) {
                 for (unsigned int i = 0; i < _h.rows(); ++i) {
                     denom = hUpdateMatrixDenom(i, j);
                     // Avoid division by zero
