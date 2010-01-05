@@ -40,10 +40,10 @@ AC_DEFUN([AX_ENABLE_DEBUG],
     if test "$ENABLE_DEBUG" != "yes"; then
         dnl Never ever use -ftree-vectorize since it can lead to strange bugs!
         CFLAGS="-O3 $CFLAGS"
-        CXXFLAGS="-O3 $CPPFLAGS"
+        CXXFLAGS="-O3 $CXXFLAGS"
     else
         CFLAGS="-g -O2 -Wall -D_DEBUG $CFLAGS"
-        CXXFLAGS="-g -O2 -Wall -D_DEBUG $CPPFLAGS"
+        CXXFLAGS="-g -O2 -Wall -D_DEBUG $CXXFLAGS"
         AC_MSG_NOTICE([Compiler flags set for debugging.])
     fi
 
