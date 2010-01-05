@@ -24,7 +24,7 @@ dnl
 
 
 dnl AX_CHECK_POCO([ENTERPRISE, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]]])
-dnl Checks for the presence of Poco v1.3.4+. Sets POCO_LDFLAGS and
+dnl Checks for the presence of Poco v1.3.6+. Sets POCO_LDFLAGS and
 dnl POCO_CPPFLAGS accordingly. If ENTERPRISE is set to an arbitrary value, i.e.
 dnl it isn't empty, also Poco::Data is required.
 AC_DEFUN([AX_CHECK_POCO],
@@ -57,8 +57,16 @@ AC_DEFUN([AX_CHECK_POCO],
             LIBS="-lPocoFoundation"
             AC_LINK_IFELSE(
                 [AC_LANG_PROGRAM(
-                    [[#include <Poco/DateTime.h>]],
-                    [[Poco::DateTime dt;]])
+                    [[
+                      #include <Poco/DateTime.h>
+                      #include <Poco/Foundation.h>
+                    ]],
+                    [[
+                      Poco::DateTime dt;
+                      #if !(POCO_VERSION >= 0x01030600)
+                      # error Wrong Poco version!
+                      #endif
+                    ]])
                 ], [], [NO_POCO=yes]
             )], 
            [dnl Enterprise.
@@ -66,12 +74,14 @@ AC_DEFUN([AX_CHECK_POCO],
             AC_LINK_IFELSE(
                 [AC_LANG_PROGRAM(
                     [[
-                        #include <Poco/Data/SQLite/Utility.h>
-                        #include <Poco/AtomicCounter.h>
+                      #include <Poco/Data/SQLite/Utility.h>
+                      #include <Poco/Foundation.h>
                     ]],
                     [[
-                        Poco::Data::SQLite::Utility util;
-                        Poco::AtomicCounter counter;
+                      Poco::Data::SQLite::Utility util;
+                      #if (!POCO_VERSION >= 0x01030600)
+                      # error Wrong Poco version!
+                      #endif
                     ]])
                 ], [], [NO_POCO=yes]
             )]
