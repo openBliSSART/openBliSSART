@@ -259,9 +259,101 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
 }
 
 
+void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
+                                 ProgressObserver *observer)
+{
+    Matrix& w = *(_w[0]);
+    Matrix wUpdateMatrixNom(_v.rows(), _h.rows());
+    Matrix wUpdateMatrixDenom(_v.rows(), _h.rows());
+    Matrix hhT(_h.rows(), _h.rows());
+    Matrix hUpdateMatrixNom(_h.rows(), _h.cols());
+    Matrix hUpdateMatrixDenom(_h.rows(), _h.cols());
+    Matrix wTw(_h.rows(), _h.rows());
+    Matrix *wh = 0, *oldWH = 0;
+    double denom;
+
+    _numSteps = 0;
+    while (_numSteps < maxSteps) {
+
+        // W Update
+        if (!_wConstant) {
+            // The trick is not to calculate (W*H)*H^T, but
+            // W*(H*H^T), which is much faster, assuming common
+            // dimensions of W and H.
+            _v.multWithTransposedMatrix(_h, &wUpdateMatrixNom);
+            _h.multWithTransposedMatrix(_h, &hhT);
+            w.multWithMatrix(hhT, &wUpdateMatrixDenom);
+            for (unsigned int j = 0; j < w.cols(); ++j) {
+                if (!_wColConstant[j]) {
+                    for (unsigned int i = 0; i < w.rows(); ++i) {
+                        denom = wUpdateMatrixDenom(i, j);
+                        if (denom <= 0.0) denom = 1e-9;
+                        w(i, j) *= (wUpdateMatrixNom(i, j) / denom);
+                    }
+                }
+            }
+        }
+
+        // H Update
+        // Calculate W^T * V
+        w.multWithMatrix(_v, &hUpdateMatrixNom, true, false,
+            _h.rows(), _v.rows(), _h.cols(),
+            0, 0, 0, 0, 0, 0);
+        // Here the trick is to calculate (W^T * W) * H instead of
+        // W^T * (W * H).
+        // Calculate W^T * W
+        w.multWithMatrix(w, &wTw, true, false,
+            _h.rows(), w.rows(), _h.rows(),
+            0, 0, 0, 0, 0, 0);
+        wTw.multWithMatrix(_h, &hUpdateMatrixDenom);
+        for (unsigned int j = 0; j < _h.cols(); ++j) {
+            for (unsigned int i = 0; i < _h.rows(); ++i) {
+                denom = hUpdateMatrixDenom(i, j);
+                if (denom <= 0.0) denom = 1e-9;
+                _h(i, j) *= (hUpdateMatrixNom(i, j) / denom);
+            }
+        }
+
+        // convergence criterion
+        if (eps > 0) {
+            if (_numSteps == 0) {
+                wh = new Matrix(_v.rows(), _v.cols());
+                oldWH = new Matrix(_v.rows(), _v.cols());
+                w.multWithMatrix(_h, oldWH);
+            }
+            else {
+                w.multWithMatrix(_h, wh);
+                Matrix whDiff(*wh);
+                whDiff.sub(*oldWH);
+                double zeta = whDiff.frobeniusNorm() / 
+                              oldWH->frobeniusNorm();
+                if (zeta < eps) {
+                    //break;
+                }
+                *oldWH = *wh;
+            }
+        }
+
+        ++_numSteps;
+
+        // Call the ProgressObserver every once in a while (if applicable).
+        if (observer && _numSteps % 25 == 0)
+            observer->progressChanged((float)_numSteps / (float)maxSteps);
+    }
+
+    if (wh)    delete wh;
+    if (oldWH) delete oldWH;
+}
+
+
 void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
                               ProgressObserver *observer)
 {
+    if (_t == 1) {
+        factorizeNMFED(maxSteps, eps, observer);
+        return;
+    }
+
     Matrix hSum(_h.rows(), _h.cols());
     Matrix wUpdateMatrixNom(_v.rows(), _h.rows());
     Matrix wUpdateMatrixDenom(_v.rows(), _h.rows());

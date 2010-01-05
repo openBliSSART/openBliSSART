@@ -168,6 +168,10 @@ public:
 
 
 protected:
+    // A more efficient implementation of NMD-ED for 1 spectrum (NMF case).
+    void factorizeNMFED(unsigned int maxSteps, double eps,
+                        ProgressObserver *observer = 0);
+
     // Computes error of current approximation.
     void computeError();
 
