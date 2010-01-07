@@ -441,7 +441,9 @@ FeatureExtractor::computeNMDGain(FeatureExtractor::FeatureMap& target,
         if (compIndex < relevantComponents) {
             double otherLength = 0.0;
             while (compIndex < relevantComponents) {
-                otherLength += h.nthRow(compIndex).length();
+                double l = h.nthRow(compIndex).length();
+                otherLength += l;
+                totalLength += l;
                 ++compIndex;
             }
             target[FeatureDescriptor("nmd_gain_label", type,
@@ -456,9 +458,9 @@ FeatureExtractor::computeNMDGain(FeatureExtractor::FeatureMap& target,
         for (; compIndex < h.rows(); ++compIndex) {
             double l = h.nthRow(compIndex).length();
             lengths[compIndex] = l;
-            if (compIndex < nmdObjectIDs.size()) {
+            //if (compIndex < nmdObjectIDs.size()) {
                 totalLength += l;
-            }
+            //}
         }
         compIndex = 0;
         for (vector<int>::const_iterator itr = nmdObjectIDs.begin();

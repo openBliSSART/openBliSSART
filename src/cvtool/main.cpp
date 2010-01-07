@@ -71,6 +71,7 @@ public:
       _fold(10),
       _trainID(0),
       _shuffle(false),
+      _upsample(false),
       _featureSelector(0),
       _maxFeatures(10),
       _probabilities(false),
@@ -110,11 +111,15 @@ protected:
 
         options.addOption(
             Option("train", "t",
-                   "Builds validation model from the given response",
+                   "Use data from the given response as training set",
                    false, "<id>", true)
             .validator(new validators::RangeValidator<int>(1))
             .group("method"));
         
+        options.addOption(
+            Option("upsample", "u",
+                   "Upsamples the training set", false));
+
         options.addOption(
             Option("verbose", "v",
                    "Verbose output, "
@@ -197,6 +202,9 @@ protected:
         else if (name == "shuffle") {
             _shuffle = true;
         }
+        else if (name == "upsample") {
+            _upsample = true;
+        }
     }
 
 
@@ -246,6 +254,16 @@ protected:
             getDouble("blissart.classification.scaling.sigma", 1.0);
         double accuracy = 0.0;
 
+        // Fetch the label text for all label IDs occurring in the response
+        // (used for output of confusion matrix, accuracies + upsample factors)
+        vector<LabelPtr> labels = database.getLabelsForResponse(response);
+        map<int, string> labelTextByID;
+        for (vector<LabelPtr>::const_iterator itr = labels.begin();
+            itr != labels.end(); ++itr)
+        {
+            labelTextByID[(*itr)->labelID] = (*itr)->text;
+        }
+
         // Specific training response
         if (_trainID > 0) {
             ResponsePtr trainResponse = database.getResponse(_trainID);
@@ -279,6 +297,21 @@ protected:
                     linearScaleMuSigma(dataSets, mu, sigma);
                 trainingSet = dataSets[0];
                 dataSet = dataSets[1];
+            }
+
+            // Upsample if desired.
+            if (_upsample) {
+                DataSet::size_type origSize = trainingSet.size();
+                map<int, int> factors;
+                upsample(trainingSet, factors);
+                cout << "Upsampled training set from " << origSize << " to "
+                     << trainingSet.size() << " samples. Factors:" << endl;
+                for (map<int, int>::const_iterator fItr = factors.begin();
+                    fItr != factors.end(); ++fItr)
+                {
+                    cout << setw(20) << labelTextByID[fItr->first] << ":" 
+                         << fItr->second << endl;
+                }
             }
 
             // Classify test set using SVM model from training set.
@@ -352,15 +385,6 @@ protected:
                 }
                 cout << "done." << endl;
             }
-        }
-
-        // Fetch the label text for all label IDs occurring in the response
-        vector<LabelPtr> labels = database.getLabelsForResponse(response);
-        map<int, string> labelTextByID;
-        for (vector<LabelPtr>::const_iterator itr = labels.begin();
-            itr != labels.end(); ++itr)
-        {
-            labelTextByID[(*itr)->labelID] = (*itr)->text;
         }
 
         // Build confusion matrix and output misclassifications, if desired
@@ -478,6 +502,7 @@ protected:
     int               _fold;
     int               _trainID;
     bool              _shuffle;
+    bool              _upsample;
     FeatureSelector*  _featureSelector;
     int               _maxFeatures;
     bool              _probabilities;

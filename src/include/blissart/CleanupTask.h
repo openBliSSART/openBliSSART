@@ -71,6 +71,19 @@ public:
     std::vector<Poco::Path> removedFiles() const;
 
 
+    /**
+     * Enables/disables simulation mode, i.e. don't really remove anything.
+     */
+    void setSimulation(bool flag);
+
+
+    /**
+     * Enables/disables removal of data associated with data descriptors
+     * marked as being not available.
+     */
+    void setRemoveNA(bool flag);
+
+
 private:
     // Forbid copy constructor and operator=.
     CleanupTask(const CleanupTask &other);
@@ -79,6 +92,8 @@ private:
     void cleanup(const Poco::Path& directory);
 
     Poco::Path              _directory;
+    bool                    _simulate;
+    bool                    _removeNA;
     std::set<int>           _validIDs;
     std::vector<Poco::Path> _removedFiles;
     StorageSubsystem&       _sts;
@@ -91,6 +106,18 @@ private:
 inline std::vector<Poco::Path> CleanupTask::removedFiles() const
 {
     return _removedFiles;
+}
+
+
+inline void CleanupTask::setSimulation(bool flag)
+{
+    _simulate = flag;
+}
+
+
+inline void CleanupTask::setRemoveNA(bool flag)
+{
+    _removeNA = flag;
 }
 
 

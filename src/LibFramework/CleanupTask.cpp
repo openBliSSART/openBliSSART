@@ -69,7 +69,9 @@ void CleanupTask::runTask()
         for (vector<DataDescriptorPtr>::const_iterator dItr = dds.begin();
             dItr != dds.end(); ++dItr)
         {
-            _validIDs.insert((*dItr)->descrID);
+            if (!_removeNA || (*dItr)->available) {
+                _validIDs.insert((*dItr)->descrID);
+            }
         }
     }
 
@@ -90,7 +92,9 @@ void CleanupTask::cleanup(const Poco::Path& directory)
                 == _validIDs.end())
             {
                 _removedFiles.push_back(sItr->path());
-                sItr->remove();
+                if (!_simulate) {
+                    sItr->remove();
+                }
             }
         }
     }
