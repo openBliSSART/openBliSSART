@@ -38,12 +38,14 @@ namespace wave {
 
 // The following conditional is vital for the correct
 // length of the headers and chunks!
-#if ((UCHAR_MAX != 0xFF) || \
-     (USHRT_MAX != 0xFFFF) || \
-     (UINT_MAX != 0xFFFFFFFF) || \
-     (ULONG_MAX != 0xFFFFFFFFUL))
-# error This machine does NOT support either \
-        8-bit chars, 16-bit shorts, 32-bit ints or 32-bit longs!
+#if ((UCHAR_MAX != 0xFF))
+# error This machine does NOT support 8-bit chars!
+#endif
+#if ((USHRT_MAX != 0xFFFF))
+# error This machine does NOT support 16-bit shorts!
+#endif
+#if ((UINT_MAX != 0xFFFFFFFF))
+# error This machine does NOT support 32-bit ints!
 #endif
 
 
@@ -59,7 +61,7 @@ namespace wave {
  */
 struct RiffHeader {
     char id[4];
-    long lChunkSize;
+    int32_t lChunkSize;
     char type[4];
 };
 
@@ -69,13 +71,13 @@ struct RiffHeader {
  */
 struct FormatChunk {
     char id[4];
-    long lChunkSize;
+    int32_t lChunkSize;
     short wFormatTag;
-    unsigned short wChannels;
-    unsigned long dwSamplesPerSec;
-    unsigned long dwAvgBytesPerSec;
-    unsigned short wBlockAlign;
-    unsigned short wBitsPerSample;
+    uint16_t wChannels;
+    uint32_t dwSamplesPerSec;
+    uint32_t dwAvgBytesPerSec;
+    uint16_t wBlockAlign;
+    uint16_t wBitsPerSample;
 };
 
 
@@ -84,7 +86,7 @@ struct FormatChunk {
  */
 struct DataChunk {
     char id[4];
-    long lChunkSize;
+    int32_t lChunkSize;
     unsigned char *data;
 };
 

@@ -126,6 +126,7 @@ AC_CONFIG_FILES([Makefile
                  src/LibNMF/Makefile
                  src/Makefile
                  src/Testsuite/Makefile
+                 src/benchmark/Makefile
                  src/cvtool/Makefile
                  src/fextool/Makefile
                  src/icatool/Makefile

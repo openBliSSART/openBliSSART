@@ -249,6 +249,8 @@ FeatureSet FeatureSet::getStandardSet()
                 "blissart.features." + typeName + ".nmd_gain.response");
             int nComponents = config.getInt(
                 "blissart.features." + typeName + ".nmd_gain.components", 0);
+            bool allComponents = config.getBool(
+                "blissart.features." + typeName + ".nmd_gain.allcomponents", false);
             DatabaseSubsystem& dbs = BasicApplication::instance().getSubsystem<DatabaseSubsystem>();
             ResponsePtr response = dbs.getResponse(responseID);
             if (response.isNull()) {
@@ -260,11 +262,41 @@ FeatureSet FeatureSet::getStandardSet()
             if (nComponents == 0) {
                 nComponents = (int) labels.size();
             }
-            for (Response::LabelMap::const_iterator itr = labels.begin();
-                itr != labels.end(); ++itr)
-            {
-                fs.add(FeatureDescriptor("nmd_gain", *matrixType,
-                    responseID, nComponents, itr->first));
+            if (config.getBool("blissart.features." + typeName + ".nmd_gain.sumbylabel", true)) {
+                set<int> labelIDs;
+                for (Response::LabelMap::const_iterator itr = labels.begin();
+                    itr != labels.end(); ++itr)
+                {
+                    labelIDs.insert(itr->first);
+                }
+                for (set<int>::const_iterator itr = labelIDs.begin(); 
+                    itr != labelIDs.end(); ++itr)
+                {
+                    fs.add(FeatureDescriptor("nmd_gain_label", *matrixType,
+                        responseID, nComponents, *itr));
+                }
+                if (allComponents) {
+                    fs.add(FeatureDescriptor("nmd_gain_label", *matrixType,
+                        responseID, nComponents, 0));
+                }
+            }
+            else {
+                for (Response::LabelMap::const_iterator itr = labels.begin();
+                    itr != labels.end(); ++itr)
+                {
+                    fs.add(FeatureDescriptor("nmd_gain", *matrixType,
+                        responseID, nComponents, itr->first));
+                }
+                if (allComponents) {
+                    for (unsigned int compIndex = labels.size(); 
+                         compIndex < nComponents; ++compIndex)
+                    {
+                        // Gains from uninitialized components have the negative 
+                        // component number as parameter.
+                        fs.add(FeatureDescriptor("nmd_gain", *matrixType,
+                            responseID, nComponents, -((double)compIndex + 1)));
+                    }
+                }
             }
         }
         ++matrixType;

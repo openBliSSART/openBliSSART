@@ -45,6 +45,8 @@
 #include <iostream>
 #include <vector>
 #include <iomanip>
+#include <cstdlib>
+#include <ctime>
 
 
 using namespace std;
@@ -141,6 +143,8 @@ protected:
             formatter.format(cout);
             return EXIT_USAGE;
         }
+
+        srand((unsigned int)time(0));
 
         cout << "FeXTool, "
              << DateTimeFormatter::format(DateTime(), "%Y/%m/%d %H:%M:%S")

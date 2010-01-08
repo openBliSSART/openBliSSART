@@ -205,4 +205,45 @@ void sigmoidSmooth(DataSet& dataSet, double lower, double upper)
 }
 
 
+bool compareByCount(const pair<int, int>& p1, const pair<int, int>& p2) 
+{
+    return p1.second < p2.second;
+}
+
+
+void upsample(DataSet& dataSet, map<int, int>& factors)
+{
+
+    map<int, int> countByLabel;
+    for (DataSet::const_iterator itr = dataSet.begin(); itr != dataSet.end();
+        ++itr)
+    {
+        ++countByLabel[itr->classLabel];
+    }
+    pair<int, int> maxCountLabel = 
+        *std::max_element(countByLabel.begin(), countByLabel.end(), 
+                          compareByCount);
+    for (map<int, int>::const_iterator itr = countByLabel.begin();
+        itr != countByLabel.end(); ++itr)
+    {
+        if (itr->first != maxCountLabel.first) {
+            debug_assert(itr->second < maxCountLabel.second);
+            double ratio = (double) maxCountLabel.second / itr->second;
+            factors[itr->first] = (int) (ratio + 0.5);
+        }
+        else {
+            factors[itr->first] = 1;
+        }
+    }
+    // XXX: If we were using an iterator for this loop, we could not operate 
+    // on the original DataSet.
+    DataSet::size_type originalSize = dataSet.size();
+    for (unsigned int i = 0; i < originalSize; ++i) {
+        for (unsigned int j = 1; j < factors[dataSet[i].classLabel]; ++j) {
+            dataSet.push_back(dataSet[i]);
+        }
+    }
+}
+
+
 } // namespace blissart

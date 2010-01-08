@@ -198,16 +198,14 @@ FeatureExtractor::extract(DataDescriptor::Type type, const Matrix &data)
     
         // Sampled MFCC
         if ((mfcc || mfccD || mfccA) && nCoeff > 0) {
-            int frameCount = std::min<int>(maxFrameCount, data.cols());
-
             // We precompute MFCCs for all columns here, as we assume that 
             // in most cases, average MFCCs will be used too.
             cepstrogram = feature::computeMFCC(data, _sampleFreq, nCoeff, 
                 nBands, lowFreq, highFreq, lifter);
-            if ((mfccD || mfccA) && data.cols() > 1) {
+            if (mfccD || mfccA) {
                 cepstrogramD = feature::deltaRegression(*cepstrogram, theta);
             }
-            if (mfccA && data.cols() > 1) {
+            if (mfccA) {
                 cepstrogramA = feature::deltaRegression(*cepstrogramD, theta);
             }
             // Insert each desired MFCC into result structure.
@@ -220,38 +218,36 @@ FeatureExtractor::extract(DataDescriptor::Type type, const Matrix &data)
                 // Otherwise the feature won't be found later, as FeatureSet::
                 // getStandardSet() uses the count from the config file
                 // as parameter and doesn't now about the matrix properties.
-                if (data.cols() > 1) {
-                    for (int frameIndex = 0; frameIndex < frameCount; ++frameIndex) 
-                    {
-                        unsigned int col = (unsigned int)
-                            ((double) frameIndex / (frameCount - 1) * (data.cols() - 1));
-                        if (mfcc) {
-                            result[FeatureDescriptor("mfcc", type, 
-                                mfccIndex, maxFrameCount, frameIndex)] = 
-                                cepstrogram->at(mfccIndex, col);
-                        }
-                        if (mfccD) {
-                            result[FeatureDescriptor("mfccD", type, 
-                                mfccIndex, maxFrameCount, frameIndex)] = 
-                                cepstrogramD->at(mfccIndex, col);
-                        }
-                        if (mfccA) {
-                            result[FeatureDescriptor("mfccA", type, 
-                                mfccIndex, maxFrameCount, frameIndex)] = 
-                                cepstrogramA->at(mfccIndex, col);
-                        }
+                for (int frameIndex = 0; frameIndex < maxFrameCount; ++frameIndex) 
+                {
+                    // If the actual frame count is lower than maxFrameCount
+                    // a frame might be taken into account more than once.
+                    unsigned int col = (unsigned int)
+                        ((double) frameIndex / (maxFrameCount - 1) * (data.cols() - 1));
+                    if (mfcc) {
+                        result[FeatureDescriptor("mfcc", type, 
+                            mfccIndex, maxFrameCount, frameIndex)] = 
+                            cepstrogram->at(mfccIndex, col);
+                    }
+                    if (mfccD) {
+                        result[FeatureDescriptor("mfccD", type, 
+                            mfccIndex, maxFrameCount, frameIndex)] = 
+                            cepstrogramD->at(mfccIndex, col);
+                    }
+                    if (mfccA) {
+                        result[FeatureDescriptor("mfccA", type, 
+                            mfccIndex, maxFrameCount, frameIndex)] = 
+                            cepstrogramA->at(mfccIndex, col);
                     }
                 }
-                else if (mfcc) {
-                    result[FeatureDescriptor("mfcc", type, 
-                        mfccIndex, maxFrameCount, 0)] = cepstrogram->at(mfccIndex, 0);
-                }
+                result[FeatureDescriptor("mfcc", type, 
+                    mfccIndex, maxFrameCount, 0)] = cepstrogram->at(mfccIndex, 0);
             }
         }
 
         // Average MFCCs, Delta- and Delta-Delta MFCCs
         if (config.getBool("blissart.features." + typeName + ".mean_mfcc", true) 
-            && nCoeff > 0 && data.cols() > 1) 
+            && nCoeff > 0) 
         {
             if (cepstrogram.isNull()) {
                 cepstrogram = feature::computeMFCC(data, _sampleFreq, nCoeff, nBands, 
@@ -295,7 +291,7 @@ FeatureExtractor::extract(DataDescriptor::Type type, const Matrix &data)
 
         // Standard deviation of MFCCs, Delta- and Delta-Delta MFCCs
         if (config.getBool("blissart.features." + typeName + ".stddev_mfcc", true) 
-            && nCoeff > 0 && data.cols() > 1) 
+            && nCoeff > 0) 
         {
             if (cepstrogram.isNull()) {
                 cepstrogram = feature::computeMFCC(data, _sampleFreq, nCoeff, nBands,
@@ -342,12 +338,17 @@ FeatureExtractor::extract(DataDescriptor::Type type, const Matrix &data)
                 "blissart.features." + typeName + ".nmd_gain.response");
             int nIterations = config.getInt(
                 "blissart.features." + typeName + ".nmd_gain.iterations", 200);
+            // XXX: Use parameter "# noise components" instead?
             unsigned int nComponents = config.getInt(
                 "blissart.features." + typeName + ".nmd_gain.components", 0);
+            bool allComponents = config.getBool(
+                "blissart.features." + typeName + ".nmd_gain.allcomponents", false);
+            bool sumByLabel = config.getBool(
+                "blissart.features." + typeName + ".nmd_gain.sumbylabel", false);
             string cfName = config.getString(
                 "blissart.features." + typeName + ".nmd_gain.costfunction", "div");
             computeNMDGain(result, data, responseID, cfName, 
-                nComponents, nIterations, type);
+                nComponents, allComponents, sumByLabel, nIterations, type);
         }
     
     } // type == Spectrum || type == MagnitudeMatrix || 
@@ -361,7 +362,9 @@ void
 FeatureExtractor::computeNMDGain(FeatureExtractor::FeatureMap& target, 
                                  const Matrix& data,
                                  int responseID, const string& cfName,
-                                 int nComponents, int nIterations,
+                                 int nComponents, bool allComponents,
+                                 bool sumByLabel,
+                                 int nIterations,
                                  DataDescriptor::Type type)
 {
     DatabaseSubsystem& dbs = BasicApplication::instance().
@@ -408,26 +411,74 @@ FeatureExtractor::computeNMDGain(FeatureExtractor::FeatureMap& target,
     }
 
     const Matrix& h = d.getH();
-    // NMD gains are only saved for the components that have been initialized
-    // from the response.
-    // Also, NMD gains are normalized such that they sum to 1.
+
     double totalLength = 0.0;
-    double* lengths = new double[nmdObjectIDs.size()];
-    unsigned int compIndex = 0;
-    for (; compIndex < h.rows(); ++compIndex) {
-        double l = h.nthRow(compIndex).length();
-        totalLength += l;
-        if (compIndex < nmdObjectIDs.size()) {
-            lengths[compIndex] = l;
+    unsigned int relevantComponents = allComponents ? 
+                                      nComponents : 
+                                      nmdObjectIDs.size();
+    
+    if (sumByLabel) {
+        map<int, double> lengthByLabel;
+        unsigned int compIndex = 0;
+        for (vector<int>::const_iterator itr = nmdObjectIDs.begin();
+            itr != nmdObjectIDs.end(); ++itr, ++compIndex) 
+        {
+            double l = h.nthRow(compIndex).length();
+            lengthByLabel[response->labels[*itr]] += l;
+            totalLength += l;
+        }
+        // Initialized components
+        for (map<int, double>::const_iterator itr = lengthByLabel.begin();
+            itr != lengthByLabel.end(); ++itr)
+        {
+            // XXX: Here the feature name differs from the configuration
+            // option name.
+            target[FeatureDescriptor("nmd_gain_label", type,
+                responseID, nComponents, itr->first)] = 
+                itr->second / totalLength;
+        }
+        // Uninitialized components (label 0)
+        if (compIndex < relevantComponents) {
+            double otherLength = 0.0;
+            while (compIndex < relevantComponents) {
+                double l = h.nthRow(compIndex).length();
+                otherLength += l;
+                totalLength += l;
+                ++compIndex;
+            }
+            target[FeatureDescriptor("nmd_gain_label", type,
+                responseID, nComponents, 0)] = 
+                otherLength / totalLength;
         }
     }
-    compIndex = 0;
-    for (vector<int>::const_iterator itr = nmdObjectIDs.begin();
-        itr != nmdObjectIDs.end(); ++itr, ++compIndex) 
-    {
-        // TODO: Include iterations parameter
-        target[FeatureDescriptor("nmd_gain", type,
-            responseID, nComponents, *itr)] = lengths[compIndex] / totalLength;
+
+    else {
+        vector<double> lengths(nComponents);
+        unsigned int compIndex = 0;
+        for (; compIndex < h.rows(); ++compIndex) {
+            double l = h.nthRow(compIndex).length();
+            lengths[compIndex] = l;
+            //if (compIndex < nmdObjectIDs.size()) {
+                totalLength += l;
+            //}
+        }
+        compIndex = 0;
+        for (vector<int>::const_iterator itr = nmdObjectIDs.begin();
+            itr != nmdObjectIDs.end(); ++itr, ++compIndex) 
+        {
+            // TODO: Include iterations parameter
+            target[FeatureDescriptor("nmd_gain", type,
+                responseID, nComponents, *itr)] = 
+                lengths[compIndex] / totalLength;
+        }
+        // Gains from uninitialized components have the negative component index 
+        // as parameter.
+        while (compIndex < relevantComponents) {
+            target[FeatureDescriptor("nmd_gain", type,
+                responseID, nComponents, -((double)compIndex + 1))] = 
+                lengths[compIndex] / totalLength;
+            ++compIndex;
+        }
     }
 }
 

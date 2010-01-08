@@ -123,8 +123,11 @@ Matrix::Matrix(const std::string& fileName) :
         if (flag != 2)
             break;
 
-        br >> _rows;
-        br >> _cols;
+        uint32_t rowstmp, colstmp;
+        br >> rowstmp;
+        br >> colstmp;
+        _rows = rowstmp;
+        _cols = colstmp;
         if (_rows <= 0 || _cols <= 0 || _rows * _cols <= 0)
             break;
 
@@ -1057,8 +1060,8 @@ void Matrix::dump(const std::string &fileName) const
         BinaryWriter bw(fos, BinaryWriter::LittleEndian);
 
         bw << uint32_t(2);
-        bw << _rows;
-        bw << _cols;
+        bw << uint32_t(_rows);
+        bw << uint32_t(_cols);
         if (fos.fail())
             break;
 

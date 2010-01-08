@@ -53,6 +53,10 @@ double mean(const Vector& data)
 
 double stddev(const Vector& data)
 {
+    // Avoid NaN for 1-dimensional vectors
+    if (data.dim() == 1)
+        return 0.0;
+
     double m = mean(data), variance = 0.0;
     for (unsigned int i = 0; i < data.dim(); ++i) {
         double dev = data(i) - m;
@@ -114,7 +118,7 @@ double correlation(const Vector& v1, const Vector& v2)
 
 double autocorrelation(const Vector& data, unsigned int delay)
 {
-    if (delay > data.dim())
+    if (delay >= data.dim())
         return 0.0;
 
     double mu = mean(data);
