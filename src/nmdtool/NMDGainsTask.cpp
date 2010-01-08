@@ -297,8 +297,10 @@ void NMDGainsTask::exportHTKFile() const
     htkFile.setExtension("htk");
     // ofstream needs a char pointer, thus we have to create a string object
     string htkFileString = htkFile.toString();
-    ofstream htkFileStream(htkFile.toString().c_str());
-    HTKWriter writer(
+    ofstream htkFileStream(htkFileString.c_str());
+    Poco::Int32 sp = (Poco::Int32)
+        (windowSize() * 10e4 * (1.0 - overlap()));
+    HTKWriter::writeMatrix(htkFileStream, *_gainsMatrix, sp);
 }
 
 
