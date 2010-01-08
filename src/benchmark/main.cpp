@@ -29,6 +29,7 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
+#include <cstring> // for strcmp
 
 #include <blissart/audio/audio.h>
 

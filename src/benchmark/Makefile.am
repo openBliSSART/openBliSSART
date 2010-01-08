@@ -22,23 +22,16 @@
 ## openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-SUBDIRS = LibLinAlg \
-          LibAudio \
-          LibFeature \
-          LibICA \
-          LibNMF \
-          LibFramework \
-          Testsuite \
-          benchmark \
-		  septool \
-          nmdtool \
-          browser \
-          cvtool \
-          fextool \
-          icatool \
-		  labeller \
-          cleanup \
-          export \
-          exportaudio \
-          include 
+bin_PROGRAMS = benchmark
+
+benchmark_CPPFLAGS = -I../include
+
+benchmark_LDADD = $(top_srcdir)/src/LibLinAlg/libLinAlg.la \
+                  $(top_srcdir)/src/LibNMF/libNMF.la \
+                  $(top_srcdir)/src/LibAudio/libAudio.la \
+                  @POCO_LDFLAGS@ -lPocoFoundation -lPocoUtil -lPocoXML 
+
+benchmark_SOURCES = NMDBenchmark.cpp \
+                    NMDBenchmark.h \
+                    main.cpp
 
