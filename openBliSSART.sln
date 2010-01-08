@@ -44,7 +44,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibFeature", "src\LibFeatur
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup_openBliSSART", "win32\Setup_openBliSSART\Setup_openBliSSART.vdproj", "{BDE9C59F-49EC-4F86-A69F-04F6FAAFE124}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "browser", "src\browser\browser.vcproj", "{9BBD562E-AD3B-3311-9735-7F679F0DEE54}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "browser", "src\browser\browser.vcproj", "{78826BC4-6514-31A5-A590-017322842D59}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1C0DD473-A8D1-4108-9FE9-E7AD814BE1BF} = {1C0DD473-A8D1-4108-9FE9-E7AD814BE1BF}
 		{094AE1BE-4478-4234-AD41-81D8EC4B8D5E} = {094AE1BE-4478-4234-AD41-81D8EC4B8D5E}
@@ -93,6 +93,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cleanup", "src\cleanup\clea
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nmdtool", "src\nmdtool\nmdtool.vcproj", "{5F7BCAB7-856E-4A6F-9A2E-060323745F2F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "benchmark", "src\benchmark\benchmark.vcproj", "{6C640B96-7E68-4E93-978F-1407D5B85896}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -121,10 +123,10 @@ Global
 		{DE9D8B16-7A50-45F5-AEE5-451DFA4881B8}.Release|Win32.Build.0 = Release|Win32
 		{BDE9C59F-49EC-4F86-A69F-04F6FAAFE124}.Debug|Win32.ActiveCfg = Debug
 		{BDE9C59F-49EC-4F86-A69F-04F6FAAFE124}.Release|Win32.ActiveCfg = Release
-		{9BBD562E-AD3B-3311-9735-7F679F0DEE54}.Debug|Win32.ActiveCfg = Debug|Win32
-		{9BBD562E-AD3B-3311-9735-7F679F0DEE54}.Debug|Win32.Build.0 = Debug|Win32
-		{9BBD562E-AD3B-3311-9735-7F679F0DEE54}.Release|Win32.ActiveCfg = Release|Win32
-		{9BBD562E-AD3B-3311-9735-7F679F0DEE54}.Release|Win32.Build.0 = Release|Win32
+		{78826BC4-6514-31A5-A590-017322842D59}.Debug|Win32.ActiveCfg = Debug|Win32
+		{78826BC4-6514-31A5-A590-017322842D59}.Debug|Win32.Build.0 = Debug|Win32
+		{78826BC4-6514-31A5-A590-017322842D59}.Release|Win32.ActiveCfg = Release|Win32
+		{78826BC4-6514-31A5-A590-017322842D59}.Release|Win32.Build.0 = Release|Win32
 		{3623E3C3-571E-424B-89A4-025166C0DFBD}.Debug|Win32.ActiveCfg = Debug|Win32
 		{3623E3C3-571E-424B-89A4-025166C0DFBD}.Debug|Win32.Build.0 = Debug|Win32
 		{3623E3C3-571E-424B-89A4-025166C0DFBD}.Release|Win32.ActiveCfg = Release|Win32
@@ -165,6 +167,10 @@ Global
 		{5F7BCAB7-856E-4A6F-9A2E-060323745F2F}.Debug|Win32.Build.0 = Debug|Win32
 		{5F7BCAB7-856E-4A6F-9A2E-060323745F2F}.Release|Win32.ActiveCfg = Release|Win32
 		{5F7BCAB7-856E-4A6F-9A2E-060323745F2F}.Release|Win32.Build.0 = Release|Win32
+		{6C640B96-7E68-4E93-978F-1407D5B85896}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6C640B96-7E68-4E93-978F-1407D5B85896}.Debug|Win32.Build.0 = Debug|Win32
+		{6C640B96-7E68-4E93-978F-1407D5B85896}.Release|Win32.ActiveCfg = Release|Win32
+		{6C640B96-7E68-4E93-978F-1407D5B85896}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
