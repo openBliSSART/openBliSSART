@@ -111,6 +111,17 @@ protected:
                    "list of sound files to process.",
                    false));
 
+		options.addOption(
+			Option("export", "p",
+			       "Do not save anything to the database, but export the NMF "
+				   "activation matrix in HTK format.",
+				   false));
+
+		options.addOption(
+			Option("export-dir", "",
+			       "Directory where exported files should be stored.",
+				   false, "<dir>", true));
+
         options.addOption(
             Option("num-threads", "n",
                    "The number of concurrent threads that should be started.",
@@ -174,6 +185,12 @@ protected:
         else if (name == "scripted") {
             _scripted = true;
         }
+		else if (name == "export") {
+			_export = true;
+		}
+		else if (name == "export-dir") {
+			_exportDir = value;
+		}
         else if (name == "num-threads") {
             setNumThreads(Poco::NumberParser::parse(value));
         }
@@ -238,14 +255,17 @@ protected:
         for (vector<string>::const_iterator itr = inputFiles.begin();
             itr != inputFiles.end(); ++itr)
         {
-            addTask(new NMDGainsTask(
-                    *itr,
-                    _nComponents,
-                    _nIterations,
-                    clObjs,
-                    _allComponents,
-                    _transformation)
-            );
+			Poco::AutoPtr<NMDGainsTask> task = new NMDGainsTask(
+                *itr,
+                _nComponents,
+                _nIterations,
+                clObjs,
+                _allComponents,
+                _transformation
+			);
+			task->setExport(_export);
+			task->setExportDir(_exportDir);
+			addTask(task);
         }
 
         // Wait until all tasks have finished and display some progress
@@ -257,12 +277,14 @@ protected:
 
 
 private:
-    bool _displayUsage;
-    bool _scripted;
-    int  _responseID;
-    int  _nComponents;
-    bool _allComponents;
-    int  _nIterations;
+    bool   _displayUsage;
+    bool   _scripted;
+	bool   _export;
+	string _exportDir;
+    int    _responseID;
+    int    _nComponents;
+    bool   _allComponents;
+    int    _nIterations;
     NMDGainsTask::TransformationMethod _transformation;
 };
 

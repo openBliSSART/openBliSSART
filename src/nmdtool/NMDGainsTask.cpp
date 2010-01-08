@@ -32,9 +32,12 @@
 #include <blissart/BasicApplication.h>
 #include <blissart/DatabaseSubsystem.h>
 #include <blissart/StorageSubsystem.h>
+#include <blissart/HTKWriter.h>
 #include <iostream>
+#include <fstream>
 #include <set>
 #include <algorithm>
+#include <Poco/Path.h>
 
 
 using namespace std;
@@ -114,9 +117,14 @@ void NMDGainsTask::runTask()
         if (isCancelled())
             break;
 
-        // Store the components. We don't want cancellation during the storage
-        // process.
-        storeComponents();
+        // Store / export activation matrices. 
+        // We don't want cancellation during the storage process.
+        if (_export) {
+            exportHTKFile();
+        }
+        else {
+            storeComponents();
+        }
         incTotalProgress(1.0f);
 
         // The original amplitude matrix isn't needed anymore. Free some memory.
@@ -279,6 +287,18 @@ void NMDGainsTask::storeComponents() const
     ddGains->processID = process->processID;
     dbs.createDataDescriptor(ddGains);
     sts.store(*_gainsMatrix, ddGains);
+}
+
+
+void NMDGainsTask::exportHTKFile() const
+{
+    Poco::Path inputFile(fileName());
+    Poco::Path htkFile = Poco::Path(_exportDir).append(fileName());
+    htkFile.setExtension("htk");
+    // ofstream needs a char pointer, thus we have to create a string object
+    string htkFileString = htkFile.toString();
+    ofstream htkFileStream(htkFile.toString().c_str());
+    HTKWriter writer(
 }
 
 

@@ -36,11 +36,15 @@
 
 
 /**
- * The type of task performed by NMDTool.
+ * Computes NMD activations (or "gains") using a given set of NMD components
+ * from the database, and stores them in the database or HTK files.
  */
 class NMDGainsTask : public blissart::FTTask, blissart::ProgressObserver
 {
 public:
+    /**
+     * TODO: Document or drop me.
+     */
     typedef enum {
         NoTransformation,
         UnitSum,
@@ -48,21 +52,58 @@ public:
         MaximalIndices
     } TransformationMethod;
 
+    /**
+     * Default constructor. Takes a variety of arguments concerning the actal
+     * NMD parameters.
+     * @param	fileName	input file (e.g. a WAV file)
+     * @param	nrOfComponents	number of NMD components - if it is greater
+     *							than the number of initialized objects, 
+     *							additional "garbage" components are introduced.
+     * @param	allComponents	whether to store the activations of the
+     *							"garbage" components too
+     * @param	method			a TransformationMethod for the activations
+     */
     NMDGainsTask(const std::string &fileName,
         int nrOfComponents, int maxIterations,
         const std::vector<blissart::ClassificationObjectPtr>& initObjects,
         bool allComponents,
-        TransformationMethod method);
+        TransformationMethod method = NoTransformation);
 
+    /**
+     * Destroys the NMDGainsTask and frees the memory allocated for NMD.
+     */
     virtual ~NMDGainsTask();
 
+    /**
+     * Implementation of BasicTask interface; overrides FTTask method.
+     */
     virtual void runTask();
 
+    /**
+     * Implementation of ProgressObserver interface.
+     */
     virtual void progressChanged(float progress);
 
+    /**
+     * TODO: Document or drop me.
+     */
     void setIndexCount(int count);
 
+    /**
+     * Sets a flag controlling whether to export activations to HTK files, 
+     * or store them in the DB.
+     */
+    inline void setExport(bool flag);
+
+    /**
+     * Sets the directory where HTK files should be exported.
+     */
+    inline void setExportDir(const std::string& dir);
+
 private:
+    /**
+     * Performs initialized NMD on the input file.
+     */
     void performNMD();
 
     /**
@@ -70,6 +111,11 @@ private:
      * Overrides FTTask method.
      */
     void storeComponents() const;
+
+    /**
+     * Exports the computed NMD activation matrix as an HTK file.
+     */
+    void exportHTKFile() const;
 
     std::vector<blissart::ClassificationObjectPtr> 
                                     _initObjects;
@@ -81,8 +127,23 @@ private:
     blissart::linalg::Matrix*       _gainsMatrix;
     TransformationMethod            _transformation;
 
+    bool                            _export;
+    std::string                     _exportDir;
+
     int                             _myUniqueID;
 };
+
+
+void NMDGainsTask::setExport(bool flag)
+{
+    _export = flag;
+}
+
+
+void NMDGainsTask::setExportDir(const std::string &dir)
+{
+    _exportDir = dir;
+}
 
 
 #endif // __NMD_GAINS_TASK_H__
