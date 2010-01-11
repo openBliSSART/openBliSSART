@@ -24,6 +24,7 @@
 
 
 #include <blissart/FTTask.h>
+#include <blissart/AmplitudeMatrixTransforms.h>
 #include <blissart/BasicApplication.h>
 #include <blissart/DatabaseSubsystem.h>
 #include <blissart/StorageSubsystem.h>
@@ -72,6 +73,19 @@ FTTask::FTTask(const std::string& typeIdentifier,
     _zeroPadding = cfg.getBool("blissart.fft.zeropadding", false);
     _removeDC = cfg.getBool("blissart.audio.remove_dc", false);
     _reduceMids = cfg.getBool("blissart.audio.reduce_mids", false);
+
+    // Add transformations if specified in the configuration.
+    // Keep in mind that the transformations are executed in the order in
+    // which they were added, thus the order of these statements is vital!
+    if (cfg.getBool("blissart.fft.transformations.powerSpectrum", false)) {
+        addTransformation(transforms::powerSpectrum);
+    }
+    if (cfg.getBool("blissart.fft.transformations.melFilter", false)) {
+        addTransformation(transforms::melFilter);
+    }
+    if (cfg.getBool("blissart.fft.transformations.slidingWindow", false)) {
+        addTransformation(transforms::slidingWindow);
+    }
 }
 
 
@@ -134,6 +148,7 @@ void FTTask::runTask()
             if (trResult != _amplitudeMatrix) {
                 replaceAmplitudeMatrix(trResult);
             }
+            incTotalProgress(0.5f);
         }
 
     } while (false);
