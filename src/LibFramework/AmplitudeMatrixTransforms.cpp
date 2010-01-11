@@ -44,9 +44,13 @@ namespace transforms {
 
 Matrix* powerSpectrum(Matrix* spectrogram)
 {
+    Poco::Util::LayeredConfiguration& cfg 
+        = Poco::Util::Application::instance().config();
+    double gamma = 
+        cfg.getInt("blissart.fft.transformations.powerSpectrum.gamma", 2);
     for (unsigned int j = 0; j < spectrogram->cols(); ++j) {
         for (unsigned int i = 0; i < spectrogram->rows(); ++i) {
-            spectrogram->at(i, j) *= spectrogram->at(i, j);
+            spectrogram->at(i, j) = std::pow(spectrogram->at(i, j), gamma);
         }
     }
     return spectrogram;

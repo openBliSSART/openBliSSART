@@ -22,12 +22,17 @@
 // openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+
 #ifndef __TESTABLE_H__
 #define __TESTABLE_H__
 
 
 #include <cmath>
 #include <common.h>
+
+
+// Forward declaration
+namespace blissart { namespace linalg { class Matrix; } }
 
 
 namespace Testing {
@@ -68,11 +73,25 @@ protected:
      * @return          true if and only if the absolute value of a-b is less than
      *                  prec
      */
-    inline bool epsilonCheck(double a, double b, const double prec = 1e-10)
+    inline static bool epsilonCheck(double a, double b, const double prec = 1e-10)
     {
         debug_assert(prec >= 0);
         return (fabs(a-b) <= prec);
     }
+
+
+    /**
+     * Compares two real matrices with the given precision.
+     * @param   a       the first matrix
+     * @param   b       the second matrix
+     * @param   prec    a double value specifying the desired precision, e.g. 1e-10
+     *                  (which is also the default value)
+     * @return          true if and only if all entries have an absolute difference
+                        of less than prec
+     */
+    static bool epsilonCheck(const blissart::linalg::Matrix& a,
+                      const blissart::linalg::Matrix& b,
+                      const double prec = 1e-10);
 
 
 };

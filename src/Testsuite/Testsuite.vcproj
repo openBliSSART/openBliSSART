@@ -229,6 +229,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MTrTest.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\NMDTest.cpp"
 				>
 			</File>
@@ -254,6 +258,10 @@
 			</File>
 			<File
 				RelativePath=".\TaskDepsTest.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Testable.cpp"
 				>
 			</File>
 			<File
@@ -304,6 +312,10 @@
 			</File>
 			<File
 				RelativePath=".\MinHeapTest.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MTrTest.h"
 				>
 			</File>
 			<File

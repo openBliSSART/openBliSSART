@@ -41,7 +41,7 @@ namespace transforms {
 
 
 /**
- * Transforms spectrograms to power spectrum (i.e. squares each entry ;-))
+ * Transforms spectrograms to power spectrum.
  */
 linalg::Matrix LibFramework_API * powerSpectrum(linalg::Matrix* spectrogram);
 
