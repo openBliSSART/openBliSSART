@@ -59,7 +59,9 @@ public:
      */
     Deconvolver(const blissart::linalg::Matrix& v, unsigned int r, 
         unsigned int t,
-        blissart::linalg::Matrix::GeneratorFunction generator 
+        blissart::linalg::Matrix::GeneratorFunction wGenerator 
+        = gaussianRandomGenerator,
+        blissart::linalg::Matrix::GeneratorFunction hGenerator 
         = gaussianRandomGenerator);
 
     /**
@@ -120,6 +122,16 @@ public:
      */
     void generateH(blissart::linalg::Matrix::GeneratorFunction generator
         = gaussianRandomGenerator);
+
+    /**
+     * Sets the sparsity parameters for each entry of H, given as a matrix.
+     */
+    inline void setS(const blissart::linalg::Matrix& s);
+
+    /**
+     * Returns the sparsity parameters for each entry of H as a matrix.
+     */
+    inline const blissart::linalg::Matrix& getS() const;
 
     /**
      * Returns the current value of Lambda (approximation of V).
@@ -191,6 +203,7 @@ protected:
     bool*                       _wColConstant;
     unsigned int                _t;
     blissart::linalg::Matrix        _h;
+    blissart::linalg::Matrix        _s;
     unsigned int                _numSteps;
     double                      _absoluteError;
     double                      _relativeError;
@@ -240,6 +253,19 @@ void Deconvolver::keepWColumnConstant(unsigned int index, bool flag)
 const blissart::linalg::Matrix& Deconvolver::getH() const
 {
     return _h;
+}
+
+
+void Deconvolver::setS(const blissart::linalg::Matrix& s)
+{
+    assert(_s.rows() == _h.rows() && _s.cols() && _h.cols());
+    _s = s;
+}
+
+
+const blissart::linalg::Matrix& Deconvolver::getS() const
+{
+    return _s;
 }
 
 

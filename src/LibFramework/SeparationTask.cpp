@@ -99,6 +99,7 @@ void SeparationTask::runTask()
 
         // Compute the spectrogram.
         computeSpectrogram();
+        // TODO: replace this by more generic approach
         if (_dataKind == MelSpectrum) {
             int nBanks = BasicApplication::instance().config().
                 getInt("blissart.global.mel_bands", 26);

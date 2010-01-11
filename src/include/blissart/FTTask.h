@@ -31,6 +31,7 @@
 #include <blissart/WindowFunctions.h>
 #include <common.h>
 #include <cassert>
+#include <vector>
 
 
 namespace blissart {
@@ -218,6 +219,20 @@ public:
     inline const linalg::Matrix& amplitudeMatrix() const;
 
 
+    /**
+     * A prototype for a function that performs (in-place or out-of-place) 
+     * matrix transformation, e.g. calculate the power spectrum.
+     */
+    typedef linalg::Matrix*(*MatrixTransform)(linalg::Matrix*);
+
+
+    /**
+     * Advises the FTTask to perform one or more additional transformations
+     * on the magnitude matrix obtained by Fourier transformation.
+     */
+    inline void addTransformation(MatrixTransform tf);
+
+
 protected:
     /**
      * Sets the number of completed steps.
@@ -265,6 +280,8 @@ private:
     double                  _preemphasisCoeff;
     bool                    _removeDC;
     bool                    _zeroPadding;
+
+    std::vector<MatrixTransform> _transforms;
 
     audio::AudioData*       _audioData;
     unsigned int            _sampleRate;
@@ -386,6 +403,12 @@ inline void FTTask::setRemoveDC(bool flag)
 inline bool FTTask::removeDC() const
 {
     return _removeDC;
+}
+
+
+inline void FTTask::addTransformation(FTTask::MatrixTransform tf)
+{
+    _transforms.push_back(tf);
 }
 
 

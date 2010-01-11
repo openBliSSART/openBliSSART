@@ -50,6 +50,16 @@ inline double uniformRandomGenerator(unsigned int, unsigned int)
 double LibNMF_API gaussianRandomGenerator(unsigned int, unsigned int);
 
 
+/**
+ * Initializes a matrix, setting all elements to unity (1.0).
+ * @return              always 1.0
+ */
+inline double unityGenerator(unsigned int, unsigned int)
+{
+    return 1.0;
+}
+
+
 } // namespace nmf
 
 } // namespace blissart

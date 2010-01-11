@@ -96,6 +96,8 @@ void FTTask::runTask()
 {
     // Steps: Read audio, compute spectrogram, save it.
     incMaxProgress(3.0f);
+    // Take into account additional transformations.
+    incMaxProgress(0.5f * _transforms.size());
 
     // From now on, perform periodical checks to see if the task has been
     // cancelled.
@@ -123,6 +125,17 @@ void FTTask::runTask()
         // Mandatory check.
         if (isCancelled())
             break;
+
+        // Additional transformations, if desired.
+        for (vector<MatrixTransform>::const_iterator it = _transforms.begin();
+             it != _transforms.end() && !isCancelled(); ++it)
+        {
+            Matrix *trResult = (*it)(_amplitudeMatrix);
+            if (trResult != _amplitudeMatrix) {
+                replaceAmplitudeMatrix(trResult);
+            }
+        }
+
     } while (false);
 }
 

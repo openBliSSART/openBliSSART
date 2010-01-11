@@ -50,14 +50,16 @@ namespace nmf {
 
 
 Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t,
-                         Matrix::GeneratorFunction generator) :
+                         Matrix::GeneratorFunction wGenerator,
+                         Matrix::GeneratorFunction hGenerator) :
     _v(v),
     _lambda(v.rows(), v.cols(), generators::zero),
     _w(new Matrix*[t]),
     _wConstant(false),
     _wColConstant(new bool[r]),
     _t(t),
-    _h(r, v.cols(), generator),
+    _h(r, v.cols(), hGenerator),
+    _s(r, v.cols(), generators::zero),      // zero --> no sparsity
     _numSteps(0),
     _absoluteError(-1),
     _relativeError(-1),
@@ -75,7 +77,7 @@ Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t,
     for (unsigned int c = 0; c < r; ++c) {
         _wColConstant[c] = false;
     }
-    generateW(generator);
+    generateW(wGenerator);
 }
 
 
@@ -226,9 +228,11 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
                     // Instead of considering the jth column of V/Lambda
                     // shifted p spots to the left, we consider the (j + p)th
                     // column of V/Lambda itself.
+                    // Also simulate shift of sparsity weight matrix S here,
+                    // by using j+p as column index.
                     hUpdate(i, j) += 
                         Matrix::dotColCol(*_w[p], i, vOverLambda, j + p) / 
-                        wpColSums[i];
+                        (wpColSums[i] + _s(i, j + p));
                 }
             }
         }
@@ -478,6 +482,7 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
                     // Avoid division by zero
                     if (denom <= 0.0) denom = 1e-9;
                     hSum(i, j) += _h(i, j) * hUpdateMatrixNom(i, j) / denom;
+                    // TODO: sparsity
                 }
             }
         }
