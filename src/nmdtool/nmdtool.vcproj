@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)\..\trunk\bin\$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)\..\trunk\build\$(ConfigurationName)\$(ProjectName)"
+			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)\build\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="2"
 			>
