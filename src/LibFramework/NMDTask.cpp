@@ -58,6 +58,7 @@ NMDTask::NMDTask(const std::string &fileName,
     _cf(cf)
 {
     logger().debug(nameAndTaskID() + " initialized.");
+    // XXX: config options for sparsity and normalization?
 }
 
 
@@ -130,6 +131,45 @@ const Matrix& NMDTask::magnitudeSpectraMatrix(unsigned int index) const
 const Matrix& NMDTask::gainsMatrix() const
 {
     return _deconvolver->getH();
+}
+
+
+void NMDTask::setSparsity(double lambda)
+{
+    Matrix s(_deconvolver->getS());
+    for (unsigned int j = 0; j < s.cols(); ++j) {
+        for (unsigned int i = 0; i < s.rows(); ++i) {
+            s(i, j) = lambda;
+        }
+    }
+}
+
+
+void NMDTask::setSparsityMatrix(const Matrix& s)
+{
+    assert(_deconvolver);
+    _deconvolver->setS(s);
+}
+
+
+const Matrix& NMDTask::getSparsityMatrix() const
+{
+    assert(_deconvolver);
+    return _deconvolver->getS();
+}
+
+
+void NMDTask::setNormalizeSpectra(bool flag)
+{
+    assert(_deconvolver);
+    _deconvolver->setNormalizeW(flag);
+}
+
+
+bool NMDTask::getNormalizeSpectra() const
+{
+    assert(_deconvolver);
+    return _deconvolver->getNormalizeW();
 }
 
 

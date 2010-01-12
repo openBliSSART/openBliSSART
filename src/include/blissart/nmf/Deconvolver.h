@@ -102,6 +102,16 @@ public:
     inline void keepWColumnConstant(unsigned int index, bool flag);
 
     /**
+     * Sets whether all W matrices should be normalized after each iteration.
+     */
+    inline void setNormalizeW(bool flag);
+
+    /**
+     * Returns whether all W matrices are normalized after each iteration.
+     */
+    inline bool getNormalizeW() const;
+
+    /**
      * Generates all W matrices using the specified generator function.
      */
     void generateW(blissart::linalg::Matrix::GeneratorFunction generator
@@ -201,6 +211,7 @@ protected:
     blissart::linalg::Matrix**      _w;
     bool                        _wConstant;
     bool*                       _wColConstant;
+    bool                        _normalizeW;
     unsigned int                _t;
     blissart::linalg::Matrix        _h;
     blissart::linalg::Matrix        _s;
@@ -247,6 +258,18 @@ void Deconvolver::keepWConstant(bool flag)
 void Deconvolver::keepWColumnConstant(unsigned int index, bool flag)
 {
     _wColConstant[index] = flag;
+}
+
+
+void Deconvolver::setNormalizeW(bool flag)
+{
+    _normalizeW = flag;
+}
+
+
+bool Deconvolver::getNormalizeW() const
+{
+    return _normalizeW;
 }
 
 

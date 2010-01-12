@@ -99,6 +99,21 @@ public:
     virtual const linalg::Matrix& gainsMatrix() const;
 
 
+    void setSparsity(double lambda);
+
+    
+    void setSparsityMatrix(const linalg::Matrix& s);
+
+
+    const linalg::Matrix& getSparsityMatrix() const;
+
+
+    void setNormalizeSpectra(bool flag);
+
+
+    bool getNormalizeSpectra() const;
+
+
 protected:
     /**
      * Performs the actual separation process.

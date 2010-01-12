@@ -57,6 +57,7 @@ Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t,
     _w(new Matrix*[t]),
     _wConstant(false),
     _wColConstant(new bool[r]),
+    _normalizeW(false),
     _t(t),
     _h(r, v.cols(), hGenerator),
     _s(r, v.cols(), generators::zero),      // zero --> no sparsity
@@ -314,7 +315,8 @@ void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
             for (unsigned int i = 0; i < _h.rows(); ++i) {
                 denom = hUpdateMatrixDenom(i, j);
                 if (denom <= 0.0) denom = 1e-9;
-                _h(i, j) *= (hUpdateMatrixNom(i, j) / denom);
+                _h(i, j) *= (hUpdateMatrixNom(i, j) / 
+                             (denom + _s(i, j)));
             }
         }
 
@@ -481,8 +483,8 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
                     denom = hUpdateMatrixDenom(i, j);
                     // Avoid division by zero
                     if (denom <= 0.0) denom = 1e-9;
-                    hSum(i, j) += _h(i, j) * hUpdateMatrixNom(i, j) / denom;
-                    // TODO: sparsity
+                    hSum(i, j) += _h(i, j) * hUpdateMatrixNom(i, j) / 
+                        (denom + _s(i, j + p));
                 }
             }
         }

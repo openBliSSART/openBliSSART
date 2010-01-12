@@ -203,6 +203,18 @@ protected:
             .validator(new RegExpValidator("dist|div")));
 
         options.addOption(
+            Option("sparsity", "y",
+                   "Sparsity weight for NMD cost function. "
+                   "Implies --normalize if > 0",
+                   false, "<number>", true)
+            .validator(new RangeValidator<double>(0.0)));
+
+        options.addOption(
+            Option("normalize-spectra", "N",
+                   "Normalize NMD spectra to unity length.",
+                   false));
+
+        options.addOption(
             Option("components", "c",
                    "The number of components. Default is " +
                    NumberFormatter::format(_nrComponents),
@@ -304,6 +316,13 @@ protected:
                 _nmdCostFunction = NMDTask::ExtendedKLDivergence;
                 _cfName = "Extended KL divergence";
             }
+        }
+        else if (name == "sparsity") {
+            _nmdSparsity = NumberParser::parseFloat(value);
+            _nmdNormalize = true;
+        }
+        else if (name == "normalize-spectra") {
+            _nmdNormalize = true;
         }
         else if (name == "components") {
             _nrComponents = NumberParser::parse(value);
@@ -471,14 +490,18 @@ protected:
         for (vector<string>::const_iterator it = inputFiles.begin();
             it != inputFiles.end(); ++it)
         {
+            NMDTask* nmdTask;
             // SeparationTask:
             SeparationTaskPtr newSepTask;
             switch (_separationMethod) {
             case SeparationTask::NMD:
-                newSepTask = new NMDTask(
+                nmdTask = new NMDTask(
                     *it, _dataKind, _nmdCostFunction,
                     _nrComponents, _nrSpectra, _maxIter,_epsilon, _volatile
                 );
+                nmdTask->setSparsity(_nmdSparsity);
+                nmdTask->setNormalizeSpectra(_nmdNormalize);
+                newSepTask = nmdTask;
                 break;
             default:
                 throw Poco::NotImplementedException("Unhandled method type.");
@@ -568,6 +591,8 @@ private:
     int                _maxIter;
     string             _algName;
     string             _cfName;
+    double             _nmdSparsity;
+    bool               _nmdNormalize;
     NMDTask::CostFunction _nmdCostFunction;
     int                _nrComponents;
     int                _nrSpectra;
