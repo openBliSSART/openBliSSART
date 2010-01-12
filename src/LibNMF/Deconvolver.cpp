@@ -268,6 +268,8 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
 void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
                                  ProgressObserver *observer)
 {
+    assert(_t == 1);
+
     Matrix& w = *(_w[0]);
     Matrix wUpdateMatrixNom(_v.rows(), _h.rows());
     Matrix wUpdateMatrixDenom(_v.rows(), _h.rows());
@@ -300,6 +302,18 @@ void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
             }
         }
 
+        if (_normalizeW) {
+            for (unsigned int j = 0; j < w.cols(); ++j) {
+                double colNorm = std::sqrt(w.dotColCol(w, j, w, j));
+                for (unsigned int i = 0; i < w.rows(); ++i) {
+                    w(i, j) /= colNorm;
+                }
+                for (unsigned int k = 0; k < _h.cols(); ++k) {
+                    _h(j, k) *= colNorm;
+                }
+            }
+        }
+
         // H Update
         // Calculate W^T * V
         w.multWithMatrix(_v, &hUpdateMatrixNom, true, false,
@@ -324,20 +338,20 @@ void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
         // convergence criterion
         if (eps > 0) {
             if (_numSteps == 0) {
-                wh = new Matrix(_v.rows(), _v.cols());
+                //wh = new Matrix(_v.rows(), _v.cols());
                 oldWH = new Matrix(_v.rows(), _v.cols());
                 w.multWithMatrix(_h, oldWH);
             }
             else {
-                w.multWithMatrix(_h, wh);
-                Matrix whDiff(*wh);
+                w.multWithMatrix(_h, &_lambda);
+                Matrix whDiff(_lambda);
                 whDiff.sub(*oldWH);
                 double zeta = whDiff.frobeniusNorm() / 
                               oldWH->frobeniusNorm();
                 if (zeta < eps) {
-                    //break;
+                    break;
                 }
-                *oldWH = *wh;
+                *oldWH = _lambda;
             }
         }
 
@@ -453,8 +467,9 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
             }
         }
 
-        if (!_wConstant || _numSteps == 0) {
+        if (_normalizeW) {
             normalizeW();
+            computeLambda();
         }
 
         // The standard method of computing Lambda is more efficient 
@@ -577,7 +592,7 @@ void Deconvolver::normalizeW()
     for (unsigned int p = 0; p < _t; ++p) {
         for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
             double colNorm = std::sqrt(_w[p]->dotColCol(*_w[p], j, *_w[p], j));
-            for (unsigned int i = 0; i < _w[0]->rows(); ++i) {
+            for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
                 _w[p]->at(i, j) /= colNorm;
             }
         }

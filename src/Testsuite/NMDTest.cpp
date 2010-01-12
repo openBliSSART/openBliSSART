@@ -44,7 +44,11 @@ bool NMDTest::performTest()
 
     cout << "Creating 10x5 random matrix:" << endl;
     Matrix x(10, 5, nmf::gaussianRandomGenerator);
-    cout << x;
+    /*double norm = sqrt(x.dotColCol(x, 0, x, 0));
+    for (unsigned int i = 0; i < x.rows(); ++i) {
+        x(i, 0) /= norm;
+    }
+    cout << x;*/
     cout << "---" << endl;
 
     const unsigned int t = 3;
@@ -106,17 +110,17 @@ bool NMDTest::performTest()
     }
 
     {
-        cout << "Performing NMD using Euclidean distance, with normalization" 
+        cout << "Performing NMF using Euclidean distance, with normalization" 
              << endl;
 
-        nmf::Deconvolver d(x, 10, t);
+        nmf::Deconvolver d(x, 10, 1);
         d.setNormalizeW(true);
         d.factorizeED(5000, 1e-5);
         cout << "# steps: " << d.numSteps() << endl;
         cout << "absolute error: " << d.absoluteError() << endl;
         cout << "relative error: " << d.relativeError() << endl;
         cout << endl;
-        for (unsigned int i = 0; i < t; ++i) {
+        for (unsigned int i = 0; i < 1; ++i) {
             cout << "W[" << i << "] = " << endl;
             cout << d.getW(i) << endl;
         }
