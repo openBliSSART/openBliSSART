@@ -206,6 +206,9 @@ protected:
     void ensureNonnegativity(blissart::linalg::Matrix& m, 
         double epsilon = 1e-9);
 
+    // Normalizes W[p] columns to unity for all p
+    void normalizeW();
+
     const blissart::linalg::Matrix& _v;
     blissart::linalg::Matrix        _lambda;
     blissart::linalg::Matrix**      _w;

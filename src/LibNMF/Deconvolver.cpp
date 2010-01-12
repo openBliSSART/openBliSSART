@@ -30,6 +30,7 @@
 
 #include <stdexcept>
 #include <sstream>
+#include <cmath>
 
 // Uncomment the following line if you want to generate output suitable for
 // gnuplot during factorization.
@@ -452,6 +453,10 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
             }
         }
 
+        if (!_wConstant || _numSteps == 0) {
+            normalizeW();
+        }
+
         // The standard method of computing Lambda is more efficient 
         // for T = 1 (1 vs. 2 matrix multiplications).
         if (_t == 1) {
@@ -561,6 +566,19 @@ void Deconvolver::ensureNonnegativity(Matrix &m, double epsilon)
         for (unsigned int i = 0; i < m.rows(); ++i) {
             if (m(i, j) <= 0.0) {
                 m(i, j) = epsilon;
+            }
+        }
+    }
+}
+
+
+void Deconvolver::normalizeW()
+{
+    for (unsigned int p = 0; p < _t; ++p) {
+        for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
+            double colNorm = std::sqrt(_w[p]->dotColCol(*_w[p], j, *_w[p], j));
+            for (unsigned int i = 0; i < _w[0]->rows(); ++i) {
+                _w[p]->at(i, j) /= colNorm;
             }
         }
     }
