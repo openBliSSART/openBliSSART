@@ -47,31 +47,46 @@ bool SNMFTest::performTest()
     cout << x;
     cout << "---" << endl;
 
-    /*{
-        cout << "Performing NMF using KL divergence" << endl;
+    {
+        const double sparsity[] = { 0, 0.1, 0.25 };
 
-        nmf::Deconvolver d(x, 10, 1);
-        d.decompose(nmf::Deconvolver::KLDivergenceSparse, 100, 0.0);
-        //cout << "# steps: " << d.numSteps() << endl;
-        cout << "absolute error: " << d.absoluteError() << endl;
-        cout << "relative error: " << d.relativeError() << endl;
-        cout << endl;
-        cout << "W = " << endl;
-        cout << d.getW(0) << endl;
-        cout << "H = " << endl;
-        cout << d.getH() << endl;
-        cout << "Approx = " << endl;
-        d.computeApprox();
-        Matrix l(d.getApprox());
-        cout << l << endl;
-        
-        for (unsigned int i = 0; i < x.rows(); i++) {
-            for (unsigned int j = 0; j < x.cols(); j++) {
-                if (!epsilonCheck(x(i,j), l(i,j), 1e-2))
-                    return false;
+        for (unsigned int si = 0; si < 3; ++si) {
+
+            cout << "Performing Sparse NMF using KL divergence" << endl;
+            cout << "Sparsity parameter set to " << sparsity[si] << endl;
+
+            nmf::Deconvolver d(x, 10, 1);
+            Matrix s(10, 5);
+            for (unsigned int j = 0; j < s.cols(); ++j) {
+                for (unsigned int i = 0; i < s.rows(); ++i) {
+                    s(i, j) = sparsity[si];
+                }
             }
-        }
-    }*/
+            d.setS(s);
+
+            d.decompose(nmf::Deconvolver::KLDivergenceSparse, 100, 0.0);
+            d.computeApprox();
+            cout << "absolute error: " << d.absoluteError() << endl;
+            cout << "relative error: " << d.relativeError() << endl;
+            cout << endl;
+
+            cout << "W = " << endl;
+            cout << d.getW(0) << endl;
+            cout << "H = " << endl;
+            cout << d.getH() << endl;
+            cout << "Approx = " << endl;
+            Matrix l(d.getApprox());
+            cout << l << endl;
+            
+            for (unsigned int i = 0; i < x.rows(); i++) {
+                for (unsigned int j = 0; j < x.cols(); j++) {
+                    if (!epsilonCheck(x(i,j), l(i,j), 5e-2))
+                        return false;
+                }
+            }
+
+        } // for (sparsity param)
+    }
 
     {
         const double sparsity[] = { 0, 0.1, 0.25 };
@@ -90,7 +105,7 @@ bool SNMFTest::performTest()
             }
             d.setS(s);
 
-            d.decompose(nmf::Deconvolver::EuclideanDistanceSparse, 100, 0.0);
+            d.decompose(nmf::Deconvolver::EuclideanDistanceSparse, 1000, 1e-5);
             d.computeApprox();
             cout << "absolute error: " << d.absoluteError() << endl;
             cout << "relative error: " << d.relativeError() << endl;

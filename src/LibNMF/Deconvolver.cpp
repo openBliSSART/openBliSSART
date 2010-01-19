@@ -268,11 +268,9 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
                     // Instead of considering the jth column of V/approx
                     // shifted p spots to the left, we consider the (j + p)th
                     // column of V/Approx itself.
-                    // Also simulate shift of sparsity weight matrix S here,
-                    // by using j+p as column index.
                     hUpdate(i, j) += 
                         Matrix::dotColCol(*_w[p], i, vOverApprox, j + p) / 
-                        (wpColSums[i] + _s(i, j + p));
+                        wpColSums[i];
                 }
             }
         }
@@ -693,7 +691,132 @@ void Deconvolver::factorizeEDSparse(unsigned int maxSteps, double eps,
 void Deconvolver::factorizeKLSparse(unsigned int maxSteps, double eps,
                                     ProgressObserver *observer)
 {
-    // TODO: Implement me!
+    assert(_t == 1);
+
+    Matrix& w = *(_w[0]);
+    Matrix vOverApprox(_v.rows(), _v.cols());
+    Matrix wUpdateNum(_v.rows(), _h.rows());
+    Matrix hUpdateMatrixNum(_h.rows(), _h.cols());
+    Matrix *wh = 0, *oldWH = 0;
+    
+    // helper variables
+    double denom;
+    double hRowSumSq, hRowLength;
+
+    // parts of gradient which are equal for each row
+    double *csplus = new double[_h.rows()];
+    double *csminus = new double[_h.rows()];
+
+    // row sums are used for H as well as W update
+    double *hRowSums = new double[_h.rows()];
+
+    // col sums for H update
+    double *wColSums = new double[w.cols()];
+
+    // Precompute 2 constants
+    double sqrtT = sqrt((double) _h.cols());
+    double sqrtOneOverT = sqrt(1.0 / (double) _h.cols());
+
+    _numSteps = 0;
+    while (_numSteps < maxSteps) {
+
+        // compute approximation
+        computeApprox();
+        _v.elementWiseDivision(_approx, &vOverApprox);
+        vOverApprox.multWithTransposedMatrix(_h, &wUpdateNum);
+
+        // precompute H row sums
+        for (unsigned int i = 0; i < _h.rows(); ++i) {
+            hRowSums[i] = _h.rowSum(i);
+        }
+
+        // W Update
+        if (!_wConstant) {
+            for (unsigned int j = 0; j < w.cols(); ++j) {
+                if (!_wColConstant[j]) {
+                    for (unsigned int i = 0; i < w.rows(); ++i) {
+                        w(i, j) *= (wUpdateNum(i, j) / hRowSums[j]);
+                    }
+                }
+            }
+
+            // recompute approximation
+            computeApprox();
+            _v.elementWiseDivision(_approx, &vOverApprox);
+        }
+
+        // H Update
+
+        // Precompute row norms of H for normalization of sparsity weight
+        // (sum of squares)
+        for (unsigned int i = 0; i < _h.rows(); ++i) {
+            hRowSumSq = Matrix::dotRowRow(_h, i, _h, i);
+            hRowLength = sqrt(hRowSumSq);
+            csplus[i] = sqrtT / hRowLength;
+            csminus[i] = sqrtT * hRowSums[i] / (hRowSumSq * hRowLength);
+            wColSums[i] = w.colSum(i);
+        }
+
+        w.multWithMatrix(vOverApprox, &hUpdateMatrixNum,
+            true, false,
+            _h.rows(), _v.rows(), _h.cols(),
+            0, 0, 0, 0, 0, 0);
+        for (unsigned int j = 0; j < _h.cols(); ++j) {
+            for (unsigned int i = 0; i < _h.rows(); ++i) {
+                _h(i, j) *=
+                    hUpdateMatrixNum(i, j) + _s(i, j) ;
+                denom = wColSums[i] + _s(i, j) * csplus[i];
+                if (denom <= 0.0) denom = 1e-9;
+                _h(i, j) *= 
+                    (hUpdateMatrixNum(i, j) + _s(i, j) * _h(i, j) * csminus[i])
+                    / denom;
+            }
+        }
+
+        // convergence criterion
+        if (eps > 0) {
+            if (_numSteps == 0) {
+                //wh = new Matrix(_v.rows(), _v.cols());
+                oldWH = new Matrix(_v.rows(), _v.cols());
+                w.multWithMatrix(_h, oldWH);
+            }
+            else {
+                w.multWithMatrix(_h, &_approx);
+                Matrix whDiff(_approx);
+                whDiff.sub(*oldWH);
+                double zeta = whDiff.frobeniusNorm() / 
+                              oldWH->frobeniusNorm();
+                if (zeta < eps) {
+                    break;
+                }
+                *oldWH = _approx;
+            }
+        }
+
+        ++_numSteps;
+
+        // Call the ProgressObserver every once in a while (if applicable).
+        if (observer && _numSteps % 25 == 0)
+            observer->progressChanged((float)_numSteps / (float)maxSteps);
+    }
+
+    if (_normalizeW) {
+        for (unsigned int j = 0; j < w.cols(); ++j) {
+            double colNorm = std::sqrt(w.dotColCol(w, j, w, j));
+            for (unsigned int i = 0; i < w.rows(); ++i) {
+                w(i, j) /= colNorm;
+            }
+            for (unsigned int k = 0; k < _h.cols(); ++k) {
+                _h(j, k) *= colNorm;
+            }
+        }
+    }
+
+    if (wh)    delete wh;
+    if (oldWH) delete oldWH;
+
+    delete[] csminus;
+    delete[] csplus;
 }
 
 

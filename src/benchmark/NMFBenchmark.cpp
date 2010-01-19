@@ -44,6 +44,14 @@ void NMFBenchmark::run()
 {
 	Matrix v(500, 1000, blissart::nmf::gaussianRandomGenerator);
 
+    // sparsity matrix
+    Matrix s(20, 1000);
+    for (unsigned int j = 0; j < s.cols(); ++j) {
+        for (unsigned int i = 0; i < s.rows(); ++i) {
+            s(i, j) = 0.1;
+        }
+    }
+
 	// NMF, Euclidean distance,
 	// 500x1000 Gaussian random matrix, 20 components
 	// fixed number of iterations (100)
@@ -64,6 +72,28 @@ void NMFBenchmark::run()
         d.decompose(Deconvolver::KLDivergence, 100, 0.0, this);
 		Timestamp end;
 		_elapsedTimes["NMF-KL 500x1000 r=20"] = end - start;
+	}
+
+	// Sparse NMF, Euclidean distance,
+	// 500x1000 Gaussian random matrix, 20 components
+	// fixed number of iterations (100)
+	{
+		Deconvolver d(v, 20, 1);
+		Timestamp start;
+        d.decompose(Deconvolver::EuclideanDistanceSparse, 100, 0.0, this);
+		Timestamp end;
+		_elapsedTimes["SNMF-ED 500x1000 r=20"] = end - start;
+	}
+
+    // Sparse NMF, KL divergence,
+	// 500x1000 Gaussian random matrix, 20 components
+	// fixed number of iterations (100)
+	{
+		Deconvolver d(v, 20, 1);
+		Timestamp start;
+        d.decompose(Deconvolver::KLDivergenceSparse, 100, 0.0, this);
+		Timestamp end;
+		_elapsedTimes["SNMF-KL 500x1000 r=20"] = end - start;
 	}
 }
 
