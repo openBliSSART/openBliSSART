@@ -46,6 +46,13 @@ extern "C" {
 }
 #endif
 
+#ifdef HAVE_MATLAB
+#   include <blas.h>
+#   ifdef _WIN32
+#       pragma comment(lib, "libmwblas.lib")
+#   endif
+#endif
+
 
 namespace blissart {
 
@@ -354,13 +361,41 @@ void Matrix::multWithMatrix(const Matrix& other, Matrix* target,
                 target->_rows); // ldc
 #  endif // ISEP_ROW_MAJOR
 #else // !HAVE_CBLAS_H
-#    ifdef ISEP_ROW_MAJOR
+#   ifdef HAVE_MATLAB
+#       ifdef ISEP_ROW_MAJOR
+#           error Matlab does not support row-major layout
+#       endif // ISEP_ROW_MAJOR
+    char noTrans[1] = { 'N' };
+    char trans[1] = { 'T' };
+    // Create local copies of variables and convert them to ptrdiff_t type,
+    // to use with Fortran interface (call by reference!)
+    ptrdiff_t m_ptrdiff = (ptrdiff_t) m;
+    ptrdiff_t n_ptrdiff = (ptrdiff_t) n;
+    ptrdiff_t k_ptrdiff = (ptrdiff_t) k;
+    ptrdiff_t lda = (ptrdiff_t) this->_rows;
+    ptrdiff_t ldb = (ptrdiff_t) other._rows;
+    ptrdiff_t ldc = (ptrdiff_t) target->_rows;
+    double alpha = 1.0;
+    double beta = 0.0;
+    dgemm((transpose ? trans : noTrans),
+          (transposeOther ? trans : noTrans),
+          &m_ptrdiff, &n_ptrdiff, &k_ptrdiff,
+          &alpha,
+          this->_data + colOffset * this->_rows + rowOffset,
+          &lda,
+          other._data + colOffsetOther * other._rows + rowOffsetOther,
+          &ldb,
+          &beta,
+          target->_data + colOffsetTarget * target->_rows + rowOffsetTarget,
+          &ldc);
+#   else // !HAVE_MATLAB
+#       ifdef ISEP_ROW_MAJOR
     for (unsigned int row = 0; row < m; row++) {
         for (unsigned int col = 0; col < n; col++) {
-#    else // !ISEP_ROW_MAJOR
+#       else // !ISEP_ROW_MAJOR
     for (unsigned int col = 0; col < n; col++) {
         for (unsigned int row = 0; row < m; row++) {
-#    endif // ISEP_ROW_MAJOR
+#       endif // ISEP_ROW_MAJOR
             unsigned int ri = row + rowOffset;
             unsigned int ci = col + colOffset;
             unsigned int riTarget = row + rowOffsetTarget;
@@ -379,6 +414,7 @@ void Matrix::multWithMatrix(const Matrix& other, Matrix* target,
             }
         }
     }
+#   endif // HAVE_MATLAB
 #endif // HAVE_CBLAS_H
 }
 
