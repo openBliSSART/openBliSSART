@@ -43,6 +43,7 @@
 #include "NMFTest.h"
 #include "PCATest.h"
 #include "ScalingTest.h"
+#include "SNMFTest.h"
 #include "SVMModelTest.h"
 #include "SpectralAnalysisTest.h"
 #include "StorageSubsystemTest.h"
@@ -113,9 +114,10 @@ protected:
         options.addOption(Option("mfcc", "", "Test extraction of MFCCs", false, "<file>", true));
         options.addOption(Option("mh", "", "Test Minimum Heap implementation"));
         options.addOption(Option("mt", "", "Test (spectrogram) matrix transformations"));
-        options.addOption(Option("nmd", "", "Test NMD routine"));
-        options.addOption(Option("nmf", "", "Test NMF routine"));
+        options.addOption(Option("nmd", "", "Test NMD routines"));
+        options.addOption(Option("nmf", "", "Test NMF routines"));
         options.addOption(Option("pca", "", "Test PCA routine"));
+        options.addOption(Option("snmf", "", "Test sparse NMF routines"));
         options.addOption(Option("spec", "", "Test spectral analysis functions"));
         options.addOption(Option("storage", "", "Test StorageManager functions"));
         options.addOption(Option("sc", "", "Test scaling and smoothing"));
@@ -163,6 +165,8 @@ protected:
             pushTest(new NMDTest());
         if (name == "all" || name == "nmf")
             pushTest(new NMFTest());
+        if (name == "all" || name == "snmf") 
+            pushTest(new SNMFTest());
         if (name == "all" || name == "brw")
             pushTest(new BinaryReaderWriterTest());
         if (name == "all" || name == "td")

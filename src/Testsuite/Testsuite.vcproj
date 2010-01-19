@@ -249,6 +249,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SNMFTest.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SpectralAnalysisTest.cpp"
 				>
 			</File>
@@ -336,6 +340,10 @@
 			</File>
 			<File
 				RelativePath=".\ScalingTest.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SNMFTest.h"
 				>
 			</File>
 			<File
