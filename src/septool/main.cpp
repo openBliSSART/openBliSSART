@@ -67,6 +67,7 @@ public:
         _maxIter(100),
         _algName("Multiplicative update (divergence)"),
         _cfName("Extended KL divergence"),
+        _nmdSparsity(0.0),
         _nmfCostFunction(nmf::Deconvolver::KLDivergence),
         _nrComponents(20),
         _nrSpectra(5),
@@ -197,21 +198,21 @@ protected:
 
         options.addOption(
             Option("cost-function", "f",
-                   "NMD cost function. Must be one of \"dist\" or \"div\". "
-                   "Default is \"div\".",
+                   "NMF cost function. Must be one of the following: "
+                   "\"ed\", \"kl\", \"eds\", \"kls\" or \"edsn\". "
+                   "Default is \"kl\".",
                    false, "<name>", true)
-            .validator(new RegExpValidator("dist|div")));
+            .validator(new RegExpValidator("eds?|kls?|edsn")));
 
         options.addOption(
             Option("sparsity", "y",
-                   "Sparsity weight for NMD cost function. "
-                   "Implies --normalize if > 0",
+                   "Sparsity weight for NMF cost function. ",
                    false, "<number>", true)
             .validator(new RangeValidator<double>(0.0)));
 
         options.addOption(
             Option("normalize-spectra", "N",
-                   "Normalize NMD spectra to unity length.",
+                   "Normalize NMF spectra to unity length.",
                    false));
 
         options.addOption(
@@ -308,18 +309,29 @@ protected:
             _volatile = true;
         }
         else if (name == "cost-function") {
-            if (value == "dist") {
+            if (value == "ed") {
                 _nmfCostFunction = nmf::Deconvolver::EuclideanDistance;
                 _cfName = "Squared Euclidean distance";
             }
-            else if (value == "div") {
+            else if (value == "kl") {
                 _nmfCostFunction = nmf::Deconvolver::KLDivergence;
                 _cfName = "Extended KL divergence";
+            }
+            else if (value == "eds") {
+                _nmfCostFunction = nmf::Deconvolver::EuclideanDistanceSparse;
+                _cfName = "Squared Euclidean distance + sparseness constraint";
+            }
+            else if (value == "kls") {
+                _nmfCostFunction = nmf::Deconvolver::KLDivergenceSparse;
+                _cfName = "Extended KL divergence + sparseness constraint";
+            }
+            else if (value == "edsn") {
+                _nmfCostFunction = nmf::Deconvolver::EuclideanDistanceSparseNormalized;
+                _cfName = "Squared ED (normalized basis) + sparseness";
             }
         }
         else if (name == "sparsity") {
             _nmdSparsity = NumberParser::parseFloat(value);
-            _nmdNormalize = true;
         }
         else if (name == "normalize-spectra") {
             _nmdNormalize = true;
@@ -453,6 +465,14 @@ protected:
 
         if (_separationMethod == SeparationTask::NMD) {
             cout << setw(20) << "# of spectra: " << _nrSpectra << endl;
+            if (_nmfCostFunction == nmf::Deconvolver::EuclideanDistanceSparse ||
+                _nmfCostFunction == nmf::Deconvolver::KLDivergenceSparse ||
+                _nmfCostFunction == nmf::Deconvolver::EuclideanDistanceSparseNormalized)
+            {
+                cout << setw(20) << "sparsity: " << _nmdSparsity << endl;
+            }
+            cout << setw(20) << "normalize spectra: "
+                 << (_nmdNormalize ? "True" : "False") << endl;
         }
 
         cout << setw(20) << "Max. iterations: " << _maxIter << endl

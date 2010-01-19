@@ -92,19 +92,16 @@ public:
     virtual const linalg::Matrix& gainsMatrix() const;
 
 
-    void setSparsity(double lambda);
+    inline void setSparsity(double lambda);
+
+
+    inline double getSparsity() const;
 
     
-    void setSparsityMatrix(const linalg::Matrix& s);
+    inline void setNormalizeSpectra(bool flag);
 
 
-    const linalg::Matrix& getSparsityMatrix() const;
-
-
-    void setNormalizeSpectra(bool flag);
-
-
-    bool getNormalizeSpectra() const;
+    inline bool getNormalizeSpectra() const;
 
 
 protected:
@@ -128,7 +125,34 @@ private:
 
     nmf::Deconvolver*                 _deconvolver;
     nmf::Deconvolver::NMFCostFunction _cf;
+    double                            _sparsity;
+    bool                              _normalizeSpectra;
+
 };
+
+
+void NMDTask::setNormalizeSpectra(bool flag)
+{
+    _normalizeSpectra = flag;
+}
+
+
+bool NMDTask::getNormalizeSpectra() const
+{
+    return _normalizeSpectra;
+}
+
+
+void NMDTask::setSparsity(double lambda)
+{
+    _sparsity = lambda;
+}
+
+
+double NMDTask::getSparsity() const
+{
+    return _sparsity;
+}
 
 
 typedef Poco::AutoPtr<NMDTask> NMDTaskPtr;
