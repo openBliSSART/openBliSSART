@@ -63,17 +63,17 @@ bool SNMFTest::performTest()
         Matrix h(10, 5, nmf::gaussianRandomGenerator);
         d.setW(0, w);
         d.setH(h);
-        d.decompose(Deconvolver::EuclideanDistanceSparse, 100, 0.0);
+        d.decompose(Deconvolver::EuclideanDistanceSparse, 1, 0.0);
         d.computeApprox();
         Matrix wh1(d.getApprox());
         d.setW(0, w);
         d.setH(h);
-        d.decompose(Deconvolver::EuclideanDistance, 100, 0.0);
+        d.decompose(Deconvolver::EuclideanDistance, 1, 0.0);
         d.computeApprox();
         Matrix wh2(d.getApprox());
-        cout << "With sparse NMF (lambda = 0)" << endl;
+        cout << "1 iteration of sparse NMF (lambda = 0)" << endl;
         cout << wh1;
-        cout << "With standard NMF" << endl;
+        cout << "1 iteration of NMF" << endl;
         cout << wh2;
         if (!epsilonCheck(wh1, wh2, 1e-2)) {
             return false;
@@ -87,17 +87,17 @@ bool SNMFTest::performTest()
         Matrix h(10, 5, nmf::gaussianRandomGenerator);
         d.setW(0, w);
         d.setH(h);
-        d.decompose(Deconvolver::KLDivergenceSparse, 100, 0.0);
+        d.decompose(Deconvolver::KLDivergenceSparse, 1, 0.0);
         d.computeApprox();
         Matrix wh1(d.getApprox());
         d.setW(0, w);
         d.setH(h);
-        d.decompose(Deconvolver::KLDivergence, 100, 0.0);
+        d.decompose(Deconvolver::KLDivergence, 1, 0.0);
         d.computeApprox();
         Matrix wh2(d.getApprox());
-        cout << "With sparse NMF (lambda = 0)" << endl;
+        cout << "1 iteration of sparse NMF (lambda = 0)" << endl;
         cout << wh1;
-        cout << "With standard NMF" << endl;
+        cout << "1 iteration of standard NMF" << endl;
         cout << wh2;
         if (!epsilonCheck(wh1, wh2, 1e-2)) {
             return false;

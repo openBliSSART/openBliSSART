@@ -763,8 +763,6 @@ void Deconvolver::factorizeKLSparse(unsigned int maxSteps, double eps,
             0, 0, 0, 0, 0, 0);
         for (unsigned int j = 0; j < _h.cols(); ++j) {
             for (unsigned int i = 0; i < _h.rows(); ++i) {
-                _h(i, j) *=
-                    hUpdateMatrixNum(i, j) + _s(i, j) ;
                 denom = wColSums[i] + _s(i, j) * csplus[i];
                 if (denom <= 0.0) denom = 1e-9;
                 _h(i, j) *= 
