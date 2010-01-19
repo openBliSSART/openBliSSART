@@ -29,13 +29,14 @@
 
 #include <blissart/SeparationTask.h>
 #include <blissart/ProgressObserver.h>
+#include <blissart/nmf/Deconvolver.h>
 
 
 namespace blissart {
 
 
 // Forward declarations
-namespace nmf { class Deconvolver; }
+//namespace nmf { class Deconvolver; }
 
 
 /**
@@ -46,15 +47,6 @@ class LibFramework_API NMDTask : public SeparationTask,
                                  public ProgressObserver
 {
 public:
-    /**
-     * TODO: Document me!
-     */
-    typedef enum {
-        EuclideanDistance,
-        ExtendedKLDivergence
-    } CostFunction;
-
-
     /**
      * Constructs a new instance of NMDTask for the given parameters.
      * @param  fileName         the name of the input file
@@ -68,7 +60,8 @@ public:
      * @param  isVolatile       store the resulting components iff true
      */
     NMDTask(const std::string &fileName, DataKind dataKind,
-            CostFunction cf, int nrOfComponents, int nrOfSpectra,
+            nmf::Deconvolver::NMFCostFunction costFunction, 
+            int nrOfComponents, int nrOfSpectra,
             int maxIterations, double epsilon, bool isVolatile);
 
 
@@ -133,8 +126,8 @@ private:
     virtual void progressChanged(float);
 
 
-    nmf::Deconvolver*  _deconvolver;
-    CostFunction       _cf;
+    nmf::Deconvolver*                 _deconvolver;
+    nmf::Deconvolver::NMFCostFunction _cf;
 };
 
 

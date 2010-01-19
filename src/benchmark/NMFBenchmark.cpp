@@ -50,7 +50,7 @@ void NMFBenchmark::run()
 	{
 		Deconvolver d(v, 20, 1);
 		Timestamp start;
-		d.factorizeED(100, 0.0, this);
+        d.decompose(Deconvolver::EuclideanDistance, 100, 0.0, this);
 		Timestamp end;
 		_elapsedTimes["NMF-ED 500x1000 r=20"] = end - start;
 	}
@@ -61,7 +61,7 @@ void NMFBenchmark::run()
 	{
 		Deconvolver d(v, 20, 1);
 		Timestamp start;
-		d.factorizeKL(100, 0.0, this);
+        d.decompose(Deconvolver::KLDivergence, 100, 0.0, this);
 		Timestamp end;
 		_elapsedTimes["NMF-KL 500x1000 r=20"] = end - start;
 	}

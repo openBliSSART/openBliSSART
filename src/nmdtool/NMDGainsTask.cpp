@@ -168,10 +168,12 @@ void NMDGainsTask::performNMD()
         getString("blissart.nmdtool.costfunction", "div");
     logger().debug(nameAndTaskID() + " performing NMD.");
     if (cfName.substr(0, 3) == "div") {
-        _deconvolver->factorizeKL(_maxIterations, 0, this);
+        _deconvolver->decompose(TargetedDeconvolver::KLDivergence,
+            _maxIterations, 0, this);
     }
     else if (cfName.substr(0, 4) == "dist") {
-        _deconvolver->factorizeED(_maxIterations, 0, this);
+        _deconvolver->decompose(TargetedDeconvolver::EuclideanDistance,
+            _maxIterations, 0, this);
     }
     else {
         throw Poco::InvalidArgumentException("Invalid cost function: " 

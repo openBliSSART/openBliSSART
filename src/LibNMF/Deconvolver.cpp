@@ -55,6 +55,7 @@ Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t,
                          Matrix::GeneratorFunction hGenerator) :
     _v(v),
     _lambda(v.rows(), v.cols(), generators::zero),
+    _oldLambda(0),
     _w(new Matrix*[t]),
     _wConstant(false),
     _wColConstant(new bool[r]),
@@ -127,6 +128,42 @@ void Deconvolver::setH(const Matrix& h)
 {
     assert(h.cols() == _h.cols() && h.rows() == _h.rows());
     _h = h;
+}
+
+
+void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
+                            unsigned int maxSteps, double eps,
+                            ProgressObserver *observer)
+{
+    if (cf == EuclideanDistance) {
+        if (_t == 1) {
+            factorizeNMFED(maxSteps, eps, observer);
+        }
+        else {
+            factorizeED(maxSteps, eps, observer);
+        }
+    }
+    else if (cf == KLDivergence) {
+        factorizeKL(maxSteps, eps, observer);
+    }
+    else if (cf == EuclideanDistanceSparse) {
+        if (_t > 1) {
+            throw std::runtime_error("Sparse NMD not implemented");
+        }
+        factorizeEDSparse(maxSteps, eps, observer);
+    }
+    else if (cf == KLDivergenceSparse) {
+        if (_t > 1) {
+            throw std::runtime_error("Sparse NMD not implemented");
+        }
+        factorizeKLSparse(maxSteps, eps, observer);
+    }
+    else if (cf == EuclideanDistanceSparseNormalized) {
+        if (_t > 1) {
+            throw std::runtime_error("Sparse NMD not implemented");
+        }
+        factorizeEDSparseNorm(maxSteps, eps, observer);
+    }
 }
 
 
@@ -370,11 +407,6 @@ void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
 void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
                               ProgressObserver *observer)
 {
-    if (_t == 1) {
-        factorizeNMFED(maxSteps, eps, observer);
-        return;
-    }
-
     Matrix hSum(_h.rows(), _h.cols());
     Matrix wUpdateMatrixNom(_v.rows(), _h.rows());
     Matrix wUpdateMatrixDenom(_v.rows(), _h.rows());
@@ -418,6 +450,7 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
             Matrix* wpH = 0;
             // Update all W[p]
             for (unsigned int p = 0; p < _t; ++p) {
+
                 // Calculate V * (H shifted t spots to the right)^T 
                 // (nominator of the update matrix)
                 // In this case, zeros would be introduced in the first t rows
@@ -429,6 +462,7 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
                     // target dimension: MxR
                     _v.rows(), _v.cols() - p, _h.rows(),
                     0, p, 0, 0, 0, 0);
+
                 // Calculate Lambda * (H shifted t spots to the right)^T 
                 // (denominator of the update matrix)
                 // The same as above.
@@ -436,16 +470,17 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
                     false, true,
                     _v.rows(), _v.cols() - p, _h.rows(), 
                     0, p, 0, 0, 0, 0);
-                if (_t > 1) {
-                    // Efficient (difference-based) calculation of updated Lambda
-                    // (step 1: subtraction of old W[p]*H)
-                    // Due to Wang (2009)
-                    wpH = new Matrix(_v.rows(), _v.cols());
-                    computeWpH(p, *wpH);
-                    // It is safe to overwrite Lambda, as it is not directly used 
-                    // in the update loop.
-                    _lambda.sub(*wpH);
-                }
+
+                // Efficient (difference-based) calculation of updated Lambda
+                // (step 1: subtraction of old W[p]*H)
+                // Due to Wang (2009)
+                wpH = new Matrix(_v.rows(), _v.cols());
+                computeWpH(p, *wpH);
+
+                // It is safe to overwrite Lambda, as it is not directly used 
+                // in the update loop.
+                _lambda.sub(*wpH);
+
                 // Finally, the update loop is simple now.
                 for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
                     if (!_wColConstant[j]) {
@@ -456,26 +491,14 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
                         }
                     }
                 }
-                if (_t > 1) {
-                    // Calculate updated lambda, step 2
-                    // (addition of new W[p]*H)
-                    computeWpH(p, *wpH);
-                    _lambda.add(*wpH);
-                    delete wpH;
-                    ensureNonnegativity(_lambda);
-                }
+
+                // Calculate updated lambda, step 2
+                // (addition of new W[p]*H)
+                computeWpH(p, *wpH);
+                _lambda.add(*wpH);
+                delete wpH;
+                ensureNonnegativity(_lambda);
             }
-        }
-
-        if (_normalizeW) {
-            normalizeW();
-            computeLambda();
-        }
-
-        // The standard method of computing Lambda is more efficient 
-        // for T = 1 (1 vs. 2 matrix multiplications).
-        if (_t == 1) {
-            computeLambda();
         }
 
         // Calculate update matrix for H by averaging the updates corresponding
@@ -503,8 +526,7 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
                     denom = hUpdateMatrixDenom(i, j);
                     // Avoid division by zero
                     if (denom <= 0.0) denom = 1e-9;
-                    hSum(i, j) += _h(i, j) * hUpdateMatrixNom(i, j) / 
-                        (denom + _s(i, j + p));
+                    hSum(i, j) += _h(i, j) * hUpdateMatrixNom(i, j) / denom;
                 }
             }
         }
@@ -536,9 +558,31 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
 }
 
 
+void Deconvolver::factorizeEDSparse(unsigned int maxSteps, double eps,
+                                    ProgressObserver *observer)
+{
+    // TODO: Implement me!
+}
+
+
+void Deconvolver::factorizeKLSparse(unsigned int maxSteps, double eps,
+                                    ProgressObserver *observer)
+{
+    // TODO: Implement me!
+}
+
+
+void Deconvolver::factorizeEDSparseNorm(unsigned int maxSteps, double eps,
+                                        ProgressObserver *observer)
+{
+    // TODO: Implement me!
+}
+
+
 void Deconvolver::computeLambda()
 {
     if (_t == 1) {
+        // this is much faster
         _w[0]->multWithMatrix(_h, &_lambda);
     }
     else {

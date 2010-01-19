@@ -46,7 +46,8 @@ namespace blissart {
 
 
 NMDTask::NMDTask(const std::string &fileName,
-                 SeparationTask::DataKind dataKind, CostFunction cf,
+                 SeparationTask::DataKind dataKind, 
+                 nmf::Deconvolver::NMFCostFunction cf,
                  int nrOfComponents, int nrOfSpectra,
                  int maxIterations, double epsilon, bool isVolatile) :
     SeparationTask(
@@ -58,7 +59,7 @@ NMDTask::NMDTask(const std::string &fileName,
     _cf(cf)
 {
     logger().debug(nameAndTaskID() + " initialized.");
-    // XXX: config options for sparsity and normalization?
+    // XXX: config option for normalization?
 }
 
 
@@ -111,14 +112,7 @@ void NMDTask::performSeparation()
     debug_assert(&amplitudeMatrix() && _deconvolver);
 
     logger().debug(nameAndTaskID() + " factorizing.");
-    switch (_cf) {
-        case ExtendedKLDivergence:
-            _deconvolver->factorizeKL(maxIterations(), epsilon(), this);
-            break;
-        case EuclideanDistance:
-            _deconvolver->factorizeED(maxIterations(), epsilon(), this);
-            break;
-    }
+    _deconvolver->decompose(_cf, maxIterations(), epsilon(), this);
 }
 
 

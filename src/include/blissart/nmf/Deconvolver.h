@@ -50,6 +50,15 @@ namespace nmf {
 class LibNMF_API Deconvolver
 {
 public:
+    typedef enum
+    {
+        EuclideanDistance,
+        KLDivergence,
+        EuclideanDistanceSparse,
+        KLDivergenceSparse,
+        EuclideanDistanceSparseNormalized
+    } NMFCostFunction;
+
     /**
      * Constructs a Deconvolver object for the matrix V.
      * Initializes the matrix factors with random matrices.
@@ -102,12 +111,12 @@ public:
     inline void keepWColumnConstant(unsigned int index, bool flag);
 
     /**
-     * Sets whether all W matrices should be normalized after each iteration.
+     * Sets whether the W matrix should be normalized after each iteration.
      */
     inline void setNormalizeW(bool flag);
 
     /**
-     * Returns whether all W matrices are normalized after each iteration.
+     * Returns whether the W matrix is normalized after each iteration.
      */
     inline bool getNormalizeW() const;
 
@@ -153,23 +162,8 @@ public:
      */
     void computeLambda();
 
-    /**
-     * Performs NMD using a generalized Kulback-Leibler divergence,
-     * using Smaragdis' algorithm (2004).
-     * Setting eps > 0 significantly slows down the NMD and should therefore 
-     * not be used in production code.
-     */
-    void factorizeKL(unsigned int maxSteps, double eps,
-                     ProgressObserver *observer = 0);
-
-    /** 
-     * Performs NMD minimizing squared Euclidean distance,
-     * according to Wang 2009.
-     * Setting eps > 0 significantly slows down the NMD and should therefore 
-     * not be used in production code.
-     */
-    void factorizeED(unsigned int maxSteps, double eps,
-                     ProgressObserver *observer = 0);
+    void decompose(NMFCostFunction cf, unsigned int maxSteps, double eps,
+                   ProgressObserver *observer = 0);
 
     /**
      * Returns the absolute error achieved in the last iteration,
@@ -190,9 +184,35 @@ public:
 
 
 protected:
+    /**
+     * Performs NMD using a generalized Kulback-Leibler divergence,
+     * using Smaragdis' algorithm (2004).
+     * Setting eps > 0 significantly slows down the NMD and should therefore 
+     * not be used in production code.
+     */
+    void factorizeKL(unsigned int maxSteps, double eps,
+                     ProgressObserver *observer = 0);
+
+    /** 
+     * Performs NMD minimizing squared Euclidean distance,
+     * according to Wang 2009.
+     * Setting eps > 0 significantly slows down the NMD and should therefore 
+     * not be used in production code.
+     */
+    void factorizeED(unsigned int maxSteps, double eps,
+                     ProgressObserver *observer = 0);
+
     // A more efficient implementation of NMD-ED for 1 spectrum (NMF case).
     void factorizeNMFED(unsigned int maxSteps, double eps,
                         ProgressObserver *observer = 0);
+
+    void factorizeEDSparse(unsigned int maxSteps, double eps,
+                           ProgressObserver *observer = 0);
+    void factorizeKLSparse(unsigned int maxSteps, double eps,
+                           ProgressObserver *observer = 0);
+    void factorizeEDSparseNorm(unsigned int maxSteps, double eps,
+                               ProgressObserver *observer = 0);
+
 
     // Computes error of current approximation.
     void computeError();
@@ -211,6 +231,7 @@ protected:
 
     const blissart::linalg::Matrix& _v;
     blissart::linalg::Matrix        _lambda;
+    blissart::linalg::Matrix*       _oldLambda;
     blissart::linalg::Matrix**      _w;
     bool                        _wConstant;
     bool*                       _wColConstant;

@@ -130,16 +130,16 @@ void CreateProcessDialog::accept()
     }
 
     // Determine the desired cost function.
-    NMDTask::CostFunction cf;
+    nmf::Deconvolver::NMFCostFunction cf;
     switch (_ui.cbCostFunction->currentIndex()) {
     case 0: 
-        cf = NMDTask::ExtendedKLDivergence; 
+        cf = nmf::Deconvolver::KLDivergence; 
         break;
     case 1: 
-        cf = NMDTask::EuclideanDistance; 
+        cf = nmf::Deconvolver::EuclideanDistance; 
         break;
     default:
-        cf = NMDTask::ExtendedKLDivergence;
+        cf = nmf::Deconvolver::KLDivergence;
         break;
     }
 

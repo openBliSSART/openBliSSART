@@ -400,10 +400,10 @@ FeatureExtractor::computeNMDGain(FeatureExtractor::FeatureMap& target,
     }
 
     if (cfName.substr(0, 3) == "div") {
-        d.factorizeKL(nIterations, 0);
+        d.decompose(TargetedDeconvolver::KLDivergence, nIterations, 0);
     }
     else if (cfName.substr(0, 4) == "dist") {
-        d.factorizeED(nIterations, 0);
+        d.decompose(TargetedDeconvolver::EuclideanDistance, nIterations, 0);
     }
     else {
         throw Poco::InvalidArgumentException("Invalid cost function: " +

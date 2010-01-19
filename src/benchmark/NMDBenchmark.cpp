@@ -50,7 +50,7 @@ void NMDBenchmark::run()
 	{
 		Deconvolver d(v, 20, 5);
 		Timestamp start;
-		d.factorizeED(100, 0.0, this);
+        d.decompose(Deconvolver::EuclideanDistance, 100, 0.0, this);
 		Timestamp end;
 		_elapsedTimes["NMD-ED 500x1000 r=20 t=5"] = end - start;
 	}

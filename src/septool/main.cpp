@@ -67,7 +67,7 @@ public:
         _maxIter(100),
         _algName("Multiplicative update (divergence)"),
         _cfName("Extended KL divergence"),
-        _nmdCostFunction(NMDTask::ExtendedKLDivergence),
+        _nmfCostFunction(nmf::Deconvolver::KLDivergence),
         _nrComponents(20),
         _nrSpectra(5),
         _preserveInit(false),
@@ -309,11 +309,11 @@ protected:
         }
         else if (name == "cost-function") {
             if (value == "dist") {
-                _nmdCostFunction = NMDTask::EuclideanDistance;
-                _cfName = "Euclidean distance";
+                _nmfCostFunction = nmf::Deconvolver::EuclideanDistance;
+                _cfName = "Squared Euclidean distance";
             }
             else if (value == "div") {
-                _nmdCostFunction = NMDTask::ExtendedKLDivergence;
+                _nmfCostFunction = nmf::Deconvolver::KLDivergence;
                 _cfName = "Extended KL divergence";
             }
         }
@@ -496,7 +496,7 @@ protected:
             switch (_separationMethod) {
             case SeparationTask::NMD:
                 nmdTask = new NMDTask(
-                    *it, _dataKind, _nmdCostFunction,
+                    *it, _dataKind, _nmfCostFunction,
                     _nrComponents, _nrSpectra, _maxIter,_epsilon, _volatile
                 );
                 nmdTask->setSparsity(_nmdSparsity);
@@ -593,7 +593,7 @@ private:
     string             _cfName;
     double             _nmdSparsity;
     bool               _nmdNormalize;
-    NMDTask::CostFunction _nmdCostFunction;
+    nmf::Deconvolver::NMFCostFunction _nmfCostFunction;
     int                _nrComponents;
     int                _nrSpectra;
     vector<int>        _initObjectIDs;

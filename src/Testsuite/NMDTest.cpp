@@ -44,11 +44,7 @@ bool NMDTest::performTest()
 
     cout << "Creating 10x5 random matrix:" << endl;
     Matrix x(10, 5, nmf::gaussianRandomGenerator);
-    /*double norm = sqrt(x.dotColCol(x, 0, x, 0));
-    for (unsigned int i = 0; i < x.rows(); ++i) {
-        x(i, 0) /= norm;
-    }
-    cout << x;*/
+    cout << x;
     cout << "---" << endl;
 
     const unsigned int t = 3;
@@ -57,7 +53,7 @@ bool NMDTest::performTest()
         cout << "Performing NMD using KL divergence" << endl;
 
         nmf::Deconvolver d(x, 10, t);
-        d.factorizeKL(5000, 1e-5);
+        d.decompose(nmf::Deconvolver::KLDivergence, 5000, 1e-5);
         cout << "# steps: " << d.numSteps() << endl;
         cout << "absolute error: " << d.absoluteError() << endl;
         cout << "relative error: " << d.relativeError() << endl;
@@ -85,42 +81,12 @@ bool NMDTest::performTest()
         cout << "Performing NMD using Euclidean distance" << endl;
 
         nmf::Deconvolver d(x, 10, t);
-        d.factorizeED(5000, 1e-5);
+        d.decompose(nmf::Deconvolver::EuclideanDistance, 5000, 1e-5);
         cout << "# steps: " << d.numSteps() << endl;
         cout << "absolute error: " << d.absoluteError() << endl;
         cout << "relative error: " << d.relativeError() << endl;
         cout << endl;
         for (unsigned int i = 0; i < t; ++i) {
-            cout << "W[" << i << "] = " << endl;
-            cout << d.getW(i) << endl;
-        }
-        cout << "H = " << endl;
-        cout << d.getH() << endl;
-        cout << "Lambda = " << endl;
-        d.computeLambda();
-        Matrix l(d.getLambda());
-        cout << l << endl;
-        
-        for (unsigned int i = 0; i < x.rows(); i++) {
-            for (unsigned int j = 0; j < x.cols(); j++) {
-                if (!epsilonCheck(x(i,j), l(i,j), 5e-2))
-                    return false;
-            }
-        }
-    }
-
-    {
-        cout << "Performing NMF using Euclidean distance, with normalization" 
-             << endl;
-
-        nmf::Deconvolver d(x, 10, 1);
-        d.setNormalizeW(true);
-        d.factorizeED(5000, 1e-5);
-        cout << "# steps: " << d.numSteps() << endl;
-        cout << "absolute error: " << d.absoluteError() << endl;
-        cout << "relative error: " << d.relativeError() << endl;
-        cout << endl;
-        for (unsigned int i = 0; i < 1; ++i) {
             cout << "W[" << i << "] = " << endl;
             cout << d.getW(i) << endl;
         }
