@@ -33,6 +33,7 @@
 using namespace std;
 using namespace blissart;
 using namespace blissart::linalg;
+using nmf::Deconvolver;
 
 
 namespace Testing {
@@ -47,11 +48,71 @@ bool SNMFTest::performTest()
     cout << x;
     cout << "---" << endl;
 
+    // This sanity check tests whether a sparse NMF with the sparseness
+    // weight set to zero equals normal NMF. This test is necessary since
+    // implementation might select different algorithms for both tasks.
+    // In this test, of course, the same initialization has to be chosen
+    // for both variants.
+
+    cout << "Performing Sparse NMF sanity check" << endl << endl;
+
+    {
+        cout << "Euclidean distance" << endl;
+        nmf::Deconvolver d(x, 10, 1);
+        Matrix w(10, 10, nmf::gaussianRandomGenerator);
+        Matrix h(10, 5, nmf::gaussianRandomGenerator);
+        d.setW(0, w);
+        d.setH(h);
+        d.decompose(Deconvolver::EuclideanDistanceSparse, 100, 0.0);
+        d.computeApprox();
+        Matrix wh1(d.getApprox());
+        d.setW(0, w);
+        d.setH(h);
+        d.decompose(Deconvolver::EuclideanDistance, 100, 0.0);
+        d.computeApprox();
+        Matrix wh2(d.getApprox());
+        cout << "With sparse NMF (lambda = 0)" << endl;
+        cout << wh1;
+        cout << "With standard NMF" << endl;
+        cout << wh2;
+        if (!epsilonCheck(wh1, wh2, 1e-2)) {
+            return false;
+        }
+    }
+
+    {
+        cout << "KL divergence" << endl;
+        nmf::Deconvolver d(x, 10, 1);
+        Matrix w(10, 10, nmf::gaussianRandomGenerator);
+        Matrix h(10, 5, nmf::gaussianRandomGenerator);
+        d.setW(0, w);
+        d.setH(h);
+        d.decompose(Deconvolver::KLDivergenceSparse, 100, 0.0);
+        d.computeApprox();
+        Matrix wh1(d.getApprox());
+        d.setW(0, w);
+        d.setH(h);
+        d.decompose(Deconvolver::KLDivergence, 100, 0.0);
+        d.computeApprox();
+        Matrix wh2(d.getApprox());
+        cout << "With sparse NMF (lambda = 0)" << endl;
+        cout << wh1;
+        cout << "With standard NMF" << endl;
+        cout << wh2;
+        if (!epsilonCheck(wh1, wh2, 1e-2)) {
+            return false;
+        }
+    }
+
+    // Convergence tests for different sparsity parameters and both cost 
+    // functions.
+
     {
         const double sparsity[] = { 0, 0.1, 0.25 };
 
         for (unsigned int si = 0; si < 3; ++si) {
 
+            cout << endl << "---" << endl;
             cout << "Performing Sparse NMF using KL divergence" << endl;
             cout << "Sparsity parameter set to " << sparsity[si] << endl;
 
