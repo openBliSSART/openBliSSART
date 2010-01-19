@@ -54,8 +54,8 @@ Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t,
                          Matrix::GeneratorFunction wGenerator,
                          Matrix::GeneratorFunction hGenerator) :
     _v(v),
-    _lambda(v.rows(), v.cols(), generators::zero),
-    _oldLambda(0),
+    _approx(v.rows(), v.cols(), generators::zero),
+    _oldApprox(0),
     _w(new Matrix*[t]),
     _wConstant(false),
     _wColConstant(new bool[r]),
@@ -170,10 +170,10 @@ void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
 void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
                               ProgressObserver *observer)
 {
-    Matrix vOverLambda(_v.rows(), _v.cols());
+    Matrix vOverApprox(_v.rows(), _v.cols());
     Matrix hShifted(_h.rows(), _h.cols());
     Matrix hUpdate(_h.rows(), _h.cols());
-    Matrix* oldLambda;
+    Matrix* oldApprox;
     double *wpColSums = new double[_h.rows()];
 
 #ifdef GNUPLOT
@@ -184,10 +184,10 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
     while (_numSteps < maxSteps) {
 
         // Compute approximation at the beginning and after the H update
-        computeLambda();
+        computeApprox();
         
-        // Compute V/Lambda.
-        _v.elementWiseDivision(_lambda, &vOverLambda);
+        // Compute V/Approx.
+        _v.elementWiseDivision(_approx, &vOverApprox);
 
         // FIXME: Duplicate code here
         // Compute difference between approximations in current and previous
@@ -197,17 +197,17 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
         // only perform this computation if eps > 0.
         if (eps > 0) {
             if (_numSteps > 1) {
-                Matrix lambdaDiff(_lambda);
-                lambdaDiff.sub(*oldLambda);
-                double zeta = lambdaDiff.frobeniusNorm() / 
-                              oldLambda->frobeniusNorm();
+                Matrix approxDiff(_approx);
+                approxDiff.sub(*oldApprox);
+                double zeta = approxDiff.frobeniusNorm() / 
+                              oldApprox->frobeniusNorm();
                 if (zeta < eps) {
                     break;
                 }
-                *oldLambda = _lambda;
+                *oldApprox = _approx;
             }
             else {
-                oldLambda = new Matrix(_lambda);
+                oldApprox = new Matrix(_approx);
             }
         }
 
@@ -218,9 +218,9 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
             for (unsigned int p = 0; p < _t; ++p) {
                 if (_t > 1) {
                     wpH = new Matrix(_v.rows(), _v.cols());
-                    // Difference-based calculation of new Lambda
+                    // Difference-based calculation of new approximation
                     computeWpH(p, *wpH);
-                    _lambda.sub(*wpH);
+                    _approx.sub(*wpH);
                 }
                 for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
                     if (!_wColConstant[j]) {
@@ -228,29 +228,30 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
                         double hRowSum = hShifted.rowSum(j);
                         for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
                             _w[p]->at(i, j) *= 
-                                Matrix::dotRowRow(hShifted, j, vOverLambda, i) 
+                                Matrix::dotRowRow(hShifted, j, vOverApprox, i) 
                                 / hRowSum;
                         }
                     }
                 }
                 if (_t > 1) {
                     computeWpH(p, *wpH);
-                    _lambda.add(*wpH);
+                    _approx.add(*wpH);
                     delete wpH;
-                    ensureNonnegativity(_lambda);
+                    ensureNonnegativity(_approx);
                 }
                 hShifted.shiftColumnsRight();
             }
         }
 
-        // The standard method of computing Lambda is more efficient 
+        // The standard method of computing the approximation is more efficient 
         // for T = 1 (1 vs. 2 matrix multiplications).
         if (_t == 1) {
-            computeLambda();
+            computeApprox();
         }
 
-        // Now Lambda has been updated in any case, so update V/Lambda now.
-        _v.elementWiseDivision(_lambda, &vOverLambda);
+        // Now approximation has been updated in any case, 
+        // so update V/approx now.
+        _v.elementWiseDivision(_approx, &vOverApprox);
 
         // Calculate update matrix for H by averaging the updates corresponding
         // to each W_t
@@ -264,13 +265,13 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
             // Calculate sum of updates
             for (unsigned int j = 0; j < _h.cols() - p; ++j) {
                 for (unsigned int i = 0; i < _h.rows(); ++i) {
-                    // Instead of considering the jth column of V/Lambda
+                    // Instead of considering the jth column of V/approx
                     // shifted p spots to the left, we consider the (j + p)th
-                    // column of V/Lambda itself.
+                    // column of V/Approx itself.
                     // Also simulate shift of sparsity weight matrix S here,
                     // by using j+p as column index.
                     hUpdate(i, j) += 
-                        Matrix::dotColCol(*_w[p], i, vOverLambda, j + p) / 
+                        Matrix::dotColCol(*_w[p], i, vOverApprox, j + p) / 
                         (wpColSums[i] + _s(i, j + p));
                 }
             }
@@ -368,15 +369,15 @@ void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
                 w.multWithMatrix(_h, oldWH);
             }
             else {
-                w.multWithMatrix(_h, &_lambda);
-                Matrix whDiff(_lambda);
+                w.multWithMatrix(_h, &_approx);
+                Matrix whDiff(_approx);
                 whDiff.sub(*oldWH);
                 double zeta = whDiff.frobeniusNorm() / 
                               oldWH->frobeniusNorm();
                 if (zeta < eps) {
                     break;
                 }
-                *oldWH = _lambda;
+                *oldWH = _approx;
             }
         }
 
@@ -412,7 +413,7 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
     Matrix wUpdateMatrixDenom(_v.rows(), _h.rows());
     Matrix hUpdateMatrixNom(_h.rows(), _h.cols());
     Matrix hUpdateMatrixDenom(_h.rows(), _h.cols());
-    Matrix* oldLambda = 0;
+    Matrix* oldApprox = 0;
     double denom;
 
 #ifdef GNUPLOT
@@ -423,7 +424,7 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
     while (_numSteps < maxSteps) {
 
         // Compute approximation at the beginning and after the H update
-        computeLambda();
+        computeApprox();
         
         // Compute difference between approximations in current and previous
         // iteration in terms of Frobenius norm. Stop iteration if difference
@@ -432,17 +433,17 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
         // only perform this computation if eps > 0.
         if (eps > 0) {
             if (_numSteps > 1) {
-                Matrix lambdaDiff(_lambda);
-                lambdaDiff.sub(*oldLambda);
-                double zeta = lambdaDiff.frobeniusNorm() / 
-                              oldLambda->frobeniusNorm();
+                Matrix approxDiff(_approx);
+                approxDiff.sub(*oldApprox);
+                double zeta = approxDiff.frobeniusNorm() / 
+                              oldApprox->frobeniusNorm();
                 if (zeta < eps) {
                     break;
                 }
-                *oldLambda = _lambda;
+                *oldApprox = _approx;
             }
             else {
-                oldLambda = new Matrix(_lambda);
+                oldApprox = new Matrix(_approx);
             }
         }
 
@@ -463,23 +464,23 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
                     _v.rows(), _v.cols() - p, _h.rows(),
                     0, p, 0, 0, 0, 0);
 
-                // Calculate Lambda * (H shifted t spots to the right)^T 
+                // Calculate Approx * (H shifted t spots to the right)^T 
                 // (denominator of the update matrix)
                 // The same as above.
-                _lambda.multWithMatrix(_h, &wUpdateMatrixDenom,
+                _approx.multWithMatrix(_h, &wUpdateMatrixDenom,
                     false, true,
                     _v.rows(), _v.cols() - p, _h.rows(), 
                     0, p, 0, 0, 0, 0);
 
-                // Efficient (difference-based) calculation of updated Lambda
+                // Efficient (difference-based) calculation of updated Approx
                 // (step 1: subtraction of old W[p]*H)
                 // Due to Wang (2009)
                 wpH = new Matrix(_v.rows(), _v.cols());
                 computeWpH(p, *wpH);
 
-                // It is safe to overwrite Lambda, as it is not directly used 
+                // It is safe to overwrite Approx, as it is not directly used 
                 // in the update loop.
-                _lambda.sub(*wpH);
+                _approx.sub(*wpH);
 
                 // Finally, the update loop is simple now.
                 for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
@@ -492,12 +493,12 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
                     }
                 }
 
-                // Calculate updated lambda, step 2
+                // Calculate updated approximation, step 2
                 // (addition of new W[p]*H)
                 computeWpH(p, *wpH);
-                _lambda.add(*wpH);
+                _approx.add(*wpH);
                 delete wpH;
-                ensureNonnegativity(_lambda);
+                ensureNonnegativity(_approx);
             }
         }
 
@@ -516,7 +517,7 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
                 // target dimension: R x (N-p)
                 _w[p]->cols(), _w[p]->rows(), _v.cols() - p,
                 0, 0, 0, p, 0, 0);
-            _w[p]->multWithMatrix(_lambda, &hUpdateMatrixDenom,
+            _w[p]->multWithMatrix(_approx, &hUpdateMatrixDenom,
                 true, false, 
                 _w[p]->cols(), _w[p]->rows(), _v.cols() - p,
                 0, 0, 0, p, 0, 0);
@@ -553,15 +554,139 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
     if (observer)
         observer->progressChanged(1.0f);
 
-    if (oldLambda)
-        delete oldLambda;
+    if (oldApprox)
+        delete oldApprox;
 }
 
 
 void Deconvolver::factorizeEDSparse(unsigned int maxSteps, double eps,
                                     ProgressObserver *observer)
 {
-    // TODO: Implement me!
+    assert(_t == 1);
+
+    Matrix& w = *(_w[0]);
+    Matrix wUpdateMatrixNom(_v.rows(), _h.rows());
+    Matrix wUpdateMatrixDenom(_v.rows(), _h.rows());
+    Matrix hhT(_h.rows(), _h.rows());
+    Matrix hUpdateMatrixNom(_h.rows(), _h.cols());
+    Matrix hUpdateMatrixDenom(_h.rows(), _h.cols());
+    Matrix wTw(_h.rows(), _h.rows());
+    Matrix *wh = 0, *oldWH = 0;
+    
+    // helper variables
+    double denom;
+    double hRowSumSq, hRowLength;
+
+    // parts of gradient which are equal for each row
+    double *csplus = new double[_h.rows()];
+    double *csminus = new double[_h.rows()];
+
+    // Precompute 2 constants
+    double sqrtT = sqrt((double) _h.cols());
+    double sqrtOneOverT = sqrt(1.0 / (double) _h.cols());
+
+    _numSteps = 0;
+    while (_numSteps < maxSteps) {
+
+        // W Update
+        // FIXME: Duplicate code --> factorizeNMFED
+        if (!_wConstant) {
+            // The trick is not to calculate (W*H)*H^T, but
+            // W*(H*H^T), which is much faster, assuming common
+            // dimensions of W and H.
+            _v.multWithTransposedMatrix(_h, &wUpdateMatrixNom);
+            _h.multWithTransposedMatrix(_h, &hhT);
+            w.multWithMatrix(hhT, &wUpdateMatrixDenom);
+            for (unsigned int j = 0; j < w.cols(); ++j) {
+                if (!_wColConstant[j]) {
+                    for (unsigned int i = 0; i < w.rows(); ++i) {
+                        denom = wUpdateMatrixDenom(i, j);
+                        if (denom <= 0.0) denom = 1e-9;
+                        w(i, j) *= (wUpdateMatrixNom(i, j) / denom);
+                    }
+                }
+            }
+        }
+
+        // H Update
+        // FIXME: Duplicate code --> factorizeNMFED
+
+        // Calculate W^T * V
+        w.multWithMatrix(_v, &hUpdateMatrixNom, true, false,
+            _h.rows(), _v.rows(), _h.cols(),
+            0, 0, 0, 0, 0, 0);
+
+        // Here the trick is to calculate (W^T * W) * H instead of
+        // W^T * (W * H).
+        // Calculate W^T * W
+        w.multWithMatrix(w, &wTw, true, false,
+            _h.rows(), w.rows(), _h.rows(),
+            0, 0, 0, 0, 0, 0);
+        wTw.multWithMatrix(_h, &hUpdateMatrixDenom);
+
+        // Precompute row norms of H for normalization of sparsity weight
+        // (sum of squares)
+        for (unsigned int i = 0; i < _h.rows(); ++i) {
+            hRowSumSq = Matrix::dotRowRow(_h, i, _h, i);
+            hRowLength = sqrt(hRowSumSq);
+            csplus[i] = sqrtT / hRowLength;
+            csminus[i] = sqrtT * _h.rowSum(i) / (hRowSumSq * hRowLength);
+        }
+
+        for (unsigned int j = 0; j < _h.cols(); ++j) {
+            for (unsigned int i = 0; i < _h.rows(); ++i) {
+                denom = hUpdateMatrixDenom(i, j) + _s(i, j) * csplus[i];
+                if (denom <= 0.0) denom = 1e-9;
+                _h(i, j) *= 
+                    (hUpdateMatrixNom(i, j) + _s(i, j) * _h(i, j) * csminus[i])
+                    / denom;
+            }
+        }
+
+        // convergence criterion
+        if (eps > 0) {
+            if (_numSteps == 0) {
+                //wh = new Matrix(_v.rows(), _v.cols());
+                oldWH = new Matrix(_v.rows(), _v.cols());
+                w.multWithMatrix(_h, oldWH);
+            }
+            else {
+                w.multWithMatrix(_h, &_approx);
+                Matrix whDiff(_approx);
+                whDiff.sub(*oldWH);
+                double zeta = whDiff.frobeniusNorm() / 
+                              oldWH->frobeniusNorm();
+                if (zeta < eps) {
+                    break;
+                }
+                *oldWH = _approx;
+            }
+        }
+
+        ++_numSteps;
+
+        // Call the ProgressObserver every once in a while (if applicable).
+        if (observer && _numSteps % 25 == 0)
+            observer->progressChanged((float)_numSteps / (float)maxSteps);
+    }
+
+    if (_normalizeW) {
+        for (unsigned int j = 0; j < w.cols(); ++j) {
+            double colNorm = std::sqrt(w.dotColCol(w, j, w, j));
+            for (unsigned int i = 0; i < w.rows(); ++i) {
+                w(i, j) /= colNorm;
+            }
+            for (unsigned int k = 0; k < _h.cols(); ++k) {
+                _h(j, k) *= colNorm;
+            }
+        }
+    }
+
+    if (wh)    delete wh;
+    if (oldWH) delete oldWH;
+
+    delete[] csminus;
+    delete[] csplus;
 }
 
 
@@ -579,18 +704,18 @@ void Deconvolver::factorizeEDSparseNorm(unsigned int maxSteps, double eps,
 }
 
 
-void Deconvolver::computeLambda()
+void Deconvolver::computeApprox()
 {
     if (_t == 1) {
         // this is much faster
-        _w[0]->multWithMatrix(_h, &_lambda);
+        _w[0]->multWithMatrix(_h, &_approx);
     }
     else {
         Matrix wpH(_v.rows(), _v.cols());
-        _lambda.zero();
+        _approx.zero();
         for (unsigned int p = 0; p < _t; ++p) {
             computeWpH(p, wpH);
-            _lambda.add(wpH);
+            _approx.add(wpH);
         }
     }
 }
@@ -617,7 +742,7 @@ void Deconvolver::computeWpH(unsigned int p, Matrix& wpH)
 
 void Deconvolver::computeError()
 {
-    Matrix errorMatrix(_lambda);
+    Matrix errorMatrix(_approx);
     errorMatrix.sub(_v);
     _absoluteError = errorMatrix.frobeniusNorm();
     _relativeError = _absoluteError / _vFrob;

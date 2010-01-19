@@ -153,15 +153,28 @@ public:
     inline const blissart::linalg::Matrix& getS() const;
 
     /**
-     * Returns the current value of Lambda (approximation of V).
+     * Returns the current value of approximation of V.
      */
-    inline const blissart::linalg::Matrix& getLambda() const;
+    inline const blissart::linalg::Matrix& getApprox() const;
     
     /**
-     * Updates the value of Lambda (approximation of V).
+     * Recomputes the value of approximation of V.
      */
-    void computeLambda();
+    void computeApprox();
 
+    /**
+     * Performs decomposition according to the given cost function.
+     * The appropriate algorithm is chosen automatically.
+     * @param NMFCostFunction   the cost function to minimize
+     * @param maxSteps          maximum number of iteration steps
+     * @param eps               if eps > 0.0, convergence of the approximation
+     *                          is checked and once it is reached, iteration 
+     *                          is stopped; setting eps > 0.0 may significantly
+     *                          slow down computation and should not be used
+     *                          in production code
+     * @param observer          a ProgressObserver that is notified every 25
+     *                          iteration steps
+     */
     void decompose(NMFCostFunction cf, unsigned int maxSteps, double eps,
                    ProgressObserver *observer = 0);
 
@@ -206,13 +219,25 @@ protected:
     void factorizeNMFED(unsigned int maxSteps, double eps,
                         ProgressObserver *observer = 0);
 
+    // Sparse NMF according to Virtanen 2007, modified to use Euclidean
+    // distance for measurement of reconstruction error.
     void factorizeEDSparse(unsigned int maxSteps, double eps,
                            ProgressObserver *observer = 0);
+
+    // Sparse NMF according to Virtanen 2007, measuring reconstruction error
+    // using extended KL divergence.
     void factorizeKLSparse(unsigned int maxSteps, double eps,
                            ProgressObserver *observer = 0);
+
+    // Sparse NMF minimizing Euclidean distance, measured using normalized
+    // basis vectors (Eggert and Körner 2004).
     void factorizeEDSparseNorm(unsigned int maxSteps, double eps,
                                ProgressObserver *observer = 0);
 
+    // Checks convergence of the approximation. If recomputeApprox is set,
+    // the new approximation is computed first (maybe in the iteration itself
+    // the approximation is not needed!)
+    bool checkConvergence(bool recomputeApprox);
 
     // Computes error of current approximation.
     void computeError();
@@ -230,8 +255,8 @@ protected:
     void normalizeW();
 
     const blissart::linalg::Matrix& _v;
-    blissart::linalg::Matrix        _lambda;
-    blissart::linalg::Matrix*       _oldLambda;
+    blissart::linalg::Matrix        _approx;
+    blissart::linalg::Matrix*       _oldApprox;
     blissart::linalg::Matrix**      _w;
     bool                        _wConstant;
     bool*                       _wColConstant;
@@ -316,9 +341,9 @@ const blissart::linalg::Matrix& Deconvolver::getS() const
 }
 
 
-const blissart::linalg::Matrix& Deconvolver::getLambda() const
+const blissart::linalg::Matrix& Deconvolver::getApprox() const
 {
-    return _lambda;
+    return _approx;
 }
 
 

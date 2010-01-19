@@ -64,9 +64,9 @@ bool NMDTest::performTest()
         }
         cout << "H = " << endl;
         cout << d.getH() << endl;
-        cout << "Lambda = " << endl;
-        d.computeLambda();
-        Matrix l(d.getLambda());
+        cout << "Approx = " << endl;
+        d.computeApprox();
+        Matrix l(d.getApprox());
         cout << l << endl;
         
         for (unsigned int i = 0; i < x.rows(); i++) {
@@ -92,9 +92,9 @@ bool NMDTest::performTest()
         }
         cout << "H = " << endl;
         cout << d.getH() << endl;
-        cout << "Lambda = " << endl;
-        d.computeLambda();
-        Matrix l(d.getLambda());
+        cout << "Approx = " << endl;
+        d.computeApprox();
+        Matrix l(d.getApprox());
         cout << l << endl;
         
         for (unsigned int i = 0; i < x.rows(); i++) {
