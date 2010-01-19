@@ -196,6 +196,10 @@
 				RelativePath=".\NMDBenchmark.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\NMFBenchmark.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Headerdateien"
@@ -208,6 +212,10 @@
 			</File>
 			<File
 				RelativePath=".\NMDBenchmark.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NMFBenchmark.h"
 				>
 			</File>
 		</Filter>

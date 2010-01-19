@@ -365,6 +365,7 @@ void Matrix::multWithMatrix(const Matrix& other, Matrix* target,
 #       ifdef ISEP_ROW_MAJOR
 #           error Matlab does not support row-major layout
 #       endif // ISEP_ROW_MAJOR
+    // transpose parameters for Matlab dgemm
     char noTrans[1] = { 'N' };
     char trans[1] = { 'T' };
     // Create local copies of variables and convert them to ptrdiff_t type,
@@ -864,10 +865,21 @@ double Matrix::dotColCol(const Matrix &a, unsigned int aCol,
                       b._data + bCol * b._rows, 1);
 #  endif
 #else // !HAVE_CBLAS_H
+#   ifdef HAVE_MATLAB
+#       ifdef ISEP_ROW_MAJOR
+#           error Matlab does not support row-major layout
+#       endif
+    ptrdiff_t n = (ptrdiff_t) a._rows;
+    ptrdiff_t incx = 1, incy = 1;
+    return ddot(&n,
+                a._data + aCol * a._rows, &incx,
+                b._data + bCol * b._rows, &incy);
+#   else
     double result = 0.0;
     for (unsigned int i = 0; i < a._rows; i++)
         result += a(i, aCol) * b(i, bCol);
     return result;
+#   endif
 #endif
 }
 
@@ -890,10 +902,22 @@ double Matrix::dotRowRow(const Matrix &a, unsigned int aRow,
                       b._data + bRow, b._rows);
 #  endif
 #else // !HAVE_CBLAS_H
+#   ifdef HAVE_MATLAB
+#       ifdef ISEP_ROW_MAJOR
+#           error Matlab does not support row-major layout
+#       endif
+    ptrdiff_t n = (ptrdiff_t) a._cols;
+    ptrdiff_t incx = (ptrdiff_t) a._rows;
+    ptrdiff_t incy = (ptrdiff_t) b._rows;
+    return ddot(&n,
+                a._data + aRow, &incx,
+                b._data + bRow, &incy);
+#   else
     double result = 0.0;
     for (unsigned int i = 0; i < a._cols; i++)
         result += a(aRow, i) * b(bRow, i);
     return result;
+#   endif
 #endif
 }
 

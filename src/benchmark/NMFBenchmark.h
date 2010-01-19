@@ -23,49 +23,35 @@
 //
 
 
-#include "NMDBenchmark.h"
-
-#include <blissart/nmf/Deconvolver.h>
-#include <blissart/nmf/randomGenerator.h>
-
-#include <iomanip>
+#ifndef __NMF_BENCHMARK_H__
+#define __NMF_BENCHMARK_H__
 
 
-using Poco::Timestamp;
-using blissart::nmf::Deconvolver;
-using blissart::linalg::Matrix;
-using namespace std;
+#include "Benchmark.h"
+#include <blissart/ProgressObserver.h>
 
 
 namespace benchmark {
 
 
-void NMDBenchmark::run()
+class NMFBenchmark : public Benchmark, blissart::ProgressObserver
 {
-	Matrix v(500, 1000, blissart::nmf::gaussianRandomGenerator);
+public:
+	void run();
 
-	// NMD, Euclidean distance, 
-	// 500x1000 Gaussian random matrix, 20 components, 5 spectra
-	// fixed number of iterations (100)
-	{
-		Deconvolver d(v, 20, 5);
-		Timestamp start;
-		d.factorizeED(100, 0.0, this);
-		Timestamp end;
-		_elapsedTimes["NMD-ED 500x1000 r=20 t=5"] = end - start;
+
+	virtual void progressChanged(float progress);
+
+
+    inline const char *name() const 
+	{ 
+		return "NMFBenchmark"; 
 	}
-}
-
-
-void NMDBenchmark::progressChanged(float progress)
-{
-	cout << "\r"
-		 << fixed << setw(6) << setprecision(2)
-		 << (progress * 100.0) << "% complete ...";
-	if (progress == 1.0)
-		cout << endl;
-	cout << flush;
-}
+};
 
 
 } // namespace benchmark
+
+
+#endif // __NMD_BENCHMARK_H__
+

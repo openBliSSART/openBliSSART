@@ -23,7 +23,7 @@
 //
 
 
-#include "NMDBenchmark.h"
+#include "NMFBenchmark.h"
 
 #include <blissart/nmf/Deconvolver.h>
 #include <blissart/nmf/randomGenerator.h>
@@ -40,24 +40,35 @@ using namespace std;
 namespace benchmark {
 
 
-void NMDBenchmark::run()
+void NMFBenchmark::run()
 {
 	Matrix v(500, 1000, blissart::nmf::gaussianRandomGenerator);
 
-	// NMD, Euclidean distance, 
-	// 500x1000 Gaussian random matrix, 20 components, 5 spectra
+	// NMF, Euclidean distance,
+	// 500x1000 Gaussian random matrix, 20 components
 	// fixed number of iterations (100)
 	{
-		Deconvolver d(v, 20, 5);
+		Deconvolver d(v, 20, 1);
 		Timestamp start;
 		d.factorizeED(100, 0.0, this);
 		Timestamp end;
-		_elapsedTimes["NMD-ED 500x1000 r=20 t=5"] = end - start;
+		_elapsedTimes["NMF-ED 500x1000 r=20"] = end - start;
+	}
+
+    // NMF, KL divergence,
+	// 500x1000 Gaussian random matrix, 20 components
+	// fixed number of iterations (100)
+	{
+		Deconvolver d(v, 20, 1);
+		Timestamp start;
+		d.factorizeKL(100, 0.0, this);
+		Timestamp end;
+		_elapsedTimes["NMF-KL 500x1000 r=20"] = end - start;
 	}
 }
 
 
-void NMDBenchmark::progressChanged(float progress)
+void NMFBenchmark::progressChanged(float progress)
 {
 	cout << "\r"
 		 << fixed << setw(6) << setprecision(2)

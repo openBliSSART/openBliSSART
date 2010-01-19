@@ -302,18 +302,6 @@ void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
             }
         }
 
-        if (_normalizeW) {
-            for (unsigned int j = 0; j < w.cols(); ++j) {
-                double colNorm = std::sqrt(w.dotColCol(w, j, w, j));
-                for (unsigned int i = 0; i < w.rows(); ++i) {
-                    w(i, j) /= colNorm;
-                }
-                for (unsigned int k = 0; k < _h.cols(); ++k) {
-                    _h(j, k) *= colNorm;
-                }
-            }
-        }
-
         // H Update
         // Calculate W^T * V
         w.multWithMatrix(_v, &hUpdateMatrixNom, true, false,
@@ -360,6 +348,18 @@ void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
         // Call the ProgressObserver every once in a while (if applicable).
         if (observer && _numSteps % 25 == 0)
             observer->progressChanged((float)_numSteps / (float)maxSteps);
+    }
+
+    if (_normalizeW) {
+        for (unsigned int j = 0; j < w.cols(); ++j) {
+            double colNorm = std::sqrt(w.dotColCol(w, j, w, j));
+            for (unsigned int i = 0; i < w.rows(); ++i) {
+                w(i, j) /= colNorm;
+            }
+            for (unsigned int k = 0; k < _h.cols(); ++k) {
+                _h(j, k) *= colNorm;
+            }
+        }
     }
 
     if (wh)    delete wh;
@@ -538,11 +538,16 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
 
 void Deconvolver::computeLambda()
 {
-    Matrix wpH(_v.rows(), _v.cols());
-    _lambda.zero();
-    for (unsigned int p = 0; p < _t; ++p) {
-        computeWpH(p, wpH);
-        _lambda.add(wpH);
+    if (_t == 1) {
+        _w[0]->multWithMatrix(_h, &_lambda);
+    }
+    else {
+        Matrix wpH(_v.rows(), _v.cols());
+        _lambda.zero();
+        for (unsigned int p = 0; p < _t; ++p) {
+            computeWpH(p, wpH);
+            _lambda.add(wpH);
+        }
     }
 }
 

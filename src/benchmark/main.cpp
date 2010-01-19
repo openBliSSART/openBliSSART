@@ -34,6 +34,7 @@
 #include <blissart/audio/audio.h>
 
 #include "NMDBenchmark.h"
+#include "NMFBenchmark.h"
 
 
 using namespace std;
@@ -83,6 +84,7 @@ protected:
     {
         Application::defineOptions(options);
         options.addOption(Option("nmd", "", "Run NMD benchmark"));
+        options.addOption(Option("nmf", "", "Run NMF benchmark"));
 		options.addOption(Option("all", "", "Run all of the above benchmarks"));
     }
 
@@ -93,6 +95,8 @@ protected:
 
         if (name == "all" || name == "nmd")
             pushBenchmark(new NMDBenchmark());
+        if (name == "all" || name == "nmf")
+            pushBenchmark(new NMFBenchmark());
     }
 
 
