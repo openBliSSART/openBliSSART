@@ -57,7 +57,7 @@ AC_PROG_MAKE_SET
 
 # Checks for libraries.
 AX_CHECK_FFTW3(:, AC_ERROR([Need fftw3!]))
-AX_CHECK_POCO([yes], :, AC_ERROR([Need Poco Enterprise v1.3.4+!]))
+AX_CHECK_POCO([yes], :, AC_ERROR([Need Poco Enterprise v1.3.6+!]))
 # TODO: Actually, Qt is only neccessary for the building the browser application.
 #       This should be taken into account as someone might only want to build the
 #       libraries and/or command-line tools.
@@ -82,35 +82,6 @@ AC_TYPE_UINT8_T
 AC_FUNC_ERROR_AT_LINE
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([floor sqrt strrchr atexit memset pow strchr])
-
-dnl The following lines have been disabled because they make debugging impossible
-dnl and also don't improve the speed as much as intended. I'll leave them here
-dnl for possible later use (<lehmanna@in.tum.de> 2008/02/22).
-dnl
-dnl # Determine OS and machine type, then adapt optimization flags
-dnl AC_ARG_ENABLE([optimizations],
-dnl               AS_HELP_STRING([--enable-optimizations],
-dnl                              [enable machine specific optimizations (default)]),
-dnl               optimizations="$enableval", optimizations="yes")
-dnl if test "x$optimizations" = "xyes"; then
-dnl     AX_GET_OS_AND_MACHINE_TYPE
-dnl     AC_MSG_NOTICE([*** enabling optimizations])
-dnl     CXXFLAGS="${CXXFLAGS//-g /}"
-dnl     CXXFLAGS="${CXXFLAGS//-O2 /}"
-dnl     case "$TYPE_MACHINE" in
-dnl         i386)
-dnl             CXXFLAGS="$CXXFLAGS -O3 -march=prescott -mfpmath=sse"
-dnl             ;;
-dnl         powerpc)
-dnl             if test "x$TYPE_OS" = "xDarwin"; then
-dnl                 # Looks like we've found ourselves a rotten apple here
-dnl                 CXXFLAGS="$CXXFLAGS -O3 -fast"
-dnl             else
-dnl                 CXXFLAGS="$CXXFLAGS -O3"
-dnl             fi
-dnl             ;;
-dnl     esac
-dnl fi
 
 # Set the standard installation prefix to /usr/local/blissart.
 AC_PREFIX_DEFAULT([/usr/local/blissart])
