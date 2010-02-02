@@ -25,6 +25,7 @@
 
 #include <blissart/Process.h>
 #include <Poco/NumberFormatter.h>
+#include <Poco/NumberParser.h>
 
 
 using namespace std;
@@ -78,7 +79,7 @@ int Process::windowSize() const
     map<string, string>::const_iterator it;
     if ((it = parameters.find("windowSize")) == parameters.end())
         throw Poco::NotFoundException("Missing windowSize.");
-    return (unsigned int)(atoi(it->second.c_str()));
+    return (unsigned int)(Poco::NumberParser::parse(it->second.c_str()));
 }
 
 
@@ -95,7 +96,7 @@ double Process::overlap() const
     map<string, string>::const_iterator it;
     if ((it = parameters.find("overlap")) == parameters.end())
         throw Poco::NotFoundException("Missing overlap.");
-    return (atof(it->second.c_str()));
+    return Poco::NumberParser::parseFloat(it->second.c_str());
 }
 
 
@@ -127,7 +128,7 @@ int Process::components() const
     map<string, string>::const_iterator it;
     if ((it = parameters.find("components")) == parameters.end())
         throw Poco::NotFoundException("Missing # of components.");
-    return (unsigned int)(atoi(it->second.c_str()));
+    return (unsigned int)(Poco::NumberParser::parse(it->second.c_str()));
 }
 
 
@@ -144,7 +145,7 @@ int Process::spectra() const
     map<string, string>::const_iterator it;
     if ((it = parameters.find("spectra")) == parameters.end())
         throw Poco::NotFoundException("Missing # of spectra.");
-    return (unsigned int)(atoi(it->second.c_str()));
+    return (unsigned int)(Poco::NumberParser::parse(it->second.c_str()));
 }
 
 
