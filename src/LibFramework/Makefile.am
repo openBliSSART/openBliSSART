@@ -34,7 +34,8 @@ libFramework_la_CPPFLAGS = -I../include @POCO_CPPFLAGS@
 
 libFramework_la_CXXFLAGS = -fPIC
 
-libFramework_la_SOURCES = AnovaFeatureSelector.cpp \
+libFramework_la_SOURCES = AmplitudeMatrixTransforms.cpp \
+                          AnovaFeatureSelector.cpp \
 						  AudioObject.cpp \
 						  BasicApplication.cpp \
 						  BasicTask.cpp \

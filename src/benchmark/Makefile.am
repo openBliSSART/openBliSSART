@@ -33,5 +33,7 @@ benchmark_LDADD = $(top_srcdir)/src/LibLinAlg/libLinAlg.la \
 
 benchmark_SOURCES = NMDBenchmark.cpp \
                     NMDBenchmark.h \
+                    NMFBenchmark.cpp \
+                    NMFBenchmark.h \
                     main.cpp
 

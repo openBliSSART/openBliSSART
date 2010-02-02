@@ -52,20 +52,27 @@ testsuite_SOURCES = BinaryReaderWriterTest.cpp \
 					MFCCTest.h \
 					MatrixTest.cpp \
 					MatrixTest.h \
+                    MTrTest.cpp \
+                    MTrTest.h \
 					NMDTest.cpp \
 					NMDTest.h \
+					NMFTest.cpp \
+					NMFTest.h \
 					PCATest.cpp \
 					PCATest.h \
 					SVMModelTest.cpp \
 					SVMModelTest.h \
 					ScalingTest.cpp \
 					ScalingTest.h \
+					SNMFTest.cpp \
+					SNMFTest.h \
 					SpectralAnalysisTest.cpp \
 					SpectralAnalysisTest.h \
 					StorageSubsystemTest.cpp \
 					StorageSubsystemTest.h \
 					TaskDepsTest.cpp \
 					TaskDepsTest.h \
+                    Testable.cpp \
 					Testable.h \
 					VectorTest.cpp \
 					VectorTest.h \
