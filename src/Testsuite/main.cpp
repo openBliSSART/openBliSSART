@@ -124,7 +124,7 @@ protected:
         options.addOption(Option("svm", "", "Test classification using SVMModel class"));
         options.addOption(Option("td", "", "Test inter-task dependency functionality of the QueuedTaskManager"));
         options.addOption(Option("vector", "", "Test vector functions"));
-        options.addOption(Option("wave", "", "Test i/o-capabilities of AudioData"));
+        options.addOption(Option("wave", "", "Test i/o-capabilities of AudioData", false, "<audio-file>", true));
         options.addOption(Option("all", "", "Run all of the above tests"));
     }
 
@@ -142,7 +142,7 @@ protected:
         if (name == "all" || name == "vector")
             pushTest(new VectorTest());
         if (name == "all" || name == "wave")
-            pushTest(new WaveTest());
+            pushTest(new WaveTest(value));
         if (name == "all" || name == "ica")
             pushTest(new ICATest());
         if (name == "all" || name == "pca")

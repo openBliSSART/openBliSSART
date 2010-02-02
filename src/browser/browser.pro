@@ -117,8 +117,11 @@ mac {
 }
 
 unix {
-    QMAKE_CXXFLAGS += $${POCOCPPFLAGS}
-    QMAKE_LFLAGS += $${POCOLDFLAGS}
+    QMAKE_CXXFLAGS += '$${POCOCPPFLAGS}'
+    QMAKE_CXXFLAGS += '$${CPPFLAGS}'
+    QMAKE_LFLAGS += '$${POCOLDFLAGS}'
+    QMAKE_LFLAGS += '$${LDFLAGS}'
+    system(echo CPP=$${CPPFLAGS})
     LIBS += -L../LibLinAlg/.libs -lLinAlg \
             -L../LibAudio/.libs -lAudio \
             -L../LibNMF/.libs -lNMF \

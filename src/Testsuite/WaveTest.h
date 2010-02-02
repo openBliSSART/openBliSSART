@@ -27,6 +27,7 @@
 
 
 #include "Testable.h"
+#include <string>
 
 
 namespace Testing {
@@ -38,8 +39,13 @@ namespace Testing {
 class WaveTest : public Testable
 {
 public:
+    WaveTest(const std::string& filename);
     bool performTest();
     inline const char *name() { return "WaveTest"; }
+
+protected:
+    WaveTest();
+    std::string _filename;
 };
 
 

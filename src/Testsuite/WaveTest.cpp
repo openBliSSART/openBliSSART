@@ -25,6 +25,7 @@
 #include "WaveTest.h"
 #include <blissart/audio/AudioData.h>
 #include <blissart/audio/WaveEncoder.h>
+#include <blissart/linalg/Matrix.h>
 #include <iostream>
 #include <memory>
 
@@ -32,64 +33,67 @@
 using namespace std;
 using namespace blissart;
 using namespace blissart::audio;
+using blissart::linalg::Matrix;
 
 
 namespace Testing {
 
 
+WaveTest::WaveTest(const std::string& filename) : _filename(filename)
+{
+}
+
+
 bool WaveTest::performTest()
 {
     try {
-        // MP3 -> All channels WAV
+        // I/O
+        // All channels WAV
         {
-            const char* fileName = "test_1.wav";
-            cout << "Reading 'schnappi.mp3' (all channels)...";
-            auto_ptr<AudioData> mp3_data = auto_ptr<AudioData>(AudioData::fromFile("schnappi.mp3"));
+            const std::string testFileName = "test_1.wav";
+            cout << "Reading '" << _filename << "' (all channels) ... ";
+            auto_ptr<AudioData> adata = auto_ptr<AudioData>(AudioData::fromFile(_filename));
             cout << "ok." << endl
-                 << "Saving '" << fileName << "'...";
-            if (!WaveEncoder::saveAsWav(*mp3_data, fileName)) {
+                 << "Saving '" << testFileName << "'... ";
+            if (!WaveEncoder::saveAsWav(*adata, testFileName)) {
                 cerr << "WaveTest::performTest - saveAsWav failed!" << endl;
                 return false;
             }
             cout << "ok." << endl;
         }
 
-        // MP3 -> Mono WAV
+        // Mono WAV
         {
-            const char* fileName = "test_2.wav";
-            cout << "Reading 'schnappi.mp3' (mono)...";
-            auto_ptr<AudioData> mp3_data_mono = auto_ptr<AudioData>(AudioData::fromFile("schnappi.mp3", true));
+            const std::string testFileName = "test_2.wav";
+            cout << "Reading '" << _filename << "' (mono) ... ";
+            auto_ptr<AudioData> adata = auto_ptr<AudioData>(AudioData::fromFile(_filename));
             cout << "ok." << endl
-                 << "Saving '" << fileName << "'...";
-            if (!WaveEncoder::saveAsWav(*mp3_data_mono, fileName)) {
+                 << "Saving '" << testFileName << "'... ";
+            if (!WaveEncoder::saveAsWav(*adata, testFileName)) {
                 cerr << "WaveTest::performTest - saveAsWav failed!" << endl;
                 return false;
             }
             cout << "ok." << endl;
         }
 
-        // WAV -> All channels WAV
+        // Transformation stuff
         {
-            const char* fileName = "test_3.wav";
-            cout << "Reading 'horse.wav' (all channels)...";
-            auto_ptr<AudioData> wav_data = auto_ptr<AudioData>(AudioData::fromFile("horse.wav"));
-            cout << "ok." << endl
-                 << "Saving '" << fileName << "'...";
-            if (!WaveEncoder::saveAsWav(*wav_data, fileName)) {
-                cerr << "WaveTest::performTest - saveAsWav failed!" << endl;
-                return false;
-            }
+            const std::string testFileName = "test_3.wav";
+            cout << "Reading '" << _filename << "' (mono) ... ";
+            auto_ptr<AudioData> adata = auto_ptr<AudioData>(AudioData::fromFile(_filename));
             cout << "ok." << endl;
-        }
-
-        // OGG -> All channels WAV
-        {
-            const char* fileName = "test_4.wav";
-            cout << "Reading 'schnappi.ogg' (all channels)...";
-            auto_ptr<AudioData> ogg_data = auto_ptr<AudioData>(AudioData::fromFile("schnappi.ogg"));
+            cout << "Transformation ... ";
+            pair<Matrix*, Matrix*> sp = adata->computeSpectrogram(HammingFunction,
+                25, 0.6, 0);
+            auto_ptr<Matrix> amplSp(sp.first);
+            auto_ptr<Matrix> phaseSp(sp.second);
+            cout << "ok." << endl;
+            cout << "Backtransformation ... ";
+            auto_ptr<AudioData> adataRec(AudioData::fromSpectrogram(
+                *amplSp, *phaseSp, HammingFunction, 25, 0.6, adata->sampleRate()));
             cout << "ok." << endl
-                 << "Saving '" << fileName << "'...";
-            if (!WaveEncoder::saveAsWav(*ogg_data, fileName)) {
+                 << "Saving '" << testFileName << "'...";
+            if (!WaveEncoder::saveAsWav(*adataRec, testFileName)) {
                 cerr << "WaveTest::performTest - saveAsWav failed!" << endl;
                 return false;
             }

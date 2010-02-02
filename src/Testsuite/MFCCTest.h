@@ -45,6 +45,7 @@ public:
     inline const char *name() { return "MFCCTest"; }
 
 protected:
+    MFCCTest();
     std::string _filename;
 };
 
