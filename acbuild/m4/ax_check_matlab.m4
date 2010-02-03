@@ -60,7 +60,7 @@ AC_DEFUN([AX_CHECK_MATLAB],
             save_CPPFLAGS="$CPPFLAGS"
             LIBS="$LIBS -lmwblas"
             CPPFLAGS="$CPPFLAGS -I$MATLAB_INCLUDE"
-            LDFLAGS="$LDFLAGS -L$MATLAB_LIB"
+            LDFLAGS="$LDFLAGS -L$MATLAB_LIB -Wl,-rpath,$MATLAB_LIB"
             AC_LANG_PUSH([C])
             AC_RUN_IFELSE(
                 AC_LANG_PROGRAM(
@@ -90,15 +90,14 @@ AC_DEFUN([AX_CHECK_MATLAB],
         dnl has to be linked in all libraries and executables.
         dnl Probably hack, but works for me (fw).
         AC_DEFINE([HAVE_MATLAB], [1], [Define to 1 if you have Matlab and want to use it instead of ATLAS.])
-        LDFLAGS="$LDFLAGS -L$MATLAB_LIB"
+        LDFLAGS="$LDFLAGS -L$MATLAB_LIB -Wl,-rpath,$MATLAB_LIB"
         LIBS="$LIBS -lmwblas"
-        AC_SUBST(MATLAB_INCLUDE)
-        AC_SUBST(MATLAB_LDFLAGS)
-        AC_SUBST(MATLAB_LIB)
+        MATLAB_CPPFLAGS="-I$MATLAB_INCLUDE"
         ifelse([$1], [], :, [$1])     
     else
         ifelse([$2], [], :, [$2])
     fi
 
+    AC_SUBST(MATLAB_CPPFLAGS)
     AC_SUBST(MATLAB_LIBS)
 ])
