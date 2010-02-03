@@ -120,8 +120,7 @@ unix {
     QMAKE_CXXFLAGS += '$${POCOCPPFLAGS}'
     QMAKE_CXXFLAGS += '$${CPPFLAGS}'
     QMAKE_LFLAGS += '$${POCOLDFLAGS}'
-    QMAKE_LFLAGS += '$${LDFLAGS}'
-    system(echo CPP=$${CPPFLAGS})
+    #QMAKE_LFLAGS += '$${LDFLAGS}'
     LIBS += -L../LibLinAlg/.libs -lLinAlg \
             -L../LibAudio/.libs -lAudio \
             -L../LibNMF/.libs -lNMF \

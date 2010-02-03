@@ -51,6 +51,8 @@ extern "C" {
 #   ifdef _WIN32
 #       pragma comment(lib, "libmwblas.lib")
 #   endif
+// adapt this to your personal Matlab version :/
+typedef int matlab_int_t;
 #endif
 
 
@@ -370,17 +372,18 @@ void Matrix::multWithMatrix(const Matrix& other, Matrix* target,
     char trans[1] = { 'T' };
     // Create local copies of variables and convert them to ptrdiff_t type,
     // to use with Fortran interface (call by reference!)
-    ptrdiff_t m_ptrdiff = (ptrdiff_t) m;
-    ptrdiff_t n_ptrdiff = (ptrdiff_t) n;
-    ptrdiff_t k_ptrdiff = (ptrdiff_t) k;
-    ptrdiff_t lda = (ptrdiff_t) this->_rows;
-    ptrdiff_t ldb = (ptrdiff_t) other._rows;
-    ptrdiff_t ldc = (ptrdiff_t) target->_rows;
+    //ptrdiff_t m_ptrdiff = (ptrdiff_t) m;
+    matlab_int_t m_matlab = (matlab_int_t) m;
+    matlab_int_t n_matlab = (matlab_int_t) n;
+    matlab_int_t k_matlab = (matlab_int_t) k;
+    matlab_int_t lda = (matlab_int_t) this->_rows;
+    matlab_int_t ldb = (matlab_int_t) other._rows;
+    matlab_int_t ldc = (matlab_int_t) target->_rows;
     double alpha = 1.0;
     double beta = 0.0;
     dgemm((transpose ? trans : noTrans),
           (transposeOther ? trans : noTrans),
-          &m_ptrdiff, &n_ptrdiff, &k_ptrdiff,
+          &m_matlab, &n_matlab, &k_matlab,
           &alpha,
           this->_data + colOffset * this->_rows + rowOffset,
           &lda,
@@ -869,8 +872,8 @@ double Matrix::dotColCol(const Matrix &a, unsigned int aCol,
 #       ifdef ISEP_ROW_MAJOR
 #           error Matlab does not support row-major layout
 #       endif
-    ptrdiff_t n = (ptrdiff_t) a._rows;
-    ptrdiff_t incx = 1, incy = 1;
+    matlab_int_t n = (ptrdiff_t) a._rows;
+    matlab_int_t incx = 1, incy = 1;
     return ddot(&n,
                 a._data + aCol * a._rows, &incx,
                 b._data + bCol * b._rows, &incy);
@@ -906,9 +909,9 @@ double Matrix::dotRowRow(const Matrix &a, unsigned int aRow,
 #       ifdef ISEP_ROW_MAJOR
 #           error Matlab does not support row-major layout
 #       endif
-    ptrdiff_t n = (ptrdiff_t) a._cols;
-    ptrdiff_t incx = (ptrdiff_t) a._rows;
-    ptrdiff_t incy = (ptrdiff_t) b._rows;
+    matlab_int_t n = (matlab_int_t) a._cols;
+    matlab_int_t incx = (matlab_int_t) a._rows;
+    matlab_int_t incy = (matlab_int_t) b._rows;
     return ddot(&n,
                 a._data + aRow, &incx,
                 b._data + bRow, &incy);

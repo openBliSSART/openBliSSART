@@ -51,7 +51,7 @@ AC_DEFUN([AX_CHECK_CBLAS],
     dnl If CBLAS_LIBS hasn't already been set, try setting CBLAS_LIBS to some
     dnl other meaningful value.
     if test -z "$CBLAS_LIBS"; then
-        CBLAS_LIBS="-llapack -lcblas -lf77blas -latlas"
+        CBLAS_LIBS="-lcblas -lf77blas -latlas"
     fi
 
     dnl See if everything works as expected iff NO_CBLAS is unset and

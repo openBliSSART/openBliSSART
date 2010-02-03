@@ -39,6 +39,7 @@ sinclude([acbuild/m4/ax_check_qt.m4])
 sinclude([acbuild/m4/ax_check_sdl.m4])
 sinclude([acbuild/m4/ax_check_sdl_sound.m4])
 sinclude([acbuild/m4/ax_check_cblas.m4])
+sinclude([acbuild/m4/ax_check_matlab.m4])
 sinclude([acbuild/m4/ax_enable_debug.m4])
 dnl sinclude([acbuild/m4/ax_get_os_and_machine_type.m4])
 
@@ -64,7 +65,11 @@ AX_CHECK_POCO([yes], :, AC_ERROR([Need Poco Enterprise v1.3.6+!]))
 AX_CHECK_QT([4.4.2], :, AC_ERROR([Need Qt 4.4.2+!]))
 AX_CHECK_SDL([1.2.12], :, AC_ERROR([Need SDL 1.2.12+!]))
 AX_CHECK_SDL_SOUND(:, AC_ERROR([Need SDL_sound!]))
-AX_CHECK_CBLAS
+AX_CHECK_MATLAB
+#echo NO_MATLAB=$NO_MATLAB
+if test "$NO_MATLAB" == "yes"; then
+  AX_CHECK_CBLAS
+fi
 
 # Checks for header files.
 AC_CHECK_HEADERS([float.h stdlib.h string.h])

@@ -27,7 +27,7 @@ lib_LTLIBRARIES = libAudio.la
 libAudio_la_LIBADD = $(top_srcdir)/src/LibLinAlg/libLinAlg.la \
                      @SDL_LIBS@ @SDL_SOUND_LIBS@ -lfftw3 
 
-libAudio_la_CPPFLAGS = -I../include @SDL_CFLAGS@
+libAudio_la_CPPFLAGS = -I../include @SDL_CFLAGS@ @POCO_CPPFLAGS@
 
 libAudio_la_CXXFLAGS = -fPIC
 

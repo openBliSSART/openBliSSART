@@ -70,7 +70,7 @@ AC_DEFUN([AX_CHECK_POCO],
                 ], [], [NO_POCO=yes]
             )], 
            [dnl Enterprise.
-            LIBS="-lPocoFoundation -lPocoSQLite"
+            LIBS="-lPocoFoundation -lPocoSQLite -lPocoData"
             AC_LINK_IFELSE(
                 [AC_LANG_PROGRAM(
                     [[

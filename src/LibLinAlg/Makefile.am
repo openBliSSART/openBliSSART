@@ -24,9 +24,11 @@
 
 lib_LTLIBRARIES = libLinAlg.la
 
-libLinAlg_la_CPPFLAGS = -I../include
+libLinAlg_la_CPPFLAGS = -I../include @MATLAB_INCLUDE@
 
-libLinAlg_la_LIBADD = @CBLAS_LIBS@
+libLinAlg_la_LIBADD = @CBLAS_LIBS@ @MATLAB_LIBS@
+
+libLinAlg_la_LDFLAGS = @MATLAB_LDFLAGS@
 
 libLinAlg_la_CXXFLAGS = -fPIC
 

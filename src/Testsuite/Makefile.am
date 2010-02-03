@@ -24,7 +24,7 @@
 
 bin_PROGRAMS = testsuite
 
-testsuite_CPPFLAGS = -I../include
+testsuite_CPPFLAGS = -I../include @POCO_CPPFLAGS@
 
 testsuite_LDADD = $(top_srcdir)/src/LibAudio/libAudio.la \
                   $(top_srcdir)/src/LibLinAlg/libLinAlg.la \
