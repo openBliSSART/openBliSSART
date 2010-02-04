@@ -24,7 +24,9 @@
 
 
 #include "MTrTest.h"
-#include <blissart/AmplitudeMatrixTransforms.h>
+#include <blissart/transforms/PowerTransform.h>
+#include <blissart/transforms/MelFilterTransform.h>
+#include <blissart/transforms/SlidingWindowTransform.h>
 #include <blissart/linalg/Matrix.h>
 #include <Poco/Util/Application.h>
 #include <Poco/Util/LayeredConfiguration.h>
@@ -65,7 +67,8 @@ bool MTrTest::performTest()
                                       0.16,  9,    25,   36 };
     Matrix sSliding(6, 4, s_data_sliding);
 
-    transforms::powerSpectrum(&s);
+    transforms::PowerTransform pt;
+    pt.transform(&s);
 
     cout << "Power: " << endl;
     cout << s << endl;
@@ -73,7 +76,8 @@ bool MTrTest::performTest()
     if (!epsilonCheck(s, sSq)) 
         return false;
 
-    Matrix* slRes = transforms::slidingWindow(&s);
+    transforms::SlidingWindowTransform st;
+    Matrix* slRes = st.transform(&s);
 
     cout << endl;
     cout << "Sliding window: " << endl;
