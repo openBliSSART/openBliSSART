@@ -67,6 +67,9 @@ SeparationTask::SeparationTask(const SeparationMethod sepMethod,
     _maxIterations(maxIterations),
     _epsilon(epsilon),
     _isVolatile(isVolatile),
+    _exportComponents(false),
+    _exportSpectra(false),
+    _exportGains(false),
     _myUniqueID(retrieveUniqueID())
 {
 }
@@ -83,7 +86,9 @@ void SeparationTask::runTask()
     incMaxProgress(0.2f);
     if (!_isVolatile)
         incMaxProgress(0.1f);
-    if (!_exportPrefix.empty() && _dataKind == MagnitudeSpectrum)
+    if (_exportComponents && _dataKind == MagnitudeSpectrum)
+        incMaxProgress(0.1f);
+    if (_exportSpectra || _exportGains)
         incMaxProgress(0.1f);
     registerTask(_myUniqueID, 1);
 
@@ -136,8 +141,17 @@ void SeparationTask::runTask()
         if (isCancelled())
             break;
 
-        if (!_exportPrefix.empty() && _dataKind == MagnitudeSpectrum) {
+        if (_exportComponents && _dataKind == MagnitudeSpectrum) {
             exportComponents();
+            incTotalProgress(0.1f);
+        }
+
+        // Check again.
+        if (isCancelled())
+            break;
+
+        if (_exportSpectra || _exportGains) {
+            exportMatrices();
             incTotalProgress(0.1f);
         }
     } while (false);
@@ -266,8 +280,7 @@ void SeparationTask::exportComponents() const
 {
     debug_assert(&phaseMatrix() &&
                  &magnitudeSpectraMatrix(0) &&
-                 &gainsMatrix() &&
-                 !_exportPrefix.empty());
+                 &gainsMatrix() && _exportComponents);
 
     logger().debug(nameAndTaskID() + " exporting the components.");
 
@@ -303,14 +316,42 @@ void SeparationTask::exportComponents() const
                                            sampleRate());
 
         // Construct the filename.
+        string prefix = _exportPrefix;
+        if (prefix.empty()) {
+            prefix = fileName().substr(0, fileName().find_last_of('.'));
+        }
         const int numDigits = (int)(1 + log10f((float)_nrOfComponents));
         stringstream ss;
-        ss << _exportPrefix << '_' << taskID() << '_'
+        ss << prefix << '_' << taskID() << '_'
            << setfill('0') << setw(numDigits) << i << ".wav";
 
         // Eventually export the component.
         if (!WaveEncoder::saveAsWav(*pAd, ss.str()))
             throw runtime_error("Couldn't export to " + ss.str() + "!");
+    }
+}
+
+
+void SeparationTask::exportMatrices() const
+{
+    // Construct the prefix.
+    string prefix = _exportPrefix;
+    if (prefix.empty()) {
+        prefix = fileName().substr(0, fileName().find_last_of('.'));
+    }
+    if (_exportSpectra) {
+        for (unsigned int i = 0; i < _nrOfSpectra; ++i) {
+            const int numDigits = (int)(1 + log10f((float)_nrOfSpectra));
+            stringstream ss;
+            ss << prefix << '_' << taskID() << "_W_"
+               << setfill('0') << setw(numDigits) << i << ".dat";
+            magnitudeSpectraMatrix(i).dump(ss.str());
+        }
+    }
+    if (_exportGains) {
+        stringstream ss;
+        ss << prefix << '_' << taskID() << "_H.dat";
+        gainsMatrix().dump(ss.str());
     }
 }
 

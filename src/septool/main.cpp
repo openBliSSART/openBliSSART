@@ -279,11 +279,24 @@ protected:
             .validator(new RangeValidator<int>(1)));
 
         options.addOption(
-            Option("prefix", "p",
+            Option("export-prefix", "",
                    "The prefix to be used for export of the separated "
-                   "components.",
+                   "components. Default is input file name without extension",
                    false, "<prefix>", true));
 
+        options.addOption(
+            Option("export-components", "p",
+                   "Export the separated components to WAV files.",
+                   false));
+
+        options.addOption(
+            Option("export-matrices", "",
+                   "Export the separation matrices. Use \"W\" for spectra, "
+                   "\"H\" for gains or \"WH\" for both (not the product!)",
+                   false, "<name>", true)
+            .validator(new RegExpValidator("(W|H|WH)")));
+
+        // XXX: replace this by config option (also other transformations?)
         options.addOption(
             Option("data-kind", "D",
                 "The data kind to perform separation on "
@@ -382,8 +395,17 @@ protected:
             _zeroPadding = true;
             config().setBool("blissart.fft.zeropadding", true);
         }
-        else if (name == "prefix") {
+        else if (name == "export-prefix") {
             _exportPrefix = value;
+        }
+        else if (name == "export-components") {
+            _exportComponents = true;
+        }
+        else if (name == "export-matrices") {
+            if (value.find('W') != string::npos) 
+                _exportSpectra = true;
+            if (value.find('H') != string::npos)
+                _exportGains = true;
         }
         else if (name == "method") {
             if (value == "nmd")
@@ -489,7 +511,14 @@ protected:
              << (_zeroPadding ? "True" : "False") << endl
              << setw(20) << "Preemphasis (k): "
              << _preemphasisCoeff << endl
-             << setw(20) << "Export prefix: " << _exportPrefix << endl;
+             << setw(20) << "Export: ";
+        if (_exportComponents)
+            cout << "Components ";
+        if (_exportSpectra)
+            cout << "Spectra ";
+        if (_exportGains)
+            cout << "Gains";
+        cout << endl;
 
         if (_classify) {
             cout << setw(20) << "Classification: " << "using Response #"
@@ -526,6 +555,10 @@ protected:
             default:
                 throw Poco::NotImplementedException("Unhandled method type.");
             }
+
+            newSepTask->setExportComponents(_exportComponents);
+            newSepTask->setExportSpectra(_exportSpectra);
+            newSepTask->setExportGains(_exportGains);
 
             if (!_exportPrefix.empty())
                 newSepTask->setExportPrefix(_exportPrefix);
@@ -625,6 +658,9 @@ private:
     double             _preemphasisCoeff;
     bool               _zeroPadding;
     bool               _removeDC;
+    bool               _exportComponents;
+    bool               _exportSpectra;
+    bool               _exportGains;
     string             _exportPrefix;
 
     // The method to be used for component separation.

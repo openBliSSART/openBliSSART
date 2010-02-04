@@ -131,9 +131,26 @@ public:
 
 
     /**
-     * Sets the prefix to be used for the export of the separated components as
-     * audio files. Once set to a non-empty string, the components will be
-     * exported after separation.
+     * Controls whether separated components should be exported to audio files.
+     */
+    inline void setExportComponents(bool flag);
+
+
+    /**
+     * Controls whether the spectral matrices should be exported in binary
+     * format.
+     */
+    inline void setExportSpectra(bool flag);
+
+
+    /**
+     * Controls whether the gains matrix should be exported in binary format.
+     */
+    inline void setExportGains(bool flag);
+
+
+    /**
+     * Sets the prefix to be used for the export of the separated components.
      * The filenames will be of the form <prefix>_<task_id>_<nr>.wav.
      */
     inline void setExportPrefix(const std::string& prefix);
@@ -223,6 +240,12 @@ protected:
     void exportComponents() const;
 
 
+    /**
+     * Exports the separation matrices (spectra and/or gains).
+     */
+    void exportMatrices() const;
+
+
 private:
     // Forbid copy constructor and operator=.
     SeparationTask(const SeparationTask &other);
@@ -241,6 +264,9 @@ private:
     const double            _epsilon;
 
     const bool              _isVolatile;
+    bool                    _exportComponents;
+    bool                    _exportSpectra;
+    bool                    _exportGains;
     std::string             _exportPrefix;
 
     int                     _myUniqueID;
@@ -286,6 +312,24 @@ inline double SeparationTask::epsilon() const
 inline void SeparationTask::setExportPrefix(const std::string& prefix)
 {
     _exportPrefix = prefix;
+}
+
+
+inline void SeparationTask::setExportComponents(bool flag)
+{
+    _exportComponents = flag;
+}
+
+
+inline void SeparationTask::setExportSpectra(bool flag)
+{
+    _exportSpectra = flag;
+}
+
+
+inline void SeparationTask::setExportGains(bool flag)
+{
+    _exportGains = flag;
 }
 
 
