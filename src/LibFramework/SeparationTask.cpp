@@ -30,11 +30,15 @@
 #include <blissart/ClassificationObject.h>
 #include <blissart/DataDescriptor.h>
 #include <blissart/Process.h>
+#include <blissart/GnuplotWriter.h>
+
 #include <blissart/linalg/ColVector.h>
 #include <blissart/linalg/RowVector.h>
 #include <blissart/linalg/Matrix.h>
+
 #include <blissart/audio/AudioData.h>
 #include <blissart/audio/WaveEncoder.h>
+
 // XXX: Is there a better place for Mel spectrum stuff?
 #include <blissart/feature/mfcc.h>
 
@@ -280,7 +284,7 @@ void SeparationTask::exportComponents() const
 {
     debug_assert(&phaseMatrix() &&
                  &magnitudeSpectraMatrix(0) &&
-                 &gainsMatrix() && _exportComponents);
+                 &gainsMatrix());
 
     logger().debug(nameAndTaskID() + " exporting the components.");
 
@@ -334,6 +338,13 @@ void SeparationTask::exportComponents() const
 
 void SeparationTask::exportMatrices() const
 {
+    // XXX: this should rather be a command-line parameter?
+    Poco::Util::LayeredConfiguration& cfg =
+        BasicApplication::instance().config();
+    bool useGnuplotFormat = 
+        cfg.getString("blissart.separation.export.format")
+        .substr(0, 3) == "gnu";
+
     // Construct the prefix.
     string prefix = _exportPrefix;
     if (prefix.empty()) {
@@ -345,13 +356,20 @@ void SeparationTask::exportMatrices() const
             stringstream ss;
             ss << prefix << '_' << taskID() << "_W_"
                << setfill('0') << setw(numDigits) << i << ".dat";
-            magnitudeSpectraMatrix(i).dump(ss.str());
+            if (useGnuplotFormat)
+                GnuplotWriter::writeMatrixGnuplot(magnitudeSpectraMatrix(i),
+                                                  ss.str(), false);
+            else
+                magnitudeSpectraMatrix(i).dump(ss.str());
         }
     }
     if (_exportGains) {
         stringstream ss;
         ss << prefix << '_' << taskID() << "_H.dat";
-        gainsMatrix().dump(ss.str());
+        if (useGnuplotFormat)
+            GnuplotWriter::writeMatrixGnuplot(gainsMatrix(), ss.str(), true);
+        else
+            gainsMatrix().dump(ss.str());
     }
 }
 

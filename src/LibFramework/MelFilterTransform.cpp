@@ -23,57 +23,54 @@
 //
 
 
-#ifndef __BLISSART_AMPLITUDE_MATRIX_TRANSFORMS_H__
-#define __BLISSART_AMPLITUDE_MATRIX_TRANSFORMS_H__
+#include <blissart/transforms/MelFilterTransform.h>
+#include <blissart/linalg/Matrix.h>
 
+#include <blissart/feature/mfcc.h>
 
-#include <common.h>
-#include <string>
+#include <Poco/Util/LayeredConfiguration.h>
+#include <Poco/Util/Application.h>
+
+#include <cassert>
+#include <cmath>
 
 
 namespace blissart {
 
 
-// Forward declaration
-namespace linalg { class Matrix; }
-
-
-/**
- * A prototype for a function that performs (in-place or out-of-place) 
- * matrix transformation, e.g. calculate the power spectrum.
- */
-typedef linalg::Matrix*(*MatrixTransform)(linalg::Matrix*);
+using linalg::Matrix;
 
 
 namespace transforms {
 
 
-/**
- * Transforms spectrograms to power spectrum.
- */
-linalg::Matrix LibFramework_API * powerSpectrum(linalg::Matrix* spectrogram);
+MelFilterTransform::MelFilterTransform(double sampleRate) : 
+    _sampleRate(sampleRate)
+{
+    Poco::Util::LayeredConfiguration& cfg 
+        = Poco::Util::Application::instance().config();
+    _lowFreq = cfg.
+        getDouble("blissart.global.mel_filter.low_freq", 0.0);
+    _highFreq = cfg.
+        getDouble("blissart.global.mel_filter.high_freq", 0.0);
+    _nBands = cfg.
+        getInt("blissart.global.mel_bands", 26);
+}
 
 
-/**
- * Performs Mel filtering on the given spectrum.
- */
-linalg::Matrix LibFramework_API * melFilter(linalg::Matrix* spectrogram);
+Matrix* MelFilterTransform::transform(Matrix* spectrogram)
+{
+    return feature::melSpectrum(*spectrogram, _sampleRate, _nBands);
+}
 
 
-/**
- * Performs a "sliding window" transformation (i.e. create multiple-frame
- * observations.)
- */
-linalg::Matrix LibFramework_API * slidingWindow(linalg::Matrix* spectrogram);
+const char* MelFilterTransform::name()
+{
+    return "Mel filter";
+}
 
 
 } // namespace transforms
 
 
-std::string LibFramework_API matrixTransformName(MatrixTransform tf);
-
-
 } // namespace blissart
-
-
-#endif // __BLISSART_AMPLITUDE_MATRIX_TRANSFORMS_H__

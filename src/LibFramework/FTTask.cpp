@@ -24,7 +24,9 @@
 
 
 #include <blissart/FTTask.h>
-#include <blissart/AmplitudeMatrixTransforms.h>
+#include <blissart/transforms/PowerTransform.h>
+#include <blissart/transforms/SlidingWindowTransform.h>
+#include <blissart/transforms/MelFilterTransform.h>
 #include <blissart/BasicApplication.h>
 #include <blissart/DatabaseSubsystem.h>
 #include <blissart/StorageSubsystem.h>
@@ -74,18 +76,6 @@ FTTask::FTTask(const std::string& typeIdentifier,
     _removeDC = cfg.getBool("blissart.audio.remove_dc", false);
     _reduceMids = cfg.getBool("blissart.audio.reduce_mids", false);
 
-    // Add transformations if specified in the configuration.
-    // Keep in mind that the transformations are executed in the order in
-    // which they were added, thus the order of these statements is vital!
-    if (cfg.getBool("blissart.fft.transformations.powerSpectrum", false)) {
-        addTransformation(transforms::powerSpectrum);
-    }
-    if (cfg.getBool("blissart.fft.transformations.melFilter", false)) {
-        addTransformation(transforms::melFilter);
-    }
-    if (cfg.getBool("blissart.fft.transformations.slidingWindow", false)) {
-        addTransformation(transforms::slidingWindow);
-    }
 }
 
 
@@ -102,6 +92,11 @@ FTTask::~FTTask()
     if (_phaseMatrix) {
         delete _phaseMatrix;
         _phaseMatrix = 0;
+    }
+    for (vector<MatrixTransform*>::iterator it = _transforms.begin();
+         it != _transforms.end(); ++it)
+    {
+        if (*it) delete *it;
     }
 }
 
@@ -132,6 +127,21 @@ void FTTask::runTask()
         if (isCancelled())
             break;
 
+        // Additional transformations, if desired.
+        for (vector<MatrixTransform*>::const_iterator it = _transforms.begin();
+             it != _transforms.end() && !isCancelled(); ++it)
+        {
+            Matrix *trResult = (*it)->transform(_amplitudeMatrix);
+            if (trResult != _amplitudeMatrix) {
+                replaceAmplitudeMatrix(trResult);
+            }
+            incTotalProgress(0.5f);
+        }
+
+        // Mandatory check.
+        if (isCancelled())
+            break;
+
         // Store the matrices.
         storeComponents();
         incTotalProgress(1.0f);
@@ -139,17 +149,6 @@ void FTTask::runTask()
         // Mandatory check.
         if (isCancelled())
             break;
-
-        // Additional transformations, if desired.
-        for (vector<MatrixTransform>::const_iterator it = _transforms.begin();
-             it != _transforms.end() && !isCancelled(); ++it)
-        {
-            Matrix *trResult = (*it)(_amplitudeMatrix);
-            if (trResult != _amplitudeMatrix) {
-                replaceAmplitudeMatrix(trResult);
-            }
-            incTotalProgress(0.5f);
-        }
 
     } while (false);
 }
@@ -192,6 +191,39 @@ void FTTask::computeSpectrogram()
     _phaseMatrix = spectrogram.second;
 
     BasicApplication::unlockFFTW();
+
+    // Add transformations if specified in the configuration.
+    // Keep in mind that the transformations are executed in the order in
+    // which they were added, thus the order of these statements is vital!
+    Poco::Util::LayeredConfiguration& cfg =
+        BasicApplication::instance().config();
+    if (cfg.getBool("blissart.fft.transformations.powerSpectrum", false)) {
+        addTransformation(new transforms::PowerTransform);
+    }
+    if (cfg.getBool("blissart.fft.transformations.melFilter", false)) {
+        addTransformation(new transforms::MelFilterTransform(_sampleRate));
+    }
+    if (cfg.getBool("blissart.fft.transformations.slidingWindow", false)) {
+        addTransformation(new transforms::SlidingWindowTransform);
+    }
+}
+
+
+void FTTask::setProcessParameters(ProcessPtr process)
+{
+    process->setWindowFunction(_windowFunction);
+    process->setOverlap(_overlap);
+    process->setWindowSize(_windowSize);
+    process->parameters["transformCount"] = 
+        Poco::NumberFormatter::format(_transforms.size());
+    int i = 1;
+    for (vector<MatrixTransform*>::const_iterator it = _transforms.begin();
+         it != _transforms.end(); ++it)
+    {
+        string paramName = "transform" + Poco::NumberFormatter::format(i);
+        process->parameters[paramName] = (*it)->name();
+        // TODO: store transformation parameters?
+    }
 }
 
 

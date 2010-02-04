@@ -23,8 +23,8 @@
 //
 
 
-#ifndef __BLISSART_AMPLITUDE_MATRIX_TRANSFORMS_H__
-#define __BLISSART_AMPLITUDE_MATRIX_TRANSFORMS_H__
+#ifndef __BLISSART_MATRIX_TRANSFORM_H__
+#define __BLISSART_MATRIX_TRANSFORM_H__
 
 
 #include <common.h>
@@ -35,45 +35,38 @@ namespace blissart {
 
 
 // Forward declaration
+class FTTask;
 namespace linalg { class Matrix; }
 
 
 /**
- * A prototype for a function that performs (in-place or out-of-place) 
- * matrix transformation, e.g. calculate the power spectrum.
+ * An interface for (in-place or out-of-place) 
+ * matrix transformations, e.g. calculation of the power spectrum.
  */
-typedef linalg::Matrix*(*MatrixTransform)(linalg::Matrix*);
+class LibFramework_API MatrixTransform
+{
+public:
+    /**
+     * Returns a textual description of this MatrixTransform.
+     * Must be implemented by subclasses.
+     */
+    virtual const char * name() = 0;
+
+    /**
+     * Does the actual transformation. If this is an in-place transform,
+     * it may return its argument, otherwise a pointer to the new matrix.
+     * Must be implemented by subclasses.
+     */
+    virtual linalg::Matrix * transform(linalg::Matrix* m) = 0;
 
 
-namespace transforms {
-
-
-/**
- * Transforms spectrograms to power spectrum.
- */
-linalg::Matrix LibFramework_API * powerSpectrum(linalg::Matrix* spectrogram);
-
-
-/**
- * Performs Mel filtering on the given spectrum.
- */
-linalg::Matrix LibFramework_API * melFilter(linalg::Matrix* spectrogram);
-
-
-/**
- * Performs a "sliding window" transformation (i.e. create multiple-frame
- * observations.)
- */
-linalg::Matrix LibFramework_API * slidingWindow(linalg::Matrix* spectrogram);
-
-
-} // namespace transforms
-
-
-std::string LibFramework_API matrixTransformName(MatrixTransform tf);
+private:
+    FTTask* _task;
+};
 
 
 } // namespace blissart
 
 
-#endif // __BLISSART_AMPLITUDE_MATRIX_TRANSFORMS_H__
+#endif // __BLISSART_MATRIX_TRANSFORM_H__
+

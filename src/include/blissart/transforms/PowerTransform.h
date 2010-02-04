@@ -23,57 +23,65 @@
 //
 
 
-#ifndef __BLISSART_AMPLITUDE_MATRIX_TRANSFORMS_H__
-#define __BLISSART_AMPLITUDE_MATRIX_TRANSFORMS_H__
+#ifndef __BLISSART_POWER_TRANSFORM_H__
+#define __BLISSART_POWER_TRANSFORM_H__
 
 
 #include <common.h>
-#include <string>
+#include <blissart/MatrixTransform.h>
 
 
 namespace blissart {
-
-
-// Forward declaration
-namespace linalg { class Matrix; }
-
-
-/**
- * A prototype for a function that performs (in-place or out-of-place) 
- * matrix transformation, e.g. calculate the power spectrum.
- */
-typedef linalg::Matrix*(*MatrixTransform)(linalg::Matrix*);
 
 
 namespace transforms {
 
 
 /**
- * Transforms spectrograms to power spectrum.
+ * Calculation of the power spectrum. Implements MatrixTransform interface.
  */
-linalg::Matrix LibFramework_API * powerSpectrum(linalg::Matrix* spectrogram);
+class LibFramework_API PowerTransform : public blissart::MatrixTransform
+{
+public:
+    /**
+     * Default constructor. Constructs a PowerTransform that squares its input.
+     */
+    PowerTransform();
 
 
-/**
- * Performs Mel filtering on the given spectrum.
- */
-linalg::Matrix LibFramework_API * melFilter(linalg::Matrix* spectrogram);
+    /**
+     * Implementation of MatrixTransform interface.
+     */
+    virtual const char * name();
 
 
-/**
- * Performs a "sliding window" transformation (i.e. create multiple-frame
- * observations.)
- */
-linalg::Matrix LibFramework_API * slidingWindow(linalg::Matrix* spectrogram);
+    /**
+     * Computes the power spectrum using the given gamma parameter (exponent).
+     */
+    virtual linalg::Matrix * transform(linalg::Matrix* m);
+
+
+    /** 
+     * Sets the gamma parameter (exponent).
+     */
+    void setGamma(double gamma);
+
+
+private:
+    double _gamma;
+};
+
+
+inline void PowerTransform::setGamma(double gamma)
+{
+    _gamma = gamma;
+}
 
 
 } // namespace transforms
 
 
-std::string LibFramework_API matrixTransformName(MatrixTransform tf);
-
-
 } // namespace blissart
 
 
-#endif // __BLISSART_AMPLITUDE_MATRIX_TRANSFORMS_H__
+#endif // __BLISSART_POWER_TRANSFORM_H__

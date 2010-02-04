@@ -23,7 +23,7 @@
 //
 
 
-#include <blissart/AmplitudeMatrixTransforms.h>
+#include <blissart/transforms/SlidingWindowTransform.h>
 #include <blissart/linalg/Matrix.h>
 
 #include <Poco/Util/LayeredConfiguration.h>
@@ -42,50 +42,29 @@ using linalg::Matrix;
 namespace transforms {
 
 
-Matrix* powerSpectrum(Matrix* spectrogram)
+SlidingWindowTransform::SlidingWindowTransform()
 {
     Poco::Util::LayeredConfiguration& cfg 
         = Poco::Util::Application::instance().config();
-    double gamma = 
-        cfg.getInt("blissart.fft.transformations.powerSpectrum.gamma", 2);
-    for (unsigned int j = 0; j < spectrogram->cols(); ++j) {
-        for (unsigned int i = 0; i < spectrogram->rows(); ++i) {
-            spectrogram->at(i, j) = std::pow(spectrogram->at(i, j), gamma);
-        }
-    }
-    return spectrogram;
-}
-
-
-Matrix* melFilter(Matrix* spectrogram) {
-    // TODO: Implement me!
-    int nBanks = BasicApplication::instance().config().
-        getInt("blissart.global.mel_bands", 26);
-    double lowFreq = config.
-        getDouble("blissart.global.mel_filter.low_freq", 0.0);
-    double highFreq = config.
-        getDouble("blissart.global.mel_filter.high_freq", 0.0);
-    return feature::melSpectrum(spectrogram, sampleRate(), nBanks);
-}
-
-
-Matrix* slidingWindow(Matrix* spectrogram) {
-    Poco::Util::LayeredConfiguration& cfg 
-        = Poco::Util::Application::instance().config();
-    int frameSize = 
+    _frameSize = 
         cfg.getInt("blissart.fft.transformations.slidingWindow.frameSize", 10);
-    int frameRate =
+    _frameRate =
         cfg.getInt("blissart.fft.transformations.slidingWindow.frameRate", 1);
-    assert(frameSize > 0);
+    assert(_frameSize > 0);
+}
+
+
+Matrix* SlidingWindowTransform::transform(Matrix* spectrogram)
+{
     unsigned int nCols = (unsigned int) 
-        std::ceil(((double)spectrogram->cols() - frameSize) / frameRate) + 1;
-    Matrix* output = new Matrix(spectrogram->rows() * frameSize, nCols);
+        std::ceil(((double)spectrogram->cols() - _frameSize) / _frameRate) + 1;
+    Matrix* output = new Matrix(spectrogram->rows() * _frameSize, nCols);
     unsigned int frameStart = 0;
     for (unsigned int outputCol = 0; outputCol < nCols; 
-        ++outputCol, frameStart += frameRate) 
+        ++outputCol, frameStart += _frameRate) 
     {
         unsigned int outputRow = 0;
-        for (unsigned int pos = 0; pos < frameSize; ++pos)
+        for (unsigned int pos = 0; pos < _frameSize; ++pos)
         {
             for (unsigned int inputRow = 0; inputRow < spectrogram->rows(); 
                 ++inputRow, ++outputRow)
@@ -99,19 +78,13 @@ Matrix* slidingWindow(Matrix* spectrogram) {
 }
 
 
-} // namespace transforms
-
-
-std::string matrixTransformName(MatrixTransform tf)
+const char* SlidingWindowTransform::name()
 {
-    if (tf == transforms::powerSpectrum)
-        return "Power spectrum";
-    if (tf == transforms::melFilter)
-        return "Mel filter";
-    if (tf == transforms::slidingWindow)
-        return "Sliding window";
-    throw std::runtime_error("Unknown matrix transform");
+    return "Sliding window spectrum";
 }
+
+
+} // namespace transforms
 
 
 } // namespace blissart

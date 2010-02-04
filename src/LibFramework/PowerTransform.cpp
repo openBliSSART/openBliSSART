@@ -23,57 +23,52 @@
 //
 
 
-#ifndef __BLISSART_AMPLITUDE_MATRIX_TRANSFORMS_H__
-#define __BLISSART_AMPLITUDE_MATRIX_TRANSFORMS_H__
+#include <blissart/transforms/PowerTransform.h>
+#include <blissart/linalg/Matrix.h>
 
+#include <Poco/Util/LayeredConfiguration.h>
+#include <Poco/Util/Application.h>
 
-#include <common.h>
-#include <string>
+#include <cassert>
+#include <cmath>
 
 
 namespace blissart {
 
 
-// Forward declaration
-namespace linalg { class Matrix; }
-
-
-/**
- * A prototype for a function that performs (in-place or out-of-place) 
- * matrix transformation, e.g. calculate the power spectrum.
- */
-typedef linalg::Matrix*(*MatrixTransform)(linalg::Matrix*);
+using linalg::Matrix;
 
 
 namespace transforms {
 
 
-/**
- * Transforms spectrograms to power spectrum.
- */
-linalg::Matrix LibFramework_API * powerSpectrum(linalg::Matrix* spectrogram);
+PowerTransform::PowerTransform()
+{
+    Poco::Util::LayeredConfiguration& cfg 
+        = Poco::Util::Application::instance().config();
+    _gamma = 
+        cfg.getDouble("blissart.fft.transformations.powerSpectrum.gamma", 2.0);
+}
 
 
-/**
- * Performs Mel filtering on the given spectrum.
- */
-linalg::Matrix LibFramework_API * melFilter(linalg::Matrix* spectrogram);
+Matrix* PowerTransform::transform(Matrix* spectrogram)
+{
+    for (unsigned int j = 0; j < spectrogram->cols(); ++j) {
+        for (unsigned int i = 0; i < spectrogram->rows(); ++i) {
+            spectrogram->at(i, j) = std::pow(spectrogram->at(i, j), _gamma);
+        }
+    }
+    return spectrogram;
+}
 
 
-/**
- * Performs a "sliding window" transformation (i.e. create multiple-frame
- * observations.)
- */
-linalg::Matrix LibFramework_API * slidingWindow(linalg::Matrix* spectrogram);
+const char* PowerTransform::name()
+{
+    return "Power spectrum";
+}
 
 
 } // namespace transforms
 
 
-std::string LibFramework_API matrixTransformName(MatrixTransform tf);
-
-
 } // namespace blissart
-
-
-#endif // __BLISSART_AMPLITUDE_MATRIX_TRANSFORMS_H__

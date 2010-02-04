@@ -29,6 +29,8 @@
 
 #include <blissart/BasicTask.h>
 #include <blissart/WindowFunctions.h>
+#include <blissart/MatrixTransform.h>
+#include <blissart/Process.h>
 #include <common.h>
 #include <cassert>
 #include <vector>
@@ -220,17 +222,10 @@ public:
 
 
     /**
-     * A prototype for a function that performs (in-place or out-of-place) 
-     * matrix transformation, e.g. calculate the power spectrum.
-     */
-    typedef linalg::Matrix*(*MatrixTransform)(linalg::Matrix*);
-
-
-    /**
      * Advises the FTTask to perform one or more additional transformations
      * on the magnitude matrix obtained by Fourier transformation.
      */
-    inline void addTransformation(MatrixTransform tf);
+    inline void addTransformation(MatrixTransform *tf);
 
 
 protected:
@@ -262,6 +257,20 @@ protected:
 
 
     /**
+     * Performs transformations of the matrices, such as Mel filtering of the
+     * magnitude spectra.
+     */
+    void doAdditionalTransformations();
+
+
+    /**
+     * Fills in the attributes of the given Process entity according to the
+     * actual parameters of this FTTask.
+     */
+    void setProcessParameters(ProcessPtr process);
+
+
+    /**
      * Stores the amplitude- and phase-matrix in the database.
      */
     void storeComponents() const;
@@ -281,7 +290,7 @@ private:
     bool                    _removeDC;
     bool                    _zeroPadding;
 
-    std::vector<MatrixTransform> _transforms;
+    std::vector<MatrixTransform*> _transforms;
 
     audio::AudioData*       _audioData;
     unsigned int            _sampleRate;
@@ -406,7 +415,7 @@ inline bool FTTask::removeDC() const
 }
 
 
-inline void FTTask::addTransformation(FTTask::MatrixTransform tf)
+inline void FTTask::addTransformation(MatrixTransform *tf)
 {
     _transforms.push_back(tf);
 }

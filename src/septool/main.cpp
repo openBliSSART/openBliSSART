@@ -79,6 +79,9 @@ public:
         _preemphasisCoeff(0.0),
         _zeroPadding(false),
         _removeDC(false),
+        _exportComponents(false),
+        _exportSpectra(false),
+        _exportGains(false),
         _separationMethod(SeparationTask::NMD),
         _dataKind(SeparationTask::MagnitudeSpectrum)
     {
