@@ -128,15 +128,7 @@ void FTTask::runTask()
             break;
 
         // Additional transformations, if desired.
-        for (vector<MatrixTransform*>::const_iterator it = _transforms.begin();
-             it != _transforms.end() && !isCancelled(); ++it)
-        {
-            Matrix *trResult = (*it)->transform(_amplitudeMatrix);
-            if (trResult != _amplitudeMatrix) {
-                replaceAmplitudeMatrix(trResult);
-            }
-            incTotalProgress(0.5f);
-        }
+        doAdditionalTransformations();
 
         // Mandatory check.
         if (isCancelled())
@@ -209,18 +201,32 @@ void FTTask::computeSpectrogram()
 }
 
 
-void FTTask::setProcessParameters(ProcessPtr process)
+void FTTask::doAdditionalTransformations()
+{
+    for (vector<MatrixTransform*>::const_iterator it = _transforms.begin();
+         it != _transforms.end() && !isCancelled(); ++it)
+    {
+        Matrix *trResult = (*it)->transform(_amplitudeMatrix);
+        if (trResult != _amplitudeMatrix) {
+            replaceAmplitudeMatrix(trResult);
+        }
+        incTotalProgress(0.5f);
+    }
+}
+
+
+void FTTask::setProcessParameters(ProcessPtr process) const
 {
     process->setWindowFunction(_windowFunction);
     process->setOverlap(_overlap);
     process->setWindowSize(_windowSize);
     process->parameters["transformCount"] = 
         Poco::NumberFormatter::format(_transforms.size());
-    int i = 1;
+    int trIndex = 1;
     for (vector<MatrixTransform*>::const_iterator it = _transforms.begin();
-         it != _transforms.end(); ++it)
+         it != _transforms.end(); ++it, ++trIndex)
     {
-        string paramName = "transform" + Poco::NumberFormatter::format(i);
+        string paramName = "transform" + Poco::NumberFormatter::format(trIndex);
         process->parameters[paramName] = (*it)->name();
         // TODO: store transformation parameters?
     }
@@ -240,9 +246,7 @@ void FTTask::storeComponents() const
 
     // Store a Process entity in the database.
     ProcessPtr process = new Process("FT", _fileName, _sampleRate);
-    process->setWindowFunction(_windowFunction);
-    process->setOverlap(_overlap);
-    process->setWindowSize(_windowSize);
+    setProcessParameters(process);
     dbs.createProcess(process);
 
     // Create a DataDescriptor for the magnitude matrix and save it.

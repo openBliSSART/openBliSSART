@@ -50,6 +50,9 @@ namespace nmf {
 class LibNMF_API Deconvolver
 {
 public:
+    /**
+     * TODO: Document me!
+     */
     typedef enum
     {
         EuclideanDistance,
@@ -58,6 +61,13 @@ public:
         KLDivergenceSparse,
         EuclideanDistanceSparseNormalized
     } NMFCostFunction;
+
+
+    /**
+     * TODO: Document me!
+     */
+    static const char* costFunctionName(NMFCostFunction cf);
+
 
     /**
      * Constructs a Deconvolver object for the matrix V.

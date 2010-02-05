@@ -39,9 +39,6 @@
 #include <blissart/audio/AudioData.h>
 #include <blissart/audio/WaveEncoder.h>
 
-// XXX: Is there a better place for Mel spectrum stuff?
-#include <blissart/feature/mfcc.h>
-
 #include <Poco/NumberFormatter.h>
 #include <Poco/Util/LayeredConfiguration.h>
 
@@ -58,14 +55,12 @@ namespace blissart {
 
 SeparationTask::SeparationTask(const SeparationMethod sepMethod,
                  const std::string &typeIdentifier,
-                 SeparationTask::DataKind dataKind,
                  const std::string &fileName,
                  unsigned int nrOfComponents, unsigned int nrOfSpectra,
                  unsigned int maxIterations,
                  double epsilon, bool isVolatile) :
     FTTask(typeIdentifier, fileName),
     _separationMethod(sepMethod),
-    _dataKind(dataKind),
     _nrOfComponents(nrOfComponents),
     _nrOfSpectra(nrOfSpectra),
     _maxIterations(maxIterations),
@@ -86,14 +81,19 @@ SeparationTask::~SeparationTask()
 
 void SeparationTask::runTask()
 {
-    // Adapt Increase maxSteps as neccessary.
+    // Take into account loading audio and computing FFT.
     incMaxProgress(0.2f);
+    // Take into account additional transformations.
+    incMaxProgress(0.05f * transforms().size());
+    // Take into account storage of components.
     if (!_isVolatile)
         incMaxProgress(0.1f);
-    if (_exportComponents && _dataKind == MagnitudeSpectrum)
+    // Take into account export of components / matrices.
+    if (_exportComponents)
         incMaxProgress(0.1f);
     if (_exportSpectra || _exportGains)
         incMaxProgress(0.1f);
+
     registerTask(_myUniqueID, 1);
 
     // From now on, perform periodical checks to see if the task has been
@@ -108,16 +108,13 @@ void SeparationTask::runTask()
 
         // Compute the spectrogram.
         computeSpectrogram();
-        // TODO: replace this by more generic approach
-        if (_dataKind == MelSpectrum) {
-            int nBanks = BasicApplication::instance().config().
-                getInt("blissart.global.mel_bands", 26);
-            Matrix *mel =
-                feature::melSpectrum(amplitudeMatrix(), sampleRate(), nBanks);
-            replaceAmplitudeMatrix(mel);
-        }
         incTotalProgress(0.1f);
 
+        // Mandatory check.
+        if (isCancelled())
+            break;
+
+        doAdditionalTransformations();
         // Mandatory check.
         if (isCancelled())
             break;
@@ -145,7 +142,7 @@ void SeparationTask::runTask()
         if (isCancelled())
             break;
 
-        if (_exportComponents && _dataKind == MagnitudeSpectrum) {
+        if (_exportComponents) {
             exportComponents();
             incTotalProgress(0.1f);
         }
@@ -165,6 +162,16 @@ void SeparationTask::runTask()
     // cancellation the upper do-while block was left before the first
     // free-attempt.
     deleteAmplitudeMatrix();
+}
+
+
+void SeparationTask::setProcessParameters(ProcessPtr process) const
+{
+    FTTask::setProcessParameters(process);
+    process->parameters["maxSteps"]   = Poco::NumberFormatter::format(_maxIterations);
+    process->parameters["epsilon"]    = Poco::NumberFormatter::format(_epsilon);
+    process->parameters["components"] = Poco::NumberFormatter::format(_nrOfComponents);
+    process->parameters["spectra"]    = Poco::NumberFormatter::format(_nrOfSpectra);
 }
 
 
@@ -189,19 +196,7 @@ void SeparationTask::storeComponents() const
     default:
         throw Poco::NotImplementedException("Unknown separation method!");
     }
-    newProcess->setWindowFunction(windowFunction());
-    newProcess->setOverlap(overlap());
-    newProcess->setWindowSize(windowSize());
-    newProcess->parameters["dataKind"] = _dataKind == MagnitudeSpectrum ?
-        "Magnitude spectrum" : "Mel spectrum";
-    if (_dataKind == MelSpectrum) {
-        newProcess->parameters["banks"] = BasicApplication::instance().
-            config().getInt("blissart.global.mel_bands", 26);
-    }
-    newProcess->parameters["maxSteps"]   = Poco::NumberFormatter::format(_maxIterations);
-    newProcess->parameters["epsilon"]    = Poco::NumberFormatter::format(_epsilon);
-    newProcess->parameters["components"] = Poco::NumberFormatter::format(_nrOfComponents);
-    newProcess->parameters["spectra"]    = Poco::NumberFormatter::format(_nrOfSpectra);
+    setProcessParameters(newProcess);
     dbs.createProcess(newProcess);
 
     Poco::Util::LayeredConfiguration& cfg =
@@ -220,11 +215,9 @@ void SeparationTask::storeComponents() const
     }
 
     // Also save the amplitude matrix.
-    if (_dataKind == MelSpectrum ||
-        cfg.getBool("blissart.separation.storage.magnitudematrix", false)) {
+    if (cfg.getBool("blissart.separation.storage.magnitudematrix", false)) {
         DataDescriptorPtr magnMatrixDescr = new DataDescriptor;
-        magnMatrixDescr->type = _dataKind == MagnitudeSpectrum ?
-            DataDescriptor::MagnitudeMatrix : DataDescriptor::MelMatrix;
+        magnMatrixDescr->type = DataDescriptor::MagnitudeMatrix;
         magnMatrixDescr->processID = newProcess->processID;
         dbs.createDataDescriptor(magnMatrixDescr);
         magnitudeMatrixID = magnMatrixDescr->descrID;
@@ -251,8 +244,7 @@ void SeparationTask::storeComponents() const
                 magnitudeSpectraMatrix(t).nthColumn(i));
         }
         DataDescriptorPtr spectrumDescr = new DataDescriptor;
-        spectrumDescr->type = _dataKind == MagnitudeSpectrum ?
-            DataDescriptor::Spectrum : DataDescriptor::MelSpectrum;
+        spectrumDescr->type = DataDescriptor::Spectrum;
         spectrumDescr->index = i;
         spectrumDescr->processID = newProcess->processID;
         dbs.createDataDescriptor(spectrumDescr);

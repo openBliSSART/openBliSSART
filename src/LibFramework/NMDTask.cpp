@@ -46,12 +46,11 @@ namespace blissart {
 
 
 NMDTask::NMDTask(const std::string &fileName,
-                 SeparationTask::DataKind dataKind, 
                  nmf::Deconvolver::NMFCostFunction cf,
                  int nrOfComponents, int nrOfSpectra,
                  int maxIterations, double epsilon, bool isVolatile) :
     SeparationTask(
-        SeparationTask::NMD, "NMDTask", dataKind,
+        SeparationTask::NMD, "NMDTask",
         fileName, nrOfComponents, nrOfSpectra,
         maxIterations, epsilon, isVolatile
     ),
@@ -122,6 +121,14 @@ void NMDTask::performSeparation()
 
     logger().debug(nameAndTaskID() + " factorizing.");
     _deconvolver->decompose(_cf, maxIterations(), epsilon(), this);
+}
+
+
+void NMDTask::setProcessParameters(ProcessPtr process) const
+{
+    SeparationTask::setProcessParameters(process);
+    process->parameters["costFunction"] = nmf::Deconvolver::costFunctionName(_cf);
+    process->parameters["sparsity"] = Poco::NumberFormatter::format(_sparsity);
 }
 
 

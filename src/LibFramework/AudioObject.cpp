@@ -61,14 +61,16 @@ AudioData* AudioObject::getAudioObject(ClassificationObjectPtr clo,
             "classification object!");
     }
 
-    // Since we don't know about the dimensionality of the spectrogram yet,
-    // we have to use pointers.
-    Poco::SharedPtr<Matrix> amplitudeMatrix;
-    Poco::SharedPtr<Matrix> phaseMatrix;
-    
     // Get the process information from the database.
     const int processID = dds.at(0)->processID;
     ProcessPtr process = dbs.getProcess(processID);
+    // Spectral post-processing transformations currently supported only
+    // for analysis, not for reconstruction.
+    if (process->parameters["transformCount"] != "0") {
+        throw Poco::InvalidArgumentException("Cannot reconstruct audio "
+              "from transformed spectral matrices!");
+    }
+
     // Get some information about the window-function, window-size and
     // overlap that were used during the creation of the related process.
     // Furthermore we need to know the source sample frequency.
@@ -82,6 +84,11 @@ AudioData* AudioObject::getAudioObject(ClassificationObjectPtr clo,
             "and/or overlap from the associated process's parameters.");
     }
 
+    // Since we don't know about the dimensionality of the spectrogram yet,
+    // we have to use pointers.
+    Poco::SharedPtr<Matrix> amplitudeMatrix;
+    Poco::SharedPtr<Matrix> phaseMatrix;
+    
     if (clo->type == ClassificationObject::Spectrogram) {
         for (vector<DataDescriptorPtr>::const_iterator ddIt = dds.begin();
             ddIt != dds.end(); ++ddIt)

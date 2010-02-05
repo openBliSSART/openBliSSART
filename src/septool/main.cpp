@@ -82,8 +82,7 @@ public:
         _exportComponents(false),
         _exportSpectra(false),
         _exportGains(false),
-        _separationMethod(SeparationTask::NMD),
-        _dataKind(SeparationTask::MagnitudeSpectrum)
+        _separationMethod(SeparationTask::NMD)
     {
         addSubsystem(new DatabaseSubsystem());
         addSubsystem(new StorageSubsystem());
@@ -298,15 +297,6 @@ protected:
                    "\"H\" for gains or \"WH\" for both (not the product!)",
                    false, "<name>", true)
             .validator(new RegExpValidator("(W|H|WH)")));
-
-        // XXX: replace this by config option (also other transformations?)
-        options.addOption(
-            Option("data-kind", "D",
-                "The data kind to perform separation on "
-                "(\"spectrum\" or \"melSpectrum\").",
-                false, "<kind>", true)
-                .validator(new RegExpValidator("(spectrum|melSpectrum)")));
-
     }
 
 
@@ -327,24 +317,20 @@ protected:
         else if (name == "cost-function") {
             if (value == "ed") {
                 _nmfCostFunction = nmf::Deconvolver::EuclideanDistance;
-                _cfName = "Squared Euclidean distance";
             }
             else if (value == "kl") {
                 _nmfCostFunction = nmf::Deconvolver::KLDivergence;
-                _cfName = "Extended KL divergence";
             }
             else if (value == "eds") {
                 _nmfCostFunction = nmf::Deconvolver::EuclideanDistanceSparse;
-                _cfName = "Squared Euclidean distance + sparseness constraint";
             }
             else if (value == "kls") {
                 _nmfCostFunction = nmf::Deconvolver::KLDivergenceSparse;
-                _cfName = "Extended KL divergence + sparseness constraint";
             }
             else if (value == "edsn") {
                 _nmfCostFunction = nmf::Deconvolver::EuclideanDistanceSparseNormalized;
-                _cfName = "Squared ED (normalized basis) + sparseness";
             }
+            _cfName = nmf::Deconvolver::costFunctionName(_nmfCostFunction);
         }
         else if (name == "sparsity") {
             _nmdSparsity = NumberParser::parseFloat(value);
@@ -415,14 +401,6 @@ protected:
                 _separationMethod = SeparationTask::NMD;
             else
                 throw Poco::NotImplementedException("Unknown separation method.");
-        }
-        else if (name == "data-kind") {
-            if (value == "spectrum")
-                _dataKind = SeparationTask::MagnitudeSpectrum;
-            else if (value == "melSpectrum")
-                _dataKind = SeparationTask::MelSpectrum;
-            else
-                throw Poco::NotImplementedException("Unknown data kind.");
         }
     }
 
@@ -548,7 +526,7 @@ protected:
             switch (_separationMethod) {
             case SeparationTask::NMD:
                 nmdTask = new NMDTask(
-                    *it, _dataKind, _nmfCostFunction,
+                    *it, _nmfCostFunction,
                     _nrComponents, _nrSpectra, _maxIter,_epsilon, _volatile
                 );
                 nmdTask->setSparsity(_nmdSparsity);
@@ -668,9 +646,6 @@ private:
 
     // The method to be used for component separation.
     SeparationTask::SeparationMethod   _separationMethod;
-
-    // The type of data to perform separation on.
-    SeparationTask::DataKind           _dataKind;
 
     // This vector holds the names of the files during whose processing errors
     // have occured.

@@ -51,20 +51,10 @@ public:
 
 
     /**
-     * Identifies the type of data on which component separation is done.
-     */
-    typedef enum {
-        MagnitudeSpectrum,
-        MelSpectrum
-    } DataKind;
-
-
-    /**
      * Constructs a new instance of SeparationTask for the given parameters.
      * @param  sepMethod        the method to be used for component separation
      * @param  typeIdentifier   a string identifier for the type of the task
      * @param  fileName         the name of the input file
-     * @param  dataKind         the type of data (spectrum or Mel spectrum)
      *                          which should be separated
      * @param  nrOfComponents   the desired number of components
      * @param  maxIterations    the maximum number of iterations
@@ -73,7 +63,6 @@ public:
      */
     SeparationTask(SeparationMethod sepMethod,
         const std::string &typeIdentifier,
-        DataKind dataKind,
         const std::string &fileName,
         unsigned int nrOfComponents, unsigned int nrOfSpectra,
         unsigned int maxIterations,
@@ -228,6 +217,13 @@ protected:
 
 
     /**
+     * Fills in some process parameters.
+     * Overrides FTTask method.
+     */
+    void setProcessParameters(ProcessPtr process) const;
+
+
+    /**
      * Stores the phase-matrix and the separated components in the database.
      * Overrides FTTask method.
      */
@@ -253,7 +249,6 @@ private:
 
 
     const SeparationMethod  _separationMethod;
-    const DataKind          _dataKind;
     const unsigned int      _nrOfComponents;
     const unsigned int      _nrOfSpectra;
 

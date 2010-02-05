@@ -228,6 +228,13 @@ public:
     inline void addTransformation(MatrixTransform *tf);
 
 
+    /**
+     * Returns a reference to the vector containing addtional matrix 
+     * transformations.
+     */
+    inline const std::vector<MatrixTransform*>& transforms() const;
+
+
 protected:
     /**
      * Sets the number of completed steps.
@@ -267,7 +274,7 @@ protected:
      * Fills in the attributes of the given Process entity according to the
      * actual parameters of this FTTask.
      */
-    void setProcessParameters(ProcessPtr process);
+    void setProcessParameters(ProcessPtr process) const;
 
 
     /**
@@ -418,6 +425,12 @@ inline bool FTTask::removeDC() const
 inline void FTTask::addTransformation(MatrixTransform *tf)
 {
     _transforms.push_back(tf);
+}
+
+
+inline const std::vector<MatrixTransform*>& FTTask::transforms() const
+{
+    return _transforms;
 }
 
 

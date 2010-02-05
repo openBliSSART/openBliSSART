@@ -50,6 +50,23 @@ namespace blissart {
 namespace nmf {
 
 
+const char* Deconvolver::costFunctionName(Deconvolver::NMFCostFunction cf)
+{
+    if (cf == Deconvolver::EuclideanDistance) 
+        return "Squared Euclidean distance";
+    if (cf == Deconvolver::KLDivergence)
+        return "Extended KL divergence";
+    if (cf == Deconvolver::EuclideanDistanceSparse)
+        return "Squared Euclidean distance + sparseness constraint";
+    if (cf == Deconvolver::KLDivergenceSparse)
+        return "Extended KL divergence + sparseness constraint";
+    if (cf == Deconvolver::EuclideanDistanceSparseNormalized)
+        return "Squared ED (normalized basis) + sparseness";
+    // should not occur ...
+    return "Unknown";
+}
+
+
 Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t,
                          Matrix::GeneratorFunction wGenerator,
                          Matrix::GeneratorFunction hGenerator) :

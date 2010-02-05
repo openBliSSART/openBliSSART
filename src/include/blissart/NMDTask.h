@@ -50,8 +50,6 @@ public:
     /**
      * Constructs a new instance of NMDTask for the given parameters.
      * @param  fileName         the name of the input file
-     * @param  dataKind         the type of data (spectrum or Mel spectrum) 
-     *                          which should be separated
      * @param  costFunction     the cost function which should be minimized
      * @param  nrOfComponents   the desired number of components
      * @param  nrOfSpectra      the desired number of spectra per component
@@ -59,7 +57,7 @@ public:
      * @param  epsilon          the desired precision
      * @param  isVolatile       store the resulting components iff true
      */
-    NMDTask(const std::string &fileName, DataKind dataKind,
+    NMDTask(const std::string &fileName,
             nmf::Deconvolver::NMFCostFunction costFunction, 
             int nrOfComponents, int nrOfSpectra,
             int maxIterations, double epsilon, bool isVolatile);
@@ -109,6 +107,13 @@ protected:
      * Performs the actual separation process.
      */
     virtual void performSeparation();
+
+
+    /**
+     * Fills in the NMD parameters.
+     * Overrides SeparationTask method.
+     */
+    void setProcessParameters(ProcessPtr process) const;
 
 
 private:
