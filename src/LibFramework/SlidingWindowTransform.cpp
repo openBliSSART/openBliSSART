@@ -78,6 +78,13 @@ Matrix* SlidingWindowTransform::transform(Matrix* spectrogram)
 }
 
 
+Matrix* SlidingWindowTransform::inverseTransform(Matrix* spectrogram)
+{
+    // TODO: Implement me!
+    return spectrogram;
+}
+
+
 const char* SlidingWindowTransform::name()
 {
     return "Sliding window spectrum";

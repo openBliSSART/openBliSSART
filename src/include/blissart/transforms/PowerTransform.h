@@ -56,9 +56,17 @@ public:
 
 
     /**
+     * Implementation of MatrixTransform interface.
      * Computes the power spectrum using the given gamma parameter (exponent).
      */
     virtual linalg::Matrix * transform(linalg::Matrix* m);
+
+
+    /** 
+     * Implementation of MatrixTransform interface.
+     * Reverts the power spectrum transformation.
+     */
+    virtual linalg::Matrix * inverseTransform(linalg::Matrix* m);
 
 
     /** 
@@ -68,6 +76,9 @@ public:
 
 
 private:
+    // Applies pow to a Matrix.
+    void powMatrix(linalg::Matrix* m, double exp);
+
     double _gamma;
 };
 

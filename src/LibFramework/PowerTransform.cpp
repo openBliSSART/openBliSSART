@@ -53,12 +53,25 @@ PowerTransform::PowerTransform()
 
 Matrix* PowerTransform::transform(Matrix* spectrogram)
 {
-    for (unsigned int j = 0; j < spectrogram->cols(); ++j) {
-        for (unsigned int i = 0; i < spectrogram->rows(); ++i) {
-            spectrogram->at(i, j) = std::pow(spectrogram->at(i, j), _gamma);
+    powMatrix(spectrogram, _gamma);
+    return spectrogram;
+}
+
+
+Matrix* PowerTransform::inverseTransform(Matrix* spectrogram)
+{
+    powMatrix(spectrogram, 1.0 / _gamma);
+    return spectrogram;
+}
+
+
+void PowerTransform::powMatrix(Matrix* m, double exp)
+{
+    for (unsigned int j = 0; j < m->cols(); ++j) {
+        for (unsigned int i = 0; i < m->rows(); ++i) {
+            m->at(i, j) = std::pow(m->at(i, j), exp);
         }
     }
-    return spectrogram;
 }
 
 

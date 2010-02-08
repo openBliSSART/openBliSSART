@@ -57,10 +57,18 @@ public:
 
 
     /**
+     * Implementation of MatrixTransform interface.
      * Computes the Mel spectrum using the given number of bands, sample rate
      * and cut-off frequencies.
      */
     virtual linalg::Matrix * transform(linalg::Matrix* m);
+
+
+    /** 
+     * Implementation of MatrixTransform interface.
+     * Reverts the Mel filter transformation.
+     */
+    virtual linalg::Matrix * inverseTransform(linalg::Matrix* m);
 
 
     /** 

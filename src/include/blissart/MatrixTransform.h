@@ -35,7 +35,6 @@ namespace blissart {
 
 
 // Forward declaration
-class FTTask;
 namespace linalg { class Matrix; }
 
 
@@ -60,8 +59,14 @@ public:
     virtual linalg::Matrix * transform(linalg::Matrix* m) = 0;
 
 
-private:
-    FTTask* _task;
+    /**
+     * Does the inverse transformation, i.e. it should hold that
+     * inverseTransform(transform(m)) = m. 
+     * If this is an in-place transform,
+     * it may return its argument, otherwise a pointer to the new matrix.
+     * Must be implemented by subclasses.
+     */
+    virtual linalg::Matrix * inverseTransform(linalg::Matrix* m) = 0;
 };
 
 

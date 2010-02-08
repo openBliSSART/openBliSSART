@@ -59,9 +59,17 @@ public:
 
 
     /**
-     * Computes the power spectrum using the given gamma parameter (exponent).
+     * Applies a "sliding window" to the given spectrum, i.e. multiple
+     * columns are concatenated into single columns.
      */
     virtual linalg::Matrix * transform(linalg::Matrix* m);
+
+
+    /** 
+     * Implementation of MatrixTransform interface.
+     * Reverts the sliding window transformation.
+     */
+    virtual linalg::Matrix * inverseTransform(linalg::Matrix* m);
 
 
     /** 

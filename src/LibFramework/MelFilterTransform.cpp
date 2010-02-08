@@ -64,6 +64,13 @@ Matrix* MelFilterTransform::transform(Matrix* spectrogram)
 }
 
 
+Matrix* MelFilterTransform::inverseTransform(Matrix* melSpectrogram)
+{
+    // TODO: Implement me!
+    return melSpectrogram;
+}
+
+
 const char* MelFilterTransform::name()
 {
     return "Mel filter";
