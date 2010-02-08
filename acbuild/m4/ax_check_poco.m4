@@ -79,7 +79,7 @@ AC_DEFUN([AX_CHECK_POCO],
                     ]],
                     [[
                       Poco::Data::SQLite::Utility util;
-                      #if (!POCO_VERSION >= 0x01030600)
+                      #if !(POCO_VERSION >= 0x01030600)
                       # error Wrong Poco version!
                       #endif
                     ]])
