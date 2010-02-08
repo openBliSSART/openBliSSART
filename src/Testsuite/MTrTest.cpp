@@ -47,6 +47,7 @@ bool MTrTest::performTest()
                               4.5, 2.5, 0.3, 0.7, 1.2,
                               0.6, 0.4, 3, 5, 6 };
     Matrix s(3, 5, s_data);
+    Matrix sOrig(s);
     cout << "S = " << endl;
     cout << s << endl;
 
@@ -86,6 +87,12 @@ bool MTrTest::performTest()
     if (!epsilonCheck(*slRes, sSliding)) {
         return false;
     }
+
+    pt.inverseTransform(&s);
+    cout << "Reverting power transform:" << endl;
+    cout << s << endl;
+    if (!epsilonCheck(s, sOrig)) 
+        return false;
 
     return true;
 }

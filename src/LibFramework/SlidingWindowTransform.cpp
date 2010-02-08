@@ -54,7 +54,7 @@ SlidingWindowTransform::SlidingWindowTransform()
 }
 
 
-Matrix* SlidingWindowTransform::transform(Matrix* spectrogram)
+Matrix* SlidingWindowTransform::transform(Matrix* spectrogram) const
 {
     unsigned int nCols = (unsigned int) 
         std::ceil(((double)spectrogram->cols() - _frameSize) / _frameRate) + 1;
@@ -78,14 +78,14 @@ Matrix* SlidingWindowTransform::transform(Matrix* spectrogram)
 }
 
 
-Matrix* SlidingWindowTransform::inverseTransform(Matrix* spectrogram)
+Matrix* SlidingWindowTransform::inverseTransform(Matrix* spectrogram) const
 {
     // TODO: Implement me!
     return spectrogram;
 }
 
 
-const char* SlidingWindowTransform::name()
+const char* SlidingWindowTransform::name() const
 {
     return "Sliding window spectrum";
 }

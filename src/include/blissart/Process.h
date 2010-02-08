@@ -29,10 +29,12 @@
 
 #include <blissart/DatabaseEntity.h>
 #include <blissart/WindowFunctions.h>
+#include <blissart/MatrixTransform.h>
 
 #include <common.h>
 
 #include <string>
+#include <vector>
 #include <map>
 
 #include <Poco/Timestamp.h>
@@ -155,6 +157,12 @@ public:
      * @throw                   Poco::InvalidArgumentException
      */
     void setWindowFunction(WindowFunction winFun);
+
+
+    const std::vector<MatrixTransform*> transforms() const;
+
+
+    void setTransforms(const std::vector<MatrixTransform*>& tfs);
 
     
     /**

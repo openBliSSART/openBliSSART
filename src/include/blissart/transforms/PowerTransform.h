@@ -52,21 +52,21 @@ public:
     /**
      * Implementation of MatrixTransform interface.
      */
-    virtual const char * name();
+    virtual const char * name() const;
 
 
     /**
      * Implementation of MatrixTransform interface.
      * Computes the power spectrum using the given gamma parameter (exponent).
      */
-    virtual linalg::Matrix * transform(linalg::Matrix* m);
+    virtual linalg::Matrix * transform(linalg::Matrix* m) const;
 
 
     /** 
      * Implementation of MatrixTransform interface.
      * Reverts the power spectrum transformation.
      */
-    virtual linalg::Matrix * inverseTransform(linalg::Matrix* m);
+    virtual linalg::Matrix * inverseTransform(linalg::Matrix* m) const;
 
 
     /** 
@@ -77,7 +77,7 @@ public:
 
 private:
     // Applies pow to a Matrix.
-    void powMatrix(linalg::Matrix* m, double exp);
+    void powMatrix(linalg::Matrix* m, double exp) const;
 
     double _gamma;
 };

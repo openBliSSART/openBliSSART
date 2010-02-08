@@ -26,9 +26,13 @@
 #include <blissart/Process.h>
 #include <Poco/NumberFormatter.h>
 #include <Poco/NumberParser.h>
+#include <blissart/transforms/PowerTransform.h>
+#include <blissart/transforms/MelFilterTransform.h>
+#include <blissart/transforms/SlidingWindowTransform.h>
 
 
 using namespace std;
+using namespace blissart::transforms;
 
 
 namespace blissart {
@@ -121,6 +125,52 @@ void Process::setWindowFunction(WindowFunction winFun)
 {
     parameters["windowFunction"] = windowFunctionName(winFun);
 } 
+
+
+const vector<MatrixTransform*> Process::transforms() const
+{
+    vector<MatrixTransform*> tfs;
+    map<string, string>::const_iterator tcIt = parameters.find("transformCount");
+    if (tcIt != parameters.end()) {
+        int transformCount = Poco::NumberParser::parse(tcIt->second);
+        for (int ti = 1; ti <= transformCount; ++ti) {
+            string tfName;
+            map<string, string>::const_iterator tnIt = 
+                parameters.find("transform" + Poco::NumberFormatter::format(ti));
+            if (tnIt != parameters.end()) {
+                // TODO: Load parameters
+                MatrixTransform* tf = 0;
+                tfName = tnIt->second;
+                if (tfName == "Power spectrum") {
+                    tf = new PowerTransform();
+                }
+                else if (tfName == "Mel filter") {
+                    tf = new MelFilterTransform(sampleFreq);
+                }
+                else if (tfName == "Sliding window spectrum") {
+                    tf = new SlidingWindowTransform();
+                }
+                else {
+                    throw Poco::InvalidArgumentException(
+                        "Invalid name for matrix transform: " + tfName);
+                }
+                tfs.push_back(tf);
+            }
+            else {
+                throw Poco::NotFoundException("Transformation #" + 
+                    Poco::NumberFormatter::format(ti) + 
+                    " not found in parameters!");
+            }
+        }
+    }
+    return tfs;
+}
+
+
+void Process::setTransforms(const std::vector<MatrixTransform*>& tfs)
+{
+    // TODO: Implement me (now in FTTask)
+}
 
 
 int Process::components() const

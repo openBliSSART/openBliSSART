@@ -49,14 +49,14 @@ public:
      * Returns a textual description of this MatrixTransform.
      * Must be implemented by subclasses.
      */
-    virtual const char * name() = 0;
+    virtual const char * name() const = 0;
 
     /**
      * Does the actual transformation. If this is an in-place transform,
      * it may return its argument, otherwise a pointer to the new matrix.
      * Must be implemented by subclasses.
      */
-    virtual linalg::Matrix * transform(linalg::Matrix* m) = 0;
+    virtual linalg::Matrix * transform(linalg::Matrix* m) const = 0;
 
 
     /**
@@ -66,7 +66,7 @@ public:
      * it may return its argument, otherwise a pointer to the new matrix.
      * Must be implemented by subclasses.
      */
-    virtual linalg::Matrix * inverseTransform(linalg::Matrix* m) = 0;
+    virtual linalg::Matrix * inverseTransform(linalg::Matrix* m) const = 0;
 };
 
 

@@ -55,21 +55,21 @@ public:
     /**
      * Implementation of MatrixTransform interface.
      */
-    virtual const char * name();
+    virtual const char * name() const;
 
 
     /**
      * Applies a "sliding window" to the given spectrum, i.e. multiple
      * columns are concatenated into single columns.
      */
-    virtual linalg::Matrix * transform(linalg::Matrix* m);
+    virtual linalg::Matrix * transform(linalg::Matrix* m) const;
 
 
     /** 
      * Implementation of MatrixTransform interface.
      * Reverts the sliding window transformation.
      */
-    virtual linalg::Matrix * inverseTransform(linalg::Matrix* m);
+    virtual linalg::Matrix * inverseTransform(linalg::Matrix* m) const;
 
 
     /** 

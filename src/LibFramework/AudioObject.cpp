@@ -32,6 +32,9 @@
 #include <blissart/linalg/Matrix.h>
 #include <blissart/linalg/ColVector.h>
 #include <blissart/linalg/RowVector.h>
+#include <blissart/transforms/PowerTransform.h>
+#include <Poco/NumberParser.h>
+#include <Poco/NumberFormatter.h>
 #include <Poco/Exception.h>
 
 
@@ -64,12 +67,6 @@ AudioData* AudioObject::getAudioObject(ClassificationObjectPtr clo,
     // Get the process information from the database.
     const int processID = dds.at(0)->processID;
     ProcessPtr process = dbs.getProcess(processID);
-    // Spectral post-processing transformations currently supported only
-    // for analysis, not for reconstruction.
-    if (process->parameters["transformCount"] != "0") {
-        throw Poco::InvalidArgumentException("Cannot reconstruct audio "
-              "from transformed spectral matrices!");
-    }
 
     // Get some information about the window-function, window-size and
     // overlap that were used during the creation of the related process.
@@ -168,6 +165,17 @@ AudioData* AudioObject::getAudioObject(ClassificationObjectPtr clo,
             amplitudeMatrix->add(spectrum->nthColumn(t) * componentGains);
             componentGains.shiftRight();
         }
+    }
+
+    // Revert any transformations, in reverse order.
+    vector<MatrixTransform*> tfs = process->transforms();
+    vector<MatrixTransform*>::const_reverse_iterator tflast(tfs.end());
+    vector<MatrixTransform*>::const_reverse_iterator tffirst(tfs.begin());
+    for (vector<MatrixTransform*>::const_reverse_iterator rit = tflast;
+         rit != tffirst; ++rit) // YES, it's operator ++ ;-)
+    {
+        // Let Poco::SharedPtr do the dirty work of pointer handling!
+        amplitudeMatrix = (*rit)->inverseTransform(amplitudeMatrix);
     }
 
     AudioData* ad = AudioData::fromSpectrogram(*amplitudeMatrix, *phaseMatrix,

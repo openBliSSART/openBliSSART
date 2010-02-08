@@ -58,20 +58,20 @@ MelFilterTransform::MelFilterTransform(double sampleRate) :
 }
 
 
-Matrix* MelFilterTransform::transform(Matrix* spectrogram)
+Matrix* MelFilterTransform::transform(Matrix* spectrogram) const
 {
     return feature::melSpectrum(*spectrogram, _sampleRate, _nBands);
 }
 
 
-Matrix* MelFilterTransform::inverseTransform(Matrix* melSpectrogram)
+Matrix* MelFilterTransform::inverseTransform(Matrix* melSpectrogram) const
 {
     // TODO: Implement me!
     return melSpectrogram;
 }
 
 
-const char* MelFilterTransform::name()
+const char* MelFilterTransform::name() const
 {
     return "Mel filter";
 }

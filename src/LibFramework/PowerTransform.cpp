@@ -51,21 +51,21 @@ PowerTransform::PowerTransform()
 }
 
 
-Matrix* PowerTransform::transform(Matrix* spectrogram)
+Matrix* PowerTransform::transform(Matrix* spectrogram) const
 {
     powMatrix(spectrogram, _gamma);
     return spectrogram;
 }
 
 
-Matrix* PowerTransform::inverseTransform(Matrix* spectrogram)
+Matrix* PowerTransform::inverseTransform(Matrix* spectrogram) const
 {
     powMatrix(spectrogram, 1.0 / _gamma);
     return spectrogram;
 }
 
 
-void PowerTransform::powMatrix(Matrix* m, double exp)
+void PowerTransform::powMatrix(Matrix* m, double exp) const
 {
     for (unsigned int j = 0; j < m->cols(); ++j) {
         for (unsigned int i = 0; i < m->rows(); ++i) {
@@ -75,7 +75,7 @@ void PowerTransform::powMatrix(Matrix* m, double exp)
 }
 
 
-const char* PowerTransform::name()
+const char* PowerTransform::name() const
 {
     return "Power spectrum";
 }
