@@ -27,8 +27,6 @@
 #include <blissart/linalg/Matrix.h>
 #include <blissart/linalg/generators/generators.h>
 #include <cassert>
-#include <iostream>
-using namespace std;
 
 
 using namespace blissart::linalg;
@@ -64,9 +62,6 @@ Matrix* MelFilter::melSpectrum(const Matrix& spectrogram)
 {
     computeFilters(spectrogram.rows());
 
-    /*for (unsigned int i = 0; i < spectrogram.rows(); ++i)
-        cout << i << " = " << spectrogram.at(i, 0) << " ";*/
-    //cout << endl;
     // Process matrix column by column.
     int m = 0;
     Matrix* rv = new Matrix(_nBands, spectrogram.cols(), generators::zero);
@@ -199,6 +194,12 @@ void MelFilter::computeFilters(unsigned int nBins)
         delete[] _filterCoeffs;
     _filterCoeffs = new double[nBins];
 
+    // Actually this is NOT necessary, but we want to be ABSOLUTELY sure ...
+    for (unsigned int b = 0; b < nBins; ++b) {
+        _filterCoeffs[b] = 0.0;
+        _filterIndex[b] = -3;
+    }
+
     // Compute the index of the filter that is to be applied to every component
     // of the spectrum. Note that the falling slope of filter M is equal to 
     // the rising slope of filter M+1, which is why we calculate falling slopes
@@ -227,9 +228,6 @@ void MelFilter::computeFilters(unsigned int nBins)
         while (m <= (int)_nBands && binFreq > centerFrequencies[m + 1]) {
             ++m;
         }
-        //if (i >= _nBands - 1) {
-            //cout << m << " " << centerFrequencies[m+1] << " " << binFreq << " " << centerFrequencies[m] << endl;
-        //}
         _filterCoeffs[i] = (centerFrequencies[m + 1] - binFreq) /
                            (centerFrequencies[m + 1] - centerFrequencies[m]);
     }
