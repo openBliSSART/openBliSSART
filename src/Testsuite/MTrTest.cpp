@@ -30,6 +30,7 @@
 #include <blissart/linalg/Matrix.h>
 #include <Poco/Util/Application.h>
 #include <Poco/Util/LayeredConfiguration.h>
+#include <Poco/SharedPtr.h>
 #include <iostream>
 
 
@@ -71,27 +72,33 @@ bool MTrTest::performTest()
     transforms::PowerTransform pt;
     pt.transform(&s);
 
-    cout << "Power: " << endl;
+    cout << "Applying power transform: " << endl;
     cout << s << endl;
 
     if (!epsilonCheck(s, sSq)) 
         return false;
 
     transforms::SlidingWindowTransform st;
-    Matrix* slRes = st.transform(&s);
+    Poco::SharedPtr<Matrix> slRes = st.transform(&s);
 
     cout << endl;
-    cout << "Sliding window: " << endl;
+    cout << "Applying sliding window transform: " << endl;
     cout << *slRes << endl;
 
     if (!epsilonCheck(*slRes, sSliding)) {
         return false;
     }
 
-    pt.inverseTransform(&s);
+    Poco::SharedPtr<Matrix> slRev = st.inverseTransform(slRes);
+    cout << "Reverting sliding window transform:" << endl;
+    cout << *slRev << endl;
+    if (!epsilonCheck(*slRev, sSq)) 
+        return false;
+
+    pt.inverseTransform(slRev);
     cout << "Reverting power transform:" << endl;
-    cout << s << endl;
-    if (!epsilonCheck(s, sOrig)) 
+    cout << *slRev << endl;
+    if (!epsilonCheck(*slRev, sOrig)) 
         return false;
 
     return true;

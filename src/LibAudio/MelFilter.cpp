@@ -145,6 +145,7 @@ void MelFilter::synth(const Matrix& melSpectrogram, Matrix& spectrogram)
         }
     }
 
+    delete[] specNorm;
     delete[] filterCoeffSums;
 }
 

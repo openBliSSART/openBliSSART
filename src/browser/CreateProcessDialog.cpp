@@ -159,7 +159,6 @@ void CreateProcessDialog::accept()
         // STFT + NMD
         if (_ui.cbProcessing->currentIndex() == 0) {
             task = new NMDTask(fileName.toStdString(),
-                SeparationTask::MagnitudeSpectrum,
                 cf,
                 _ui.sbNumComponents->value(),
                 _ui.sbNumSpectra->value(),

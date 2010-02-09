@@ -28,9 +28,12 @@
 
 #include <Poco/Util/LayeredConfiguration.h>
 #include <Poco/Util/Application.h>
+#include <Poco/NumberFormatter.h>
 
 #include <cassert>
 #include <cmath>
+
+#include <algorithm>
 
 
 namespace blissart {
@@ -80,8 +83,53 @@ Matrix* SlidingWindowTransform::transform(Matrix* spectrogram) const
 
 Matrix* SlidingWindowTransform::inverseTransform(Matrix* spectrogram) const
 {
-    // TODO: Implement me!
-    return spectrogram;
+    unsigned int nCols = (spectrogram->cols() - 1) * _frameRate + _frameSize;
+    Matrix* output = new Matrix(spectrogram->rows() / _frameSize, nCols);
+    if (output->rows() * _frameSize != spectrogram->rows()) {
+        throw Poco::InvalidArgumentException("Invalid matrix dimensions: "
+            "input matrix has " + 
+            Poco::NumberFormatter::format(spectrogram->rows()) +
+            " rows, not a multiple of frame size = " +
+            Poco::NumberFormatter::format(_frameSize));
+    }
+
+    output->zero();
+
+    unsigned int outputCol = 0;
+    for (unsigned int inputCol = 0; inputCol < spectrogram->cols(); 
+         ++inputCol, outputCol += _frameRate)
+    {
+        unsigned int outputColOffset = 0;
+        unsigned int outputRow = 0;
+        for (unsigned int inputRow = 0; inputRow < spectrogram->rows(); 
+             ++inputRow) 
+        {
+            outputColOffset = inputRow / output->rows(); // integer division
+            outputRow = inputRow % output->rows();
+            output->at(outputRow, outputCol + outputColOffset) 
+                += spectrogram->at(inputRow, inputCol);
+        }
+    }
+
+    // interpolation
+    for (unsigned int j = 0; j < output->cols(); ++j) {
+        int cnt = 1;
+        if ((j + 1) <= (_frameSize - 1) * _frameRate) {
+            cnt = j / _frameRate + 1;
+        }
+        else if (j >= output->cols() - (_frameSize - 1) * _frameRate) {
+            cnt = (output->cols() - j - 1) / _frameRate + 1;
+        }
+        else {
+            cnt = _frameSize;
+        }
+        for (unsigned int i = 0; i < output->rows(); ++i) {
+            output->at(i, j) /= (double)cnt;
+        }
+        //cout << "j = " << j << " cnt = " << cnt << endl;
+    }
+
+    return output;
 }
 
 
