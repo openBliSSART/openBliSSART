@@ -146,6 +146,9 @@ const vector<MatrixTransform*> Process::transforms() const
                 }
                 else if (tfName == "Mel filter") {
                     tf = new MelFilterTransform(sampleFreq);
+                    // TODO: Zero padding (introduce process param "fftSize"??)
+                    int ws = windowSize() * sampleFreq / 1000;
+                    ((MelFilterTransform*)tf)->setBins(ws / 2 + 1);
                 }
                 else if (tfName == "Sliding window spectrum") {
                     tf = new SlidingWindowTransform();

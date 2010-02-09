@@ -30,6 +30,7 @@
 #include <blissart/linalg/Matrix.h>
 #include <blissart/audio/AudioData.h>
 #include <blissart/audio/audio.h>
+#include <blissart/audio/MelFilter.h>
 #include <Poco/SharedPtr.h>
 
 #include <iostream>
@@ -64,14 +65,24 @@ bool MFCCTest::performTest()
         delete sp.second;
         Poco::SharedPtr<Matrix> pM(sp.first);
         Poco::SharedPtr<Matrix> mel = 
-            melSpectrum(*pM, pAd->sampleRate(), 26, 32767.0);
+            melSpectrum(*pM, pAd->sampleRate(), 26, 0.0, 0.0, 32767.0);
+            // 32767.0 for compatibility with HTK results
+
+        MelFilter mf(26, (unsigned int)pAd->sampleRate(), 0.0, 0.0);
+        mf.setScaleFactor(32767.0);
+        Poco::SharedPtr<Matrix> mel2 = mf.melSpectrum(*pM);
 
         audio::shutdown();
 
-        // 32767.0 for compatibility with HTK results
         cout << "Mel spectrum (first column):" << endl;
         for (unsigned int i = 0; i < 26; ++i) {
             cout << mel->at(i, 0) << " ";
+        }
+        cout << endl;
+        cout << "Mel spectrum (first column):" << endl;
+        for (unsigned int i = 0; i < 26; ++i) {
+            cout << mel2->at(i, 0) << " ";
+            if (!epsilonCheck(mel->at(i, 0), mel2->at(i, 0))) return false;
         }
         cout << endl;
         cout << "Mel spectrum (2nd column):" << endl;

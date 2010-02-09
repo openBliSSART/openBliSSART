@@ -96,6 +96,12 @@ public:
     void setHighFreq(double highFreq);
 
 
+    /**
+     * Sets the number of bins for the inverse transformation.
+     */
+    void setBins(unsigned int bins);
+
+
 private:
     // Forbid default constructor.
     MelFilterTransform();
@@ -103,6 +109,7 @@ private:
     int _nBands;
     double _sampleRate;
     double _lowFreq, _highFreq;
+    unsigned int _nBins;
 };
 
 
@@ -127,6 +134,12 @@ inline void MelFilterTransform::setLowFreq(double lowFreq)
 inline void MelFilterTransform::setHighFreq(double highFreq)
 {
     _highFreq = highFreq;
+}
+
+
+inline void MelFilterTransform::setBins(unsigned int nBins)
+{
+    _nBins = nBins;
 }
 
 

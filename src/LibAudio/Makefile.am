@@ -32,6 +32,7 @@ libAudio_la_CPPFLAGS = -I../include @SDL_CFLAGS@ @POCO_CPPFLAGS@
 libAudio_la_CXXFLAGS = -fPIC
 
 libAudio_la_SOURCES = AudioData.cpp \
+                      MelFilter.cpp \
                       WaveEncoder.cpp \
                       Sound.cpp \
                       wave.h \

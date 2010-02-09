@@ -38,6 +38,7 @@
 #include "MFCCTest.h"
 #include "MatrixTest.h"
 #include "MinHeapTest.h"
+#include "MelFilterTest.h"
 #include "MTrTest.h"
 #include "NMDTest.h"
 #include "NMFTest.h"
@@ -112,6 +113,7 @@ protected:
         options.addOption(Option("ica", "", "Test ICA functions"));
         options.addOption(Option("matrix", "", "Test matrix functions"));
         options.addOption(Option("mfcc", "", "Test extraction of MFCCs", false, "<file>", true));
+        options.addOption(Option("mel", "", "Test Mel filter and synth"));
         options.addOption(Option("mh", "", "Test Minimum Heap implementation"));
         options.addOption(Option("mt", "", "Test (spectrogram) matrix transformations"));
         options.addOption(Option("nmd", "", "Test NMD routines"));
@@ -159,6 +161,8 @@ protected:
             pushTest(new HTKWriterTest());
         if (name == "all" || name == "sc")
             pushTest(new ScalingTest());
+        if (name == "all" || name == "mel")
+            pushTest(new MelFilterTest());
         if (name == "all" || name == "mt")
             pushTest(new MTrTest());
         if (name == "all" || name == "nmd")

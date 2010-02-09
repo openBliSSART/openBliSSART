@@ -34,7 +34,14 @@
 #include <cassert>
 
 
+#include <iostream>
+
+using namespace std;
+
+
 using namespace blissart::linalg;
+
+
 
 
 namespace blissart {
@@ -105,6 +112,8 @@ Matrix* melSpectrum(const Matrix& spectrogram,
     // Always ignore zeroth FFT coefficient (DC component).
     if (lowestIndex < 1) lowestIndex = 1;
     
+    cout << "highestIndex = " << highestIndex << endl;
+    cout << "lowestIndex = " << lowestIndex << endl;
     assert(highestIndex < spectrogram.rows() && 
            lowestIndex < spectrogram.rows());
 

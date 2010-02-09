@@ -52,6 +52,8 @@ testsuite_SOURCES = BinaryReaderWriterTest.cpp \
 					MFCCTest.h \
 					MatrixTest.cpp \
 					MatrixTest.h \
+                    MelFilterTest.cpp \
+                    MelFilterTest.h \
                     MTrTest.cpp \
                     MTrTest.h \
 					NMDTest.cpp \

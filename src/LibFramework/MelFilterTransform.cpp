@@ -26,7 +26,7 @@
 #include <blissart/transforms/MelFilterTransform.h>
 #include <blissart/linalg/Matrix.h>
 
-#include <blissart/feature/mfcc.h>
+#include <blissart/audio/MelFilter.h>
 
 #include <Poco/Util/LayeredConfiguration.h>
 #include <Poco/Util/Application.h>
@@ -45,7 +45,7 @@ namespace transforms {
 
 
 MelFilterTransform::MelFilterTransform(double sampleRate) : 
-    _sampleRate(sampleRate)
+    _sampleRate(sampleRate), _nBins(0)
 {
     Poco::Util::LayeredConfiguration& cfg 
         = Poco::Util::Application::instance().config();
@@ -60,14 +60,17 @@ MelFilterTransform::MelFilterTransform(double sampleRate) :
 
 Matrix* MelFilterTransform::transform(Matrix* spectrogram) const
 {
-    return feature::melSpectrum(*spectrogram, _sampleRate, _nBands);
+    audio::MelFilter mf(_nBands, _sampleRate, _lowFreq, _highFreq);
+    return mf.melSpectrum(*spectrogram);
 }
 
 
 Matrix* MelFilterTransform::inverseTransform(Matrix* melSpectrogram) const
 {
-    // TODO: Implement me!
-    return melSpectrogram;
+    audio::MelFilter mf(_nBands, _sampleRate, _lowFreq, _highFreq);
+    Matrix* rv = new Matrix(_nBins, melSpectrogram->cols());
+    mf.synth(*melSpectrogram, *rv);
+    return rv;
 }
 
 
