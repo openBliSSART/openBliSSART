@@ -41,35 +41,42 @@ namespace linalg { class Matrix; }
 namespace audio {
 
 
+/**
+ * A filter bank that transforms a discrete Fourier spectrum onto the Mel 
+ * scale by triangular filters.
+ */
 class LibAudio_API MelFilter
 {
 public:
     /**
-     * TODO: Document me!
+     * Constructs a Mel filter bank with 26 filters, assuming a sample rate
+     * of 44.1 kHz, ranging from 0 to 22.05 kHz (Nyquist frequency).
      */
     MelFilter();
 
 
     /**
-     * TODO: Document me!
+     * Constructs a Mel filter bank with the specified number of filters,
+     * sample rate and cut-off frequencies.
      */
     MelFilter(unsigned int nBands, unsigned int sampleRate, 
               double lowFreq, double highFreq);
 
     /**
-     * TODO: Document me!
+     * Transforms the given spectrogram on the Mel scale.
      */
     linalg::Matrix* melSpectrum(const linalg::Matrix& spectrogram);
 
 
     /**
-     * TODO: Document me!
+     * Resynthesizes (approximatively) the Fourier spectrum from the Mel 
+     * spectrum.
      */
     void synth(const linalg::Matrix& melSpectrogram, linalg::Matrix& spectrogram);
 
 
     /**
-     * TODO: Document me!
+     * Sets a scale factor that can be used e.g. for compatibility with HTK.
      */
     void setScaleFactor(double factor);
 
@@ -103,6 +110,7 @@ private:
     unsigned int _nBins;
     double*      _filterCoeffs;
     int*         _filterIndex;
+    unsigned int _lowestIndex, _highestIndex;
 };
 
 

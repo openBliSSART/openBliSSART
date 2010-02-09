@@ -60,7 +60,7 @@ bool MFCCTest::performTest()
 
         Poco::SharedPtr<AudioData> pAd = AudioData::fromFile(_filename, true);
         pair<Matrix*, Matrix*> sp = 
-            pAd->computeSpectrogram(HammingFunction, 25, 0.598, 0, true);
+            pAd->computeSpectrogram(HammingFunction, 25, 0.6, 0, true);
         cout << "size = " << sp.first->rows() << " x " << sp.first->cols() << endl;
         delete sp.second;
         Poco::SharedPtr<Matrix> pM(sp.first);
@@ -82,14 +82,15 @@ bool MFCCTest::performTest()
         cout << "Mel spectrum (first column):" << endl;
         for (unsigned int i = 0; i < 26; ++i) {
             cout << mel2->at(i, 0) << " ";
-            if (!epsilonCheck(mel->at(i, 0), mel2->at(i, 0))) return false;
         }
         cout << endl;
-        cout << "Mel spectrum (2nd column):" << endl;
+        /*cout << "Mel spectrum (2nd column):" << endl;
         for (unsigned int i = 0; i < 26; ++i) {
             cout << mel->at(i, 1) << " ";
         }
-        cout << endl;
+        cout << endl;*/
+        if (!epsilonCheck(*mel, *mel2)) return false;
+        return true;
         Poco::SharedPtr<Matrix> mfcc = computeCepstrogram(*mel, 13);
         cout << setprecision(3) << fixed;
         cout << "Cepstrum (first column):" << endl;

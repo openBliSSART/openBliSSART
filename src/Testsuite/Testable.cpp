@@ -41,7 +41,7 @@ bool Testable::epsilonCheck(const Matrix& a, const Matrix& b,
 
     for (unsigned int j = 0; j < a.cols(); ++j) {
         for (unsigned int i = 0; i < a.rows(); ++i) {
-            if (!epsilonCheck(a(i, j), b(i, j), 1e-3)) {
+            if (!epsilonCheck(a(i, j), b(i, j), prec)) {
                 return false;
             }
         }

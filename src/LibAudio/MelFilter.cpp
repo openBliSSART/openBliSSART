@@ -27,6 +27,8 @@
 #include <blissart/linalg/Matrix.h>
 #include <blissart/linalg/generators/generators.h>
 #include <cassert>
+#include <iostream>
+using namespace std;
 
 
 using namespace blissart::linalg;
@@ -41,17 +43,19 @@ namespace audio {
 MelFilter::MelFilter() : 
     _nBands(26), _sampleRate(44100), _lowFreq(0.0), _highFreq(0.0),
     _scaleFactor(1.0),
-    _nBins(0), _filterCoeffs(0), _filterIndex(0)
+    _nBins(0), _filterCoeffs(0), _filterIndex(0),
+    _lowestIndex(0), _highestIndex(0)
 {
 }
 
 
 MelFilter::MelFilter(unsigned int nBands, unsigned int sampleRate,
                      double lowFreq, double highFreq) :
-                     _nBands(nBands), _sampleRate(sampleRate),
-                     _lowFreq(lowFreq), _highFreq(highFreq),
-                     _scaleFactor(1.0),
-                     _nBins(0), _filterCoeffs(0), _filterIndex(0)
+    _nBands(nBands), _sampleRate(sampleRate),
+    _lowFreq(lowFreq), _highFreq(highFreq),
+    _scaleFactor(1.0),
+    _nBins(0), _filterCoeffs(0), _filterIndex(0),
+    _lowestIndex(0), _highestIndex(0)
 {
 }
 
@@ -60,11 +64,14 @@ Matrix* MelFilter::melSpectrum(const Matrix& spectrogram)
 {
     computeFilters(spectrogram.rows());
 
+    /*for (unsigned int i = 0; i < spectrogram.rows(); ++i)
+        cout << i << " = " << spectrogram.at(i, 0) << " ";*/
+    //cout << endl;
     // Process matrix column by column.
     int m = 0;
     Matrix* rv = new Matrix(_nBands, spectrogram.cols(), generators::zero);
     for (unsigned int j = 0; j < spectrogram.cols(); ++j) {
-        for (unsigned int i = 0; i < spectrogram.rows(); ++i) {
+        for (unsigned int i = _lowestIndex; i <= _highestIndex; ++i) {
             m = _filterIndex[i];
             if (m > -2) {
                 double out = spectrogram.at(i, j) * _filterCoeffs[i];
@@ -96,7 +103,7 @@ void MelFilter::synth(const Matrix& melSpectrogram, Matrix& spectrogram)
     for (unsigned int fi = 0; fi < _nBands; ++fi) {
         filterCoeffSums[fi] = 0.0;
     }
-    for (unsigned int i = 0; i < spectrogram.rows(); ++i) {
+    for (unsigned int i = _lowestIndex; i <= _highestIndex; ++i) {
         int m = _filterIndex[i];
         if (m > -2) {
             if (m > -1) {
@@ -110,7 +117,7 @@ void MelFilter::synth(const Matrix& melSpectrogram, Matrix& spectrogram)
     
     // Compute normalization for each frequency
     double* specNorm = new double[spectrogram.rows()];
-    for (unsigned int i = 0; i < spectrogram.rows(); ++i) {
+    for (unsigned int i = _lowestIndex; i <= _highestIndex; ++i) {
         specNorm[i] = 0.0;
         int m = _filterIndex[i];
         if (m > -2) {
@@ -129,7 +136,7 @@ void MelFilter::synth(const Matrix& melSpectrogram, Matrix& spectrogram)
 
     spectrogram.zero();
     for (unsigned int j = 0; j < spectrogram.cols(); ++j) {
-        for (unsigned int i = 0; i < spectrogram.rows(); ++i) {
+        for (unsigned int i = _lowestIndex; i <= _highestIndex; ++i) {
             int m = _filterIndex[i];
             if (m > -2) {
                 if (m > -1) {
@@ -140,7 +147,7 @@ void MelFilter::synth(const Matrix& melSpectrogram, Matrix& spectrogram)
                 }
             }
         }
-        for (unsigned int i = 0; i < spectrogram.rows(); ++i) {
+        for (unsigned int i = _lowestIndex; i <= _highestIndex; ++i) {
             spectrogram.at(i, j) *= specNorm[i];
         }
     }
@@ -166,14 +173,13 @@ void MelFilter::computeFilters(unsigned int nBins)
     const double baseFreq       = (double) _sampleRate / nSamples;
     const double lowestMelFreq  = hertzToMel(_lowFreq);
     const double highestMelFreq = hertzToMel(_highFreq);
-    unsigned int lowestIndex    = (unsigned int) round(_lowFreq / baseFreq);
-    unsigned int highestIndex   = (unsigned int) round(_highFreq / baseFreq);
+    _lowestIndex                = (unsigned int) round(_lowFreq / baseFreq);
+    _highestIndex               = (unsigned int) round(_highFreq / baseFreq);
     
     // Always ignore zeroth FFT coefficient (DC component).
-    if (lowestIndex < 1) lowestIndex = 1;
+    if (_lowestIndex < 1) _lowestIndex = 1;
     
-    assert(highestIndex < nBins && 
-           lowestIndex < nBins);
+    assert(_highestIndex < nBins && _lowestIndex < nBins);
 
     // Compute Mel center frequencies
     double* centerFrequencies = new double[_nBands + 2];
@@ -201,7 +207,7 @@ void MelFilter::computeFilters(unsigned int nBins)
     // filter output is zero.
     m = 0;
     for (unsigned int i = 0; i < nBins; ++i) {
-        if (i < lowestIndex || i > highestIndex) {
+        if (i < _lowestIndex || i > _highestIndex) {
             // XXX: -3?
             _filterIndex[i] = -3;
         }
@@ -216,11 +222,14 @@ void MelFilter::computeFilters(unsigned int nBins)
 
     // Compute filter coefficients (for falling slopes).
     m = 0;
-    for (unsigned int i = lowestIndex; i < highestIndex; ++i) {
+    for (unsigned int i = _lowestIndex; i <= _highestIndex; ++i) {
         double binFreq = hertzToMel((double)i * baseFreq);
         while (m <= (int)_nBands && binFreq > centerFrequencies[m + 1]) {
             ++m;
         }
+        //if (i >= _nBands - 1) {
+            //cout << m << " " << centerFrequencies[m+1] << " " << binFreq << " " << centerFrequencies[m] << endl;
+        //}
         _filterCoeffs[i] = (centerFrequencies[m + 1] - binFreq) /
                            (centerFrequencies[m + 1] - centerFrequencies[m]);
     }
