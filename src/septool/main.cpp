@@ -92,8 +92,6 @@ public:
 protected:
     virtual void initialize(Application &self)
     {
-        cout << "initialize" << endl;
-
         // Copy parameters from the configuration such that they can be
         // displayed later. Also ClassificationTasks have to use the same
         // window size and overlap parameters.
@@ -313,8 +311,6 @@ protected:
 
     virtual void handleOption(const string &name, const string &value)
     {
-        cout << "handleOptions" << endl;
-
         Application::handleOption(name, value);
 
         if (name == "help") {
