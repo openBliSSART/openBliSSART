@@ -100,7 +100,7 @@ double Process::overlap() const
     map<string, string>::const_iterator it;
     if ((it = parameters.find("overlap")) == parameters.end())
         throw Poco::NotFoundException("Missing overlap.");
-    return Poco::NumberParser::parseFloat(it->second.c_str());
+    return DatabaseEntity::parseDouble(it->second.c_str());
 }
 
 
@@ -108,7 +108,7 @@ void Process::setOverlap(double overlap)
 {
     if (overlap < 0 || overlap >= 1)
         throw Poco::InvalidArgumentException("Invalid overlap.");
-    parameters["overlap"] = Poco::NumberFormatter::format(overlap);
+    parameters["overlap"] = DatabaseEntity::formatDouble(overlap);
 }
 
 

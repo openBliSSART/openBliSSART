@@ -128,7 +128,7 @@ void NMDTask::setProcessParameters(ProcessPtr process) const
 {
     SeparationTask::setProcessParameters(process);
     process->parameters["costFunction"] = nmf::Deconvolver::costFunctionName(_cf);
-    process->parameters["sparsity"] = Poco::NumberFormatter::format(_sparsity);
+    process->parameters["sparsity"] = Process::formatDouble(_sparsity);
 }
 
 

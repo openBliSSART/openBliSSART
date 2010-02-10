@@ -89,11 +89,31 @@ protected:
 
     /**
      * Loads necessary configuration files after setting up the directory
-     * sturcture.
+     * structure.
      * Subclasses that overwrite this method must call the base-class
      * implementation at first!
      */
     virtual void initializeConfiguration();
+
+
+    /**
+     * Overrides the corresponding Poco::Util::Aplication method
+     * to store all options given on the command-line for later access.
+     */
+    void handleOption(const std::string& name, const std::string& value);
+
+
+    /**
+     * Overrides the corresponding Poco::Util::Aplication method
+     * to provide the -A and -C options.
+     */
+    void defineOptions(Poco::Util::OptionSet& options);
+
+
+private:
+    std::string _optionsString;
+    std::string _userConfigFile;
+    bool        _echoCommand;
 };
 
 

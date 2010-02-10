@@ -92,19 +92,6 @@ public:
 protected:
     virtual void initialize(Application &self)
     {
-        // Copy parameters from the configuration such that they can be
-        // displayed later. Also ClassificationTasks have to use the same
-        // window size and overlap parameters.
-        _zeroPadding = config().getBool("blissart.fft.zeropadding", false);
-        _removeDC    = config().getBool("blissart.audio.remove_dc", false);
-        _reduceMids  = config().getBool("blissart.audio.reduce_mids", false);
-        _preemphasisCoeff = config().getDouble("blissart.audio.preemphasis", 0.0);
-        _windowFunction = windowFunctionForShortName(
-            config().getString("blissart.fft.windowfunction", "sqhann"));
-        _wfName      = windowFunctionName(_windowFunction);
-        _windowSize  = config().getInt("blissart.fft.windowsize", 25);
-        _overlap     = config().getDouble("blissart.fft.overlap", 0.5);
-
         // Add storage and database subsystems if run in non-volatile mode,
         // or if classification is desired, which needs some input data.
         if (!_volatile && !_classify) {
@@ -118,6 +105,19 @@ protected:
 
         // Initialize LibAudio.
         blissart::audio::initialize();
+
+        // Copy parameters from the configuration such that they can be
+        // displayed later. Also ClassificationTasks have to use the same
+        // window size and overlap parameters.
+        _zeroPadding = config().getBool("blissart.fft.zeropadding", false);
+        _removeDC    = config().getBool("blissart.audio.remove_dc", false);
+        _reduceMids  = config().getBool("blissart.audio.reduce_mids", false);
+        _preemphasisCoeff = config().getDouble("blissart.audio.preemphasis", 0.0);
+        _windowFunction = windowFunctionForShortName(
+            config().getString("blissart.fft.windowfunction", "sqhann"));
+        _wfName      = windowFunctionName(_windowFunction);
+        _windowSize  = config().getInt("blissart.fft.windowsize", 25);
+        _overlap     = config().getDouble("blissart.fft.overlap", 0.5);
     }
 
 
@@ -133,7 +133,7 @@ protected:
 
     virtual void defineOptions(OptionSet &options)
     {
-        Application::defineOptions(options);
+        BasicApplication::defineOptions(options);
 
         options.addOption(
             Option("help", "h",
@@ -311,7 +311,7 @@ protected:
 
     virtual void handleOption(const string &name, const string &value)
     {
-        Application::handleOption(name, value);
+        BasicApplication::handleOption(name, value);
 
         if (name == "help") {
             _displayUsage = true;

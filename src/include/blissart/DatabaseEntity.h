@@ -30,6 +30,7 @@
 #include <Poco/AutoPtr.h>
 #include <Poco/RefCountedObject.h>
 #include <common.h>
+#include <string>
 
 
 namespace blissart {
@@ -69,6 +70,22 @@ public:
     * Tells the type of the entity.
     */
    inline EntityType entityType() const { return _entityType; }
+
+
+   /**
+    * Under Unix, formats a floating-point number using the "C" locale,
+    * so that a consistent format within the database is guaranteed.
+    * Under Windows, this does the same as Poco::NumberFormatter::format().
+    */
+   static std::string formatDouble(double value);
+
+
+   /**
+    * Under Unix, parses a floating-point number using the "C" locale,
+    * so that portability of databases is preserved.
+    * Under Windows, this does the same as Poco::NumberParser::parseFloat().
+    */
+   static double parseDouble(const std::string& str);
 
 
 protected:

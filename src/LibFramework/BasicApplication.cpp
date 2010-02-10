@@ -42,7 +42,7 @@ static Poco::FastMutex _fftwMutex;
 namespace blissart {
 
 
-BasicApplication::BasicApplication()
+BasicApplication::BasicApplication() : _echoCommand(false)
 {
     setUnixOptions(true);
 }
@@ -87,6 +87,9 @@ BasicApplication::parseScriptFiles(const vector<string>& fileNames)
 
 void BasicApplication::initialize(Application& self)
 {
+    if (_echoCommand) {
+        logger().information("Executing: " + commandName() + _optionsString);
+    }
     initializeDirectories();
     initializeConfiguration();
 
@@ -137,11 +140,46 @@ void BasicApplication::initializeConfiguration()
 #endif
     );
 
-    Path configFileName = Path::forDirectory(config().getString("blissart.configDir"));
-    configFileName.setFileName("blissart.properties");
-    if (!File(configFileName).exists())
-        File(configFileName).createFile();
-    loadConfiguration(configFileName.toString());
+    if (!_userConfigFile.empty()) {
+        logger().information("Using configuration file: " + _userConfigFile);
+        loadConfiguration(_userConfigFile);
+    }
+    else {
+        Path configFileName = Path::forDirectory(config().getString("blissart.configDir"));
+        configFileName.setFileName("blissart.properties");
+        if (!File(configFileName).exists())
+            File(configFileName).createFile();
+        loadConfiguration(configFileName.toString());
+    }
+}
+
+
+void BasicApplication::handleOption(const string& name, const string& value)
+{
+    if (name == "echo") {
+        _echoCommand = true;
+    }
+    else if (name == "config") {
+        _userConfigFile = value;
+    }
+    _optionsString += " --" + name;
+    if (!value.empty()) {
+        _optionsString += '=' + value;
+    }
+}
+
+
+void BasicApplication::defineOptions(OptionSet& options)
+{
+    Application::defineOptions(options);
+
+    options.addOption(Option("echo", "A", 
+        "Echo the command that was used to start this application.",
+        false));
+    options.addOption(Option("config", "C",
+        "Specifies a config file to use instead of "
+        "blissart-dir/etc/blissart.properties",
+        false, "<filename>", true));
 }
 
 

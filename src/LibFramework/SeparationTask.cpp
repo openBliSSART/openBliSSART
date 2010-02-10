@@ -169,7 +169,7 @@ void SeparationTask::setProcessParameters(ProcessPtr process) const
 {
     FTTask::setProcessParameters(process);
     process->parameters["maxSteps"]   = Poco::NumberFormatter::format(_maxIterations);
-    process->parameters["epsilon"]    = Poco::NumberFormatter::format(_epsilon);
+    process->parameters["epsilon"]    = Process::formatDouble(_epsilon);
     process->parameters["components"] = Poco::NumberFormatter::format(_nrOfComponents);
     process->parameters["spectra"]    = Poco::NumberFormatter::format(_nrOfSpectra);
 }

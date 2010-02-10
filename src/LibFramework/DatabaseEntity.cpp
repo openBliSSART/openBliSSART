@@ -24,6 +24,11 @@
 
 
 #include <blissart/DatabaseEntity.h>
+#include <Poco/NumberFormatter.h>
+#include <Poco/NumberParser.h>
+#ifndef _WIN32
+#include <locale.h>
+#endif
 
 
 namespace blissart {
@@ -38,6 +43,36 @@ DatabaseEntity::DatabaseEntity(EntityType entityType) :
 DatabaseEntity::DatabaseEntity(const DatabaseEntity &other) :
   _entityType(other._entityType)
 {
+}
+
+
+std::string DatabaseEntity::formatDouble(double value)
+{
+    std::string rv;
+    #ifndef _WIN32
+    char* oldLocale = setlocale(LC_NUMERIC, NULL);
+    setlocale(LC_NUMERIC, "C");
+    #endif
+    rv = Poco::NumberFormatter::format(value);
+    #ifndef _WIN32
+    setlocale(LC_NUMERIC, oldLocale);
+    #endif
+    return rv;
+}
+
+
+double DatabaseEntity::parseDouble(const std::string& str)
+{
+    double rv;
+    #ifndef _WIN32
+    char* oldLocale = setlocale(LC_NUMERIC, NULL);
+    setlocale(LC_NUMERIC, "C");
+    #endif
+    rv = Poco::NumberParser::parseFloat(str);
+    #ifndef _WIN32
+    setlocale(LC_NUMERIC, oldLocale);
+    #endif
+    return rv;
 }
 
 
