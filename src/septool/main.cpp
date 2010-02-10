@@ -52,10 +52,10 @@ using namespace Poco;
 using namespace Poco::Util;
 
 
-class SEPTool : public ThreadedApplication
+class SeparationTool : public ThreadedApplication
 {
 public:
-    SEPTool() :
+    SeparationTool() :
         _scripted(false),
         _classify(false),
         _displayUsage(false),
@@ -84,18 +84,15 @@ public:
         _exportGains(false),
         _separationMethod(SeparationTask::NMD)
     {
-        addSubsystem(new DatabaseSubsystem());
-        addSubsystem(new StorageSubsystem());
+        //addSubsystem(new DatabaseSubsystem());
+        //addSubsystem(new StorageSubsystem());
     }
 
 
 protected:
     virtual void initialize(Application &self)
     {
-        ThreadedApplication::initialize(self);
-
-        // Initialize LibAudio.
-        blissart::audio::initialize();
+        cout << "initialize" << endl;
 
         // Copy parameters from the configuration such that they can be
         // displayed later. Also ClassificationTasks have to use the same
@@ -109,6 +106,20 @@ protected:
         _wfName      = windowFunctionName(_windowFunction);
         _windowSize  = config().getInt("blissart.fft.windowsize", 25);
         _overlap     = config().getDouble("blissart.fft.overlap", 0.5);
+
+        // Add storage and database subsystems if run in non-volatile mode,
+        // or if classification is desired, which needs some input data.
+        if (!_volatile && !_classify) {
+            addSubsystem(new DatabaseSubsystem());
+            addSubsystem(new StorageSubsystem());
+        }
+
+        // Don't call the applications's initialize() until now, 
+        // to make sure these subsystems are initialized.
+        ThreadedApplication::initialize(self);
+
+        // Initialize LibAudio.
+        blissart::audio::initialize();
     }
 
 
@@ -302,6 +313,8 @@ protected:
 
     virtual void handleOption(const string &name, const string &value)
     {
+        cout << "handleOptions" << endl;
+
         Application::handleOption(name, value);
 
         if (name == "help") {
@@ -439,18 +452,21 @@ protected:
                 " <options> FILE1 [FILE2 ...]\nwhere FILE can be one or more"
                 " WAV, MP3 or script file(s)\n");
             formatter.setHeader(
-                "SEPTool, a tool for blind source separation using NMD");
+                "SepTool, a tool for blind source separation using NMF/NMD");
             formatter.format(cout);
             return EXIT_USAGE;
         }
 
-        cout << "SEPTool, "
+        cout << "SepTool, "
              << DateTimeFormatter::format(LocalDateTime(), "%Y/%m/%d %H:%M:%S")
              << endl << endl
              << setw(20) << "Method: ";
         switch (_separationMethod) {
         case SeparationTask::NMD:
-            cout << "Non-Negative Matrix Deconvolution";
+            if (_nrSpectra == 1)
+                cout << "Non-Negative Matrix Factorization";
+            else
+                cout << "Non-Negative Matrix Deconvolution";
             break;
         default:
             throw Poco::NotImplementedException("Unknown separation method.");
@@ -660,5 +676,5 @@ private:
 };
 
 
-POCO_APP_MAIN(SEPTool);
+POCO_APP_MAIN(SeparationTool);
 

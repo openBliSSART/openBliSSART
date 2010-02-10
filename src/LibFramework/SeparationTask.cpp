@@ -334,7 +334,7 @@ void SeparationTask::exportMatrices() const
     Poco::Util::LayeredConfiguration& cfg =
         BasicApplication::instance().config();
     bool useGnuplotFormat = 
-        cfg.getString("blissart.separation.export.format")
+        cfg.getString("blissart.separation.export.format", "bin")
         .substr(0, 3) == "gnu";
 
     // Construct the prefix.
