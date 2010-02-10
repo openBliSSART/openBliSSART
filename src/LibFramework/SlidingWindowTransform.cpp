@@ -32,8 +32,7 @@
 
 #include <cassert>
 #include <cmath>
-
-#include <algorithm>
+#include <vector>
 
 
 namespace blissart {
@@ -60,8 +59,9 @@ SlidingWindowTransform::SlidingWindowTransform()
 Matrix* SlidingWindowTransform::transform(Matrix* spectrogram) const
 {
     unsigned int nCols = (unsigned int) 
-        std::ceil(((double)spectrogram->cols() - _frameSize) / _frameRate) + 1;
+        std::floor(((double)spectrogram->cols() - _frameSize) / _frameRate) + 1;
     Matrix* output = new Matrix(spectrogram->rows() * _frameSize, nCols);
+    output->zero();
     unsigned int frameStart = 0;
     for (unsigned int outputCol = 0; outputCol < nCols; 
         ++outputCol, frameStart += _frameRate) 
@@ -94,6 +94,7 @@ Matrix* SlidingWindowTransform::inverseTransform(Matrix* spectrogram) const
     }
 
     output->zero();
+    std::vector<int> counts(output->cols(), 0);
 
     unsigned int outputCol = 0;
     for (unsigned int inputCol = 0; inputCol < spectrogram->cols(); 
@@ -108,25 +109,17 @@ Matrix* SlidingWindowTransform::inverseTransform(Matrix* spectrogram) const
             outputRow = inputRow % output->rows();
             output->at(outputRow, outputCol + outputColOffset) 
                 += spectrogram->at(inputRow, inputCol);
+            counts[outputCol + outputColOffset]++;
         }
     }
 
     // interpolation
     for (unsigned int j = 0; j < output->cols(); ++j) {
-        int cnt = 1;
-        if ((j + 1) <= (_frameSize - 1) * _frameRate) {
-            cnt = j / _frameRate + 1;
-        }
-        else if (j >= output->cols() - (_frameSize - 1) * _frameRate) {
-            cnt = (output->cols() - j - 1) / _frameRate + 1;
-        }
-        else {
-            cnt = _frameSize;
-        }
+        int cnt = counts[j] / output->rows(); // integer division
+        //cout << "j = " << j << " cnt = " << cnt << endl;
         for (unsigned int i = 0; i < output->rows(); ++i) {
             output->at(i, j) /= (double)cnt;
         }
-        //cout << "j = " << j << " cnt = " << cnt << endl;
     }
 
     return output;

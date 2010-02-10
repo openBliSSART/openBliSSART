@@ -41,7 +41,8 @@ namespace Testing {
 
 bool MelFilterTest::performTest()
 {
-    const unsigned int n = 100;
+    // Create a constant spectrum of ones
+    const unsigned int n = 200;
     MelFilter mf(5, 44100, 0, 0);
     Matrix s(n, 1);
     for (unsigned int i = 0; i < s.rows(); ++i)
@@ -49,13 +50,22 @@ bool MelFilterTest::performTest()
 
     Matrix s2(n, 1);
 
+    // Compute Mel spectrum
+    cout << "Meling ..." << endl;
     Poco::SharedPtr<Matrix> mel = mf.melSpectrum(s);
-    cout << *mel;
-    cout << endl;
 
+    // This spectrum should be resynthesized perfectly except for the
+    // energy coefficient, which is ignored by the Mel filter.
+    cout << "Unmeling ..." << endl;
     mf.synth(*mel, s2);
-    cout << s2;
+    s2(0, 0) = 1.0;
+    if (!epsilonCheck(s, s2, 1e-2)) {
+        cout << "Synth failed: " << endl;
+        cout << s2;
+        return false;
+    }
 
+    cout << "OK!" << endl;
     return true;
 }
 

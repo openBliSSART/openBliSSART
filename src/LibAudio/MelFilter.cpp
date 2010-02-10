@@ -125,7 +125,7 @@ void MelFilter::synth(const Matrix& melSpectrogram, Matrix& spectrogram)
         }
         if (_scaleFactor != 1.0)
             specNorm[i] *= _scaleFactor;
-        if (specNorm[i] > 1e-10)
+        if (specNorm[i] > 0.0)
             specNorm[i] = 1.0 / specNorm[i];
     }
 
