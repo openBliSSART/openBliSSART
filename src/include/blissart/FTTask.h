@@ -274,7 +274,7 @@ protected:
      * Fills in the attributes of the given Process entity according to the
      * actual parameters of this FTTask.
      */
-    void setProcessParameters(ProcessPtr process) const;
+    virtual void setProcessParameters(ProcessPtr process) const;
 
 
     /**

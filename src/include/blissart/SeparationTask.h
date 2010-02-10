@@ -220,7 +220,7 @@ protected:
      * Fills in some process parameters.
      * Overrides FTTask method.
      */
-    void setProcessParameters(ProcessPtr process) const;
+    virtual void setProcessParameters(ProcessPtr process) const;
 
 
     /**

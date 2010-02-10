@@ -113,7 +113,7 @@ protected:
      * Fills in the NMD parameters.
      * Overrides SeparationTask method.
      */
-    void setProcessParameters(ProcessPtr process) const;
+    virtual void setProcessParameters(ProcessPtr process) const;
 
 
 private:
