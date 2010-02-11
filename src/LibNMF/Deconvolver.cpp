@@ -380,30 +380,13 @@ void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
             for (unsigned int i = 0; i < _h.rows(); ++i) {
                 denom = hUpdateMatrixDenom(i, j);
                 if (denom <= 0.0) denom = 1e-9;
-                _h(i, j) *= (hUpdateMatrixNom(i, j) / 
-                             (denom + _s(i, j)));
+                _h(i, j) *= (hUpdateMatrixNom(i, j) / denom);
             }
         }
 
         // convergence criterion
-        if (eps > 0) {
-            if (_numSteps == 0) {
-                //wh = new Matrix(_v.rows(), _v.cols());
-                oldWH = new Matrix(_v.rows(), _v.cols());
-                w.multWithMatrix(_h, oldWH);
-            }
-            else {
-                w.multWithMatrix(_h, &_approx);
-                Matrix whDiff(_approx);
-                whDiff.sub(*oldWH);
-                double zeta = whDiff.frobeniusNorm() / 
-                              oldWH->frobeniusNorm();
-                if (zeta < eps) {
-                    break;
-                }
-                *oldWH = _approx;
-            }
-        }
+        if (checkConvergence(eps, true)) 
+            break;
 
         ++_numSteps;
 
@@ -812,6 +795,33 @@ void Deconvolver::factorizeEDSparseNorm(unsigned int maxSteps, double eps,
                                         ProgressObserver *observer)
 {
     // TODO: Implement me!
+}
+
+
+bool Deconvolver::checkConvergence(double eps, bool doComputeApprox)
+{
+    if (eps <= 0.0)
+        return false;
+
+    bool converged;
+    if (_oldApprox == 0) {
+        if (doComputeApprox) {
+            computeApprox();
+        }
+        _oldApprox = new Matrix(_approx);
+        converged = false;
+    }
+    else {
+        if (doComputeApprox) {
+            computeApprox();
+        }
+        Matrix approxDiff(_approx);
+        approxDiff.sub(*_oldApprox);
+        double zeta = approxDiff.frobeniusNorm() / _oldApprox->frobeniusNorm();
+        converged = zeta < eps;
+        *_oldApprox = _approx;
+    }
+    return converged;
 }
 
 

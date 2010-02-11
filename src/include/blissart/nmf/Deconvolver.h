@@ -169,7 +169,14 @@ public:
     inline const blissart::linalg::Matrix& getApprox() const;
     
     /**
-     * Recomputes the value of approximation of V.
+     * Recomputes the approximation of V, writing the result into
+     * the given matrix.
+     */
+    //void computeApprox(blissart::linalg::Matrix& target);
+
+    /**
+     * Recomputes the approximation of V, storing it internally.
+     * The value can be retrieved using getApprox().
      */
     void computeApprox();
 
@@ -248,7 +255,7 @@ protected:
     // Checks convergence of the approximation. If recomputeApprox is set,
     // the new approximation is computed first (maybe in the iteration itself
     // the approximation is not needed!)
-    bool checkConvergence(bool recomputeApprox);
+    bool checkConvergence(double eps, bool recomputeApprox);
 
     // Computes error of current approximation.
     void computeError();
