@@ -111,7 +111,7 @@ void NMDTask::initialize()
         }
     }
     _deconvolver->setS(s);
-    _deconvolver->setNormalizeW(_normalizeSpectra);
+    _deconvolver->setNormalizeMatrices(_normalizeSpectra);
 }
 
 

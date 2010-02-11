@@ -31,6 +31,7 @@
 #include <stdexcept>
 #include <sstream>
 #include <cmath>
+#include <vector>
 
 // Uncomment the following line if you want to generate output suitable for
 // gnuplot during factorization.
@@ -76,7 +77,7 @@ Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t,
     _w(new Matrix*[t]),
     _wConstant(false),
     _wColConstant(new bool[r]),
-    _normalizeW(false),
+    _normalizeMatrices(false),
     _t(t),
     _h(r, v.cols(), hGenerator),
     _s(r, v.cols(), generators::zero),      // zero --> no sparsity
@@ -181,6 +182,14 @@ void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
         }
         factorizeEDSparseNorm(maxSteps, eps, observer);
     }
+
+    // Perform post-processing if desired.
+    if (_normalizeMatrices)
+        normalizeMatrices();
+
+    // Ensure the ProgressObserver sees that we have finished.
+    if (observer)
+        observer->progressChanged(1.0f);
 }
 
 
@@ -401,18 +410,6 @@ void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
         // Call the ProgressObserver every once in a while (if applicable).
         if (observer && _numSteps % 25 == 0)
             observer->progressChanged((float)_numSteps / (float)maxSteps);
-    }
-
-    if (_normalizeW) {
-        for (unsigned int j = 0; j < w.cols(); ++j) {
-            double colNorm = std::sqrt(w.dotColCol(w, j, w, j));
-            for (unsigned int i = 0; i < w.rows(); ++i) {
-                w(i, j) /= colNorm;
-            }
-            for (unsigned int k = 0; k < _h.cols(); ++k) {
-                _h(j, k) *= colNorm;
-            }
-        }
     }
 
     if (wh)    delete wh;
@@ -685,18 +682,6 @@ void Deconvolver::factorizeEDSparse(unsigned int maxSteps, double eps,
             observer->progressChanged((float)_numSteps / (float)maxSteps);
     }
 
-    if (_normalizeW) {
-        for (unsigned int j = 0; j < w.cols(); ++j) {
-            double colNorm = std::sqrt(w.dotColCol(w, j, w, j));
-            for (unsigned int i = 0; i < w.rows(); ++i) {
-                w(i, j) /= colNorm;
-            }
-            for (unsigned int k = 0; k < _h.cols(); ++k) {
-                _h(j, k) *= colNorm;
-            }
-        }
-    }
-
     if (wh)    delete wh;
     if (oldWH) delete oldWH;
 
@@ -815,18 +800,6 @@ void Deconvolver::factorizeKLSparse(unsigned int maxSteps, double eps,
             observer->progressChanged((float)_numSteps / (float)maxSteps);
     }
 
-    if (_normalizeW) {
-        for (unsigned int j = 0; j < w.cols(); ++j) {
-            double colNorm = std::sqrt(w.dotColCol(w, j, w, j));
-            for (unsigned int i = 0; i < w.rows(); ++i) {
-                w(i, j) /= colNorm;
-            }
-            for (unsigned int k = 0; k < _h.cols(); ++k) {
-                _h(j, k) *= colNorm;
-            }
-        }
-    }
-
     if (wh)    delete wh;
     if (oldWH) delete oldWH;
 
@@ -899,13 +872,36 @@ void Deconvolver::ensureNonnegativity(Matrix &m, double epsilon)
 }
 
 
-void Deconvolver::normalizeW()
+void Deconvolver::normalizeMatrices()
 {
+    // according to Wenwu Wang:
+    // "We use the norm of the matrix H^q to normalise the each element in
+    // H^q, i.e. each element in H^q is divided by the norm of H^q.
+    // W^q(p) is normalised accordingly by multiplying each element with a norm
+    // of matrix H^q(p), where H^q(p) is computed by shift H^q with p spots to
+    // the right."
+    double hNorm = _h.frobeniusNorm();
+    for (unsigned int j = 0; j < _h.cols(); ++j) {
+        for (unsigned int i = 0; i < _h.rows(); ++i) {
+            _h(i, j) /= hNorm;
+        }
+    }
+
+    // To simulate shift of H (as in the explanation above),
+    // compute the Frobenius norms of the P-1 rightmost parts (submatrices) of H.
+    // These are subtracted from the H norm.
+    // Take care of p=0 by setting hNormRight[0] := 0.
+    std::vector<double> hNormRight(_t, 0);
+    unsigned int col = _h.cols() - 1;
+    for (unsigned int p = 1; p < _t; ++p, --col) {
+        if (p > 1)
+            hNormRight[p - 1] = hNormRight[p - 2];
+        hNormRight[p - 1] += Matrix::dotColCol(_h, col, _h, col);
+    }
     for (unsigned int p = 0; p < _t; ++p) {
         for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
-            double colNorm = std::sqrt(_w[p]->dotColCol(*_w[p], j, *_w[p], j));
             for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
-                _w[p]->at(i, j) /= colNorm;
+                _w[p]->at(i, j) *= (hNorm - hNormRight[p]);
             }
         }
     }

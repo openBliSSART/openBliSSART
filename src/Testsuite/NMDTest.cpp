@@ -78,6 +78,42 @@ bool NMDTest::performTest()
     }
 
     {
+        cout << "Performing NMD using KL divergence, with normalization" 
+             << endl;
+
+        nmf::Deconvolver d(x, 10, t);
+        d.setNormalizeMatrices(true);
+        d.decompose(nmf::Deconvolver::KLDivergence, 5000, 1e-5);
+        cout << "# steps: " << d.numSteps() << endl;
+        cout << "absolute error: " << d.absoluteError() << endl;
+        cout << "relative error: " << d.relativeError() << endl;
+        cout << endl;
+        for (unsigned int i = 0; i < t; ++i) {
+            cout << "W[" << i << "] = " << endl;
+            cout << d.getW(i) << endl;
+        }
+        cout << "H = " << endl;
+        cout << d.getH() << endl;
+        cout << "Approx = " << endl;
+        d.computeApprox();
+        Matrix l(d.getApprox());
+        cout << l << endl;
+        
+        for (unsigned int i = 0; i < x.rows(); i++) {
+            for (unsigned int j = 0; j < x.cols(); j++) {
+                if (!epsilonCheck(x(i,j), l(i,j), 1e-2))
+                    return false;
+            }
+        }
+
+        double hfn = d.getH().frobeniusNorm();
+        if (!epsilonCheck(hfn, 1.000, 1e-3)) {
+            cout << "Error: Expected normalized H, norm is " << hfn << endl;
+            return false;
+        }
+    }
+
+    {
         cout << "Performing NMD using Euclidean distance" << endl;
 
         nmf::Deconvolver d(x, 10, t);

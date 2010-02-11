@@ -51,7 +51,7 @@ class LibNMF_API Deconvolver
 {
 public:
     /**
-     * TODO: Document me!
+     * An enumeration of cost functions which can be used for NMF/NMD.
      */
     typedef enum
     {
@@ -64,7 +64,8 @@ public:
 
 
     /**
-     * TODO: Document me!
+     * Returns a textual description for the given element of the 
+     * NMFCostFunction enumeration.
      */
     static const char* costFunctionName(NMFCostFunction cf);
 
@@ -121,14 +122,14 @@ public:
     inline void keepWColumnConstant(unsigned int index, bool flag);
 
     /**
-     * Sets whether the W matrix should be normalized after each iteration.
+     * Sets whether the W and H matrices should be normalized.
      */
-    inline void setNormalizeW(bool flag);
+    inline void setNormalizeMatrices(bool flag);
 
     /**
-     * Returns whether the W matrix is normalized after each iteration.
+     * Returns whether the W and H matrices are normalized.
      */
-    inline bool getNormalizeW() const;
+    inline bool getNormalizeMatrices() const;
 
     /**
      * Generates all W matrices using the specified generator function.
@@ -262,7 +263,7 @@ protected:
         double epsilon = 1e-9);
 
     // Normalizes W[p] columns to unity for all p
-    void normalizeW();
+    void normalizeMatrices();
 
     const blissart::linalg::Matrix& _v;
     blissart::linalg::Matrix        _approx;
@@ -270,7 +271,7 @@ protected:
     blissart::linalg::Matrix**      _w;
     bool                        _wConstant;
     bool*                       _wColConstant;
-    bool                        _normalizeW;
+    bool                        _normalizeMatrices;
     unsigned int                _t;
     blissart::linalg::Matrix        _h;
     blissart::linalg::Matrix        _s;
@@ -320,15 +321,15 @@ void Deconvolver::keepWColumnConstant(unsigned int index, bool flag)
 }
 
 
-void Deconvolver::setNormalizeW(bool flag)
+void Deconvolver::setNormalizeMatrices(bool flag)
 {
-    _normalizeW = flag;
+    _normalizeMatrices = flag;
 }
 
 
-bool Deconvolver::getNormalizeW() const
+bool Deconvolver::getNormalizeMatrices() const
 {
-    return _normalizeW;
+    return _normalizeMatrices;
 }
 
 
