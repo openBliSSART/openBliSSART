@@ -190,6 +190,7 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
 {
     Matrix vOverApprox(_v.rows(), _v.cols());
     Matrix hShifted(_h.rows(), _h.cols());
+    Matrix wUpdateNum(_v.rows(), _h.rows());
     Matrix hUpdate(_h.rows(), _h.cols());
     Matrix* oldApprox;
     double *wpColSums = new double[_h.rows()];
@@ -218,14 +219,13 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
                     computeWpH(p, *wpH);
                     _approx.sub(*wpH);
                 }
+                vOverApprox.multWithTransposedMatrix(hShifted, &wUpdateNum);
                 for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
                     if (!_wColConstant[j]) {
                         // Precalculation of sum of row j of H
                         double hRowSum = hShifted.rowSum(j);
                         for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
-                            _w[p]->at(i, j) *= 
-                                Matrix::dotRowRow(hShifted, j, vOverApprox, i) 
-                                / hRowSum;
+                            _w[p]->at(i, j) *= (wUpdateNum(i, j) / hRowSum);
                         }
                     }
                 }
@@ -234,8 +234,8 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
                     _approx.add(*wpH);
                     delete wpH;
                     ensureNonnegativity(_approx);
+                    hShifted.shiftColumnsRight();
                 }
-                hShifted.shiftColumnsRight();
             }
         }
 
