@@ -33,20 +33,12 @@
 #include <cmath>
 #include <vector>
 
-// Uncomment the following line if you want to generate output suitable for
-// gnuplot during factorization.
-//#define GNUPLOT "relative.plt"
-
-#ifdef GNUPLOT
-# include <iostream>
-# include <fstream>
-#endif
-
 
 using namespace blissart::linalg;
 
 
 namespace blissart {
+
 
 namespace nmf {
 
@@ -202,40 +194,18 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
     Matrix* oldApprox;
     double *wpColSums = new double[_h.rows()];
 
-#ifdef GNUPLOT
-    std::ofstream os(GNUPLOT, std::ios_base::out | std::ios_base::trunc);
-#endif
-
     _numSteps = 0;
     while (_numSteps < maxSteps) {
 
         // Compute approximation at the beginning and after the H update
         computeApprox();
+
+        // Check convergence criterion.
+        if (checkConvergence(eps, false))
+            break;
         
         // Compute V/Approx.
         _v.elementWiseDivision(_approx, &vOverApprox);
-
-        // FIXME: Duplicate code here
-        // Compute difference between approximations in current and previous
-        // iteration in terms of Frobenius norm. Stop iteration if difference
-        // is sufficiently small.
-        // As this criterion needs additional space and calculations,
-        // only perform this computation if eps > 0.
-        if (eps > 0) {
-            if (_numSteps > 1) {
-                Matrix approxDiff(_approx);
-                approxDiff.sub(*oldApprox);
-                double zeta = approxDiff.frobeniusNorm() / 
-                              oldApprox->frobeniusNorm();
-                if (zeta < eps) {
-                    break;
-                }
-                *oldApprox = _approx;
-            }
-            else {
-                oldApprox = new Matrix(_approx);
-            }
-        }
 
         if (!_wConstant) {
             Matrix* wpH = 0;
@@ -308,11 +278,6 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
             }
         }
 
-#ifdef GNUPLOT
-        computeError();
-        os << _relativeError << std::endl;
-#endif
-
         ++_numSteps;
 
         // Call the ProgressObserver every once in a while (if applicable).
@@ -343,7 +308,7 @@ void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
     double denom;
 
     _numSteps = 0;
-    while (_numSteps < maxSteps) {
+    while (_numSteps < maxSteps && !checkConvergence(eps, true)) {
 
         // W Update
         if (!_wConstant) {
@@ -384,10 +349,6 @@ void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
             }
         }
 
-        // convergence criterion
-        if (checkConvergence(eps, true)) 
-            break;
-
         ++_numSteps;
 
         // Call the ProgressObserver every once in a while (if applicable).
@@ -410,10 +371,6 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
     Matrix hUpdateMatrixDenom(_h.rows(), _h.cols());
     Matrix* oldApprox = 0;
     double denom;
-
-#ifdef GNUPLOT
-    std::ofstream os(GNUPLOT, std::ios_base::out | std::ios_base::trunc);
-#endif
 
     _numSteps = 0;
     while (_numSteps < maxSteps) {
@@ -533,11 +490,6 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
                 _h(i, j) = hSum(i, j) / (double) _t;
             }
         }
-
-#ifdef GNUPLOT
-        computeError();
-        os << _relativeError << std::endl;
-#endif
 
         ++_numSteps;
 
@@ -919,5 +871,6 @@ void Deconvolver::normalizeMatrices()
 
 
 } // namespace nmf
+
 
 } // namespace blissart
