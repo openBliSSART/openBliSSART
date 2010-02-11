@@ -182,6 +182,11 @@ void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
     // Ensure the ProgressObserver sees that we have finished.
     if (observer)
         observer->progressChanged(1.0f);
+
+    // Delete value of old approximation (used in convergence check), 
+    // if it exists.
+    if (_oldApprox)
+        delete _oldApprox;
 }
 
 
@@ -192,7 +197,6 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
     Matrix hShifted(_h.rows(), _h.cols());
     Matrix wUpdateNum(_v.rows(), _h.rows());
     Matrix hUpdate(_h.rows(), _h.cols());
-    Matrix* oldApprox;
     double *wpColSums = new double[_h.rows()];
 
     _numSteps = 0;
@@ -264,6 +268,7 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
                     // Instead of considering the jth column of V/approx
                     // shifted p spots to the left, we consider the (j + p)th
                     // column of V/Approx itself.
+                    // TODO: use more efficient version (MM) from factorizeED!
                     hUpdate(i, j) += 
                         Matrix::dotColCol(*_w[p], i, vOverApprox, j + p) / 
                         wpColSums[i];
@@ -297,14 +302,13 @@ void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
 {
     assert(_t == 1);
 
-    Matrix& w = *(_w[0]);
+    Matrix& w = *(_w[0]); // for convenience
     Matrix wUpdateMatrixNom(_v.rows(), _h.rows());
     Matrix wUpdateMatrixDenom(_v.rows(), _h.rows());
     Matrix hhT(_h.rows(), _h.rows());
     Matrix hUpdateMatrixNom(_h.rows(), _h.cols());
     Matrix hUpdateMatrixDenom(_h.rows(), _h.cols());
     Matrix wTw(_h.rows(), _h.rows());
-    Matrix *wh = 0, *oldWH = 0;
     double denom;
 
     _numSteps = 0;
@@ -355,9 +359,6 @@ void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
         if (observer && _numSteps % 25 == 0)
             observer->progressChanged((float)_numSteps / (float)maxSteps);
     }
-
-    if (wh)    delete wh;
-    if (oldWH) delete oldWH;
 }
 
 
@@ -369,7 +370,6 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
     Matrix wUpdateMatrixDenom(_v.rows(), _h.rows());
     Matrix hUpdateMatrixNom(_h.rows(), _h.cols());
     Matrix hUpdateMatrixDenom(_h.rows(), _h.cols());
-    Matrix* oldApprox = 0;
     double denom;
 
     _numSteps = 0;
@@ -480,12 +480,6 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
         if (observer && _numSteps % 25 == 0)
             observer->progressChanged((float)_numSteps / (float)maxSteps);
     }
-    // Final call to the ProgressObserver (if applicable).
-    if (observer)
-        observer->progressChanged(1.0f);
-
-    if (oldApprox)
-        delete oldApprox;
 }
 
 
@@ -501,7 +495,6 @@ void Deconvolver::factorizeEDSparse(unsigned int maxSteps, double eps,
     Matrix hUpdateMatrixNom(_h.rows(), _h.cols());
     Matrix hUpdateMatrixDenom(_h.rows(), _h.cols());
     Matrix wTw(_h.rows(), _h.rows());
-    Matrix *wh = 0, *oldWH = 0;
     
     // helper variables
     double denom;
@@ -580,9 +573,6 @@ void Deconvolver::factorizeEDSparse(unsigned int maxSteps, double eps,
             observer->progressChanged((float)_numSteps / (float)maxSteps);
     }
 
-    if (wh)    delete wh;
-    if (oldWH) delete oldWH;
-
     delete[] csminus;
     delete[] csplus;
 }
@@ -597,7 +587,6 @@ void Deconvolver::factorizeKLSparse(unsigned int maxSteps, double eps,
     Matrix vOverApprox(_v.rows(), _v.cols());
     Matrix wUpdateNum(_v.rows(), _h.rows());
     Matrix hUpdateMatrixNum(_h.rows(), _h.cols());
-    Matrix *wh = 0, *oldWH = 0;
     
     // helper variables
     double denom;
@@ -684,9 +673,6 @@ void Deconvolver::factorizeKLSparse(unsigned int maxSteps, double eps,
         if (observer && _numSteps % 25 == 0)
             observer->progressChanged((float)_numSteps / (float)maxSteps);
     }
-
-    if (wh)    delete wh;
-    if (oldWH) delete oldWH;
 
     delete[] csminus;
     delete[] csplus;
