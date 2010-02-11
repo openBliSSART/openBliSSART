@@ -169,12 +169,6 @@ public:
     inline const blissart::linalg::Matrix& getApprox() const;
     
     /**
-     * Recomputes the approximation of V, writing the result into
-     * the given matrix.
-     */
-    //void computeApprox(blissart::linalg::Matrix& target);
-
-    /**
      * Recomputes the approximation of V, storing it internally.
      * The value can be retrieved using getApprox().
      */
@@ -212,6 +206,15 @@ public:
      * Returns the number of steps performed in the last iteration.
      */
     inline unsigned int numSteps() const;
+
+
+    /**
+     * Sets the number of iteration steps after which progress should
+     * be reported in the factorization methods (defaults to 25).
+     * Small values may result in performance loss while larger values
+     * may prevent any progress being seen when factorizing large matrices.
+     */
+    inline void setProgressNotificationDelay(unsigned int nSteps);
 
 
 protected:
@@ -257,6 +260,11 @@ protected:
     // the approximation is not needed!)
     bool checkConvergence(double eps, bool recomputeApprox);
 
+    // Increments the internal iteration step counter.
+    // Calls the given ProgressObserver, respecting the notification delay.
+    // Does nothing if the argument is null.
+    void nextItStep(ProgressObserver* observer, unsigned int maxSteps);
+
     // Computes error of current approximation.
     void computeError();
 
@@ -286,6 +294,7 @@ protected:
     double                      _absoluteError;
     double                      _relativeError;
     const double                _vFrob;
+    unsigned int                _notificationDelay;
 
 
 private:
@@ -384,6 +393,12 @@ double Deconvolver::relativeError()
 unsigned int Deconvolver::numSteps() const
 {
     return _numSteps;
+}
+
+
+void Deconvolver::setProgressNotificationDelay(unsigned int numSteps)
+{
+    _notificationDelay = numSteps;
 }
 
 

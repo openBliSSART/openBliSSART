@@ -76,7 +76,8 @@ Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t,
     _numSteps(0),
     _absoluteError(-1),
     _relativeError(-1),
-    _vFrob(_v.frobeniusNorm())
+    _vFrob(_v.frobeniusNorm()),
+    _notificationDelay(25)
 {
     if (t > v.cols()) {
         std::ostringstream errStr;
@@ -283,15 +284,8 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
             }
         }
 
-        ++_numSteps;
-
-        // Call the ProgressObserver every once in a while (if applicable).
-        if (observer && _numSteps % 25 == 0)
-            observer->progressChanged((float)_numSteps / (float)maxSteps);
+        nextItStep(observer, maxSteps);
     }
-    // Final call to the ProgressObserver (if applicable).
-    if (observer)
-        observer->progressChanged(1.0f);
 
     delete[] wpColSums;
 }
@@ -353,11 +347,7 @@ void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
             }
         }
 
-        ++_numSteps;
-
-        // Call the ProgressObserver every once in a while (if applicable).
-        if (observer && _numSteps % 25 == 0)
-            observer->progressChanged((float)_numSteps / (float)maxSteps);
+        nextItStep(observer, maxSteps);
     }
 }
 
@@ -474,11 +464,7 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
             }
         }
 
-        ++_numSteps;
-
-        // Call the ProgressObserver every once in a while (if applicable).
-        if (observer && _numSteps % 25 == 0)
-            observer->progressChanged((float)_numSteps / (float)maxSteps);
+        nextItStep(observer, maxSteps);
     }
 }
 
@@ -566,11 +552,7 @@ void Deconvolver::factorizeEDSparse(unsigned int maxSteps, double eps,
             }
         }
 
-        ++_numSteps;
-
-        // Call the ProgressObserver every once in a while (if applicable).
-        if (observer && _numSteps % 25 == 0)
-            observer->progressChanged((float)_numSteps / (float)maxSteps);
+        nextItStep(observer, maxSteps);
     }
 
     delete[] csminus;
@@ -667,11 +649,7 @@ void Deconvolver::factorizeKLSparse(unsigned int maxSteps, double eps,
             }
         }
 
-        ++_numSteps;
-
-        // Call the ProgressObserver every once in a while (if applicable).
-        if (observer && _numSteps % 25 == 0)
-            observer->progressChanged((float)_numSteps / (float)maxSteps);
+        nextItStep(observer, maxSteps);
     }
 
     delete[] csminus;
@@ -803,6 +781,16 @@ void Deconvolver::normalizeMatrices()
             }
         }
     }
+}
+
+
+void Deconvolver::nextItStep(ProgressObserver *observer, 
+                             unsigned int maxSteps)
+{
+    ++_numSteps;
+    // Call the ProgressObserver every once in a while (if applicable).
+    if (observer && _numSteps % _notificationDelay == 0)
+        observer->progressChanged((float)_numSteps / (float)maxSteps);
 }
 
 
