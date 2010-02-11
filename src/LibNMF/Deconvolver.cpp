@@ -378,26 +378,9 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
         // Compute approximation at the beginning and after the H update
         computeApprox();
         
-        // Compute difference between approximations in current and previous
-        // iteration in terms of Frobenius norm. Stop iteration if difference
-        // is sufficiently small.
-        // As this criterion needs additional space and calculations,
-        // only perform this computation if eps > 0.
-        if (eps > 0) {
-            if (_numSteps > 1) {
-                Matrix approxDiff(_approx);
-                approxDiff.sub(*oldApprox);
-                double zeta = approxDiff.frobeniusNorm() / 
-                              oldApprox->frobeniusNorm();
-                if (zeta < eps) {
-                    break;
-                }
-                *oldApprox = _approx;
-            }
-            else {
-                oldApprox = new Matrix(_approx);
-            }
-        }
+        // Check convergence criterion.
+        if (checkConvergence(eps, false))
+            break;
 
         if (!_wConstant) {
             Matrix* wpH = 0;
@@ -533,7 +516,7 @@ void Deconvolver::factorizeEDSparse(unsigned int maxSteps, double eps,
     double sqrtOneOverT = sqrt(1.0 / (double) _h.cols());
 
     _numSteps = 0;
-    while (_numSteps < maxSteps) {
+    while (_numSteps < maxSteps && !checkConvergence(eps, true)) {
 
         // W Update
         // FIXME: Duplicate code --> factorizeNMFED
@@ -590,26 +573,6 @@ void Deconvolver::factorizeEDSparse(unsigned int maxSteps, double eps,
             }
         }
 
-        // convergence criterion
-        if (eps > 0) {
-            if (_numSteps == 0) {
-                //wh = new Matrix(_v.rows(), _v.cols());
-                oldWH = new Matrix(_v.rows(), _v.cols());
-                w.multWithMatrix(_h, oldWH);
-            }
-            else {
-                w.multWithMatrix(_h, &_approx);
-                Matrix whDiff(_approx);
-                whDiff.sub(*oldWH);
-                double zeta = whDiff.frobeniusNorm() / 
-                              oldWH->frobeniusNorm();
-                if (zeta < eps) {
-                    break;
-                }
-                *oldWH = _approx;
-            }
-        }
-
         ++_numSteps;
 
         // Call the ProgressObserver every once in a while (if applicable).
@@ -659,6 +622,13 @@ void Deconvolver::factorizeKLSparse(unsigned int maxSteps, double eps,
 
         // compute approximation
         computeApprox();
+
+        // convergence criterion
+        if (checkConvergence(eps, false))
+            break;
+
+        // numerator for W updates (fast calculation by matrix product)
+        // TODO: Use this simpler formulation in factorizeKL
         _v.elementWiseDivision(_approx, &vOverApprox);
         vOverApprox.multWithTransposedMatrix(_h, &wUpdateNum);
 
@@ -705,26 +675,6 @@ void Deconvolver::factorizeKLSparse(unsigned int maxSteps, double eps,
                 _h(i, j) *= 
                     (hUpdateMatrixNum(i, j) + _s(i, j) * _h(i, j) * csminus[i])
                     / denom;
-            }
-        }
-
-        // convergence criterion
-        if (eps > 0) {
-            if (_numSteps == 0) {
-                //wh = new Matrix(_v.rows(), _v.cols());
-                oldWH = new Matrix(_v.rows(), _v.cols());
-                w.multWithMatrix(_h, oldWH);
-            }
-            else {
-                w.multWithMatrix(_h, &_approx);
-                Matrix whDiff(_approx);
-                whDiff.sub(*oldWH);
-                double zeta = whDiff.frobeniusNorm() / 
-                              oldWH->frobeniusNorm();
-                if (zeta < eps) {
-                    break;
-                }
-                *oldWH = _approx;
             }
         }
 
