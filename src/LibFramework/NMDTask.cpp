@@ -102,6 +102,10 @@ void NMDTask::initialize()
                     amplitudeMatrix(),
                     nrOfComponents(),
                     nrOfSpectra());
+        _deconvolver->setProgressNotificationDelay(
+            BasicApplication::instance().config().
+                getInt("blissart.separation.notificationSteps", 25)
+        );
     }
 
     Matrix s(nrOfComponents(), amplitudeMatrix().cols());
