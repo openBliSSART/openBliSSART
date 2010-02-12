@@ -43,6 +43,10 @@ namespace blissart {
 namespace nmf {
 
 
+// Trivial constant to avoid division by zero in multiplicative updates.
+#define DIVISOR_FLOOR 1e-9
+
+
 const char* Deconvolver::costFunctionName(Deconvolver::NMFCostFunction cf)
 {
     if (cf == Deconvolver::EuclideanDistance) 
@@ -204,6 +208,7 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
     Matrix hShifted(_h.rows(), _h.cols());
     Matrix wUpdateNum(_v.rows(), _h.rows());
     Matrix hUpdate(_h.rows(), _h.cols());
+    Matrix hUpdateMatrixNum(_h.rows(), _h.cols());
     double *wpColSums = new double[_h.rows()];
 
     _numSteps = 0;
@@ -267,18 +272,23 @@ void Deconvolver::factorizeKL(unsigned int maxSteps, double eps,
             // Precalculation of column-sums of W_t
             for (unsigned int i = 0; i < _h.rows(); ++i) {
                 wpColSums[i] = _w[p]->colSum(i);
+                if (wpColSums[i] == 0.0)
+                    wpColSums[i] = DIVISOR_FLOOR;
             }
 
+            _w[p]->multWithMatrix(vOverApprox, &hUpdateMatrixNum,
+                // transpose W[p]
+                true, false, 
+                // target dimension: R x (N-p)
+                _w[p]->cols(), _w[p]->rows(), _v.cols() - p,
+                0, 0, 0, p, 0, 0);
             // Calculate sum of updates
             for (unsigned int j = 0; j < _h.cols() - p; ++j) {
                 for (unsigned int i = 0; i < _h.rows(); ++i) {
                     // Instead of considering the jth column of V/approx
                     // shifted p spots to the left, we consider the (j + p)th
                     // column of V/Approx itself.
-                    // TODO: use more efficient version (MM) from factorizeED!
-                    hUpdate(i, j) += 
-                        Matrix::dotColCol(*_w[p], i, vOverApprox, j + p) / 
-                        wpColSums[i];
+                    hUpdate(i, j) += (hUpdateMatrixNum(i, j) / wpColSums[i]);
                 }
             }
         }
@@ -326,7 +336,7 @@ void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
                 if (!_wColConstant[j]) {
                     for (unsigned int i = 0; i < w.rows(); ++i) {
                         denom = wUpdateMatrixDenom(i, j);
-                        if (denom <= 0.0) denom = 1e-9;
+                        if (denom <= 0.0) denom = DIVISOR_FLOOR;
                         w(i, j) *= (wUpdateMatrixNom(i, j) / denom);
                     }
                 }
@@ -348,7 +358,7 @@ void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
         for (unsigned int j = 0; j < _h.cols(); ++j) {
             for (unsigned int i = 0; i < _h.rows(); ++i) {
                 denom = hUpdateMatrixDenom(i, j);
-                if (denom <= 0.0) denom = 1e-9;
+                if (denom <= 0.0) denom = DIVISOR_FLOOR;
                 _h(i, j) *= (hUpdateMatrixNom(i, j) / denom);
             }
         }
@@ -418,7 +428,7 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
                     if (!_wColConstant[j]) {
                         for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
                             denom = wUpdateMatrixDenom(i, j);
-                            if (denom <= 0.0) denom = 1e-9;
+                            if (denom <= 0.0) denom = DIVISOR_FLOOR;
                             _w[p]->at(i, j) *= wUpdateMatrixNom(i, j) / denom;
                         }
                     }
@@ -457,7 +467,7 @@ void Deconvolver::factorizeED(unsigned int maxSteps, double eps,
                 for (unsigned int i = 0; i < _h.rows(); ++i) {
                     denom = hUpdateMatrixDenom(i, j);
                     // Avoid division by zero
-                    if (denom <= 0.0) denom = 1e-9;
+                    if (denom <= 0.0) denom = DIVISOR_FLOOR;
                     hSum(i, j) += _h(i, j) * hUpdateMatrixNom(i, j) / denom;
                 }
             }
@@ -516,7 +526,7 @@ void Deconvolver::factorizeEDSparse(unsigned int maxSteps, double eps,
                 if (!_wColConstant[j]) {
                     for (unsigned int i = 0; i < w.rows(); ++i) {
                         denom = wUpdateMatrixDenom(i, j);
-                        if (denom <= 0.0) denom = 1e-9;
+                        if (denom <= 0.0) denom = DIVISOR_FLOOR;
                         w(i, j) *= (wUpdateMatrixNom(i, j) / denom);
                     }
                 }
@@ -551,7 +561,7 @@ void Deconvolver::factorizeEDSparse(unsigned int maxSteps, double eps,
         for (unsigned int j = 0; j < _h.cols(); ++j) {
             for (unsigned int i = 0; i < _h.rows(); ++i) {
                 denom = hUpdateMatrixDenom(i, j) + _s(i, j) * csplus[i];
-                if (denom <= 0.0) denom = 1e-9;
+                if (denom <= 0.0) denom = DIVISOR_FLOOR;
                 _h(i, j) *= 
                     (hUpdateMatrixNom(i, j) + _s(i, j) * _h(i, j) * csminus[i])
                     / denom;
@@ -605,7 +615,6 @@ void Deconvolver::factorizeKLSparse(unsigned int maxSteps, double eps,
             break;
 
         // numerator for W updates (fast calculation by matrix product)
-        // TODO: Use this simpler formulation in factorizeKL
         _v.elementWiseDivision(_approx, &vOverApprox);
         vOverApprox.multWithTransposedMatrix(_h, &wUpdateNum);
 
@@ -648,7 +657,7 @@ void Deconvolver::factorizeKLSparse(unsigned int maxSteps, double eps,
         for (unsigned int j = 0; j < _h.cols(); ++j) {
             for (unsigned int i = 0; i < _h.rows(); ++i) {
                 denom = wColSums[i] + _s(i, j) * csplus[i];
-                if (denom <= 0.0) denom = 1e-9;
+                if (denom <= 0.0) denom = DIVISOR_FLOOR;
                 _h(i, j) *= 
                     (hUpdateMatrixNum(i, j) + _s(i, j) * _h(i, j) * csminus[i])
                     / denom;
