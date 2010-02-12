@@ -31,6 +31,7 @@
 #include <blissart/DataDescriptor.h>
 #include <blissart/Process.h>
 #include <blissart/GnuplotWriter.h>
+#include <blissart/transforms/MelFilterTransform.h>
 
 #include <blissart/linalg/ColVector.h>
 #include <blissart/linalg/RowVector.h>
@@ -283,15 +284,16 @@ void SeparationTask::exportComponents() const
     // Store the components.
     for (unsigned int i = 0; i < _nrOfComponents; i++) {
         // Compute the component's magnitude spectrum.
-        Matrix magnitudeSpectrum(magnitudeSpectraMatrix(0).rows(),
+        Poco::SharedPtr<Matrix> magnitudeSpectrum = new Matrix(
+            magnitudeSpectraMatrix(0).rows(),
             gainsMatrix().cols());
         // NMD case
         if (_nrOfSpectra > 1) {
-            magnitudeSpectrum.zero();
+            magnitudeSpectrum->zero();
             RowVector componentGains = gainsMatrix().nthRow(i);
             for (unsigned int t = 0; t < _nrOfSpectra; t++) {
                 ColVector componentSpectrum = magnitudeSpectraMatrix(t).nthColumn(i);
-                magnitudeSpectrum.add(componentSpectrum * componentGains);
+                magnitudeSpectrum->add(componentSpectrum * componentGains);
                 componentGains.shiftRight();
             }
         }
@@ -299,12 +301,26 @@ void SeparationTask::exportComponents() const
         else {
             ColVector componentSpectrum = magnitudeSpectraMatrix(0).nthColumn(i);
             RowVector componentGains = gainsMatrix().nthRow(i);
-            magnitudeSpectrum = componentSpectrum * componentGains;
+            *magnitudeSpectrum = componentSpectrum * componentGains;
+        }
+
+        // Revert any transformations, in reverse order.
+        vector<MatrixTransform*>::const_reverse_iterator tflast(transforms().end());
+        vector<MatrixTransform*>::const_reverse_iterator tffirst(transforms().begin());
+        for (vector<MatrixTransform*>::const_reverse_iterator rit = tflast;
+             rit != tffirst; ++rit) // YES, it's operator ++ ;-)
+        {
+            if (string((*rit)->name()) == "Mel filter") {
+                ((transforms::MelFilterTransform*)(*rit))->setBins(
+                   windowSize() * sampleRate() / 1000 / 2 + 1);
+            }
+            // Let Poco::SharedPtr do the dirty work of pointer handling!
+            magnitudeSpectrum = (*rit)->inverseTransform(magnitudeSpectrum);
         }
 
         // Create an AudioData object.
         Poco::SharedPtr<AudioData> pAd =
-                AudioData::fromSpectrogram(magnitudeSpectrum,
+                AudioData::fromSpectrogram(*magnitudeSpectrum,
                                            phaseMatrix(),
                                            windowFunction(),
                                            windowSize(),
@@ -330,7 +346,6 @@ void SeparationTask::exportComponents() const
 
 void SeparationTask::exportMatrices() const
 {
-    // XXX: this should rather be a command-line parameter?
     Poco::Util::LayeredConfiguration& cfg =
         BasicApplication::instance().config();
     bool useGnuplotFormat = 

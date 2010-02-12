@@ -29,6 +29,7 @@
 #include <Poco/Mutex.h>
 #include <Poco/Exception.h>
 #include <fstream>
+#include <iostream>
 
 
 using namespace Poco;
@@ -87,9 +88,11 @@ BasicApplication::parseScriptFiles(const vector<string>& fileNames)
 
 void BasicApplication::initialize(Application& self)
 {
+    // Don't use logger here because it is not configured yet.
     if (_echoCommand) {
-        logger().information("Executing: " + commandName() + _optionsString);
+        cout << "Executing: " << commandName() << _optionsString << endl;
     }
+
     initializeDirectories();
     initializeConfiguration();
 
