@@ -136,13 +136,17 @@ void SeparationTask::runTask()
             incTotalProgress(0.1f);
         }
 
-        // The original amplitude matrix isn't needed anymore. Free some memory.
-        //deleteAmplitudeMatrix();
+        // The original amplitude matrix isn't needed anymore unless we plan
+        // to export audio files. Hence, free some memory.
+        if (!_exportComponents) {
+            deleteAmplitudeMatrix();
+        }
 
         // Mandatory check.
         if (isCancelled())
             break;
 
+        // Export components as audio files, if desired.
         if (_exportComponents) {
             exportComponents();
             incTotalProgress(0.1f);
@@ -152,6 +156,7 @@ void SeparationTask::runTask()
         if (isCancelled())
             break;
 
+        // Export separation matrices, if desired.
         if (_exportSpectra || _exportGains) {
             exportMatrices();
             incTotalProgress(0.1f);

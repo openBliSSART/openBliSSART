@@ -102,6 +102,9 @@ Deconvolver::~Deconvolver()
     }
     delete[] _w;
     delete[] _wColConstant;
+    if (_oldApprox) {
+        delete _oldApprox;
+    }
 }
 
 
@@ -187,8 +190,10 @@ void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
 
     // Delete value of old approximation (used in convergence check), 
     // if it exists.
-    if (_oldApprox)
+    if (_oldApprox) {
         delete _oldApprox;
+        _oldApprox = 0;
+    }
 }
 
 
@@ -655,6 +660,8 @@ void Deconvolver::factorizeKLSparse(unsigned int maxSteps, double eps,
 
     delete[] csminus;
     delete[] csplus;
+    delete[] hRowSums;
+    delete[] wColSums;
 }
 
 

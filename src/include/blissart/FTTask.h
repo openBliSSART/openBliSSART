@@ -357,6 +357,7 @@ inline const linalg::Matrix& FTTask::phaseMatrix() const
 
 inline const linalg::Matrix& FTTask::amplitudeMatrix() const
 {
+    assert(_amplitudeMatrix != 0);
     return *_amplitudeMatrix;
 }
 
