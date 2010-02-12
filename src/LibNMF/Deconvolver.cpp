@@ -146,6 +146,7 @@ void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
                             unsigned int maxSteps, double eps,
                             ProgressObserver *observer)
 {
+    // Select an optimal algorithm according to the given parameters.
     if (cf == EuclideanDistance) {
         if (_t == 1) {
             factorizeNMFED(maxSteps, eps, observer);

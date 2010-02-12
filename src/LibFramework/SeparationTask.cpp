@@ -136,7 +136,7 @@ void SeparationTask::runTask()
         }
 
         // The original amplitude matrix isn't needed anymore. Free some memory.
-        deleteAmplitudeMatrix();
+        //deleteAmplitudeMatrix();
 
         // Mandatory check.
         if (isCancelled())

@@ -70,7 +70,7 @@ public:
         _nmdSparsity(0.0),
         _nmfCostFunction(nmf::Deconvolver::KLDivergence),
         _nrComponents(20),
-        _nrSpectra(5),
+        _nrSpectra(1),
         _preserveInit(false),
         _windowSize(25),
         _wfName("Square root of Hann function"),
@@ -84,8 +84,6 @@ public:
         _exportGains(false),
         _separationMethod(SeparationTask::NMD)
     {
-        //addSubsystem(new DatabaseSubsystem());
-        //addSubsystem(new StorageSubsystem());
     }
 
 
@@ -94,7 +92,7 @@ protected:
     {
         // Add storage and database subsystems if run in non-volatile mode,
         // or if classification is desired, which needs some input data.
-        if (!_volatile && !_classify) {
+        if (!_volatile || _classify || !_initObjectIDs.empty()) {
             addSubsystem(new DatabaseSubsystem());
             addSubsystem(new StorageSubsystem());
         }
