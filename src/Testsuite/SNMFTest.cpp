@@ -190,6 +190,49 @@ bool SNMFTest::performTest()
         } // for (sparsity param)
     }
 
+    {
+        const double sparsity[] = { 0, 0.1, 0.25 };
+
+        for (unsigned int si = 0; si < 3; ++si) {
+
+            cout << "Performing Sparse NMF using Euclidean distance, normalized basis" << endl;
+            cout << "Sparsity parameter set to " << sparsity[si] << endl;
+
+            nmf::Deconvolver d(x, 10, 1);
+            Matrix s(10, 5);
+            for (unsigned int j = 0; j < s.cols(); ++j) {
+                for (unsigned int i = 0; i < s.rows(); ++i) {
+                    s(i, j) = sparsity[si];
+                }
+            }
+            d.setS(s);
+
+            d.decompose(nmf::Deconvolver::EuclideanDistanceSparseNormalized, 1000, 1e-5);
+            d.computeApprox();
+            cout << "absolute error: " << d.absoluteError() << endl;
+            cout << "relative error: " << d.relativeError() << endl;
+            cout << endl;
+
+            cout << "W = " << endl;
+            cout << d.getW(0) << endl;
+            cout << "H = " << endl;
+            cout << d.getH() << endl;
+            cout << "Approx = " << endl;
+            Matrix l(d.getApprox());
+            cout << l << endl;
+            
+            for (unsigned int i = 0; i < x.rows(); i++) {
+                for (unsigned int j = 0; j < x.cols(); j++) {
+                    // this variant of SNMF seems to be less precise
+                    // concerning reconstruction error!
+                    if (!epsilonCheck(x(i,j), l(i,j), 2e-1))
+                        return false;
+                }
+            }
+
+        } // for (sparsity param)
+    }
+
     return true;
 }
 

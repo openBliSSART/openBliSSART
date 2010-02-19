@@ -224,8 +224,8 @@ protected:
      * Setting eps > 0 significantly slows down the NMD and should therefore 
      * not be used in production code.
      */
-    void factorizeKL(unsigned int maxSteps, double eps,
-                     ProgressObserver *observer = 0);
+    void factorizeNMDKL(unsigned int maxSteps, double eps,
+                        ProgressObserver *observer = 0);
 
     /** 
      * Performs NMD minimizing squared Euclidean distance,
@@ -233,8 +233,8 @@ protected:
      * Setting eps > 0 significantly slows down the NMD and should therefore 
      * not be used in production code.
      */
-    void factorizeED(unsigned int maxSteps, double eps,
-                     ProgressObserver *observer = 0);
+    void factorizeNMDED(unsigned int maxSteps, double eps,
+                        ProgressObserver *observer = 0);
 
     // A more efficient implementation of NMD-ED for 1 spectrum (NMF case).
     void factorizeNMFED(unsigned int maxSteps, double eps,
@@ -242,18 +242,28 @@ protected:
 
     // Sparse NMF according to Virtanen 2007, modified to use Euclidean
     // distance for measurement of reconstruction error.
-    void factorizeEDSparse(unsigned int maxSteps, double eps,
-                           ProgressObserver *observer = 0);
+    void factorizeNMFEDSparse(unsigned int maxSteps, double eps,
+                              ProgressObserver *observer = 0);
+
+    // The W update (common for factorizeNMFED and factorizeEDSparse).
+    void factorizeNMFEDWUpdate(blissart::linalg::Matrix& w) const;
+
+    // Calculate the update matrices (numerator/denominator) for the H update
+    // (common for factorizeNMFED and factorizeNMFEDSparse).
+    // Note that the actual update differs between sparse and non-sparse
+    // versions.
+    void calculateNMFEDHUpdate(blissart::linalg::Matrix& num,
+                               blissart::linalg::Matrix& denom) const;
 
     // Sparse NMF according to Virtanen 2007, measuring reconstruction error
     // using extended KL divergence.
-    void factorizeKLSparse(unsigned int maxSteps, double eps,
-                           ProgressObserver *observer = 0);
+    void factorizeNMFKLSparse(unsigned int maxSteps, double eps,
+                              ProgressObserver *observer = 0);
 
     // Sparse NMF minimizing Euclidean distance, measured using normalized
     // basis vectors (Eggert and Körner 2004).
-    void factorizeEDSparseNorm(unsigned int maxSteps, double eps,
-                               ProgressObserver *observer = 0);
+    void factorizeNMFEDSparseNorm(unsigned int maxSteps, double eps,
+                                  ProgressObserver *observer = 0);
 
     // Checks convergence of the approximation. If recomputeApprox is set,
     // the new approximation is computed first (maybe in the iteration itself
