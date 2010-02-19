@@ -726,6 +726,8 @@ void Deconvolver::factorizeNMFEDSparseNorm(unsigned int maxSteps, double eps,
                 }
             }
         }
+
+        nextItStep(observer, maxSteps);
     }
 }
 
