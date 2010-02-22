@@ -66,8 +66,13 @@ AC_DEFUN([AX_CHECK_MATLAB],
                 AC_LANG_PROGRAM(
                     [#include <blas.h>],
                     [double t = 1.0; int n = 5; int inc = 0; return (ddot(&n, &t, &inc, &t, &inc) != 5.0);]),
-                :,
-                [NO_MATLAB=yes])
+                AC_DEFINE([MATLAB_INT_TYPE], [int], [The C data type which MATLAB BLAS functions expect for integer arguments.]),
+                AC_RUN_IFELSE(
+                    AC_LANG_PROGRAM(
+                        [#include <blas.h>],
+                        [double t = 1.0; ptrdiff_t n = 5; ptrdiff_t inc = 0; return (ddot(&n, &t, &inc, &t, &inc) != 5.0);]),
+                    AC_DEFINE([MATLAB_INT_TYPE], [ptrdiff_t], [The C data type which MATLAB BLAS functions expect for integer arguments.]),
+                    [NO_MATLAB=yes]))
             AC_LANG_POP([C])
             CPPFLAGS="$save_CPPFLAGS"
             LDFLAGS="$save_LDFLAGS"

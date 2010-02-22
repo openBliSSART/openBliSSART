@@ -31,6 +31,7 @@
 #include <blissart/DataDescriptor.h>
 #include <blissart/Process.h>
 #include <blissart/GnuplotWriter.h>
+#include <blissart/HTKWriter.h>
 #include <blissart/transforms/MelFilterTransform.h>
 
 #include <blissart/linalg/ColVector.h>
@@ -44,6 +45,7 @@
 #include <Poco/Util/LayeredConfiguration.h>
 
 #include <cmath>
+#include <fstream>
 
 
 using namespace blissart::audio;
@@ -356,6 +358,9 @@ void SeparationTask::exportMatrices() const
     bool useGnuplotFormat = 
         cfg.getString("blissart.separation.export.format", "bin")
         .substr(0, 3) == "gnu";
+    bool useHTKFormat = 
+        cfg.getString("blissart.separation.export.format", "bin")
+        .substr(0, 3) == "htk";
 
     // Construct the prefix.
     string prefix = _exportPrefix;
@@ -371,6 +376,8 @@ void SeparationTask::exportMatrices() const
             if (useGnuplotFormat)
                 GnuplotWriter::writeMatrixGnuplot(magnitudeSpectraMatrix(i),
                                                   ss.str(), false);
+            else if (useHTKFormat)
+                exportMatrixHTK(magnitudeSpectraMatrix(i), ss.str());
             else
                 magnitudeSpectraMatrix(i).dump(ss.str());
         }
@@ -378,11 +385,25 @@ void SeparationTask::exportMatrices() const
     if (_exportGains) {
         stringstream ss;
         ss << prefix << '_' << taskID() << "_H.dat";
-        if (useGnuplotFormat)
+        if (useGnuplotFormat) 
             GnuplotWriter::writeMatrixGnuplot(gainsMatrix(), ss.str(), true);
-        else
+        else if (useHTKFormat) 
+            exportMatrixHTK(gainsMatrix(), ss.str());
+        else 
+            // BliSSART binary format
             gainsMatrix().dump(ss.str());
     }
+}
+
+
+void SeparationTask::exportMatrixHTK(const blissart::linalg::Matrix& m,
+                                     const std::string &filename) const
+{
+    ofstream mos(filename.c_str());
+    // calculate framerate in 100ns (HTK unit)
+    int framerate = (int) ((double)windowSize() * (1.0 - overlap())) 
+                    * 10000;  // 1 ms = 10^4 * 100ns
+    HTKWriter::writeMatrix(mos, m, framerate);
 }
 
 

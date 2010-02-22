@@ -51,8 +51,11 @@ extern "C" {
 #   ifdef _WIN32
 #       pragma comment(lib, "libmwblas.lib")
 #   endif
-// adapt this to your personal Matlab version :/
-typedef int matlab_int_t;
+#   ifdef MATLAB_INT_TYPE
+typedef MATLAB_INT_TYPE matlab_int_t;
+#   else
+typedef ptrdiff_t matlab_int_t;
+#   endif
 #endif
 
 

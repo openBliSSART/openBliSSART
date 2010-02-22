@@ -242,6 +242,13 @@ protected:
     void exportMatrices() const;
 
 
+    /**
+     * Helper function for exportMatrices().
+     */
+    void exportMatrixHTK(const blissart::linalg::Matrix& m,
+                         const std::string& filename) const;
+
+
 private:
     // Forbid copy constructor and operator=.
     SeparationTask(const SeparationTask &other);
