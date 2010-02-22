@@ -179,6 +179,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MelFilter.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Sound.cpp"
 				>
 			</File>
