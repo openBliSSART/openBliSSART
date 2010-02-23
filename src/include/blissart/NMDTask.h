@@ -90,16 +90,34 @@ public:
     virtual const linalg::Matrix& gainsMatrix() const;
 
 
+    /**
+     * Sets the sparsity parameter for sparse NMF
+     * (cost functions KLDivergenceSparse, EuclideanDistanceSparse, 
+     * EuclideanDistanceSparseNormalized).
+     */
     inline void setSparsity(double lambda);
 
 
+    /**
+     * Returns the sparsity parameter for sparse NMF
+     * (cost functions KLDivergenceSparse, EuclideanDistanceSparse, 
+     * EuclideanDistanceSparseNormalized).
+     */
     inline double getSparsity() const;
 
     
-    inline void setNormalizeSpectra(bool flag);
+    /**
+     * Sets whether the W and H matrices should be normalized after
+     * computation.
+     */
+    inline void setNormalizeMatrices(bool flag);
 
 
-    inline bool getNormalizeSpectra() const;
+    /**
+     * Tells whether the W and H matrices should be normalized after
+     * computation.
+     */
+    inline bool getNormalizeMatrices() const;
 
 
 protected:
@@ -131,20 +149,20 @@ private:
     nmf::Deconvolver*                 _deconvolver;
     nmf::Deconvolver::NMFCostFunction _cf;
     double                            _sparsity;
-    bool                              _normalizeSpectra;
+    bool                              _normalizeMatrices;
 
 };
 
 
-void NMDTask::setNormalizeSpectra(bool flag)
+void NMDTask::setNormalizeMatrices(bool flag)
 {
-    _normalizeSpectra = flag;
+    _normalizeMatrices = flag;
 }
 
 
-bool NMDTask::getNormalizeSpectra() const
+bool NMDTask::getNormalizeMatrices() const
 {
-    return _normalizeSpectra;
+    return _normalizeMatrices;
 }
 
 

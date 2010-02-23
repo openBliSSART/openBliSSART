@@ -93,7 +93,8 @@ void NMDTask::initialize()
                 );
             } else {
                 for (unsigned int i = 0; i < numInitializationObjects(); ++i)
-                    _deconvolver->keepWColumnConstant(i, true);
+                    _deconvolver->keepWColumnConstant(i, 
+                        constantInitializedComponentSpectra());
             }
         }
     } else {
@@ -115,7 +116,7 @@ void NMDTask::initialize()
         }
     }
     _deconvolver->setS(s);
-    _deconvolver->setNormalizeMatrices(_normalizeSpectra);
+    _deconvolver->setNormalizeMatrices(_normalizeMatrices);
 }
 
 

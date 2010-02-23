@@ -220,8 +220,8 @@ protected:
             .validator(new RangeValidator<double>(0.0)));
 
         options.addOption(
-            Option("normalize-spectra", "N",
-                   "Normalize NMF spectra to unity length.",
+            Option("normalize-matrices", "N",
+                   "Normalize NMF/NMD matrices such that H has unity Frobenius norm.",
                    false));
 
         options.addOption(
@@ -484,7 +484,7 @@ protected:
             {
                 cout << setw(20) << "sparsity: " << _nmdSparsity << endl;
             }
-            cout << setw(20) << "normalize spectra: "
+            cout << setw(20) << "normalize matrices: "
                  << (_nmdNormalize ? "True" : "False") << endl;
         }
 
@@ -540,7 +540,7 @@ protected:
                     _nrComponents, _nrSpectra, _maxIter,_epsilon, _volatile
                 );
                 nmdTask->setSparsity(_nmdSparsity);
-                nmdTask->setNormalizeSpectra(_nmdNormalize);
+                nmdTask->setNormalizeMatrices(_nmdNormalize);
                 newSepTask = nmdTask;
                 break;
             default:
