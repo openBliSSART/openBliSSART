@@ -31,6 +31,7 @@
 #include <blissart/FTTask.h>
 #include <blissart/WindowFunctions.h>
 #include <blissart/ClassificationObject.h>
+#include <blissart/linalg/Matrix.h>
 
 
 namespace blissart {
@@ -120,6 +121,13 @@ public:
 
 
     /**
+     * Sets the generator function for initialization of the W and H matrices.
+     * If W is initialized from objects, the function is ignored for W.
+     */
+    inline void setGeneratorFunction(linalg::Matrix::GeneratorFunction gf);
+
+
+    /**
      * Controls whether separated components should be exported to audio files.
      */
     inline void setExportComponents(bool flag);
@@ -172,6 +180,12 @@ public:
      * Returns the number of targeted initialization objects.
      */
     inline unsigned int numInitializationObjects() const;
+
+
+    /**
+     * Returns the generator function used for matrix initialization.
+     */
+    inline linalg::Matrix::GeneratorFunction generatorFunction() const;
 
 
     /**
@@ -262,6 +276,8 @@ private:
     std::vector<ClassificationObjectPtr> _initObjects;
     bool                    _constantInitializedComponentsSpectra;
 
+    linalg::Matrix::GeneratorFunction _genFunc;
+
     const unsigned int      _maxIterations;
     const double            _epsilon;
 
@@ -332,6 +348,20 @@ inline void SeparationTask::setExportSpectra(bool flag)
 inline void SeparationTask::setExportGains(bool flag)
 {
     _exportGains = flag;
+}
+
+
+inline void 
+SeparationTask::setGeneratorFunction(linalg::Matrix::GeneratorFunction gf)
+{
+    _genFunc = gf;
+}
+
+
+inline linalg::Matrix::GeneratorFunction 
+SeparationTask::generatorFunction() const
+{
+    return _genFunc;
 }
 
 

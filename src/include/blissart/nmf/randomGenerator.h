@@ -29,6 +29,8 @@
 
 #include <cstdlib>
 #include <common.h>
+#include <string>
+#include <blissart/linalg/Matrix.h>
 
 
 namespace blissart {
@@ -58,6 +60,21 @@ inline double unityGenerator(unsigned int, unsigned int)
 {
     return 1.0;
 }
+
+
+/**
+ * Returns a textual description of the given random generator function.
+ */
+const char* LibNMF_API 
+randomGeneratorName(linalg::Matrix::GeneratorFunction gf);
+
+
+/**
+ * Returns a pointer to the generator function with the given name
+ * (one of "unity", "gaussian", "random").
+ */
+linalg::Matrix::GeneratorFunction LibNMF_API
+randomGeneratorForName(const std::string& name);
 
 
 } // namespace nmf

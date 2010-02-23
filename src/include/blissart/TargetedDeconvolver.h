@@ -46,10 +46,25 @@ namespace linalg { class Matrix; }
 class LibFramework_API TargetedDeconvolver: public nmf::Deconvolver
 {
 public:
+    /**
+     * TODO: Document me!
+     */
     TargetedDeconvolver(const linalg::Matrix& v, unsigned int r,
-        const std::vector<ClassificationObjectPtr>& clObjs);
+        const std::vector<ClassificationObjectPtr>& clObjs,
+        blissart::linalg::Matrix::GeneratorFunction wGenerator 
+        = nmf::gaussianRandomGenerator,
+        blissart::linalg::Matrix::GeneratorFunction hGenerator 
+        = nmf::gaussianRandomGenerator);
+
+    /**
+     * TODO: Document me!
+     */
     TargetedDeconvolver(const linalg::Matrix& v, unsigned int r,
-        const std::vector<int>& clObjIDs);
+        const std::vector<int>& clObjIDs,
+        blissart::linalg::Matrix::GeneratorFunction wGenerator 
+        = nmf::gaussianRandomGenerator,
+        blissart::linalg::Matrix::GeneratorFunction hGenerator 
+        = nmf::gaussianRandomGenerator);
 
 private:
     void buildW(const std::vector<ClassificationObjectPtr>& clObjs);

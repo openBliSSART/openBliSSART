@@ -44,16 +44,22 @@ namespace blissart {
 
 
 TargetedDeconvolver::TargetedDeconvolver(const Matrix& v, unsigned int r,
-    const vector<ClassificationObjectPtr>& clObjs):
-    nmf::Deconvolver(v, r, getNrOfSpectra(*clObjs.begin()))
+    const vector<ClassificationObjectPtr>& clObjs,
+    Matrix::GeneratorFunction wGenerator,
+    Matrix::GeneratorFunction hGenerator) :
+    nmf::Deconvolver(v, r, getNrOfSpectra(*clObjs.begin()), 
+                     wGenerator, hGenerator)
 {
     buildW(clObjs);
 }
 
 
 TargetedDeconvolver::TargetedDeconvolver(const Matrix& v, unsigned int r,
-    const vector<int>& clObjIDs):
-    nmf::Deconvolver(v, r, getNrOfSpectra(*clObjIDs.begin()))
+    const vector<int>& clObjIDs,
+    Matrix::GeneratorFunction wGenerator,
+    Matrix::GeneratorFunction hGenerator) :
+    nmf::Deconvolver(v, r, getNrOfSpectra(*clObjIDs.begin()),
+                     wGenerator, hGenerator)
 {
     DatabaseSubsystem& dbs = 
         BasicApplication::instance().getSubsystem<DatabaseSubsystem>();

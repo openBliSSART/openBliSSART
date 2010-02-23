@@ -25,6 +25,7 @@
 
 #include <blissart/nmf/randomGenerator.h>
 #include <cmath>
+#include <string>
 
 
 namespace blissart {
@@ -56,6 +57,28 @@ double gaussianRandomGenerator(unsigned int, unsigned int)
         haveNumber = true;
         return std::abs(x * sqrt(z));
     }
+}
+
+
+const char* randomGeneratorName(linalg::Matrix::GeneratorFunction gf)
+{
+    if (gf == unityGenerator)
+        return "unity";
+    if (gf == gaussianRandomGenerator)
+        return "gaussian";
+    if (gf == uniformRandomGenerator)
+        return "uniform";
+}
+
+
+linalg::Matrix::GeneratorFunction randomGeneratorForName(const std::string& name)
+{
+    if (name == "unity")
+        return unityGenerator;
+    if (name == "gaussian")
+        return gaussianRandomGenerator;
+    if (name == "uniform")
+        return uniformRandomGenerator;
 }
 
 

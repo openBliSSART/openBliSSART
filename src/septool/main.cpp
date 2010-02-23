@@ -72,6 +72,7 @@ public:
         _nrComponents(20),
         _nrSpectra(1),
         _preserveInit(false),
+        _matrixGenFunc(nmf::gaussianRandomGenerator),
         _windowSize(25),
         _wfName("Square root of Hann function"),
         _windowFunction(SqHannFunction),
@@ -156,24 +157,21 @@ protected:
                    "Must be one of \"hann\", \"hamming\", \"sqhann\" or "
                    "\"rectangle\". Default is \"sqhann\"",
                    false, "<function>", true)
-            .validator(new RegExpValidator("hann|hamming|sqhann|rectangle"))
-            .binding("blissart.fft.windowfunction"));
+            .validator(new RegExpValidator("hann|hamming|sqhann|rectangle")));
 
         options.addOption(
             Option("overlap", "o",
                    "Overlap (must be in the interval [0,1)). Default is " +
                    NumberFormatter::format(_overlap), false, "<number>",
                    true)
-            .validator(new RangeValidator<double>(0, false, 1, true))
-            .binding("blissart.fft.overlap"));
+            .validator(new RangeValidator<double>(0, false, 1, true)));
 
         options.addOption(
             Option("window-size", "s",
                    "Window size in milliseconds. Default is " +
                    NumberFormatter::format(_windowSize),
                    false, "<number>", true)
-            .validator(new RangeValidator<int>(1))
-            .binding("blissart.fft.windowsize"));
+            .validator(new RangeValidator<int>(1)));
 
         options.addOption(
             Option("reduce-mids", "r",
@@ -185,8 +183,7 @@ protected:
             Option("preemphasis", "k",
                    "Performs preemphasis with the given 0 <= k < 1.",
                    false, "<k>", true)
-            .validator(new RangeValidator<double>(0.0, false, 1, true))
-            .binding("blissart.audio.preemphasis"));
+            .validator(new RangeValidator<double>(0.0, false, 1, true)));
 
         options.addOption(
             Option("remove-dc", "d",
@@ -252,6 +249,14 @@ protected:
                    false));
 
         options.addOption(
+            Option("generator", "g",
+                   "Sets the generator function for initialization of the "
+                   "matrices (gaussian, uniform or unity). "
+                   "Default is gaussian.",
+                   false, "<func>", true)
+            .validator(new RegExpValidator("(gaussian|uniform|unity)")));
+
+        options.addOption(
             Option("precision", "e",
                    "The desired precision (epsilon) of the result. If set to "
                    "zero, perform the maximum number of iteration steps "
@@ -311,6 +316,8 @@ protected:
     {
         BasicApplication::handleOption(name, value);
 
+        if (name == "window-size") {
+        }
         if (name == "help") {
             _displayUsage = true;
             stopOptionsProcessing();
@@ -320,6 +327,21 @@ protected:
         }
         else if (name == "volatile") {
             _volatile = true;
+        }
+        else if (name == "window-function") {
+            config().setString("blissart.fft.windowfunction", value);
+        }
+        else if (name == "window-size") {
+            config().setInt("blissart.fft.windowsize", 
+                            NumberParser::parse(value));
+        }
+        else if (name == "overlap") {
+            config().setDouble("blissart.fft.overlap", 
+                               NumberParser::parseFloat(value));
+        }
+        else if (name == "preemphasis") {
+            config().setDouble("blissart.audio.preemphasis", 
+                               NumberParser::parseFloat(value));
         }
         else if (name == "cost-function") {
             if (value == "ed") {
@@ -362,6 +384,9 @@ protected:
         }
         else if (name == "preserve") {
             _preserveInit = true;
+        }
+        else if (name == "generator") {
+            _matrixGenFunc = nmf::randomGeneratorForName(value);
         }
         else if (name == "precision") {
             _epsilon = NumberParser::parseFloat(value);
@@ -476,6 +501,16 @@ protected:
 
         cout << setw(20) << "# of components: " << _nrComponents << endl;
 
+        if (_initObjectIDs.size() > 0) {
+            cout << setw(20) << "# of initialized spectra: " 
+                 << _initObjectIDs.size() << endl;
+            cout << setw(20) << "Preserve initialized spectra: "
+                 << (_preserveInit ? "True" : "False") << endl;
+        }
+
+        cout << setw(20) << "Initialization: "  
+             << nmf::randomGeneratorName(_matrixGenFunc) << endl;
+
         if (_separationMethod == SeparationTask::NMD) {
             cout << setw(20) << "# of spectra: " << _nrSpectra << endl;
             if (_nmfCostFunction == nmf::Deconvolver::EuclideanDistanceSparse ||
@@ -539,6 +574,7 @@ protected:
                     *it, _nmfCostFunction,
                     _nrComponents, _nrSpectra, _maxIter,_epsilon, _volatile
                 );
+                nmdTask->setGeneratorFunction(_matrixGenFunc);
                 nmdTask->setSparsity(_nmdSparsity);
                 nmdTask->setNormalizeMatrices(_nmdNormalize);
                 newSepTask = nmdTask;
@@ -642,6 +678,7 @@ private:
     int                _nrSpectra;
     vector<int>        _initObjectIDs;
     bool               _preserveInit;
+    linalg::Matrix::GeneratorFunction _matrixGenFunc;
     int                _windowSize;
     string             _wfName;
     WindowFunction     _windowFunction;

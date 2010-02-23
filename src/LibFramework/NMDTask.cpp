@@ -81,7 +81,8 @@ void NMDTask::initialize()
             new TargetedDeconvolver(
                     amplitudeMatrix(),
                     nrOfComponents(),
-                    initializationObjects());
+                    initializationObjects(),
+                    generatorFunction(), generatorFunction());
         if (nrOfSpectra() != _deconvolver->nrOfSpectra()) {
             throw Poco::InvalidArgumentException(
                 "Wrong number of spectra in initialization.");
@@ -102,7 +103,8 @@ void NMDTask::initialize()
             new nmf::Deconvolver(
                     amplitudeMatrix(),
                     nrOfComponents(),
-                    nrOfSpectra());
+                    nrOfSpectra(),
+                    generatorFunction(), generatorFunction());
         _deconvolver->setProgressNotificationDelay(
             BasicApplication::instance().config().
                 getInt("blissart.separation.notificationSteps", 25)
