@@ -169,10 +169,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\AmplitudeMatrixTransforms.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\AnovaFeatureSelector.cpp"
 				>
 			</File>
@@ -257,6 +253,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GnuplotWriter.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\HTKWriter.cpp"
 				>
 			</File>
@@ -265,7 +265,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MelFilterTransform.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\NMDTask.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PowerTransform.cpp"
 				>
 			</File>
 			<File
@@ -286,6 +294,10 @@
 			</File>
 			<File
 				RelativePath=".\SeparationTask.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SlidingWindowTransform.cpp"
 				>
 			</File>
 			<File

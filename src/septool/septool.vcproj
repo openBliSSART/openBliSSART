@@ -165,6 +165,26 @@
 		</Configuration>
 	</Configurations>
 	<References>
+		<ProjectReference
+			ReferencedProjectIdentifier="{7AA1B327-1B79-4F3C-9CEC-607B743763D8}"
+			RelativePathToProject=".\src\LibNMF\LibNMF.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{1C0DD473-A8D1-4108-9FE9-E7AD814BE1BF}"
+			RelativePathToProject=".\src\LibFramework\LibFramework.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{3623E3C3-571E-424B-89A4-025166C0DFBD}"
+			RelativePathToProject=".\src\LibAudio\LibAudio.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{094AE1BE-4478-4234-AD41-81D8EC4B8D5E}"
+			RelativePathToProject=".\src\LibLinAlg\LibLinAlg.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{DE9D8B16-7A50-45F5-AEE5-451DFA4881B8}"
+			RelativePathToProject=".\src\LibFeature\LibFeature.vcproj"
+		/>
 	</References>
 	<Files>
 		<Filter

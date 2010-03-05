@@ -95,7 +95,7 @@ void MelFilter::synth(const Matrix& melSpectrogram, Matrix& spectrogram)
 
     // Compute filter sums for normalization
     double* filterCoeffSums = new double[_nBands];
-    for (unsigned int fi = 0; fi < _nBands; ++fi) {
+    for (int fi = 0; fi < _nBands; ++fi) {
         filterCoeffSums[fi] = 0.0;
     }
     for (unsigned int i = _lowestIndex; i <= _highestIndex; ++i) {
@@ -152,12 +152,18 @@ void MelFilter::synth(const Matrix& melSpectrogram, Matrix& spectrogram)
 }
 
 
+inline double round(double x) 
+{
+    return (x > 0.0 ? floor(x + 0.5) : ceil(x - 0.5));
+}
+
+
 void MelFilter::computeFilters(unsigned int nBins)
 {
     if (nBins == _nBins) 
         return;
 
-    assert(nBins >= _nBands);
+    assert((int)nBins >= _nBands);
     assert(_sampleRate > 0.0);
     assert(_lowFreq >= 0.0 && _highFreq >= 0.0);
 

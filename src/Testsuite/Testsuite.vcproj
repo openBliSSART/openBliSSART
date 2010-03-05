@@ -221,6 +221,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MelFilterTest.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\MFCCTest.cpp"
 				>
 			</File>

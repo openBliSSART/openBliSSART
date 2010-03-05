@@ -60,14 +60,16 @@ MelFilterTransform::MelFilterTransform(double sampleRate) :
 
 Matrix* MelFilterTransform::transform(Matrix* spectrogram) const
 {
-    audio::MelFilter mf(_nBands, _sampleRate, _lowFreq, _highFreq);
+    audio::MelFilter mf(_nBands, (unsigned int)_sampleRate, 
+                        _lowFreq, _highFreq);
     return mf.melSpectrum(*spectrogram);
 }
 
 
 Matrix* MelFilterTransform::inverseTransform(Matrix* melSpectrogram) const
 {
-    audio::MelFilter mf(_nBands, _sampleRate, _lowFreq, _highFreq);
+    audio::MelFilter mf(_nBands, (unsigned int)_sampleRate, 
+                        _lowFreq, _highFreq);
     Matrix* rv = new Matrix(_nBins, melSpectrogram->cols());
     mf.synth(*melSpectrogram, *rv);
     return rv;
