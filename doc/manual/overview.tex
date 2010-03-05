@@ -9,14 +9,19 @@ Recognition Tasks. Main features include
 
 \begin{itemize}
 \item Component separation using non-negative matrix factorization (NMF)
-  \cite{Smaragdis2003} \cite{LeeSeung2001} and non-negative matrix deconvolution
+  \cite{LeeSeung1999,Smaragdis2003,LeeSeung2001} and non-negative matrix deconvolution
   (NMD) \cite{Smaragdis2004}
 \item Feature extraction from components
 \item Creation of response variables assigning audio components to classes
 \item Classification of components and assembly of audio files for different
-  classes, such as in drum beat separation \cite{HelenVirtanen}
+  classes, such as in drum beat separation \cite{Virtanen2005}
 \item Data export (ARFF \cite{Weka} and HTK \cite{HTKBook} formats)
 \end{itemize}
+
+\begin{leftbar}
+In many places in this document and the applications, NMF and NMD are used
+as synonyms. The reason is that mathematically NMF is a special case of NMD.
+\end{leftbar}
 
 This manual is divided in two sections. Section \ref{section:Tutorial} provides
 a brief introductory tutorial on how to use openBliSSART for a typical blind

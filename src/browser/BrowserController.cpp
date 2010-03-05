@@ -219,7 +219,7 @@ void BrowserController::on_treeWidget_customContextMenuRequested(const QPoint &p
             // A separator isn't always neccessary, hence:
             if (!provideFeatureExtraction)
                 pm.addSeparator();
-            pm.addAction(tr("Export selected objects"),
+            pm.addAction(tr("Export selected objects as WAV"),
                          this, SLOT(handleExportComponents()));
         }
 

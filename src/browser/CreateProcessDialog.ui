@@ -208,7 +208,7 @@
        <widget class="QComboBox" name="cbProcessing" >
         <item>
          <property name="text" >
-          <string>Fourier Transform + NMD</string>
+          <string>Fourier Transform + NMF/NMD</string>
          </property>
         </item>
         <item>

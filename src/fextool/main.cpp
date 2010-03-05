@@ -70,7 +70,7 @@ public:
 protected:
     virtual void defineOptions(OptionSet &options)
     {
-        Application::defineOptions(options);
+        BasicApplication::defineOptions(options);
 
         options.addOption(
             Option("help", "h",
@@ -101,7 +101,7 @@ protected:
 
     virtual void handleOption(const string &name, const string &value)
     {
-        Application::handleOption(name, value);
+        BasicApplication::handleOption(name, value);
 
         if (name == "all") {
             _extractAll = true;

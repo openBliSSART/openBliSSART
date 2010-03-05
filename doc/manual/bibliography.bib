@@ -1,208 +1,690 @@
-%
 % vim:set expandtab tabstop=4 shiftwidth=4:
-%
 
-@INPROCEEDINGS{SchullerLehmannWeninger,
-    author = {B. Schuller and A. Lehmann and F. Weninger},
-    title = {Blind Enhancement of the Rhythmic and Harmonic Sections by NMF:
-             Does it help?},
-    booktitle = {Proc. International Conference on Acoustics (NAG/DAGA 2009), including the 35th German Annual Conference on Acoustics, Acoustical Society of the Netherlands (Nederlands Akoestisch Genootschap, NAG), DEGA, Rotterdam, The Netherlands},
-    year = {2009}
+@INPROCEEDINGS{LeeSeung2001,
+    author = {D. D. Lee and H. S. Seung},
+    title = {Algorithms for non-negative matrix factorization},
+    booktitle = {Proc. of NIPS},
+    year = {2001},
+    pages = {556--562},
+    address = {Vancouver, Canada}
 }
-@INPROCEEDINGS{Smaragdis2003,
-    author = {P. Smaragdis and J. C. Brown},
-    title = {Non-negative matrix factorization for polyphonic music transcription},
-    booktitle = {IEEE Workshop on Applications of Signal Processing to Audio and
-                  Acoustics},
-    year = {2003},
-    pages = {177--180}
+@INPROCEEDINGS{Schmidt2006,
+    author = {M. N. Schmidt and R. K. Olsson},
+    title = {Single-channel speech separation using sparse non-
+            negative matrix factorization},
+    booktitle = {Proc. of Interspeech},
+    year = {2006},
+	address = {Pittsburgh, PA, USA}
+}
+@INPROCEEDINGS{Wilson2008_2,
+    author = {K. W. Wilson and B. Raj and P. Smaragdis},
+    title = {Regularized non-negative matrix factorization
+             with temporal dependencies for speech denoising},
+    booktitle = {Proc. of Interspeech},
+    year = {2008},
+    address = {Brisbane, Australia}
+}
+@INPROCEEDINGS{Wilson2008_1,
+    author = {K. W. Wilson and B. Raj and P. Smaragdis and A. Divakaran},
+    title = {Speech denoising using nonnegative matrix factorization with priors},
+    booktitle = {Proc. of ICASSP},
+    year = {2008},
+    pages = {4029-4032},
+    address = {Las Vegas, NV, USA}
+}
+@INPROCEEDINGS{Rennie2008,
+    author = {S. J. Rennie and J. R. Hershey and P. A. Olsen},
+    title = {Efficient model-based speech separation
+             and denoising using non-negative subspace analysis},
+    booktitle = {Proc. of ICASSP},
+    pages = {1833-1836},
+    year = {2008},
+    address = {Las Vegas, NV, USA}
+}
+@ARTICLE{Virtanen2007,
+    author = {T. Virtanen},
+    title = {Monaural Sound Source Separation by Nonnegative
+             Matrix Factorization With Temporal Continuity
+             and Sparseness Criteria},
+   journal = {IEEE Transactions on Audio, Speech and Language Processing},
+   volume = {15},
+   number = {3},
+   pages = {1066-1074},
+   year = {2007},
+   month = {March}
+}
+@INPROCEEDINGS{Schuller2009,
+    author = {B. Schuller and A. Lehmann and F. Weninger and F. Eyben and G. Rigoll},
+    title = {Blind Enhancement of the Rhythmic and Harmonic Sections by 
+        {N}{M}{F}: Does it help?},
+    booktitle = {Proc. of the International Conference on Acoustics 
+              (NAG/DAGA 2009)},
+    publisher = {DEGA},
+    pages = {361-364},
+    year = {2009},
+    address = {Rotterdam, Netherlands}
+}
+@INPROCEEDINGS{Grady2007,
+    author = {P. D. O'Grady and B. A. Pearlmutter},
+    title = {Discovering Convolutive Speech Phones using Sparseness and 
+        Non-Negativity Constraints},
+    booktitle = {Proc. of ICA},
+    year = {2007},
+    address = {London, UK}
 }
 @INPROCEEDINGS{Smaragdis2004,
     author = {P. Smaragdis},
     title = {Discovering Auditory Objects Through Non-Negativity Constraints},
-    booktitle = {Statistical and Perceptual Audio Processing (SAPA)},
-    year = {2004}
+    booktitle = {Proc. of SAPA},
+    year = {2004},
+    address = {Jeju, Korea}
 }
-    
-@INPROCEEDINGS{LeeSeung2001,
-    author = {D. D. Lee and H. S. Seung},
-    title = {Algorithms for non-negative matrix factorization},
-    booktitle = {},
-    year = {2001},
-    pages = {556--562},
-    publisher = {MIT Press}
+@INPROCEEDINGS{Virtanen2009_1,
+    author = {T. Virtanen and A. T. Cemgil},
+    title = {Mixtures of Gamma Priors for Non-Negative Matrix Factorization Based Speech Separation},
+    booktitle = {Proc. of ICA},
+    pages = {646-653},
+    year = {2009},
+    address = {Paraty, Brazil}
 }
-@INPROCEEDINGS{UhleDittmarSporer,
+@INPROCEEDINGS{Virtanen2009_2,
+    author = {T. Virtanen},
+    title = {Spectral Covariance in Prior Distributions of Non-Negative Matrix 
+        Factorization Based Speech Separation},
+    booktitle = {Proc. of EUSIPCO},
+    year = {2009},
+    address = {Glasgow, Scotland}
+}
+@INPROCEEDINGS{Woellmer2009Interspeech,
+    author = {M. W{\"o}llmer and F. Eyben and B. Schuller and Y. Sun and T. Moosmayr and N. Nguyen-Thien},
+    title = {Robust In-Car Spelling Recognition - {A Tandem BLSTM-HMM} Approach},
+    booktitle = {Proc. of Interspeech},
+    year = {2009},
+    address = {Brighton, UK}
+}
+
+
+
+% Original references from Interspeech paper
+
+
+@inproceedings{woellmer09,
+	author = {M. W{\"o}llmer and F. Eyben and J. Keshet and A. Graves and B. Schuller and G. Rigoll},
+	title = {Robust discriminative keyword spotting for emotionally colored spontaneous speech using bidirectional {LSTM} networks},
+	booktitle = {Proc. of ICASSP},
+    pages = {3949-3952},
+	address = {Taipei, Taiwan},
+	year = {2009}}
+@inproceedings{woellmer08,
+	author = {M. W{\"o}llmer and F. Eyben and S. Reiter and B. Schuller and C. Cox and E. Douglas-Cowie and R. Cowie},
+	title = {Abandoning Emotion Classes - Towards Continuous Emotion Recognition with Modelling of Long-Range Dependencies},
+	booktitle = {Proc. of Interspeech},
+	address = {Brisbane, Australia},
+	pages = {597-600},
+	year = {2008}}
+@inproceedings{schuller08,
+	author = {B. Schuller and M. W{\"o}llmer and T. Moosmayr and G. Rigoll},
+	title = {Speech Recognition in Noisy Environments using a Switching Linear Dynamic Model for Feature Enhancement},
+	booktitle = {Proc. of Interspeech},
+	address = {Brisbane, Australia},
+	pages = {1789-1792},
+	year = {2008}}
+@article{Schuller2009Noise,
+	author = {B. Schuller and M. W\"ollmer and T. Moosmayr and G. Rigoll},
+	title = {Recognition of Noisy Speech: A Comparative Survey of Robust Model Architectures and Feature Enhancement},
+	journal = {EURASIP Journal on Audio, Speech, and Music Processing},
+    publisher = {Hindawi},
+	note = {id 942617},
+	year = {2009}}
+@inproceedings{Graves2005bln,
+	author = {A. Graves and S. Fernandez and J. Schmidhuber},
+	title = {Bidirectional {LSTM} networks for improved phoneme classification and recognition},
+	booktitle = {Proc. of ICANN},
+	address = {Warsaw, Poland},
+	pages = {602-610},
+	year = {2005}}
+@phdthesis{graves08,
+	author = {A. Graves},
+	title = {Supervised sequence labelling with recurrent neural networks},
+	school = {Technische Universit{\"a}t M{\"u}nchen},
+	year = {2008}}
+@article{Hochreiter1997lst,
+	author = {S. Hochreiter and J. Schmidhuber},
+	title = {Long short-term memory},
+	journal = {Neural Computation},
+	volume = {9(8)},
+	pages = {1735-1780},
+	year = {1997}}
+@article{schuster97,
+	author = {M. Schuster and K. K. Paliwal},
+	title = {Bidirectional recurrent neural networks},
+	journal = {IEEE Transactions on Signal Processing},
+	volume = {45},
+	pages = {2673-2681},
+	year = {1997}}
+@article{bilmes05,
+	author = {J. A. Bilmes and C. Bartels},
+	title = {Graphical model architectures for speech recognition},
+	journal = {IEEE Signal Processing Magazine},
+	volume = {22},
+	number = {5},
+	pages = {89-100},
+	year = {2005}}
+@inproceedings{mitchell99,
+	author = {C. D. Mitchell and A. R. Setlur},
+	title = {Improving spelling recognition using a tree-based fast lexical match},
+	booktitle = {Proc. of ICASSP},
+	address = {Phoenix, AZ, USA},
+	pages = {597-600},
+	volume = {2},
+	year = {1999}}
+@inproceedings{droppo04,
+	author = {J. Droppo and A. Acero},
+	title = {Noise robust speech recognition with a switching linear dynamic model},
+	booktitle = {Proc. of ICASSP},
+	address = {Montreal, Canada},
+	year = {2004}}
+@inproceedings{ellis01,
+	author = {D. P. W. Ellis and R. Singh and S. Sivadas},
+	title = {Tandem acoustic modeling in large-vocabulary recognition},
+	booktitle = {Proc. of ICASSP},
+	address = {Salt Lake City, UT, USA},
+	volume = {1},
+	pages = {517-520},
+	year = {2001}}
+@inproceedings{hermansky00,
+	author = {H. Hermansky and D. P. W. Ellis and S. Sharma},
+	title = {Tandem connectionist feature extraction for conventional HMM systems},
+	booktitle = {Proc. of ICASSP},
+	address = {Istanbul, Turkey},
+	volume = {3},
+	pages = {1635-1638},
+	year = {2000}}
+@inproceedings{ketabdar08,
+	author = {H. Ketabdar and H. Bourlard},
+	title = {Enhanced phone posteriors for improving speech recognition systems},
+	booktitle = {IDIAP-RR},
+	number = {39},
+	year = {2008}}
+@inproceedings{grimm,
+	author = {M. Grimm and K. Kroschel and H. Harris and C. Nass and B. Schuller and G. Rigoll and T. Moosmayr},
+	title = {On the necessity and feasibility of detecting a driver's emotional state while driving},
+	booktitle = {Proc. of ACII},
+	address = {Lisbon, Portugal},
+	pages = {126-138},
+	year = {2007}}
+
+
+
+
+
+
+@article{bilmes03,
+	author = {J. A. Bilmes},
+	title = {Graphical models and automatic speech recognition},
+	journal = {Mathematical Foundations of Speech and Language Processing},
+	year = {2003}}
+@book{jensen96,
+	author = {F. V. Jensen},
+	title = {An introduction to Bayesian Networks},
+	publisher = {Springer},
+	year = {1996}}
+@inproceedings{ketabdar06,
+	author = {H. Ketabdar and J. Vepa and S. Bengio and H. Boulard},
+	title = {Posterior based keyword spotting with a priori thresholds},
+	booktitle = {Proc. of Interspeech},
+	address = {Pittsburgh, PA, USA},
+	year = {2006}}
+@inproceedings{rose90,
+	author = {R. C. Rose and D. B. Paul},
+	title = {A hidden markov model based keyword recognition system},
+	booktitle = {Proc. of ICASSP},
+	address = {Albuquerque, NM, USA},
+	year = {1990}}
+@inproceedings{weintraub93,
+	author = {M. Weintraub},
+	title = {Keyword-spotting using SRI's DECIPHER large vocabulary speech recognition system},
+	booktitle = {Proc. of ICASSP},
+	address = {Minneapolis, USA},
+	year = {1993}}
+@inproceedings{fernandez07,
+	author = {S. Fernandez and A. Graves and J. Schmidhuber},
+	title = {An application of recurrent neural networks to discriminative keyword spotting},
+	booktitle = {Proc. of ICANN},
+	address = {Porto, Portugal},
+	pages = {220-229},
+	year = {2007}}
+@inproceedings{keshet07,
+	author = {J. Keshet and D. Grangier and S. Bengio},
+	title = {Discriminative Keyword Spotting},
+	booktitle = {Workshop on Non-Linear Speech Processing, NOLISP},
+	address = {Paris, France},
+	year = {2007}}
+@inproceedings{lin09,
+	author = {H. Lin and A. Stupakov and J. Bilmes},
+	title = {Spoken Keyword Spotting via Multi-Lattice Alignment},
+	booktitle = {Proc. of ICASSP},
+	address = {Taipei, Taiwan},
+	year = {2009}}
+@inproceedings{lin07,
+	author = {H. Lin and J. Bilmes and D. Vergyri and K. Kirchhoff},
+	title = {OOV detection by joint word/phone lattice alignment},
+	booktitle = {IEEE Workshop on Automatic Speech Recognition and Understanding (ASRU)},
+	address = {Kyoto, Japan},
+	pages = {478-483},
+	year = {2007}}
+
+
+
+@INPROCEEDINGS{Uhle2003,
     author = {C. Uhle and C. Dittmar and T. Sporer},
     title = {Extraction of Drum Tracks From Polyphonic Music Using Independent
                   Subspace Analysis},
-    booktitle = {Proc. 4th International Symposium on Independent Component
-                  Analysis and Blind Signal Separation (ICA2003)},
+    booktitle = {Proc. of ICA},
+    address = {Nara, Japan},
     year = {2003}
 }
-@INPROCEEDINGS{HelenVirtanen,
+@INPROCEEDINGS{Virtanen2005,
     author = {M. Helén and T. Virtanen},
     title = {Separation of drums from polyphonic music using non-negative matrix
                   factorization and support vector machine},
-    booktitle = {Proc. EUSIPCO},
+    booktitle = {Proc. of EUSIPCO},
+    address = {Antalya, Turkey},
     year = {2005}
 }
-@INPROCEEDINGS{PaulusVirtanen,
-   author = {J. Paulus and T. Virtanen},
-   title = {Drum transcription with non-negative spectrogram factorisation},
-   booktitle = {Proc. EUSIPCO},
-   year = {2005}
+@INPROCEEDINGS{Smaragdis2003,
+    author = {P. Smaragdis and J. C. Brown},
+    title = {Non-negative matrix factorization for polyphonic music transcription},
+    booktitle = {Proc. of IEEE Workshop on Applications of Signal Processing to Audio and
+                  Acoustics},
+    address = {New Paltz, NY, USA},
+    year = {2003},
+    pages = {177--180}
 }
-@INPROCEEDINGS{MoreauFlexer,
-    author = {A. Moreau and A. Flexer},
-    title = {Drum transcription in polyphonic music using non-negative matrix
-                  factorisation},
-    booktitle = {Proceedings of the 8th International Conference on Music
-                  Information Retrieval (ISMIR07)},
+
+@MISC{openBliSSART,
+    author = {B. Schuller and A. Lehmann and F. Weninger},
+    title = {open{B}li{S}{S}{A}{R}{T} -- An Open Source Library for Blind Source Separation for Audio Recognition Tasks},
+    url = {http://github.com/openBliSSART/openBliSSART/tree/release1.1}
+}
+
+@INPROCEEDINGS{Cho2003,
+    title = {Non-negative component parts of sound for classification},
+    author = {Y.-C. Cho and S. Choi and S.-Y. Bang},
+    booktitle = {Proc. of ISSPIT},
+    address = {Darmstadt, Germany},
+    year = {2003},
+    pages = {633--636}
+}
+
+@INPROCEEDINGS{Benetos2006,
+    title = {Testing supervised classifiers based on non-negative matrix factorization to musical instrument classification},
+    author = {E. Benetos and C. Kotropoulos and T. Lidy and A. Rauber},
+    booktitle = {Proc. of EUSIPCO},
+    address = {Florence, Italy},
+    year = {2006}
+}
+
+@ARTICLE{Stouten2008,
+    title = {Discovering Phone Patterns in Spoken Utterances by
+    Non-Negative Matrix Factorization},
+    author = {V. Stouten and K. Demuynck and H. van Hamme},
+    journal = {IEEE Signal Processing Letters},
+    year = {2008},
+    volume = {15},
+    pages = {131--134}
+}
+
+@ARTICLE{Park2009,
+    title = {Integrated Phoneme Subspace Method for Speech
+        Feature Extraction},
+    author = {H. Park and T. Takiguchi and Y. Ariki},
+    journal = {EURASIP Journal on Audio, Speech, and Music Processing},
+    publisher = {Hindawi},
+    year = {2009},
+    note = {id 690451}
+}
+
+@INPROCEEDINGS{Lee2000,
+    author = {J.-H. Lee and H.-Y. Jung and T.-W. Lee and S.-Y. Lee},
+    title = {Speech Coding And Noise Reduction Using {ICA}-Based Speech Features},
+    booktitle = {Proc. of ICA},
+    address = {Helsinki, Finland},
+    year = {2000}
+}
+
+@BOOK{TI46,
+    author = {M. Liberman},
+    year = {1993},
+    title = {{TI} 46-Word Database},
+    publisher = {Linguistic Data Consortium},
+    address = {Philadelphia, USA}
+}
+
+@ARTICLE{Smaragdis2007,
+    author = {P. Smaragdis},
+    title = {Convolutive Speech Bases and their Application to Supervised Speech Separation},
+    journal = {IEEE Transactions on Audio, Speech and Language Processing},
+    year = {2007},
+    volume = {15},
+    number = {1},
+    pages = {1--14}
+}
+
+@incollection{SchullerEmoChapter,
+    author = {B. Schuller and M. W\"ollmer and F. Eyben and G. Rigoll},
+    title = {Spectral or Voice Quality? Feature Type Relevance for the Discrimination of Emotion Pairs},
+    booktitle = {The Role of Prosody in Affective Speech, Linguistic Insights, Studies in Language and Communication},
+    volume = {97},
+    editor = {S. Hancil},
+    publisher = {Peter Lang Publishing Group}, 
+    year = {2009}
+}
+
+@book{SchullerEmoBook,
+    author = {B. Schuller},
+    title = {Mensch, Maschine, Emotion -- Erkennung aus sprachlicher und manueller Interaktion}, 
+    publisher = {VDM},
+    address = {Saarbr\"ucken},
     year = {2007}
 }
-@INPROCEEDINGS{Virtanen2008,
-    author = {T. Virtanen and M. Ryynänen and A. Mesaros},
-    title = {Combining Pitch-Based Inference and Non-Negative Spectrogram
-                  Factorization in Separating Vocals from Polyphonic Music},
-    booktitle = {ISCA Tutorial and Research Workshop on Statistical And
-                  Perceptual Audition},
+
+@incollection{SchullerNonLingChapter,
+    author = {B. Schuller and F. Eyben and G. Rigoll},
+    title = {Static and Dynamic Modelling for the Recognition of Non-Verbal Vocalisations in Conversational Speech},
+    booktitle = {Perception in Multimodal Dialogue Systems, Proc. of PIT 2008},
+    publisher = {Springer},
+    pages = {99--110}, 
     year = {2008}
 }
-@MISC{HelenVirtanenWebsite,
-    author = {M. Helén},
-    title = {DRUM SEPARATION DEMONSTRATIONS},
-    url = {http://www.cs.tut.fi/~heln/demonstrations/NMF\_SVM\_demonstrations.html}
+
+@article{SchullerAVIC,
+    author = {B. Schuller and R. M\"uller and F. Eyben and J. Gast and B. H\"ornler and M. W\"ollmer and G. Rigoll and A. H\"othker and H. Konosu},
+    title = {Being Bored? {R}ecognising Natural Interest by Extensive Audiovisual Integration for Real-Life Application},
+    journal = {Image and Vision Computing Journal},
+    publisher = {Elsevier},
+    volume = {27},
+    number = {12},
+    pages = {1760-1774},
+    year = {2009},
+    month = {November}
 }
-@ARTICLE{Sethares1993,
-   author = {W. A. Sethares},
-   title = {Local Consonance and the Relationship Between Timbre and Scale},
-   journal = {Journal of the Acoustical Society of America},
-   year = {1993},
-   number = {94}
+
+@inproceedings{SchullerChord2009,
+    author = {B. Schuller and B. H\"ornler and D. Arsic and G. Rigoll},
+    title = {Audio Chord Labeling by Musiological Modeling and Beat-Synchronization},
+    booktitle = {Proc. of ICME},
+    address = {New York, NY, USA},
+    year = {2009},
+    pages = {526--529}
 }
-@book{CoverThomas,
-    author = {T. M. Cover and J. A. Thomas},
-    title = {Elements of Information Theory},
-    year = {1991},
-    publisher = {John Wiley and Sons},
-    address = {New York}
+
+
+
+
+
+
+
+@INPROCEEDINGS{schuller2008dagm,
+  author = {B. Schuller and M. W\"ollmer and T. Moosmayr and G. Ruske and G. Rigoll},
+  title = {Switching Linear Dynamic Models for Noise Robust In-Car Speech Recognition},
+  booktitle = {Proc. 30th DAGM Symposium, Munich, Germany, June 2008},
+  year = {2008},
+  volume = {LNCS 5096},
+  pages = {244-253},
+  publisher = {Springer}
 }
-@ARTICLE{HyvaerinenOja2000,
-    author = {E. Oja},
-    title = {Independent component analysis: algorithms and applications},
-    journal = {Neural Networks},
-    year = {2000},
-    volume = {13},
-    pages = {411--430}
+@INPROCEEDINGS{lathoud05,
+  author = {G. Lathoud and M. Magimia-Doss and B. Mesot and H. Boulard},
+  title = {Unsupervised spectral subtraction for noise-robust {ASR}},
+  booktitle = {Proc. of ASRU},
+  year = {2005},
+  pages = {189-194}
 }
-@ARTICLE{HyvaerinenOja1997,
-    author = {A. Hyv\"arinen and E. Oja},
-    title = {A fast fixed-point algorithm for independent component analysis},
-    journal = {Neural Computation},
-    year = {1997},
-    volume = {9},
-    pages = {1483--1492}
+@INPROCEEDINGS{schuller2009ICME,
+  author = {B. Schuller and S. Can and H. Feussner and M. W\"ollmer and D. Arsic and B. H\"ornler},
+  title = {Speech Control in Surgery: a Field Analysis and Strategies},
+  booktitle = {Proc. of ICME},
+  address = {New York, U.S.A.},
+  year = {2009}
 }
-@ARTICLE{JonesSibson1987,
-    author = {M. C. Jones and R. Sibson},
-    title = {What is projection pursuit?},
-    journal = {Journal of the Royal Statistical Society A },
-    year = {1987},
-    number = {150},
-    pages = {1--36}
+@INPROCEEDINGS{droppo04,
+  author = {J. Droppo and A. Acero},
+  title = {Noise robust speech recognition with a switching linear dynamic model},
+  booktitle = {Proc. of ICASSP 2004},
+  year = {2004},
+  volume = {1},
+  pages = {953-956}
 }
-@inproceedings{Hyvaerinen1998,
-    author = {A. Hyv\"arinen},
-    title = {New approximations of differential entropy for independent
-                  component analysis and projection pursuit},
-    booktitle = {NIPS '97: Proceedings of the 1997 conference on Advances in
-                  neural information processing systems 10},
-    year = {1998},
-    isbn = {0-262-10076-2},
-    pages = {273--279},
-    location = {Denver, Colorado, United States},
-    publisher = {MIT Press},
-    address = {Cambridge, MA, USA},
+@article{mesot07,
+  author = {B. Mesot and D. Barber},
+  title = {Switching linear dynamical systems for noise robust speech recognition},
+  booktitle = {IEEE Transactions on Audio, Speech and Language Processing},
+  year = {2007},
+  volume = {15},
+  pages = {1850-1858}
 }
-@MISC{ChangLinLibSVM,
-    author = {C.-C. Chang and C.-J. Lin},
-    title = {{LIBSVM}: A library for support vector machines},
-    url = {http://www.csie.ntu.edu.tw/~cjlin/libsvm},
-    year = {2005}
+@inproceedings{woellmer09nolisp,
+	author = {M. W\"ollmer and F. Eyben and A. Graves and B. Schuller and G. Rigoll},
+	title = {A {Tandem BLSTM-DBN} Architecture for Keyword Spotting with Enhanced Context Modeling},
+	booktitle = {Proc. of NOLISP 2009},
+	address = {Vic, Spain},
+	year = {2009}}
+
+
+
+
+
+
+
+
+@INPROCEEDINGS{Schuller2007a,
+  author = {B. Schul\-ler and A. Batliner and D. Seppi and S. Steidl and T. Vogt
+	and J. Wagner and L. Devillers and L. Vidrascu and N. Amir and L.
+	Kessous and V. Aharonson},
+  title = {{The Relevance of Feature Type for the Automatic Classification of
+	Emotional User States: Low Level Descriptors and Functionals}},
+  booktitle = {Proc. of Interspeech},
+  year = {2007},
+  pages = {2253-2256},
+  address = {Antwerp, Belgium}
 }
-@misc{MTV,
-    title = {20 {Y}ears {O}n {MTV}},
-    publisher = {Sony BMG Music Entertainment GmbH (ASIN: B0006H2VCC)}
+@inproceedings{Campbell2007,
+ author = "N. Campbell",
+ title = "On the Use of NonVerbal Speech Sounds in Human Communication",
+ year = "2007",
+ booktitle = "Proc. of COST 2102 Workshop",
+ address = {Vietri sul Mare, Italy},
+ pages     = "117-128"
 }
-@misc{BSDLicense,
-    title = {Berkeley {S}oftware {D}istribution {L}icense},
-    url = {http://www.opensource.org/licenses/bsd-license.php},
-    year = {February 2009}
+@inproceedings{Goto1999,
+  TITLE = "A real-time filled pause detection system
+for spontaneous speech recognition",
+  AUTHOR = "M. Goto and K. Itou and S. Hayamizu",
+  BOOKTITLE = "Proc. of Eurospeech",
+  address = {Budapest, Hungary},
+  PAGES = "227-230",
+  YEAR = "1999"
 }
-@misc{GPLLicense,
-    title = {{GNU} {G}eneral {P}ublic {L}icense, v2},
-    url = {http://www.gnu.org/licenses/gpl2.txt},
-    year = {February 2009}
+@inproceedings{Truong2005,
+  TITLE = "Automatic detection of laughter",
+  AUTHOR = "K. P. Truong and D. A. van Leeuwen",
+  BOOKTITLE = "Proc. of Interspeech",
+  ADDRESS = "Lisbon, Portugal",
+  PAGES = "485-488",
+  YEAR = "2005"
 }
-@misc{POCO,
-    title = {{POCO} {C}++ Libraries},
-    url = {http://www.appinf.com/poco/download},
-    year = {February 2009}
+@inproceedings{Campbell2005,
+  AUTHOR = "N. Campbell and H. Kashioka and R. Ohara",
+  TITLE = "No laughing matter",
+  BOOKTITLE = "Proc. of Interspeech",
+  ADDRESS = "Lisbon, Portugal",
+  PAGES = "465-468",
+  year = "2005"
 }
-@misc{SQLite,
-    title = {{SQL}ite database engine},
-    url = {http://www.sqlite.org/download.html},
-    year = {February 2009}
+@inproceedings{Knox2007,
+  AUTHOR = "M. Knox and M. Mirghafori",
+  TITLE = "Automatic Laughter Detection Using Neural Networks",
+  BOOKTITLE = "Proc. of Interspeech",
+  PAGES = "2973-2976",
+  year = "2007",
+  address = {Antwerp, Belgium}
 }
-@misc{Qt,
-    title = {Qt framework},
-    url = {http://www.trolltech.com},
-    year = {February 2009}
+
+@article{LeeSeung1999,
+    author = {D. D. Lee and H. S. Seung},
+    title = {Learning the parts of objects by non-negative matrix factorization},
+    journal = {Nature},
+    volume = {401},
+    pages = {788-791},
+    year = {1999},
+    month = {October}
+}
+
+@inproceedings{Schuller2010Spelling,
+    author = {B. Schuller and F. Weninger and M. W\"ollmer and Y. Sun and G. Rigoll},
+    title = {NON-NEGATIVE MATRIX FACTORIZATION AS NOISE-ROBUST FEATURE EXTRACTOR
+FOR SPEECH RECOGNITION},
+    booktitle = {Proc. of ICASSP},
+    year = {2010},
+    address = {Dallas, TX, USA},
+    note = {Submitted for publication}
+}
+
+@inproceedings{Schuller2010nlv,
+    author = {B. Schuller and F. Weninger},
+    title = {DISCRIMINATION OF SPEECH AND NON-LINGUISTIC VOCALIZATIONS BY
+NON-NEGATIVE MATRIX FACTORIZATION},
+    booktitle = {Proc. of ICASSP},
+    year = {2010},
+    address = {Dallas, TX, USA},
+    note = {Submitted for publication}
+}
+
+@article{WangNMD2009,
+    author = {W. Wang and A. Cichocki and J. A. Chambers},
+    title = {A Multiplicative Algorithm for Convolutive Non-Negative
+Matrix Factorization Based on Squared {E}uclidean Distance},
+    journal = {IEEE Transactions on Signal Processing},
+    volume = {57},
+    number = {7},
+    pages = {2858--2864},
+    year = {2009},
+    month = {July}
+}
+
+@article{ATLAS,
+    author = {R. C. Whaley and A. Petitet and J. Dongarra},
+    title = {Automated {E}mpirical {O}ptimization of {S}oftware and the {ATLAS} project},
+    journal = {Parallel Computing},
+    volume = {27},
+    number = {1-2},
+    pages = {3-35},
+    year = {2001}
+}
+
+@techreport{IDP09,
+    author = {F. Weninger and A. Lehmann and B. Schuller},
+    title = {Instrument Separation by {NMF} and {ICA}},
+    type = {Interdisciplinary Project},
+    institution = {Technische Universit\"at M\"unchen},
+    month = {February},
+    year = {2009},
+    note = {Software available at \url{http://www.openaudio.eu}}
+}
+
+@inproceedings{Hoyer2002,
+    author = {P. O. Hoyer},
+    title = {Non-negative sparse coding},
+    booktitle = {Proc. of IEEE Workshop on Neural Networks for Signal Processing},
+    pages = {557-565},
+    year = {2002},
+    address = {Martigny, Switzerland}
+}
+
+@article{Hoyer2004,
+    author = {P. O. Hoyer},
+    title = {Non-negative matrix factorization with sparseness constraints},
+    journal = {Journal of Machine Learning Research},
+    volume = {5},
+    year = {2004},
+    pages = {1457-1469}
+}
+
+@inproceedings{Eggert2004,
+    author = {J. Eggert and E. K\"orner},
+    title = {Sparse Coding and {NMF}},
+    booktitle = {Proc. of Neural Networks},
+    volume = {4},
+    pages = {2529-2533},
+    year = {2004},
+    address = {Dalian, China}
+}
+
+@article{Zweig03,
+    author = {G. Zweig},
+    title = {Bayesian network structures and inference techniques for automatic speech recognition},
+    journal = {Computer Speech and Language},
+    volume = {17},
+    pages = {173-193},
+    year = {2003},
+    month = {April-July}
+}
+
+@Manual{libsvm,
+  author =	 {Chih-Chung Chang and Chih-Jen Lin},
+  title =	 {{LIBSVM}: a library for support vector machines},
+  year =	 {2001},
+  note =	 {Software available at \url{http://www.csie.ntu.edu.tw/~cjlin/libsvm}}
+}
+
+@inproceedings{HGK2004,
+    author = {H.-G. Kim and J. J. Burred and T. Sikora},
+    title = {HOW EFFICIENT IS {MPEG}-7 FOR GENERAL SOUND RECOGNITION?},
+    booktitle = {Proc. of AES 25th International Conference},
+    address = {London, UK},
+    year = {2004},
+    month = {June}
+}
+
+@inproceedings{HIST2008,
+    author = {X. Domont and M. Heckmann and F. Joublin and C. Goerick},
+    title = {Hierarchical spectro-temporal features for robust speech recognition},
+    booktitle = {Proc. of ICASSP},
+    year = {2008},
+    address = {Las Vegas, NV, USA},
+    pages = {4417-4420}
 }
 @inproceedings{FFTW,
     author = {M. Frigo and S. G. Johnson},
     title = {The Design and Implementation of {F}{F}{T}{W}3},
-    booktitle = {Proceedings of the IEEE},
+    booktitle = {Proc. of the IEEE},
     volume = {93},
-    issue = {2},
+    number = {2},
     pages = {216--231},
     year = {2005}
 }
-@misc{SDL,
-    title = {Simple {D}irect {M}edia {L}ayer},
-    url = {http://www.libsdl.org},
-    year = {February 2009}
+
+@inproceedings{Ken04,
+  TITLE = "Laughter detection in meetings",
+  AUTHOR = "L. S. Kennedy and D. P. W. Ellis",
+  BOOKTITLE = "Proc. of NIST ICASSP 2004 Meeting Recognition Workshop",
+  ADDRESS = "Montreal, Canada",
+  YEAR = "2004"
 }
-@misc{SDLsound,
-    title = {{SDL}\_sound library},
-    url = {http://icculus.org/SDL\_sound},
-    year = {February 2009}
+
+@inproceedings{openEAR,
+    author = {F. Eyben and M. W\"ollmer and B. Schuller},
+    title = {open{EAR} - Introducing the {M}unich Open-Source {E}motion and {A}ffect {R}ecognition Toolkit}, 
+    booktitle = {Proc. of ACII},
+    year = {2009},
+    address = {Amsterdam, Netherlands}
 }
-@misc{VisualStudio,
-    title = {Microsoft {V}isual {S}tudio 2005},
-    url = {http://www.microsoft.com},
-    year = {February 2009}
-}
-@misc{GNUAutoconf,
-    title = {{GNU} Autoconf},
-    url = {http://www.gnu.org/software/autoconf},
-    year = {February 2009}
-}
-@misc{GNUAutomake,
-    title = {{GNU} Automake},
-    url = {http://www.gnu.org/software/automake},
-    year = {February 2009}
-}
-@misc{ARFF,
-    title = {Attribute-{R}elation {F}ile {F}ormat},
-    url = {http://www.cs.waikato.ac.nz/ml/weka/arff.html},
-    year = {February 2009}
-}
-@misc{ATLAS,
-    title = {Automatically {T}uned {L}inear {A}lgebra {S}oftware},
-    url = {http://math-atlas.sourceforge.net},
-    year = {February 2009}
+@book{HTKBook,
+    author = {S. Young and D. Kershaw and J. Odell and D. Ollason and V. Valtchev and P. Woodland},
+    title = {The {HTK} Book version 3.0},
+    publisher = {Cambridge University Press},
+    year = {2000}
 }
 @book{Weka,
     author = {I. H. Witten and E. Frank},
@@ -211,8 +693,8 @@
     publisher = {Morgan Kaufmann},
     address = {San Francisco}
 }
-@book{HTKBook,
-    author = {S. Young et al.},
-    title = {The HTK Book (version 3.4)},
-    year = {2006}
+@misc{SQLite,
+    title = {{SQL}ite database engine},
+    url = {http://www.sqlite.org/download.html},
+    year = {February 2009}
 }
