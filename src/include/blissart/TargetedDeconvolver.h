@@ -40,14 +40,24 @@ namespace blissart {
 namespace linalg { class Matrix; }
 
 /**
- * Performs NMD by initializing the spectral matrices with components from
- * the database.
+ * Performs NMD/NMF by initializing the spectral matrices with components from
+ * the database. If less components are specified than the dimensionality of
+ * the factorization, the remaining components are initialized randomly.
  */
 class LibFramework_API TargetedDeconvolver: public nmf::Deconvolver
 {
 public:
     /**
-     * TODO: Document me!
+     * Creates a TargetedDeconvolver using a vector of ClassificationObjects.
+     * @param v         a Matrix to factorize
+     * @param r         number of components (must be at least the size of 
+     *                  clObjs); if it is smaller than the size of clObjs,
+     *                  the remaining columns of W are initialized randomly
+     * @param clObjs    the vector of ClassificationObjects (of type
+     *                  NMDComponent) to use for initialization
+     * @param wGenerator  generator function for the uninitialized columns
+     *                  of the spectral matrix W
+     * @param hGenerator  generator function for H
      */
     TargetedDeconvolver(const linalg::Matrix& v, unsigned int r,
         const std::vector<ClassificationObjectPtr>& clObjs,
@@ -57,7 +67,18 @@ public:
         = nmf::gaussianRandomGenerator);
 
     /**
-     * TODO: Document me!
+     * Creates a TargetedDeconvolver using a vector of IDs referring to
+     * ClassificationObjects. The corresponding ClassificationObjects are then
+     * fetched from the database.
+     * @param v         a Matrix to factorize
+     * @param r         number of components (must be at least the size of 
+     *                  clObjs); if it is smaller than the size of clObjs,
+     *                  the remaining columns of W are initialized randomly
+     * @param clObjIDs  vector of IDs of ClassificationObjects (of type
+     *                  NMDComponent) to use for initialization
+     * @param wGenerator  generator function for the uninitialized columns
+     *                  of the spectral matrix W
+     * @param hGenerator  generator function for H
      */
     TargetedDeconvolver(const linalg::Matrix& v, unsigned int r,
         const std::vector<int>& clObjIDs,

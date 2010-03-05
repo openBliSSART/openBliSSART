@@ -1,6 +1,6 @@
 openBliSSART depends on the following libraries:
 
-- Poco Enterprise v1.3.4+ (incl. support for SQLite), http://pocoproject.org
+- Poco Enterprise v1.3.6+ (incl. support for SQLite), http://pocoproject.org
 - Simple Direct Media Layer, http://libsdl.org
 - SDL_sound, http://icculus.org/SDL_sound
 - Qt 4.4.3+, http://www.qtsoftware.com
