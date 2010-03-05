@@ -263,6 +263,12 @@ protected:
                          const std::string& filename) const;
 
 
+    /**
+     * Helper function to determine output file name for export.
+     */
+    std::string getExportPrefix() const;
+
+
 private:
     // Forbid copy constructor and operator=.
     SeparationTask(const SeparationTask &other);

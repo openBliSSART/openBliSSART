@@ -42,6 +42,7 @@
 #include <blissart/audio/WaveEncoder.h>
 
 #include <Poco/NumberFormatter.h>
+#include <Poco/Path.h>
 #include <Poco/Util/LayeredConfiguration.h>
 
 #include <cmath>
@@ -335,13 +336,10 @@ void SeparationTask::exportComponents() const
                                            sampleRate());
 
         // Construct the filename.
-        string prefix = _exportPrefix;
-        if (prefix.empty()) {
-            prefix = fileName().substr(0, fileName().find_last_of('.'));
-        }
+        string prefix = getExportPrefix();
         const int numDigits = (int)(1 + log10f((float)_nrOfComponents));
         stringstream ss;
-        ss << prefix << '_' << taskID() << '_'
+        ss << prefix /* << '_' << taskID() */ << '_'
            << setfill('0') << setw(numDigits) << i << ".wav";
 
         // Eventually export the component.
@@ -363,16 +361,15 @@ void SeparationTask::exportMatrices() const
         .substr(0, 3) == "htk";
 
     // Construct the prefix.
-    string prefix = _exportPrefix;
-    if (prefix.empty()) {
-        prefix = fileName().substr(0, fileName().find_last_of('.'));
-    }
+    string prefix = getExportPrefix();
     if (_exportSpectra) {
         for (unsigned int i = 0; i < _nrOfSpectra; ++i) {
             const int numDigits = (int)(1 + log10f((float)_nrOfSpectra));
             stringstream ss;
-            ss << prefix << '_' << taskID() << "_W_"
+            ss << prefix /* << '_' << taskID() */ << "_W_"
                << setfill('0') << setw(numDigits) << i << ".dat";
+            // TODO: error handling?
+            logger().debug("Writing to " + ss.str());
             if (useGnuplotFormat)
                 GnuplotWriter::writeMatrixGnuplot(magnitudeSpectraMatrix(i),
                                                   ss.str(), false);
@@ -384,7 +381,8 @@ void SeparationTask::exportMatrices() const
     }
     if (_exportGains) {
         stringstream ss;
-        ss << prefix << '_' << taskID() << "_H.dat";
+        ss << prefix /* << '_' << taskID() */ << "_H.dat";
+        logger().debug("Writing to " + ss.str());
         if (useGnuplotFormat) 
             GnuplotWriter::writeMatrixGnuplot(gainsMatrix(), ss.str(), true);
         else if (useHTKFormat) 
@@ -404,6 +402,21 @@ void SeparationTask::exportMatrixHTK(const blissart::linalg::Matrix& m,
     int framerate = (int) ((double)windowSize() * (1.0 - overlap())) 
                     * 10000;  // 1 ms = 10^4 * 100ns
     HTKWriter::writeMatrix(mos, m, framerate);
+}
+
+
+string SeparationTask::getExportPrefix() const
+{
+    string prefix = _exportPrefix;
+    if (prefix.empty()) {
+        prefix = fileName().substr(0, fileName().find_last_of('.'));
+    }
+    else {
+        Poco::Path tmp(fileName());
+        tmp.makeFile();
+        prefix += tmp.getBaseName();
+    }
+    return prefix;
 }
 
 
