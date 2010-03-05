@@ -340,8 +340,6 @@ configuration options (see \ref{section:ConfigFileFFT}).
 \end{itemize}
 
 
-\newpage
-
 \subsubsection{Multithreading vs. Multiple Processes}
 \label{section:MultithreadingMultiprocessing}
 
@@ -350,8 +348,8 @@ configuration options (see \ref{section:ConfigFileFFT}).
   simultaneously from one single instance of the separation tool (in this case,
   only one \emph{user process} is created by the operating system), starting
   multiple concurrent instances of the separation tool (and hence multiple user
-  processes) will lead to errors, as the integrated SQLite database can
-  only be accessed by one user process at a time.
+  processes) can lead to errors, as the integrated SQLite database can
+  only be written by one user process at a time.
 \end{leftbar}
 
 
@@ -365,6 +363,12 @@ components and saves them into the database.
 \begin{itemize}
   \item {\tt -h}, {\tt --help} -- only display information about command line
     parameters.
+  \item {\tt -A}, {\tt --echo} -- print the base name of the application binary
+    and its named command line options in long format, with their parameters if 
+    given, before executing.
+  \item {\tt -C}, {\tt --config=<filename>} -- use the specified configuration
+    file (properties format) instead of the default one. See section 
+    \ref{section:ConfigFiles} for details.
   \item {\tt -a}, {\tt --all} -- performs feature extraction for all
     components whose data is available.
   \item {\tt -p<id>}, {\tt --process=<id>} -- performs feature extraction on
@@ -393,6 +397,12 @@ a data set given by a response.
 \begin{itemize}
   \item {\tt -h}, {\tt --help} -- displays information about command line
     parameters.
+  \item {\tt -A}, {\tt --echo} -- print the base name of the application binary
+    and its named command line options in long format, with their parameters if 
+    given, before executing.
+  \item {\tt -C}, {\tt --config=<filename>} -- use the specified configuration
+    file (properties format) instead of the default one. See section 
+    \ref{section:ConfigFiles} for details.
   \item {\tt -r<id>}, {\tt --response=<id>} -- gives a response ID. All
     classification objects that are assigned a label in this response are
     validated.
@@ -455,7 +465,8 @@ classification are read from the configuration file (see section
 
 \subsection{Export Tool}
 
-The export tool ({\tt export}) exports objects in the storage to a file.
+The export tool ({\tt export}) exports objects (usually NMF components)
+in the storage to a file.
 HTK or Gnuplot output format can be selected.
 
 \noindent The following options can be specified on the command line:
@@ -467,7 +478,7 @@ HTK or Gnuplot output format can be selected.
     associated with the given process IDs. Single process IDs or ranges 
     ({\tt x..y}) can be given and must be separated with commata.
   \item {\tt -f<format>}, {\tt --format=<format>} -- selects an output format.
-    Must be one of ``htk`` or ``gnuplot''.
+    Must be one of ``htk`` or ``gnuplot''. Default is ``htk''.
   \item {\tt -c}, {\tt --concat} -- concatenates data descriptors of the same
   type, so that only one output file per type is generated.
   The type of concatenation (column- or row-wise) depends on the type of
@@ -490,6 +501,27 @@ HTK or Gnuplot output format can be selected.
 \end{itemize}
 
 
+\subsubsection{Usage Example}
+
+{\tt export -p17 -fgnuplot -tgains -c}\\
+Exports the gains vectors created in
+process 17 and concatenates them. The output (in this case a gains matrix) 
+is written to a file in Gnuplot format.
+
+
+\subsection{Audio Export Tool}
+
+In contrast to the export tool, the audio export tool ({\tt exportaudio})
+exports objects (usually NMF components) in the storage to an audio file.
+\noindent The following options can be specified on the command line:
+\begin{itemize}
+  \item {\tt -h}, {\tt --help} -- displays usage information.
+  \item {\tt -o<id1>[..<id2>]}, {\tt --object-id=<id1>[..<id2>]}
+    -- selects the objects to export. Single IDs or ranges of IDs can be given.
+    This option can be repeated to export multiple objects or ranges.
+\end{itemize}
+
+
 \subsection{Cleanup Tool}
 
 Because openBliSSART stores binary data in a filesystem directory which is
@@ -500,6 +532,9 @@ descriptor referencing them.
 The purpose of the cleanup tool ({\tt cleanup}) is to purge the storage
 directory of these files. After execution, it displays the number of files that
 have been deleted.
+
+The {\tt -s} or {\tt --simulate} option can be used if no deletions should
+be performed, but just the number of ``orphaned'' files should be printed.
 
 
 \subsection{Browser}
@@ -780,9 +815,11 @@ parameters to the separation tool.
 \label{section:ConfigFileFFT}
 
 Options for the short-time Fourier transformation can be specified in the
-configuration file {\tt blissart.properties}. These can be overridden in the
-``Import audio'' dialog of the browser, as well as by passing the orresponding
-command line parameters to the separation tool.
+configuration file {\tt blissart.properties}. Some of these can be overridden in the
+``Import audio'' dialog of the browser, as well as by passing the corresponding
+command line parameters to the separation tool. In addition, the short-time
+Fourier spectrograms can be transformed in various ways, as will be explained
+below.
 
 \begin{itemize}
   \item {\tt blissart.fft.windowfunction} (string): See the {\tt
@@ -793,9 +830,53 @@ command line parameters to the separation tool.
     the separation tool.
   \item {\tt blissart.fft.zeropadding} (boolean): See the {\tt --zero-padding}
     option of the separation tool.
+  \item {\tt blissart.fft.transformations.powerSpectrum}: 
+        If set to {\tt true}, converts the spectrum to the power spectrum (default: square).
+  \item {\tt blissart.fft.transformations.powerSpectrum.gamma}: 
+        The exponent for the power spectrum (default 2.0).
+  \item {\tt blissart.fft.transformations.melFilter}: 
+        If set to {\tt true}, applies a Mel filterbank to the spectrogram.
+        The number of Mel bands is controlled by the
+        {\tt blissart.global.mel\_bands} global option.
+  \item {\tt blissart.fft.transformations.slidingWindow}: 
+        If set to {\tt true}, applies a `sliding window' to the spectrogram, i.\,e.\ multiple
+        columns (frames) are concatenated into a single column.
+  \item {\tt blissart.fft.transformations.slidingWindow.frameSize}: 
+        The `frame size' for the sliding window transformation, i.\,e.\ the
+        number of columns to concatenate for each output column. Default is 10.
+  \item {\tt blissart.fft.transformations.slidingWindow.frameRate}: 
+        The `frame rate' for the sliding window transformation, i.\,e.\ the
+        number of columns to skip between subsequent concatenations.
 \end{itemize}
  
   
+\subsubsection{Separation}
+
+Options for the separation process can be specified in the
+configuration file {\tt blissart.properties}.
+
+\begin{itemize}
+  \item {\tt blissart.separation.notificationSteps}:
+        The number of iteration steps after which a notification is generated,
+        i.\,e.\ the progress bar is updated in the septool and Browser
+        applications. Default ist 25. Setting this number to a low value may
+        result in performance loss for small input files, whereas raising it
+        to a high value prevents any progress begin seen over long periods of
+        time.
+  \item {\tt blissart.separation.export.format}:
+        One of ``bin'', ``htk'' or ``gnu'' for BliSSART binary matrix format,
+        HTK format or Gnuplot format, respectively. This option has an effect
+        on the separation tool with the {\tt --export-matrices} option enabled.
+  \item {\tt blissart.separation.storage.phasematrix}:
+        {\tt true} (default) if the separation tool should store the phase
+        matrix of the original signal, {\tt false} otherwise.
+  \item {\tt blissart.separation.storage.magnitudematrix}:
+        {\tt true} if the separation tool should store the magnitude
+        matrix of the original signal, {\tt false} otherwise (default).
+        Usually this option should be disabled.
+\end{itemize}
+
+
 \subsubsection{Feature Extraction}
 \label{section:ConfigFileFex}
 
