@@ -31,12 +31,10 @@ SUBDIRS = LibLinAlg \
           Testsuite \
           benchmark \
 		  septool \
-          nmdtool \
           browser \
           cvtool \
           fextool \
           icatool \
-		  labeller \
           cleanup \
           export \
           exportaudio \

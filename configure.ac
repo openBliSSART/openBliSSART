@@ -108,8 +108,6 @@ AC_CONFIG_FILES([Makefile
                  src/icatool/Makefile
                  src/include/Makefile
                  src/septool/Makefile
-                 src/nmdtool/Makefile
-                 src/labeller/Makefile
                  src/export/Makefile
                  src/exportaudio/Makefile
                  src/cleanup/Makefile
