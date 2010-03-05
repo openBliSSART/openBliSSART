@@ -18,6 +18,13 @@ configure
 d2u.sh
 doc/Makefile
 doc/Makefile.in
+doc/manual/*.aux
+doc/manual/*.bbl
+doc/manual/*.blg
+doc/manual/*.log
+doc/manual/*.out
+doc/manual/*.pdf
+doc/manual/*.toc
 libtool
 m4/*.m4
 mmd.sh
