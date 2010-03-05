@@ -1,7 +1,7 @@
 //
 // This file is part of openBliSSART.
 //
-// Copyright (c) 2007-2009, Alexander Lehmann <lehmanna@in.tum.de>
+// Copyright (c) 2007-2010, Alexander Lehmann <lehmanna@in.tum.de>
 //                          Felix Weninger <felix@weninger.de>
 //                          Bjoern Schuller <schuller@tum.de>
 //
