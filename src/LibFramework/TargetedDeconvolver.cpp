@@ -97,9 +97,7 @@ TargetedDeconvolver::buildW(const vector<ClassificationObjectPtr>& clObjs)
         for (vector<DataDescriptorPtr>::const_iterator dItr = dds.begin();
              dItr != dds.end(); ++dItr)
         {
-            if ((*dItr)->type == DataDescriptor::Spectrum ||
-                (*dItr)->type == DataDescriptor::MelSpectrum)
-            {
+            if ((*dItr)->type == DataDescriptor::Spectrum) {
                 spectrum = 
                     new Matrix(sts.getLocation(*dItr).toString());
             }

@@ -160,16 +160,13 @@ FeatureExtractor::extract(DataDescriptor::Type type, const Matrix &data)
     } // Spectrum
 
     if (type == DataDescriptor::Spectrum ||
-        type == DataDescriptor::MagnitudeMatrix || 
-        type == DataDescriptor::MelMatrix) 
+        type == DataDescriptor::MagnitudeMatrix)
     {
         string typeName;
         if (type == DataDescriptor::Spectrum)
             typeName = "spectrum";
         else if (type == DataDescriptor::MagnitudeMatrix)
             typeName = "magnitudematrix";
-        else if (type == DataDescriptor::MelMatrix)
-            typeName = "melmatrix";
 
         // MFCC, delta and delta-delta (_A_cceleration)
         Poco::SharedPtr<Matrix> cepstrogram, cepstrogramD, cepstrogramA;
@@ -330,156 +327,9 @@ FeatureExtractor::extract(DataDescriptor::Type type, const Matrix &data)
             }
         }
 
-        // NMD gain
-        if (type != DataDescriptor::Spectrum &&
-            config.getBool("blissart.features." + typeName + ".nmd_gain", false)) 
-        {
-            int responseID = config.getInt(
-                "blissart.features." + typeName + ".nmd_gain.response");
-            int nIterations = config.getInt(
-                "blissart.features." + typeName + ".nmd_gain.iterations", 200);
-            // XXX: Use parameter "# noise components" instead?
-            unsigned int nComponents = config.getInt(
-                "blissart.features." + typeName + ".nmd_gain.components", 0);
-            bool allComponents = config.getBool(
-                "blissart.features." + typeName + ".nmd_gain.allcomponents", false);
-            bool sumByLabel = config.getBool(
-                "blissart.features." + typeName + ".nmd_gain.sumbylabel", false);
-            string cfName = config.getString(
-                "blissart.features." + typeName + ".nmd_gain.costfunction", "div");
-            computeNMDGain(result, data, responseID, cfName, 
-                nComponents, allComponents, sumByLabel, nIterations, type);
-        }
-    
-    } // type == Spectrum || type == MagnitudeMatrix || 
-      // type == DataDescriptor::MelMatrix
+    } // type == Spectrum || type == MagnitudeMatrix
 
     return result;
-}
-
-
-void
-FeatureExtractor::computeNMDGain(FeatureExtractor::FeatureMap& target, 
-                                 const Matrix& data,
-                                 int responseID, const string& cfName,
-                                 int nComponents, bool allComponents,
-                                 bool sumByLabel,
-                                 int nIterations,
-                                 DataDescriptor::Type type)
-{
-    DatabaseSubsystem& dbs = BasicApplication::instance().
-        getSubsystem<DatabaseSubsystem>();
-    ResponsePtr response = dbs.getResponse(responseID);
-    if (response.isNull()) {
-        throw Poco::InvalidArgumentException("Invalid response ID: " +
-            Poco::NumberFormatter::format(responseID));
-    }
-
-    vector<int> nmdObjectIDs;
-    for (Response::LabelMap::const_iterator itr = response->labels.begin();
-        itr != response->labels.end(); ++itr)
-    {
-        nmdObjectIDs.push_back(itr->first);
-    }
-
-    if (nComponents == 0) {
-        nComponents = (unsigned int) nmdObjectIDs.size();
-    }
-
-    TargetedDeconvolver d(data, nComponents, nmdObjectIDs);
-
-    // All components initialized => keep whole W matrix constant
-    if ((unsigned int)nComponents == nmdObjectIDs.size()) {
-        d.keepWConstant(true);
-    }
-    // Some components randomized => only keep corresponding W cols constant
-    else {
-        for (unsigned int c = 0; c < nmdObjectIDs.size(); ++c) {
-            d.keepWColumnConstant(c, true);
-        }
-    }
-
-    if (cfName.substr(0, 3) == "div") {
-        d.decompose(TargetedDeconvolver::KLDivergence, nIterations, 0);
-    }
-    else if (cfName.substr(0, 4) == "dist") {
-        d.decompose(TargetedDeconvolver::EuclideanDistance, nIterations, 0);
-    }
-    else {
-        throw Poco::InvalidArgumentException("Invalid cost function: " +
-            cfName);
-    }
-
-    const Matrix& h = d.getH();
-
-    double totalLength = 0.0;
-    unsigned int relevantComponents = allComponents ? 
-                                      nComponents : 
-                                      nmdObjectIDs.size();
-    
-    if (sumByLabel) {
-        map<int, double> lengthByLabel;
-        unsigned int compIndex = 0;
-        for (vector<int>::const_iterator itr = nmdObjectIDs.begin();
-            itr != nmdObjectIDs.end(); ++itr, ++compIndex) 
-        {
-            double l = h.nthRow(compIndex).length();
-            lengthByLabel[response->labels[*itr]] += l;
-            totalLength += l;
-        }
-        // Initialized components
-        for (map<int, double>::const_iterator itr = lengthByLabel.begin();
-            itr != lengthByLabel.end(); ++itr)
-        {
-            // XXX: Here the feature name differs from the configuration
-            // option name.
-            target[FeatureDescriptor("nmd_gain_label", type,
-                responseID, nComponents, itr->first)] = 
-                itr->second / totalLength;
-        }
-        // Uninitialized components (label 0)
-        if (compIndex < relevantComponents) {
-            double otherLength = 0.0;
-            while (compIndex < relevantComponents) {
-                double l = h.nthRow(compIndex).length();
-                otherLength += l;
-                totalLength += l;
-                ++compIndex;
-            }
-            target[FeatureDescriptor("nmd_gain_label", type,
-                responseID, nComponents, 0)] = 
-                otherLength / totalLength;
-        }
-    }
-
-    else {
-        vector<double> lengths(nComponents);
-        unsigned int compIndex = 0;
-        for (; compIndex < h.rows(); ++compIndex) {
-            double l = h.nthRow(compIndex).length();
-            lengths[compIndex] = l;
-            //if (compIndex < nmdObjectIDs.size()) {
-                totalLength += l;
-            //}
-        }
-        compIndex = 0;
-        for (vector<int>::const_iterator itr = nmdObjectIDs.begin();
-            itr != nmdObjectIDs.end(); ++itr, ++compIndex) 
-        {
-            // TODO: Include iterations parameter
-            target[FeatureDescriptor("nmd_gain", type,
-                responseID, nComponents, *itr)] = 
-                lengths[compIndex] / totalLength;
-        }
-        // Gains from uninitialized components have the negative component index 
-        // as parameter.
-        while (compIndex < relevantComponents) {
-            target[FeatureDescriptor("nmd_gain", type,
-                responseID, nComponents, -((double)compIndex + 1))] = 
-                lengths[compIndex] / totalLength;
-            ++compIndex;
-        }
-    }
 }
 
 

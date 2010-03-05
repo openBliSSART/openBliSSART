@@ -61,12 +61,10 @@ public:
         addSubsystem(new DatabaseSubsystem);
         addSubsystem(new StorageSubsystem);
         _types[0] = DataDescriptor::Spectrum;
-        _types[1] = DataDescriptor::MelSpectrum;
-        _types[2] = DataDescriptor::Gains;
-        _types[3] = DataDescriptor::MagnitudeMatrix;
-        _types[4] = DataDescriptor::MelMatrix;
-        _types[5] = DataDescriptor::PhaseMatrix;
-        _types[6] = DataDescriptor::FeatureMatrix;
+        _types[1] = DataDescriptor::Gains;
+        _types[2] = DataDescriptor::MagnitudeMatrix;
+        _types[3] = DataDescriptor::PhaseMatrix;
+        _types[4] = DataDescriptor::FeatureMatrix;
     }
 
 
@@ -436,7 +434,7 @@ private:
     string               _targetDir;
     bool                 _addType;
 
-    static const unsigned int _nTypes = 7;
+    static const unsigned int _nTypes = 5;
     DataDescriptor::Type _types[_nTypes];
 };
 

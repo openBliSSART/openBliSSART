@@ -136,8 +136,7 @@ void FeatureExtractionTask::extract(const DataDescriptorPtr descr)
         features = _featureExtractor.extract(descr->type, data);
     }
     else if (DataDescriptor::Spectrum == descr->type ||
-        DataDescriptor::MagnitudeMatrix == descr->type || 
-        DataDescriptor::MelMatrix == descr->type) 
+        DataDescriptor::MagnitudeMatrix == descr->type)
     {
         _featureExtractor.setSampleFrequency(process->sampleFreq);
         Matrix data(_storage.getLocation(descr).toString());

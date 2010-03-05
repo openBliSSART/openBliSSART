@@ -141,9 +141,6 @@ bool FeatureDescriptor::isValidFeature(const std::string& name,
         "stddev_mfcc",
         "stddev_mfccD",
         "stddev_mfccA",
-        // TODO: remove this before release
-        "nmd_gain",
-        "nmd_gain_label",
         0
     };
     const char* validNamesGains[] = {
@@ -165,8 +162,6 @@ bool FeatureDescriptor::isValidFeature(const std::string& name,
             }
             break;
         case DataDescriptor::MagnitudeMatrix:
-            // fallthrough
-        case DataDescriptor::MelMatrix:
             for (const char** str = validNamesMagn; *str != 0; ++str) {
                 if (name == *str)
                     return true;

@@ -87,17 +87,6 @@ public:
     void setGainsFrequency(double freq);
 
 private:
-    /** 
-     * Computes the length of the rows of the gains matrix of a NMD of the 
-     * given Matrix which is initialized with a response.
-     * This method is not in LibFeature, since it depends on the database
-     * and would thus make LibFeature depend on LibFramework.
-     */
-    void computeNMDGain(FeatureMap& target, const linalg::Matrix& data,
-        int responseID, const std::string& costf, int nComponents, 
-        bool allComponents, bool sumByLabel,
-        int nIterations, DataDescriptor::Type type);
-
     double     _sampleFreq;
     double     _gainsFreq;
 };

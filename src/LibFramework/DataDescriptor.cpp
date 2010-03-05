@@ -63,17 +63,11 @@ std::string DataDescriptor::strForType(DataDescriptor::Type type)
     case MagnitudeMatrix:
         return "Magnitude Matrix";
         break;
-    case MelMatrix:
-        return "Mel spectrogram";
-        break;
     case PhaseMatrix:
         return "Phase Matrix";
         break;
     case Spectrum:
         return "Spectrum";
-        break;
-    case MelSpectrum:
-        return "Mel spectrum";
         break;
     case Gains:
         return "Gains";
@@ -94,17 +88,11 @@ std::string DataDescriptor::strForTypeShort(DataDescriptor::Type type)
     case MagnitudeMatrix:
         return "mmatr";
         break;
-    case MelMatrix:
-        return "melma";
-        break;
     case PhaseMatrix:
         return "phase";
         break;
     case Spectrum:
         return "spect";
-        break;
-    case MelSpectrum:
-        return "melsp";
         break;
     case Gains:
         return "gains";
