@@ -60,13 +60,15 @@ CreateProcessDialog::CreateProcessDialog(QWidget *parent) :
     _ui.cbCostFunction->setCurrentIndex(
             config.getInt("browser.processCreation.costFunction", 0));
     _ui.sbWindowSize->setValue(
-            config.getInt("browser.processCreation.windowSizeMS", 30));
+            config.getInt("browser.processCreation.windowSizeMS", 25));
     _ui.dsbOverlap->setValue(
             config.getDouble("browser.processCreation.overlap", 0.5));
     _ui.sbNumComponents->setValue(
-            config.getInt("browser.processCreation.numComponents", 30));
+            config.getInt("browser.processCreation.numComponents", 20));
+    _ui.sbNumSpectra->setValue(
+            config.getInt("browser.processCreation.numSpectra", 1));
     _ui.sbMaxIterations->setValue(
-            config.getInt("browser.processCreation.maxIterations", 500));
+            config.getInt("browser.processCreation.maxIterations", 100));
     _ui.sbNumThreads->setValue(
             config.getInt("browser.processCreation.numThreads", 1));
 

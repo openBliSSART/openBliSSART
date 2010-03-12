@@ -125,6 +125,23 @@ void PreferencesDlg::getConfig()
 {
     LayeredConfiguration &config = BasicApplication::instance().config();
 
+    // Assign some default values where the "guessing" method in the next 
+    // loop is not appropriate.
+    if (!config.hasProperty("browser.processCreation.overlap")) {
+        config.setDouble("browser.processCreation.overlap",
+            config.getDouble("blissart.fft.overlap", 0.5));
+    }
+    if (!config.hasProperty("browser.processCreation.windowSizeMS")) {
+        config.setInt("browser.processCreation.windowSizeMS",
+            config.getDouble("blissart.fft.windowsize", 25));
+    }
+    if (!config.hasProperty("browser.processCreation.numComponents")) {
+        config.setInt("browser.processCreation.numComponents", 20);
+    }
+    if (!config.hasProperty("browser.processCreation.maxIterations")) {
+        config.setInt("browser.processCreation.maxIterations", 100);
+    }
+
     // Iterate over the _configMap and set the widgets' values to whatever the
     // configuration says depending on the respective widget type.
     QMutableMapIterator<QWidget *, const char *> kvp(_configMap);
