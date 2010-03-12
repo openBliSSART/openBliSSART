@@ -69,7 +69,7 @@ FTTask::FTTask(const std::string& typeIdentifier,
         BasicApplication::instance().config();
     _windowFunction = windowFunctionForShortName(
         cfg.getString("blissart.fft.windowfunction", "sqhann"));
-    _windowSize = cfg.getInt("blissart.fft.windowsize");
+    _windowSize = cfg.getInt("blissart.fft.windowsize", 25);
     _overlap = cfg.getDouble("blissart.fft.overlap", 0.5);
     _preemphasisCoeff = cfg.getDouble("blissart.audio.preemphasis", 0.0);
     _zeroPadding = cfg.getBool("blissart.fft.zeropadding", false);

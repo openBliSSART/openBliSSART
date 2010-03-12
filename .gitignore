@@ -25,6 +25,7 @@ doc/manual/*.log
 doc/manual/*.out
 doc/manual/*.pdf
 doc/manual/*.toc
+doc/html
 libtool
 m4/*.m4
 mmd.sh
