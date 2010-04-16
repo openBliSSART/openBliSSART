@@ -33,6 +33,7 @@
 #include <blissart/GnuplotWriter.h>
 #include <blissart/HTKWriter.h>
 #include <blissart/transforms/MelFilterTransform.h>
+#include <blissart/nmf/randomGenerator.h>
 
 #include <blissart/linalg/ColVector.h>
 #include <blissart/linalg/RowVector.h>
@@ -67,6 +68,8 @@ SeparationTask::SeparationTask(const SeparationMethod sepMethod,
     _separationMethod(sepMethod),
     _nrOfComponents(nrOfComponents),
     _nrOfSpectra(nrOfSpectra),
+    _constantInitializedComponentsSpectra(true),
+    _genFunc(nmf::gaussianRandomGenerator),
     _maxIterations(maxIterations),
     _epsilon(epsilon),
     _isVolatile(isVolatile),

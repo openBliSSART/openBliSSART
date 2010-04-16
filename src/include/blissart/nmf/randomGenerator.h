@@ -65,7 +65,7 @@ inline double unityGenerator(unsigned int, unsigned int)
 /**
  * Returns a textual description of the given random generator function.
  */
-const char* LibNMF_API 
+LibNMF_API const char* 
 randomGeneratorName(linalg::Matrix::GeneratorFunction gf);
 
 
@@ -73,7 +73,7 @@ randomGeneratorName(linalg::Matrix::GeneratorFunction gf);
  * Returns a pointer to the generator function with the given name
  * (one of "unity", "gaussian", "random").
  */
-linalg::Matrix::GeneratorFunction LibNMF_API
+LibNMF_API linalg::Matrix::GeneratorFunction 
 randomGeneratorForName(const std::string& name);
 
 

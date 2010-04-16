@@ -151,9 +151,7 @@ void ClassificationTask::runTask()
         logger().fatal(msg.str());
         throw Poco::RuntimeException(msg.str());
     }
-    logger().information("hallo1");
     DataSet trainingSet = dbs.getDataSet(response, FeatureSet::getStandardSet());
-    logger().information("hallo2");
     string scalingMethod = app.config().
         getString("blissart.classification.scaling.method", "minmax");
     if (scalingMethod == "minmax" || scalingMethod == "musigma") {
@@ -249,7 +247,6 @@ void ClassificationTask::exportAsWav()
 
 void ClassificationTask::createDataSet()
 {
-    logger().information("cds1");
     _dataSet.clear();
     for (unsigned int i = 0; i < _componentSpectrograms.size(); ++i) {
         DataPoint dp;
@@ -262,7 +259,6 @@ void ClassificationTask::createDataSet()
         dp.components.insert(features.begin(), features.end());
         _dataSet.push_back(dp);
     }
-    logger().information("cds2");
 }
 
 

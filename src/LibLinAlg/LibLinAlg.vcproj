@@ -116,7 +116,7 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories="$(SolutionDir)\src\include"
-				PreprocessorDefinitions="BUILD_LIBLINALG;HAVE_MATLAB"
+				PreprocessorDefinitions="BUILD_LIBLINALG;HAVE_CBLAS_H"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="false"
 				EnableEnhancedInstructionSet="2"

@@ -68,6 +68,7 @@ const char* randomGeneratorName(linalg::Matrix::GeneratorFunction gf)
         return "gaussian";
     if (gf == uniformRandomGenerator)
         return "uniform";
+    throw std::runtime_error("randomGeneratorName: invalid generator function");
 }
 
 
@@ -79,6 +80,7 @@ linalg::Matrix::GeneratorFunction randomGeneratorForName(const std::string& name
         return gaussianRandomGenerator;
     if (name == "uniform")
         return uniformRandomGenerator;
+    throw std::runtime_error("randomGeneratorForName: invalid name: " + name);
 }
 
 
