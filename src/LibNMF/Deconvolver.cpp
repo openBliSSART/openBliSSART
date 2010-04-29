@@ -183,6 +183,9 @@ void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
         }
         factorizeNMFEDSparseNorm(maxSteps, eps, observer);
     }
+    else {
+        throw std::runtime_error("Invalid cost function");
+    }
 
     // Perform post-processing if desired.
     if (_normalizeMatrices)

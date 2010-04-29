@@ -9,7 +9,7 @@ similar to the drum beat separation procedure presented in
 \cite{Schuller2009}.
 
 
-\subsection{Creating a data set}
+\section{Creating a data set}
 
 In the first step, we will create a data set containing components from speech
 and music signals. For this purpose, we will use the ``Browser'' GUI application
@@ -26,7 +26,7 @@ The right hand side of the browser window is used to display and edit the
 database objects you have selected in the tree view.
 
 
-\subsubsection{Importing audio files}
+\section{Importing audio files}
 
 To start with, we will now import audio files and separate them into components
 using non-negative matrix factorization (NMF).
@@ -64,7 +64,7 @@ of each class (speech and music) you have imported as this will simplify the
 next step.
 
 
-\subsubsection{Defining classes}
+\section{Defining classes}
 
 Having imported the neccessary audio files, we will now define the two classes
 ``Speech'' and ``Music'' by creating two corresponding labels. Click the
@@ -130,7 +130,7 @@ Repeat the above procedure for the remaining components, yet this time assign
 the label ``Speech''.
 
 
-\subsubsection{Feature extraction}
+\subsection{Feature extraction}
 
 The next step towards creating a data set is to extract features from the
 created components. Again, this is very simple: Just select ``Extract features
@@ -160,7 +160,7 @@ discussed in \cite{Schuller2009}.
 \end{figure}
 
 
-\subsubsection{Defining a response}
+\subsection{Defining a response}
 
 Eventually we will have to feed the extracted features to a support vector
 machine (SVM). To this end, we create a response variable from all components we
@@ -187,7 +187,7 @@ response should look like in figure \ref{figure:TutorialEditResponse}.
 \end{figure}
 
 
-\subsection{Cross-validation}
+\section{Cross-validation}
 
 To assess the quality of the response we have just defined, we might perform a
 stratified 10-fold cross validation. Currently this function is not accessible
@@ -208,7 +208,7 @@ The cross-validation tool should output something like this:
 \verbatiminput{tutorial-media/crossvalidation.txt}
 
 
-\subsection{Using a response for blind source separation}
+\section{Using a response for blind source separation}
 
 Finally, we are now able to separate audio files into their music and speech
 parts by means of the response that we have created.\\

@@ -26,6 +26,7 @@
 #include <blissart/nmf/randomGenerator.h>
 #include <cmath>
 #include <string>
+#include <stdexcept>
 
 
 namespace blissart {
