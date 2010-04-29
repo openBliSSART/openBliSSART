@@ -30,6 +30,7 @@
 #include <Poco/Exception.h>
 #include <Poco/Util/LayeredConfiguration.h>
 #include <Poco/NumberFormatter.h>
+#include <iostream>
 
 
 using Poco::Util::LayeredConfiguration;
@@ -163,13 +164,13 @@ FeatureSet FeatureSet::getStandardSet()
         config.getBool("blissart.global.mfcc.mfcc0", true) ? 0 : 1;
 
     // Features for component spectra.
-    if (config.getBool("blissart.features.spectrum.stddev", true))
+    if (config.getBool("blissart.features.spectrum.stddev", false))
         fs.add(FeatureDescriptor("stddev", DataDescriptor::Spectrum));
-    if (config.getBool("blissart.features.spectrum.centroid", true))
+    if (config.getBool("blissart.features.spectrum.centroid", false))
         fs.add(FeatureDescriptor("centroid", DataDescriptor::Spectrum));
-    if (config.getBool("blissart.features.spectrum.rolloff", true))
+    if (config.getBool("blissart.features.spectrum.rolloff", false))
         fs.add(FeatureDescriptor("rolloff", DataDescriptor::Spectrum));
-    if (config.getBool("blissart.features.spectrum.noiselikeness", true)) {
+    if (config.getBool("blissart.features.spectrum.noiselikeness", false)) {
         fs.add(FeatureDescriptor("noise-likeness", DataDescriptor::Spectrum,
             config.getDouble("blissart.features.spectrum.noiselikeness.sigma", 5.0)));
     }
@@ -211,33 +212,35 @@ FeatureSet FeatureSet::getStandardSet()
         string typeName(*str);
         int nFrames = std::max<int>(1, 
             config.getInt("blissart.features." + typeName + ".mfcc.frame_count", 5));
+        bool isSpectrum = *matrixType == DataDescriptor::Spectrum;
         for (int i = firstMFCC; i < nMFCC; ++i) {
             for (int f = 0; f < nFrames; ++f) {
-                if (config.getBool("blissart.features." + typeName + ".mfcc", true)) {
+                if (config.getBool("blissart.features." + typeName + ".mfcc", !isSpectrum)) {
                     fs.add(FeatureDescriptor("mfcc", *matrixType, i, nFrames, f));
                 }
-                if (config.getBool("blissart.features." + typeName + ".mfccD", true)) {
+                if (config.getBool("blissart.features." + typeName + ".mfccD", !isSpectrum)) {
                     fs.add(FeatureDescriptor("mfccD", *matrixType, i, nFrames, f));
                 }
-                if (config.getBool("blissart.features." + typeName + ".mfccA", true)) {
+                if (config.getBool("blissart.features." + typeName + ".mfccA", !isSpectrum)) {
                     fs.add(FeatureDescriptor("mfccA", *matrixType, i, nFrames, f));
                 }
             }
             if (config.getBool("blissart.features." + typeName + ".mean_mfcc", true)) {
                 fs.add(FeatureDescriptor("mean_mfcc", *matrixType, i));
-                if (config.getBool("blissart.features." + typeName + ".mfccD", true)) {
+                if (config.getBool("blissart.features." + typeName + ".mean_mfccD", !isSpectrum)) {
                     fs.add(FeatureDescriptor("mean_mfccD", *matrixType, i));
                 }
-                if (config.getBool("blissart.features." + typeName + ".mfccA", true)) {
+                if (config.getBool("blissart.features." + typeName + ".mean_mfccA", !isSpectrum)) {
                     fs.add(FeatureDescriptor("mean_mfccA", *matrixType, i));
+                    //cout << *str << endl;
                 }
             }
-            if (config.getBool("blissart.features." + typeName + ".stddev_mfcc", true)) {
+            if (config.getBool("blissart.features." + typeName + ".stddev_mfcc", !isSpectrum)) {
                 fs.add(FeatureDescriptor("stddev_mfcc", *matrixType, i));
-                if (config.getBool("blissart.features." + typeName + ".mfccD", true)) {
+                if (config.getBool("blissart.features." + typeName + ".stddev_mfccD", !isSpectrum)) {
                     fs.add(FeatureDescriptor("stddev_mfccD", *matrixType, i));
                 }
-                if (config.getBool("blissart.features." + typeName + ".mfccA", true)) {
+                if (config.getBool("blissart.features." + typeName + ".stddev_mfccA", !isSpectrum)) {
                     fs.add(FeatureDescriptor("stddev_mfccA", *matrixType, i));
                 }
             }
