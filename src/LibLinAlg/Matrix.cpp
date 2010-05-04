@@ -41,6 +41,12 @@
 #endif
 
 #ifdef HAVE_CBLAS_H
+#    ifdef _WIN32
+#        pragma comment(lib, "liblapack.lib")
+#        pragma comment(lib, "libcblas.lib")
+#        pragma comment(lib, "libf77blas.lib")
+#        pragma comment(lib, "libatlas.lib")
+#    endif
 extern "C" {
 #include <cblas.h>
 }

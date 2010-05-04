@@ -41,7 +41,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(SolutionDir)\src\include"
-				PreprocessorDefinitions="BUILD_LIBLINALG;HAVE_MATLAB"
+				PreprocessorDefinitions="BUILD_LIBLINALG;HAVE_CBLAS_H"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -59,7 +59,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="liblapack.lib libcblas.lib libf77blas.lib libatlas.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
 				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
@@ -134,7 +133,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="liblapack.lib libcblas.lib libf77blas.lib libatlas.lib"
 				OutputFile="$(OutDir)\$(ProjectName).dll"
 				GenerateDebugInformation="false"
 				OptimizeReferences="2"

@@ -6,7 +6,11 @@ Felix Weninger <weninger@tum.de>
 Alexander Lehmann <lehmanna@in.tum.de>
 
 
-These instructions cover the compilation and installation of openBliSSART on various platforms. For compilation under Unix-like systems, we provide a configure script (GNU autotools). For Microsoft Windows, we prepared Visual Studio 2008 solution files.
+These instructions cover the compilation and installation of openBliSSART on
+various platforms. 
+For compilation under Unix-like systems, we provide a configure script (GNU
+autotools). 
+For Microsoft Windows, we prepared Visual Studio 2008 solution files.
 
 
 1. Install the required libraries
@@ -14,10 +18,14 @@ These instructions cover the compilation and installation of openBliSSART on var
 openBliSSART requires several open source libraries to run. These include:
 - FFTW3 (Fastest Fourier Transform in the West) 
 - SDL (>= 1.2.12) and SDL_sound for audio processing
-- Poco (Portable Components) >= 1.3.6 for a general-purpose application framework and database access (bundled with SQLite)
+- Poco (Portable Components) Complete Edition >= 1.3.6 for a general-purpose application framework and database access (bundled with SQLite)
 - Qt (>= 4.4.3) for the browser GUI
  
-Furthermore, for fast operation, installation of the ATLAS libraries is highly recommended, but is in fact optional. The following section will provide hints on how to install these libraries on popular Linux distributions (Section 1.1), as well as Microsoft Windows (Section 1.2). If you want to compile all libraries from source, check Section 1.3.
+Furthermore, for fast operation, installation of the ATLAS libraries is highly
+recommended, but is in fact optional. The following section will provide hints
+on how to install these libraries on popular Linux distributions (Section 1.1),
+as well as Microsoft Windows (Section 1.2). If you want to compile all
+libraries from source, check Section 1.3.
 
 
 1.1 Instructions for specific Linux distributions
@@ -27,7 +35,9 @@ TODO (Alex)
 
 1.1.2 openSUSE (>= 11.1)
 
-The following packages will provide the libraries required to compile and run openBliSSART, except Poco which you will have to compile from source (see Section 1.3.1.1):
+The following packages will provide the libraries required to compile and run
+openBliSSART, except Poco which you will have to compile from source (see
+Section 1.3.1.1):
 - fftw3
 - fftw3-devel
 - libqt4
@@ -39,39 +49,77 @@ The following packages will provide the libraries required to compile and run op
 - libatlas3 
 - libatlas3-devel
 
-You might also need the following GNU development tools packages in case you have not already installed them during installation of the SuSE distribution on your system:
+You might also need the following GNU development tools packages in case you
+have not already installed them during installation of the SuSE distribution on
+your system:
 - make
 - autoconf
 - automake
 - libtool
 
-The following instructions are specific to SuSE Linux 11.2. For SuSE 11.1, the steps might be slightly different.
+The following instructions are specific to openSUSE 11.2. For openSUSE 11.1, the
+steps might be slightly different.
 
-To install the packages, start the software installation component of YaST (check your SuSE documentation if you are unsure about YaST). Make sure that "Options / Show -devel packages" is enabled, otherwise you will not be able to see the development packages required for the building process. 
+A special note for users of openSUSE 11.0 32-bit: There have been problems
+reported with the libatlas3 version that comes with this distribution, causing
+program abort due to an illegal instruction on Pentium 4 systems. In this case
+you probably want to compile ATLAS yourself (see 
+http://math-atlas.sourceforge.net).
 
-Furthermore, the ATLAS libraries are not included on the SuSE DVD, hence they must be obtained from the Web (via "Configuration" / "Search packages on the web". Alternatively, specify the "Education" repository which can be found under the URL:
+To install the packages, start the software installation component of YaST
+(check your SuSE documentation if you are unsure about YaST). Make sure that
+"Options / Show -devel packages" is enabled, otherwise you will not be able to
+see the development packages required for the building process. 
+
+Furthermore, the ATLAS libraries are not included on the SuSE DVD, hence they
+must be obtained from the Web (via "Configuration" / "Search packages on the
+web". Alternatively, specify the "Education" repository which can be found
+under the URL:
 
     http://download.opensuse.org/repositories/Education/openSUSE_11.2
 
 by selecting "Configuration / Repositories / Add / Specify URL".
 
-There might be a significant number of dependent packages which are automatically selected by YaST. They might also include the C++ compiler if it has not yet been installed.
+There might be a significant number of dependent packages which are
+automatically selected by YaST. They might also include the C++ compiler if it
+has not yet been installed.
 
 
 1.2 Microsoft Windows
 
-Binaries and header files for the required libraries can be obtained from their project homepages:
+As the process of obtaining binaries for Windows is quite tedious, we provide a ZIP compressed archive that contains the required external libraries (binaries, export files, and header files) to build and run openBliSSART:
+
+	... (TODO: insert URL here)
+
+Furthermore, binaries and header files for most of the required libraries can
+be obtained from their project homepages:
 - FFTW: http://www.fftw.org/install/windows.html
-- SDL_sound: http://icculus.org/SDL_sound/downloads/sdl_sound_visualc_srcs.zip (this file also includes SDL libraries)
-- ATLAS: http://www.netlib.org/atlas/archives/windows/ - select the version appropriate for your processor architecture. These versions are old, but still work reasonably fast on any modern computer.
+- SDL: http://www.libsdl.org/download-1.2.php
+- SDL_sound: http://icculus.org/SDL_sound/downloads/sdl_sound_visualc_srcs.zip
+- ATLAS: http://www.netlib.org/atlas/archives/windows/ - select the version
+  that is most appropriate for your processor architecture. These versions are
+  old, but still work very well on any modern computer and OS.
+- Qt: http://qt.nokia.com/downloads
+TODO: How to make lib files from ATLAS?
 
-Note that precompiled Windows binaries for ATLAS and SDL are currently only available in 32-bit. The Poco project currently does _not_ provide binaries for Windows, but Poco can be compiled very easily with Visual Studio (see Section 1.3.1.2).
+Note that precompiled Windows binaries for ATLAS and SDL are currently only
+available in 32-bit. The Poco project currently does _not_ provide binaries for
+Windows, but Poco can be compiled very easily with Visual Studio (see Section
+1.3.1.2).
 
-After downloading (and possibly compiling) the Windows binaries and header files, it is recommended to copy all DLLs (*.dll), DLL export files (*.lib), and header files (*.h) to directories which you can easily locate (e.g. C:\devel\bin, C:\devel\lib and C:\devel\include). Then, you have to set some environment variables (assuming the aforementioned paths): 
+To facilitate configuration of the Visual Studio environment, it is recommended to create directories for the DLLs (*.dll), export files (*.lib), and header files (*.h) provided by these libraries, e.g.
+- C:\devel\bin for DLL files (*.dll),
+- C:\devel\lib for export files (*.lib), and
+- C:\devel\include for header files (*.h).
+For FFTW, you have to create the *.lib files yourself. To this end, start the Visual Studio command line from the "Visual Studio Tools" folder in the Start menu, change to the directory where you extracted the FFTW ZIP file and issue the following command.  
+
+Copy the respective files from FFTW, SDL, SDL_sound (located in the visualc\win32bin and visualc\win32lib) and ATLAS to these directories. The SDL include files should all be place in a directory "SDL" under the main include directory, e.g. "C:\devel\include\SDL".
+Next, you have to set some environment variables (assuming the above paths): 
 - add C:\devel\bin to the PATH variable
-- add C:\devel\lib to the "Library directories" in Visual Studio
-- add C:\devel\include to the "Include directories" in Visual Studio
-TODO: more precise
+- add C:\devel\lib to the "Library directories" in Visual Studio ("Tools" / 
+  "Options" / "Projects and Solutions" / "VC++ Directories")
+- add C:\devel\include to the "Include directories" in Visual Studio ("Tools" / 
+  "Options" / "Projects and Solutions" / "VC++ Directories")
 TODO: check English names for VS
 
 
@@ -85,23 +133,65 @@ Obtain the following source packages:
 - ATLAS from http://math-atlas.sourceforge.net/
 - Poco from http://www.pocoproject.org/download
 
-It is out of the scope of these installation instructions to provide detailed information about the configuration and compilation of all these packages, hence we restrict to some hints which might be useful for compiling Poco, as this library is currently not included e.g. in openSUSE.
+It is out of the scope of these installation instructions to provide detailed
+information about the configuration and compilation of all these packages,
+hence we restrict to some hints which might be useful for compiling Poco, as
+this library is currently not included e.g. in openSUSE.
 
 1.3.1 Compiling and Installing Poco
  
 1.3.1.1 Unix/Linux
-After extracting the Poco source archive, the configure script should be called with the following parameters:
+
+After extracting the Poco (Complete Edition) source archive, the configure script should be called
+with the following parameters:
  
     ./configure --omit=Crypto,NetSSL_OpenSSL,Data/ODBC,Data/MySQL \
                 --no-tests --no-samples
 
-This line avoids building the parts of Poco which would cause more dependencies to external libraries, and are not required for openBliSSART.
+This line avoids building the parts of Poco which are dependent on third-party
+libraries, and are not required for openBliSSART.
 
-Then, type "make" to compile and "make install" to install. If you are not logged in as root, try "sudo make install".
+Then, type "make" to compile and "make install" to install. If you are not
+logged in as root, try "sudo make install".
 
-1.3.1.2 Microsoft Windows (TODO)
+1.3.1.2 Microsoft Windows
 
-TODO: SDL instructions???
+After extracting the Poco Complete Edition from the ZIP file, open the file
+"components". To avoid building the parts of Poco which are dependent on
+third-party libraries, and are not required for openBliSSART, remove all lines but the following:
+
+CppUnit
+Foundation
+XML
+Util
+Data
+Data/SQLite
+
+Start the Visual Studio command line from the "Visual Studio Tools" folder in
+the Start menu. Change to the directory where the "components" file is located,
+and type "build_vs71" (Visual Studio .Net 2003), "build_vs80" (Visual Studio
+2005) or "build_vs90" (Visual Studio 2008). 
+
+After the build process has finished, copy the files from the "bin"
+directory to a directory that is part of your PATH environment variable, and
+the lib files from the "lib" directory to a directory which is listed in your
+Visual Studio Library Directories.
+
+Unfortunately, under Windows you have to install the Poco include files
+yourself. To this end, copy the "Poco" directory within the "include"
+subdirectories of each of the "Foundation", "Data", "Data\SQLite", and "Util"
+directories to a common path such as "C:\devel\include". Check that this 
+directory has the following subdirectories:
+
+C:\devel\include\Poco
+C:\devel\include\Poco\Data
+C:\devel\include\Poco\DataSQLite
+C:\devel\include\Poco\Util
+
+Then, add "C:\devel\include" (or whatever directory you choose) to your Visual
+Studio Include directories, in case it is not already there.
+
+XXX: SDL instructions???
 
 
 2. Configure, compile, and install openBliSSART
@@ -117,18 +207,37 @@ Keywords:
 
 2.2 Microsoft Windows (Visual Studio 2008)
 
-Ensure you have set the paths to external libraries in the Visual Studio environment correctly (see Section 1.2). To compile openBliSSART using Visual Studio 2008, simply open the provided solution file. If you do not have the ATLAS library installed on your system, please remove the "HAVE_CBLAS_H" preprocessor definition from the LibLinAlg project file (right-click the LibLinAlg project in the solution tree, click on "C/C++ / Preprocessor", then change the line of definitions from "BUILD_LIBLINALG;HAVE_CBLAS_H" to "BUILD_LIBLINALG" only).
+Ensure you have set the paths to external libraries in the Visual Studio
+environment correctly (see Section 1.2). To compile openBliSSART using Visual
+Studio 2008, simply open the provided solution file. If you do not have the
+ATLAS library installed on your system, please remove the "HAVE_CBLAS_H"
+preprocessor definition from the LibLinAlg project file (right-click the
+LibLinAlg project in the solution tree, click on "C/C++ / Preprocessor", then
+change the line of definitions from "BUILD_LIBLINALG;HAVE_CBLAS_H" to
+"BUILD_LIBLINALG" only).
 
 TODO: check and update!
 
 
 3. Integrate Matlab libraries (experimental!)
 
-For increased performance, Matlab BLAS libraries can be used for linear algebra operations.
+For increased performance, Matlab BLAS libraries can be used for linear algebra
+operations. However, since Matlab versions differ significantly in their API, 
+this support is currently experimental. In case of problems, please use the
+ATLAS libraries.
 
 Windows:
+Add the "HAVE_MATLAB", and possibly remove the "HAVE_CBLAS_H"
+preprocessor definition from the LibLinAlg project file (right-click the
+LibLinAlg project in the solution tree, click on "C/C++ / Preprocessor", then
+change the line of definitions to "BUILD_LIBLINALG;HAVE_MATLAB". This preprocessor definition will also cause the required libraries to be linked in. Make sure that the directory where your Matlab libraries reside (usually <Matlab dir>\bin\win32) is listed in your Visual Studio library paths.
+
+Next, identify the correct integer type for the Matlab API. For example, this 
+is ptrdiff32_t for Matlab R2009b, and int for Matlab R2008. The correct type 
+can be found in the Matlab BLAS header file 
+(<Matlab dir>\extern\include\blas.h).
+
 (TODO Felix)
-Keywords: set HAVE_MATLAB define; set linker flags in LibLinAlg; set integer type
 
 Unix:
 (TODO Felix)

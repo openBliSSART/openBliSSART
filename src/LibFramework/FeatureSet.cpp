@@ -186,15 +186,15 @@ FeatureSet FeatureSet::getStandardSet()
         fs.add(FeatureDescriptor("skewness", DataDescriptor::Gains));
     if (config.getBool("blissart.features.gains.kurtosis", false))
         fs.add(FeatureDescriptor("kurtosis", DataDescriptor::Gains));
-    if (config.getBool("blissart.features.gains.pl", true))
+    if (config.getBool("blissart.features.gains.pl", false))
         fs.add(FeatureDescriptor("pl", DataDescriptor::Gains));
-    if (config.getBool("blissart.features.gains.pf", true))
+    if (config.getBool("blissart.features.gains.pf", false))
         fs.add(FeatureDescriptor("pf", DataDescriptor::Gains));
-    if (config.getBool("blissart.features.gains.percussiveness", true)) {
+    if (config.getBool("blissart.features.gains.percussiveness", false)) {
         fs.add(FeatureDescriptor("percussiveness", DataDescriptor::Gains,
             config.getDouble("blissart.features.gains.percussiveness.length", 0.2)));
     }
-    if (config.getBool("blissart.features.gains.periodicity", true)) {
+    if (config.getBool("blissart.features.gains.periodicity", false)) {
         fs.add(FeatureDescriptor("periodicity", DataDescriptor::Gains,
             config.getInt("blissart.features.gains.periodicity.bpm_min", 35),
             config.getInt("blissart.features.gains.periodicity.bpm_max", 240),
@@ -227,20 +227,20 @@ FeatureSet FeatureSet::getStandardSet()
             }
             if (config.getBool("blissart.features." + typeName + ".mean_mfcc", true)) {
                 fs.add(FeatureDescriptor("mean_mfcc", *matrixType, i));
-                if (config.getBool("blissart.features." + typeName + ".mean_mfccD", !isSpectrum)) {
+                if (config.getBool("blissart.features." + typeName + ".mfccD", !isSpectrum)) {
                     fs.add(FeatureDescriptor("mean_mfccD", *matrixType, i));
                 }
-                if (config.getBool("blissart.features." + typeName + ".mean_mfccA", !isSpectrum)) {
+                if (config.getBool("blissart.features." + typeName + ".mfccA", !isSpectrum)) {
                     fs.add(FeatureDescriptor("mean_mfccA", *matrixType, i));
                     //cout << *str << endl;
                 }
             }
             if (config.getBool("blissart.features." + typeName + ".stddev_mfcc", !isSpectrum)) {
                 fs.add(FeatureDescriptor("stddev_mfcc", *matrixType, i));
-                if (config.getBool("blissart.features." + typeName + ".stddev_mfccD", !isSpectrum)) {
+                if (config.getBool("blissart.features." + typeName + ".mfccD", !isSpectrum)) {
                     fs.add(FeatureDescriptor("stddev_mfccD", *matrixType, i));
                 }
-                if (config.getBool("blissart.features." + typeName + ".stddev_mfccA", !isSpectrum)) {
+                if (config.getBool("blissart.features." + typeName + ".mfccA", !isSpectrum)) {
                     fs.add(FeatureDescriptor("stddev_mfccA", *matrixType, i));
                 }
             }

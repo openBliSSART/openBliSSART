@@ -79,7 +79,7 @@ FeatureExtractor::extract(DataDescriptor::Type type, const Vector &data)
         }
 
         // Periodicity
-        if (config.getBool("blissart.features.gains.periodicity", true)) {
+        if (config.getBool("blissart.features.gains.periodicity", false)) {
             int bpmMin = config.getInt(
                 "blissart.features.gains.periodicity.bpm_min", 35);
             int bpmMax = config.getInt(
@@ -91,15 +91,15 @@ FeatureExtractor::extract(DataDescriptor::Type type, const Vector &data)
         }
 
         // Peak length / fluctuation
-        if (config.getBool("blissart.features.gains.pl", true)) {
+        if (config.getBool("blissart.features.gains.pl", false)) {
             result[FeatureDescriptor("pl", type)] = feature::averagePeakLength(data);
         }
-        if (config.getBool("blissart.features.gains.pf", true)) {
+        if (config.getBool("blissart.features.gains.pf", false)) {
             result[FeatureDescriptor("pf", type)] = feature::peakFluctuation(data);
         }
 
         // Percussiveness
-        if (config.getBool("blissart.features.gains.percussiveness", true)) {
+        if (config.getBool("blissart.features.gains.percussiveness", false)) {
             // The factor of 0.2 corresponds to 200 ms
             double length = config.getDouble(
                 "blissart.features.gains.percussiveness.length", 0.2);
@@ -122,24 +122,24 @@ FeatureExtractor::extract(DataDescriptor::Type type, const Matrix &data)
         ColVector mean = data.meanColumnVector();
 
         // Standard deviation
-        if (config.getBool("blissart.features.spectrum.stddev", true)) {
+        if (config.getBool("blissart.features.spectrum.stddev", false)) {
             result[FeatureDescriptor("stddev", type)] = feature::stddev(mean);
         }
 
         // Spectral centroid
-        if (config.getBool("blissart.features.spectrum.centroid", true)) {
+        if (config.getBool("blissart.features.spectrum.centroid", false)) {
             result[FeatureDescriptor("centroid", type)] = feature::centroid(mean,
                 _sampleFreq / 2.0);
         }
 
         // Roll-off point
-        if (config.getBool("blissart.features.spectrum.rolloff", true)) {
+        if (config.getBool("blissart.features.spectrum.rolloff", false)) {
             result[FeatureDescriptor("rolloff", type)] = feature::rolloff(mean,
                 _sampleFreq / 2.0);
         }
 
         // Noise-likeness
-        if (config.getBool("blissart.features.spectrum.noiselikeness", true)) {
+        if (config.getBool("blissart.features.spectrum.noiselikeness", false)) {
             double sigma = config.getDouble(
                 "blissart.features.spectrum.noiselikeness.sigma", 5.0);
             result[FeatureDescriptor("noise-likeness", type, sigma)] = 
@@ -162,6 +162,7 @@ FeatureExtractor::extract(DataDescriptor::Type type, const Matrix &data)
     if (type == DataDescriptor::Spectrum ||
         type == DataDescriptor::MagnitudeMatrix)
     {
+        bool isSpectrum = type == DataDescriptor::Spectrum;
         string typeName;
         if (type == DataDescriptor::Spectrum)
             typeName = "spectrum";
@@ -170,9 +171,9 @@ FeatureExtractor::extract(DataDescriptor::Type type, const Matrix &data)
 
         // MFCC, delta and delta-delta (_A_cceleration)
         Poco::SharedPtr<Matrix> cepstrogram, cepstrogramD, cepstrogramA;
-        bool mfcc  = config.getBool("blissart.features." + typeName + ".mfcc", true);
-        bool mfccD = config.getBool("blissart.features." + typeName + ".mfccD", true);
-        bool mfccA = config.getBool("blissart.features." + typeName + ".mfccA", true);
+        bool mfcc  = config.getBool("blissart.features." + typeName + ".mfcc", !isSpectrum);
+        bool mfccD = config.getBool("blissart.features." + typeName + ".mfccD", !isSpectrum);
+        bool mfccA = config.getBool("blissart.features." + typeName + ".mfccA", !isSpectrum);
 
         // TODO: Save all these parameters in the feature descriptor
         int nCoeff = config.getInt("blissart.global.mfcc.count", 13);
@@ -287,7 +288,7 @@ FeatureExtractor::extract(DataDescriptor::Type type, const Matrix &data)
         }
 
         // Standard deviation of MFCCs, Delta- and Delta-Delta MFCCs
-        if (config.getBool("blissart.features." + typeName + ".stddev_mfcc", true) 
+        if (config.getBool("blissart.features." + typeName + ".stddev_mfcc", !isSpectrum) 
             && nCoeff > 0) 
         {
             if (cepstrogram.isNull()) {
