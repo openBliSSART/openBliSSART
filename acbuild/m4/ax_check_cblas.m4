@@ -29,10 +29,10 @@ dnl accordingly.
 AC_DEFUN([AX_CHECK_CBLAS],
 [
     dnl Check if the mandatory CBLAS header file is available.
-    AC_CHECK_HEADERS([cblas.h], , [NO_CBLAS=yes])
-    dnl Do NOT replace this   ^^^   empty space with a colon : or square
-    dnl brackts [] because otherwise autoconf interprets action-if-found as
-    dnl given!!!
+    AC_CHECK_HEADER([cblas.h], :, [NO_CBLAS=yes])
+    dnl Do NOT replace this call to AC_CHECK_HEADER by AC_CHECK_HEADERS as
+    dnl these functions have different semantics (the latter automatically
+    dnl defines HAVE_CBLAS_H which is _not_ what we want at this time).
 
     dnl In case that the CBLAS header isn't available, see if maybe Apple's
     dnl vecLib framework is accessible instead.
@@ -59,14 +59,15 @@ AC_DEFUN([AX_CHECK_CBLAS],
     AC_MSG_CHECKING([for cblas availability])
     if test -z "$NO_CBLAS" -a -n "$CBLAS_LIBS"; then
         save_LIBS="$LIBS"
-        LIBS="$CBLABS_LIBS $LIBS"
+        LIBS="$CBLAS_LIBS $LIBS"
         AC_LANG_PUSH([C])
         AC_RUN_IFELSE(
-            AC_LANG_PROGRAM(
-                [#include <cblas.h>],
-                [double t = 1.0; return (cblas_ddot(5, &t, 0, &t, 0) == 5.0);])
-            :,
-            [NO_CBLAS=yes])
+            AC_LANG_SOURCE([[
+                #include <cblas.h>
+                int main() {
+                    double t = 1.0;
+                      return (cblas_ddot(5, &t, 0, &t, 0) != 5.0);
+                }]]), :, [NO_CBLAS=yes])
         AC_LANG_POP([C]) 
         LIBS="$save_LIBS"
     fi
@@ -81,6 +82,7 @@ AC_DEFUN([AX_CHECK_CBLAS],
         ifelse([$1], [], :, [$1])
     else
         AC_MSG_RESULT([no])
+	unset CBLAS_LIBS
         ifelse([$2], [], :, [$2])
     fi
 ]) dnl AC_DEFUN
