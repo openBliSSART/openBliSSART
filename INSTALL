@@ -191,7 +191,6 @@ C:\devel\include\Poco\Util
 Then, add "C:\devel\include" (or whatever directory you choose) to your Visual
 Studio Include directories, in case it is not already there.
 
-XXX: SDL instructions???
 
 
 2. Configure, compile, and install openBliSSART
@@ -209,14 +208,16 @@ Keywords:
 
 Ensure you have set the paths to external libraries in the Visual Studio
 environment correctly (see Section 1.2). To compile openBliSSART using Visual
-Studio 2008, simply open the provided solution file. If you do not have the
-ATLAS library installed on your system, please remove the "HAVE_CBLAS_H"
-preprocessor definition from the LibLinAlg project file (right-click the
-LibLinAlg project in the solution tree, click on "C/C++ / Preprocessor", then
-change the line of definitions from "BUILD_LIBLINALG;HAVE_CBLAS_H" to
-"BUILD_LIBLINALG" only).
+Studio 2008, simply open the provided solution file ("openBliSSART.sln") and click "Make" / "Make solution". 
+If you do not have the ATLAS library installed on your system, please remove
+the "HAVE_CBLAS_H" preprocessor definition from the LibLinAlg project file
+(right-click the LibLinAlg project in the solution tree, click on "C/C++ /
+Preprocessor", then change the line of definitions from
+"BUILD_LIBLINALG;HAVE_CBLAS_H" to "BUILD_LIBLINALG" only). However performance
+will be very slow if you do this.
 
-TODO: check and update!
+After compiling, openBliSSART libraries and tools will be available in the "bin\release" subdirectory.
+
 
 
 3. Integrate Matlab libraries (experimental!)
@@ -226,19 +227,51 @@ operations. However, since Matlab versions differ significantly in their API,
 this support is currently experimental. In case of problems, please use the
 ATLAS libraries.
 
-Windows:
+A major problem with Matlab is that it provides own versions of the FFTW and Qt
+libraries which may be incompatible with the ones that openBliSSART was linked
+against. In that case, it is recommended to copy the files from the Matlab
+libraries directory (like <Matlab dir>/bin/<architecture>) to a separate
+directory (say "/lib/matlab" or "C:\matlab-lib") and remove the Qt and FFTW
+files (Windows: Qt*.dll and libfftw*.dll, Unix: TODO) from that directory. Make
+sure the linker can find the files in this by adjusting the %PATH% (Windows) or
+$LD_LIBRARY_PATH (Linux) environment varibles. 
+
+
+3.1 Unix
+
+You need to pass the following parameters to the configure script:
+
+--with-matlab --with-matlab-lib=<lib-dir> --with-matlab-include=<include-dir>
+
+--with-matlab tells the configure script to compile with Matlab support.
+It will try to guess the Matlab integer type (varying from version to version). In case of compile errors, check the MATLAB_INT_TYPE definition in the "config.h" file against your Matlab BLAS include file (typically XXX: <Matlab-dir>/extern/include/blas.h).
+
+--with-matlab-lib points to the directory where the Matlab DLL export files reside (usually XXX). 
+
+--with-matlab-include points to the directory where the Matlab include files reside (usually XXX).
+
+
+3.2 Microsoft Windows
+
+Make sure that the directory where your Matlab libraries reside (usually
+<Matlab dir>\bin\win32) is listed in your Visual Studio library paths, and the
+directory where the Matlab includes are located (usually 
+<Matlab dir>\extern\include) is listed in your Visual Studio include paths.
+
+Next, identify the correct integer type for the Matlab API. For example, this 
+is ptrdiff_t for Matlab R2009b, and int for Matlab R2008. The correct type 
+can be found in the Matlab BLAS header file 
+(<Matlab dir>\extern\include\blas.h) by looking at the function definitions,
+e.g. the type of the "m" parameter to the "dgemm" function. 
+
 Add the "HAVE_MATLAB", and possibly remove the "HAVE_CBLAS_H"
 preprocessor definition from the LibLinAlg project file (right-click the
 LibLinAlg project in the solution tree, click on "C/C++ / Preprocessor", then
-change the line of definitions to "BUILD_LIBLINALG;HAVE_MATLAB". This preprocessor definition will also cause the required libraries to be linked in. Make sure that the directory where your Matlab libraries reside (usually <Matlab dir>\bin\win32) is listed in your Visual Studio library paths.
+change the line of definitions to "BUILD_LIBLINALG;HAVE_MATLAB". This preprocessor definition will also cause the required libraries to be linked in. If your integer type is _NOT_ ptrdiff_t, add a definition of the form "MATLAB_INT_TYPE=<type>" to the definition list, so that it looks like
 
-Next, identify the correct integer type for the Matlab API. For example, this 
-is ptrdiff32_t for Matlab R2009b, and int for Matlab R2008. The correct type 
-can be found in the Matlab BLAS header file 
-(<Matlab dir>\extern\include\blas.h).
+	BUILD_LIBLINALG;HAVE_MATLAB;MATLAB_INT_TYPE=int
 
-(TODO Felix)
 
 Unix:
-(TODO Felix)
-Keywords: copy libraries to directory (attention: Qt and FFTW3!); pass configure parameters --with-matlab, --with-matlab-lib and --with-matlab-include; set integer type if needed
+
+
