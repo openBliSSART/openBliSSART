@@ -103,6 +103,10 @@ void BrowserMainWindow::setupMenu()
     dbMenu->addSeparator();
     dbMenu->addAction(tr("Extract features from all data descriptors"),
                         this, SLOT(handleFeatureExtraction()));
+#ifndef Q_WS_MAC
+    dbMenu->addSeparator();
+    dbMenu->addAction(tr("Quit"), this, SLOT(close()));
+#endif
 
     QMenu *viewMenu = menuBar()->addMenu(tr("View"));
     viewMenu->addAction(tr("Refresh view"),
