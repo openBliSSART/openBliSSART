@@ -22,7 +22,8 @@ performance (optional, and experimental).
 
 openBliSSART requires several open source libraries to run. These include:
 - FFTW3 (Fastest Fourier Transform in the West) 
-- SDL (>= 1.2.12) and SDL_sound for audio processing
+- SDL (>= 1.2.12) and SDL_sound for support of audio input from various formats
+  (WAV, MP3, OGG, depending on the capabilities of the library)
 - Poco (Portable Components) Complete Edition >= 1.3.6 for a general-purpose
   application framework and database access (bundled with SQLite)
 - Qt (>= 4.4.3) for the browser GUI
@@ -111,12 +112,15 @@ be obtained from their project homepages:
   that is most appropriate for your processor architecture. These versions are
   old, but still work very well on any modern computer and OS.
 - Qt: http://qt.nokia.com/downloads
-TODO: How to make lib files from ATLAS?
 
 Note that precompiled Windows binaries for ATLAS and SDL are currently only
 available in 32-bit. The Poco project currently does _not_ provide binaries for
 Windows, but Poco can be compiled very easily with Visual Studio (see Section
 1.3.1.2).
+
+Also note that the binaries provided by ATLAS are static libraries that are 
+to be handled like DLL export files (*.lib). In the archives, they may have the
+extension *.a, but they can be safely renamed to *.lib.
 
 1.2.2. Create directories for binaries and header files
 
