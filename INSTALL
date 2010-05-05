@@ -94,12 +94,15 @@ has not yet been installed.
 
 1.2 Microsoft Windows
 
-As the process of obtaining binaries for Windows is quite tedious, we provide a ZIP compressed archive that contains the required external libraries (binaries, export files, and header files) to build and run openBliSSART:
+As the process of obtaining binaries for Windows is quite tedious, we provide a
+ZIP compressed archive that contains the required external libraries (binaries,
+export files, and header files) to build and run openBliSSART:
 
 	http://github.com/openBliSSART/openBliSSART/blob/master/win32/blissart-3rdparty-win32.zip
 
-Unzip this file to a location like "C:\devel". Then proceed with Section 1.2.3
-"Setting environment variables" below.
+Unzip this file to a location like "C:\devel", so that you have the directories
+"C:\devel\lib", "C:\devel\bin", and "C:\devel\include". Then proceed with
+Section 1.2.3 "Setting environment variables" below.
 
 1.2.1 Obtain Windows binaries and header files
 
