@@ -1,0 +1,58 @@
+openBliSSART demonstrator
+=========================
+
+
+This directory contains the files that are required to perform drum beat 
+separation from popular music using openBliSSART. It includes:
+
+- a component database (db / storage),
+- the configuration for classification (etc).
+
+A working installation of openBliSSART is required (see the INSTALL file in 
+the top-level source directory for instructions).
+
+Copy the directories "db", "etc", and "storage" into your openBliSSART installation directory (backup them if they already exist).
+
+The directory "wav" contains a set of short WAV extracts from popular music. 
+You can use these to test the drum beat separation with various parameters.
+Open a command line window in the "bin" directory. You may try the following 
+commands:
+
+septool -v -l9 <file.wav>
+
+Default drum beat separation process. Decomposes the signal into 20 components,
+classifies them as drum or harmonic, and creates two WAV files (file_Drum.wav
+and file_Harmonic.wav).
+
+You can try to adjust the components parameter by using the -c option. Try, for
+once, 40 components:
+
+septool -v -l9 -c40 <file.wav>
+
+and compare the result.
+
+As NMF is initialized randomly, results may vary from execution to execution,
+so you can try the same command several times and listen to the results.
+
+Next, you can use supervised NMF where some of the components are initialized
+with drum sounds. Issue the following command:
+
+septool -v -l9 -c40 -I7231..7250 -P <file.wav>
+
+The "-I7231..7250" tells the separation tool the IDs of the components in the
+database that should be used for initialization. -P keeps the spectrum of these
+components constant.
+
+It makes sense to automatically assign the initialized drum components to the 
+drum class, regardless of the classifier output. This can be achieved with the
+option -L1:
+
+septool -v -l9 -c40 -I7231..7250 -P -L1 <file.wav>
+
+Finally, you can also adjust the features which are used for component
+classification. To this end, edit the file "etc/blissart.properties" with a
+text editor. For once, you can try a classification based on MFCCs only by
+deleting the lines corresponding to feature extraction (starting with
+"blissart.features"), or by setting the option value to "false". (The default
+is "true" for MFCCs and "false" for all other features). Then you can use
+either of the above commands again.

@@ -246,7 +246,9 @@ Preprocessor", then change the line of definitions from
 "BUILD_LIBLINALG;HAVE_CBLAS_H" to "BUILD_LIBLINALG" only). However performance
 will be very slow if you do this.
 
-After compiling, openBliSSART libraries and tools will be available in the "bin\release" subdirectory.
+After compiling, openBliSSART libraries and tools will be available in the
+"bin\release" subdirectory. You should copy them into a suitable location,
+such as "C:\Program Files\openBliSSART".
 
 
 

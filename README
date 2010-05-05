@@ -3,12 +3,17 @@ Separation for Audio Recognition Tasks".
 
 Detailed installation instructions can be found in the INSTALL file.
 
-You can build the corresponding documentation either by issuing "make html" or
-explicitly running doxygen on doc/doxygen.cfg.
+For a first impression of openBliSSART, you may want to try the drum beat
+separation demonstrator which is included in the "demo" directory, along with
+installation and usage information.
 
-There is also a manual, including a tutorial and a reference section, in the 
-directory doc/manual which you can compile using
-LaTeX ("pdflatex manual").
+There is a variety of documentation available:
+
+- A reference manual, including a tutorial, can be found in the directory
+  doc/manual, and is compiled using LaTeX ("pdflatex manual").
+- A documentation of the framework API can be created by doxygen, either by
+  issuing "make html" in the top-level directory, or explicitly running doxygen
+  on doc/doxygen.cfg.
 
 If you want to use openBLiSSART for your research, please cite the following
 paper:
