@@ -208,6 +208,12 @@ public:
      *                              amount that all windows overlap
      * @param   channel             the # of the channel of which the spectogram
      *                              should be computed
+     * @param   zeroPadding         whether to apply zero padding to the frames
+     *                              to achieve a power-of-two size for FFT
+     *                              (note that the FFT algorithm can handle 
+     *                              arbitrary sizes)
+     * @param   removeDC            whether to subtract the mean from frames
+     *                              (e.g. for compatibility with HTK)
      * @return                      a pair of Matrix objects of which the first
      *                              one represents the amplitudes and the second
      *                              one the phases.

@@ -42,13 +42,20 @@ namespace feature {
 
 
 /**
- * Compute the Mel cepstrum from the given amplitude spectrogram.
- * Note that this method is NOT THREADSAFE because the fftw-library isn't.
- * @param   spectrum        a reference to a Vector object containing the
- *                          amplitudes of a short-time Fourier spectrum
+ * Compute the Mel cepstrum from the given magnitude spectrogram.
+ * @param   spectrogram     a reference to a Matrix object containing the
+ *                          magnitudes of short-time Fourier spectra
  * @param   sampleRate      the sample rate of the original signal
  * @param   nCoefficients   an integer giving the number of MFCCs to compute
- * @return                  a double array containing nCoefficients elements
+ * @param   nBands          an integer giving the number of filters in the
+ *                          filter bank
+ * @param   lowFreq         lower cut-off frequency (Hz) of the filter bank
+ * @param   highFreq        upper cut-off frequency (Hz) of the filter bank.
+                            If set to zero, sampleRate / 2 is assumed.
+ * @param   lifter          the value to use for liftering (weighting) of the
+ *                          cepstrum
+ * @return                  a pointer to a Matrix with Mel spectra in its 
+ *                          columns
  */
 LibFeature_API linalg::Matrix* 
 computeMFCC(const linalg::Matrix& spectrogram, double sampleRate,
@@ -60,6 +67,18 @@ computeMFCC(const linalg::Matrix& spectrogram, double sampleRate,
 /**
  * Convenience function to compute the Mel cepstrum from a single amplitude
  * spectrum.
+ * @param   spectrum        a reference to a Vector object containing the
+ *                          magnitudes of a short-time Fourier spectrum
+ * @param   sampleRate      the sample rate of the original signal
+ * @param   nCoefficients   an integer giving the number of MFCCs to compute
+ * @param   nBands          an integer giving the number of filters in the
+ *                          filter bank
+ * @param   lowFreq         lower cut-off frequency (Hz) of the filter bank
+ * @param   highFreq        upper cut-off frequency (Hz) of the filter bank.
+                            If set to zero, sampleRate / 2 is assumed.
+ * @param   lifter          the value to use for liftering (weighting) of the
+ *                          cepstrum
+ * @return                  a double array containing nCoefficients elements
  */
 LibFeature_API double*
 computeMFCC(const linalg::Vector& spectrum, double sampleRate,
@@ -69,9 +88,9 @@ computeMFCC(const linalg::Vector& spectrum, double sampleRate,
 
 
 /**
- * Compute the Mel spectrum from the given amplitude spectrogram.
+ * Compute the Mel spectrum from the given magnitude spectrogram.
  * @param   spectrogram     a reference to a Matrix object containing an
- *                          amplitude spectrogram
+ *                          magnitude spectrogram
  * @param   sampleRate      the sample rate of the original signal
  * @param   nBands          an integer giving the number of filters in the
  *                          filter bank
@@ -90,7 +109,11 @@ melSpectrum(const linalg::Matrix& spectrogram, double sampleRate,
 
 /**
  * Compute the cepstrum from the given (mel) spectrogram.
- */
+ * @param   melSpectrum     a reference to a Matrix object containing a
+ *                          Mel spectrogram
+ * @param   nCoefficients   an integer giving the number of MFCCs to compute
+ * @param   lifter          the value to use for liftering (weighting) of the
+ *                          cepstrum */
 LibFeature_API linalg::Matrix* 
 computeCepstrogram(const linalg::Matrix& melSpectrum, 
                    unsigned int nCoefficients, double lifter = 0.0);

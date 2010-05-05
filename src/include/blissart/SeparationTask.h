@@ -58,6 +58,7 @@ public:
      * @param  fileName         the name of the input file
      *                          which should be separated
      * @param  nrOfComponents   the desired number of components
+     * @param  nrOfSpectra      the desired number of spectra per component
      * @param  maxIterations    the maximum number of iterations
      * @param  epsilon          the desired precision
      * @param  isVolatile       store the resulting components iff true

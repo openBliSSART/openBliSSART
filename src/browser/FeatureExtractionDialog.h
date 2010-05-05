@@ -48,6 +48,7 @@ public:
      * descriptors.
      * @param  descriptors  the set of data descriptors for which the features
      *                      should be extracted
+     * @param  parent       the widget to use as dialog parent
      * @throw               Poco::InvalidArgumentException
      */
     FeatureExtractionDialog(const std::set<DataDescriptorPtr> &descriptors,

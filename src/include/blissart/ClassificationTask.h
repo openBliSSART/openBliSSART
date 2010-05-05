@@ -55,8 +55,10 @@ public:
      * @param  responseID       the id of the Response that should be used
      *                          for classification
      * @param  phaseMatrix      a pointer to a phase matrix
-     * @param  spectrumMatrix   a pointer to a matrix whose columns contain
-     *                          the corresponding separate spectra
+     * @param  componentSpectrograms a vector whose elements contain, for 
+     *                               each separated component, the pointer to 
+     *                               the spectrogram matrix (for NMF, this 
+     *                               matrix has only 1 column)
      * @param  gainsMatrix      a pointer to a matrix whose rows contain the
      *                          corresponding separate gains
      * @param  sampleRate       the sample rate

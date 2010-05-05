@@ -205,6 +205,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\blissart\audio\MelFilter.h"
+				>
+			</File>
+			<File
 				RelativePath="..\include\blissart\audio\Sound.h"
 				>
 			</File>

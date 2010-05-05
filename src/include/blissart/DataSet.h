@@ -65,6 +65,7 @@ typedef std::vector<DataPoint> DataSet;
 /**
  * Scales the given DataSet such that all feature values are in the given range,
  * using a linear function for each feature.
+ * @param  dataSet the DataSet to scale (in-place)
  * @param  lower   the value of the minimal elements in the target set
  * @param  upper   the value of the maximal elements in the target set
  */
@@ -75,6 +76,7 @@ linearScaleMinMax(DataSet& dataSet, double lower = -1.0, double upper = 1.0);
 /**
  * Scales the given DataSets such that all feature values are in the given range,
  * using a linear function for each feature.
+ * @param  dataSets  a vector of DataSets to scale (in-place)
  * @param  lower   the value of the minimal elements in the target set
  * @param  upper   the value of the maximal elements in the target set
  */
@@ -86,8 +88,9 @@ linearScaleMinMax(std::vector<DataSet>& dataSets, double lower = -1.0,
 /**
  * Scales the given DataSet such that the values of each feature have the given
  * mean and standard deviation, using linear functions.
+ * @param  dataSet the DataSet to scale (in-place)
  * @param  mu      the desired mean
- * @param  upper   the desired standard deviation
+ * @param  sigma   the desired standard deviation
  */
 void LibFramework_API
 linearScaleMuSigma(DataSet& dataSet, double mu = 0.0, double sigma = 1.0);
@@ -96,8 +99,9 @@ linearScaleMuSigma(DataSet& dataSet, double mu = 0.0, double sigma = 1.0);
 /**
  * Scales the given DataSets such that the values of each feature have the given
  * mean and standard deviation, using linear functions.
+ * @param  dataSets  a vector of DataSets to scale (in-place)
  * @param  mu      the desired mean
- * @param  upper   the desired standard deviation
+ * @param  sigma   the desired standard deviation
  */
 void LibFramework_API
 linearScaleMuSigma(std::vector<DataSet>& dataSets, double mu = 0.0,
@@ -106,6 +110,7 @@ linearScaleMuSigma(std::vector<DataSet>& dataSets, double mu = 0.0,
 
 /**
  * Smoothes the given DataSet using a sigmoid function.
+ * @param   dataSet the DataSet to smoothe (in-place)
  * @param   lower   the ordinate of the lower asymptote
  * @param   upper   the ordinate of the upper asymptote
  */
@@ -113,6 +118,13 @@ void LibFramework_API
 sigmoidSmooth(DataSet& dataSet, double lower = -1.0, double upper = 1.0);
 
 
+/**
+ * Upsamples the given DataSet by class-wise copying of the instances,
+ * according to the given factors.
+ * @param dataSet the DataSet to upsample (in-place)
+ * @param factors a map from integer class labels to integer factors
+ *                (e.g. 3 means that each instance should be copied twice)
+ */
 void LibFramework_API
 upsample(DataSet& dataSet, std::map<int, int>& factors);
 

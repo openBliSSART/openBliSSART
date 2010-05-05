@@ -50,8 +50,6 @@ public:
      * @param  samples          a pointer to the samples
      * @param  nSamples         the total number of samples
      * @param  sampleFreq       the sample frequency
-     * @param  previewCanvas    a pointer to a SamplesPreviewCanvas to be able
-     *                          to update the position marker
      * @param  parent           a pointer to the parent object
      */
     PlaybackThread(const double *samples, size_t nSamples,

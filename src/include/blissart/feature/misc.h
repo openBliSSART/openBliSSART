@@ -139,7 +139,7 @@ double LibFeature_API noiseLikeness(const linalg::Vector& data,
  * Convolves the local maxima of the given (gains) vector with a linear decay 
  * function of the given width and calculates the correlation to the 
  * original vector.
- * @param   length   the length of the decay function (as a vector)
+ * @param   length   the length of the decay function (in vector elements)
  */
 double LibFeature_API percussiveness(const linalg::Vector& data,
                                      unsigned int length);

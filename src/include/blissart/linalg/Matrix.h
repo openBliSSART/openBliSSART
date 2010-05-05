@@ -325,6 +325,8 @@ public:
      * @param   colOffset   the column offset for this Matrix
      * @param   rowOffsetOther   the row offset for the other Matrix
      * @param   colOffsetOther   the column offset for the other Matrix
+     * @param   rowOffsetTarget   the row offset for the target Matrix
+     * @param   colOffsetTarget   the column offset for the target Matrix
      */
     void multWithMatrix(const Matrix& other, Matrix* target,
         bool transpose, bool transposeOther,
@@ -382,7 +384,6 @@ public:
     /**
      * Shifts the columns of the matrix to the right by one column, 
      * introducing a zero-column on the left.
-     * @param    n       number of columns to shift
      */
     void shiftColumnsRight();
 
@@ -390,7 +391,6 @@ public:
     /**
      * Shifts the columns of the matrix to the left by one column, 
      * introducing a zero-column on the right.
-     * @param    n       number of columns to shift
      */
     void shiftColumnsLeft();
 
@@ -510,9 +510,9 @@ public:
     /**
      * Computes the dot-product of the given matrices' rows.
      * @param   a                   a Matrix
-     * @param   aCol                the row number for a
+     * @param   aRow                the row number for a
      * @param   b                   another Matrix
-     * @param   bCol                the row number for b
+     * @param   bRow                the row number for b
      * @return                      the dot-product of the rows
      */
     static double dotRowRow(const Matrix &a, unsigned int aRow,

@@ -102,7 +102,7 @@ public:
 
     /**
      * Constructs a BinaryWriter from the given output-stream and architecture.
-     * @param  is               the output-stream
+     * @param  os               the output-stream
      * @param  wantedArch       one of BinaryReader::Architecture
      */
     BinaryWriter(std::ostream& os, Architecture wantedArch) :

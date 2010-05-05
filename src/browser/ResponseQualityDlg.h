@@ -48,7 +48,8 @@ public:
     /**
      * Constructs an instance of ResponseQualityDlg for the given dataset.
      * @param   dataSet     a list of DataPoints
-     * @param   response    a pointer to the corresponding Response
+     * @param   _response   a pointer to the corresponding Response
+     * @param   parent      a pointer to the parent of the dialog
      * @throw               Poco::InvalidArgumentException
      */
     ResponseQualityDlg(const DataSet &dataSet, ResponsePtr _response,

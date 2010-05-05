@@ -45,6 +45,9 @@ public:
      * the selectable labels to a given list by providing their respective ids. 
      * @param  limitIDs         a list of all the label ids whose associated
      *                          labels should be made available for selection
+     * @param  multipleSelection  a boolean flag indicating whether the list of
+     *                            available labels should allow multiple 
+     *                            selection.
      * @param  parent           a pointer to the parent widget                         
      */
     LabelSelectionDialog(const std::set<int> limitIDs = std::set<int>(),

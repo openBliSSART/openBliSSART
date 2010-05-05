@@ -76,6 +76,8 @@ public:
      * @param   v    a Matrix object
      * @param   r    the dimensionality of the factorization
      * @param   t    the desired number of W matrices
+     * @param   wGenerator   a GeneratorFunction for the W matrices
+     * @param   hGenerator   a GeneratorFunction for the H matrix
      */
     Deconvolver(const blissart::linalg::Matrix& v, unsigned int r, 
         unsigned int t,
@@ -177,7 +179,7 @@ public:
     /**
      * Performs decomposition according to the given cost function.
      * The appropriate algorithm is chosen automatically.
-     * @param NMFCostFunction   the cost function to minimize
+     * @param cf                the NMFCostFunction to minimize
      * @param maxSteps          maximum number of iteration steps
      * @param eps               if eps > 0.0, convergence of the approximation
      *                          is checked and once it is reached, iteration 
