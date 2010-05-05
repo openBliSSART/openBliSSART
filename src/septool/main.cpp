@@ -469,7 +469,7 @@ protected:
             formatter.setAutoIndent();
             formatter.setUsage(this->commandName() +
                 " <options> FILE1 [FILE2 ...]\nwhere FILE can be one or more"
-                " WAV, MP3 or script file(s)\n");
+                " WAV, OGG, FLAC, or script file(s)\n");
             formatter.setHeader(
                 "SepTool, a tool for blind source separation using NMF/NMD");
             formatter.format(cout);

@@ -17,6 +17,9 @@ The directory "wav" contains a set of short WAV extracts from popular music.
 You can use these to test the drum beat separation with various parameters.
 Some of them correspond to the test cases from http://www.cs.tut.fi/~heln/demonstrations/NMF_SVM_demonstrations.html to allow comparison with that study.
 
+Besides WAV, also OGG and FLAC formats are supported. MP3 may work, depending
+on the version of SDL_sound that you are using.
+
 Open a command line window in the "bin" directory. You may try the following 
 commands:
 
