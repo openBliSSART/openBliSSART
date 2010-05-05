@@ -27,6 +27,7 @@
 #include <blissart/linalg/Vector.h>
 #include <blissart/linalg/Matrix.h>
 #include <blissart/linalg/generators/generators.h>
+#include <blissart/audio/MelFilter.h>
 
 #include <cmath>
 #include <cassert>
@@ -86,100 +87,9 @@ Matrix* melSpectrum(const Matrix& spectrogram,
                     double lowFreq, double highFreq,
                     double scaleFactor)
 {
-    assert(spectrogram.rows() >= nBands);
-    assert(sampleRate > 0.0);
-    assert(lowFreq >= 0.0 && highFreq >= 0.0);
-
-    if (highFreq == 0.0) highFreq = sampleRate / 2.0;
-
-    // Precompute basic parameters.
-    unsigned int nSamples       = (spectrogram.rows() - 1) * 2;
-    const double baseFreq       = sampleRate / nSamples;
-    const double lowestMelFreq  = hertzToMel(lowFreq);
-    const double highestMelFreq = hertzToMel(highFreq);
-    unsigned int lowestIndex    = (unsigned int) round(lowFreq / baseFreq);
-    unsigned int highestIndex   = (unsigned int) round(highFreq / baseFreq);
-    
-    // Always ignore zeroth FFT coefficient (DC component).
-    if (lowestIndex < 1) lowestIndex = 1;
-    
-    assert(highestIndex < spectrogram.rows() && 
-           lowestIndex < spectrogram.rows());
-
-    // Compute Mel center frequencies
-    double* centerFrequencies = new double[nBands + 2];
-    const double halfBw = highestMelFreq / ((double)nBands + 1.0);
-    int m = 0;
-    for (; m <= (int)nBands + 1; ++m) {
-        // Distance between center frequencies is half the Mel bandwidth of
-        // a filter.
-        centerFrequencies[m] = lowestMelFreq + (double)m * halfBw;
-    }
-
-    // Compute the index of the filter that is to be applied to every component
-    // of the spectrum. Note that the falling slope of filter M is equal to 
-    // the rising slope of filter M+1, which is why we calculate falling slopes
-    // only - thus the filter index can have a value of -1. A value of -2 
-    // (occurring at the boundaries of the filter bank) indicates that the 
-    // filter output is zero.
-    int* filterIndex = new int[spectrogram.rows()];
-    m = 0;
-    for (unsigned int i = 0; i < spectrogram.rows(); ++i) {
-        if (i < lowestIndex || i > highestIndex) {
-            // XXX: -3?
-            filterIndex[i] = -3;
-        }
-        else {
-            double binFreq = hertzToMel((double)i * baseFreq);
-            while (m <= (int)nBands + 1 && centerFrequencies[m] < binFreq) {
-                ++m;
-            }
-            filterIndex[i] = m - 2;
-        }
-    }
-
-    // Compute filter coefficients (for falling slopes).
-    double* filterCoeffs = new double[spectrogram.rows()];
-    m = 0;
-    for (unsigned int i = lowestIndex; i < highestIndex; ++i) {
-        double binFreq = hertzToMel((double)i * baseFreq);
-        while (m <= (int)nBands && binFreq > centerFrequencies[m + 1]) {
-            ++m;
-        }
-        filterCoeffs[i] = (centerFrequencies[m + 1] - binFreq) /
-                          (centerFrequencies[m + 1] - centerFrequencies[m]);
-    }
-
-    // Free memory.
-    delete[] centerFrequencies;
-
-    // Process matrix column by column.
-    Matrix* rv = new Matrix(nBands, spectrogram.cols(), generators::zero);
-    for (unsigned int j = 0; j < spectrogram.cols(); ++j) {
-        for (unsigned int i = lowestIndex; i < highestIndex; ++i) {
-            m = filterIndex[i];
-            if (m > -2) {
-                double out = spectrogram.at(i, j) * filterCoeffs[i];
-                if (m > -1) {
-                    rv->at(m, j) += out;
-                }
-                if (m < (int) nBands - 1) {
-                    rv->at(m + 1, j) += spectrogram.at(i, j) - out;
-                }
-            }
-        }
-        if (scaleFactor != 1.0) {
-            for (m = 0; m < (int)nBands; ++m) {
-                rv->at(m, j) *= scaleFactor;
-            }
-        }
-    }
-
-    // Free memory.
-    delete[] filterCoeffs;
-    delete[] filterIndex;
-
-    return rv;
+    audio::MelFilter mf(nBands, (unsigned int)sampleRate, lowFreq, highFreq);
+    mf.setScaleFactor(scaleFactor);
+    return mf.melSpectrum(spectrogram);
 }
 
 

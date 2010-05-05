@@ -64,13 +64,11 @@ bool MFCCTest::performTest()
         cout << "size = " << sp.first->rows() << " x " << sp.first->cols() << endl;
         delete sp.second;
         Poco::SharedPtr<Matrix> pM(sp.first);
-        Poco::SharedPtr<Matrix> mel = 
-            melSpectrum(*pM, pAd->sampleRate(), 26, 0.0, 0.0, 32767.0);
-            // 32767.0 for compatibility with HTK results
 
         MelFilter mf(26, (unsigned int)pAd->sampleRate(), 0.0, 0.0);
+        // 32767.0 for compatibility with HTK results
         mf.setScaleFactor(32767.0);
-        Poco::SharedPtr<Matrix> mel2 = mf.melSpectrum(*pM);
+        Poco::SharedPtr<Matrix> mel = mf.melSpectrum(*pM);
 
         audio::shutdown();
 
@@ -79,18 +77,6 @@ bool MFCCTest::performTest()
             cout << mel->at(i, 0) << " ";
         }
         cout << endl;
-        cout << "Mel spectrum (first column):" << endl;
-        for (unsigned int i = 0; i < 26; ++i) {
-            cout << mel2->at(i, 0) << " ";
-        }
-        cout << endl;
-        /*cout << "Mel spectrum (2nd column):" << endl;
-        for (unsigned int i = 0; i < 26; ++i) {
-            cout << mel->at(i, 1) << " ";
-        }
-        cout << endl;*/
-        if (!epsilonCheck(*mel, *mel2)) return false;
-        return true;
         Poco::SharedPtr<Matrix> mfcc = computeCepstrogram(*mel, 13);
         cout << setprecision(3) << fixed;
         cout << "Cepstrum (first column):" << endl;

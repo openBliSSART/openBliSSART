@@ -160,6 +160,10 @@
 		</Configuration>
 	</Configurations>
 	<References>
+		<ProjectReference
+			ReferencedProjectIdentifier="{3623E3C3-571E-424B-89A4-025166C0DFBD}"
+			RelativePathToProject=".\src\LibAudio\LibAudio.vcproj"
+		/>
 	</References>
 	<Files>
 		<Filter

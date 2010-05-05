@@ -15,6 +15,8 @@ Copy the directories "db", "etc", and "storage" into your openBliSSART installat
 
 The directory "wav" contains a set of short WAV extracts from popular music. 
 You can use these to test the drum beat separation with various parameters.
+Some of them correspond to the test cases from http://www.cs.tut.fi/~heln/demonstrations/NMF_SVM_demonstrations.html to allow comparison with that study.
+
 Open a command line window in the "bin" directory. You may try the following 
 commands:
 
