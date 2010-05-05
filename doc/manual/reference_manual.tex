@@ -143,7 +143,6 @@ the source signal, the number of components $r$ has to be chosen empirically,
 depending on the application.
 
 \subsection{Basic NMF Algorithms}
-% TODO: Complexity!
 \label{section:NMFAlg}
 
 A factorization according to Eq. \ref{math:BasicNMF} is usually achieved by
@@ -204,8 +203,8 @@ non-increasing under the update rules
 \begin{equation}
     \label{math:KLHUpdateRule}
     \mat{H}_{j,t} \leftarrow \mat{H}_{j,t} \,
-    \frac{\sum_{i=1}^m \mat{W}_{i,j} \mat{V}_{i,t} / (\mat{W}\mat{H})_{i,t}}
-         {\sum_{i=1}^m \mat{W}_{i,j}}
+    \frac{(\mat{W}^T (\mat{V} ./ \mat{W}\mat{H}))_{j,t}}
+         {(\mat{W}^T \mat{1})_{j,t}}
     \qquad
     j = 1, \dots, r; t = 1, \dots, n
 \end{equation}
@@ -213,13 +212,15 @@ non-increasing under the update rules
 \begin{equation}
     \label{math:KLWUpdateRule}
     \mat{W}_{i,j} \leftarrow \mat{W}_{i,j} \,
-    \frac{\sum_{t=1}^n \mat{H}_{j,t} \mat{V}_{i,t} / (\mat{W}\mat{H})_{i,t}}
-         {\sum_{t=1}^n \mat{H}_{j,t}}
+    \frac{((\mat{V} ./ (\mat{WH})) \mat{H}^T)_{i,j}}
+         {(\mat{1H}^T)_{i,j}}
     \qquad
      i = 1, \dots, m; j = 1, \dots, r .
 \end{equation}
-
-TODO: Matrix formulation for performance
+where $\mat{1}$ is an all-unity matrix and $./$ indicates elementwise division.
+The above matrix formulation has been shown to yield better performance than
+the scalar product formulations in \cite{LeeSeung2001} when using fast
+implementations of matrix multiplication, as openBliSSART does.
 
 Thereby the denominators are floored to a very small positive constant (such as
 $10^{-10}$) to avoid divisions by zero. Note that these rules are applied
@@ -315,7 +316,7 @@ and speaker spearation \cite{Schmidt2006,Grady2007}.
 \subsection{Sparse NMF}
 \label{sec:sparseness}
 
-The aforementioned cost functions measure the reconstruction error.
+The aforementioned cost functions measure the reconstruction error $c_r$.
 However, for overcomplete bases (\ie $r > m,n$) sparse NMF \cite{Hoyer2002,Hoyer2004,Eggert2004,Schmidt2006,Virtanen2007} can be valuable, whereby a term is added that increases the value of the cost function for each non-zero entry in
 $\mat{H}$, hence `dense' matrices are penalized. The resulting cost function
 $c(\mat{W},\mat{H}$) is
@@ -338,12 +339,61 @@ First, openBliSSART supports a straightforward approach introduced by \cite{Virt
 
 To prevent the scaling from affecting the value of the cost
 function, it normalizes the activations of each component $j$, \eg
-by their standard deviation estimates $\sigma_j$ \cite{Virtanen2007}. The multiplicative update rules for this cost function are as follows:
+by their standard deviation estimates $\sigma_j$ \cite{Virtanen2007}. The multiplicative update rules for $\mat{H}$ minimizing the cost function \ref{math:costsparseness} are derived as follows. 
 
-TODO
+The gradient of the cost function is written as a subtraction $\nabla c(\mat{W},\mat{H}) = \nabla c^+ (\mat{W},\mat{H}) - \nabla c^- (\mat{W},\mat{H})$ of element-wise nonnegative terms $\nabla c^+(\mat{W},\mat{H}) = \nabla c_r^+(\mat{W},\mat{H}) + \lambda \nabla c_s^+(\mat{H})$ and $\nabla c^-(\mat{W},\mat{H}) = \nabla c_r^-(\mat{W},\mat{H}) + \lambda \nabla c_s^-(\mat{H})$.
+For Euclidean distance, we have 
+\begin{equation}
+\nabla c_r^+(\mat{W},\mat{H}) = \mat{W}^T\mat{WH}
+\end{equation}
+and
+\begin{equation}
+\nabla c_r^-(\mat{W},\mat{H}) = \mat{W}^T\mat{V}
+\end{equation}
 
-As a second approach to sparse NMF, openBliSSART implements the algorithm from \cite{Eggert2004} which is based on a normalized $\mat{W}$ matrix. openBliSSART reformulates the multiplicative update rules for enhanced performance:
+For KL divergence, we have:
+\begin{equation}
+\nabla c_r^+(\mat{W},\mat{H}) = \mat{W}^T\mat{1}
+\end{equation}
+and
+\begin{equation}
+\nabla c_r^-(\mat{W},\mat{H}) = \mat{W}^T (\mat{V} ./. (\mat{WH}))
+\end{equation}
 
+For the sparseness term, we have:
+
+\begin{equation}
+[\nabla c_s^+(\mat{H})]_{j,t} = \frac{1 / \sqrt{n}}{\sqrt{\sum_{k=1}^n \mat{H}_{j,k}^2}}
+\end{equation}
+and
+\begin{equation}
+[\nabla c_s^-(\mat{H})]_{j,t} = \mat{H}_{j,t} \frac{\sqrt{n}\sum_{k=1}^n \mat{H}_{j,k}}{(\sum_{k=1}^n \mat{H}_{j,k}^2)^{3/2}}
+\end{equation}
+
+The final multiplicative update rule is:
+
+\begin{equation}
+\mat{H}_{j,t} \leftarrow \mat{H}_{j,t}\frac{\nabla_c^-(\mat{W},\mat{H})}{\nabla_c^+(\mat{W},\mat{H})}
+\end{equation}
+
+
+As a second approach to sparse NMF, openBliSSART implements the algorithm from
+\cite{Eggert2004} which is based on a cost function resembling Euclidean
+distance with a column-wise normalized $\mat{W}$ matrix. openBliSSART
+reformulates the multiplicative update rules for enhanced performance:
+\begin{equation}
+\mat{H}_{j,t} \leftarrow \mat{H}_{j,t} 
+    \frac{(\mat{W}^T \mat{V})_{j,t}}
+         {((\mat{W}^T\mat{W})\mat{H})_{j,t} + \lambda}
+\end{equation}
+where $\lambda$ is the sparseness weight, and
+\begin{equation}
+\mat{W}_{i,j} \leftarrow \mat{W}_{i,j} 
+    \frac{(\mat{VH}^T)_{i,j} + ((\mat{HH}^T)(\mat{W}^T\mat{W}))_{j,j} \hat{\mat{W}}_{i,j}}
+         {(\mat{W}(\mat{HH}^T))_{i,j} + (\mat{HV}^T\mat{W})_{j,j} \hat{\mat{W}}_{i,j}}
+\end{equation}
+where $\hat{\mat{W}}$ is the column-wise normalized matrix $\mat{W}$ (Euclidean
+norm).
 
 
 \subsection{Convolutive NMF}
@@ -460,7 +510,10 @@ In fact NMF can be regarded as a special case of NMD: by setting $P=1$, the
 convolutive signal model as well as the NMD update rules reduce to the linear
 signal model and NMF update rules, respectively.
 
-Besides NMD, a `sliding window' NMF variant is supported by openBliSSART.
-
-TODO
+Besides NMD, a `sliding window' NMF variant \cite{Gemmeke2010} is supported by
+openBliSSART. Here, simply a matrix $\mat{V}' \in \setR_+^{m \times (Tn)}$ is
+created from $\mat{V}$ by concatenating $T$ subsequent columns of $\mat{V}$
+into one column of the larger matrix $\mat{V}'$. Compared to NMD, this method
+has the advantage that no special update rules are needed, hence any algorithm
+for NMF can be immediately exploited.
 
