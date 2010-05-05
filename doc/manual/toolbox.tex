@@ -410,7 +410,7 @@ shows up when the user presses the right mouse button on an item.
 
 \begin{figure}
     \centering
-    \includegraphics[width=.5\textwidth]{images/ExpandedSubtree.png}
+    \includegraphics[width=.7\textwidth]{images/ExpandedSubtree.png}
     \caption{%
         \label{figure:ExpandedSubtree}%
         Example subtree expansion
@@ -420,17 +420,15 @@ shows up when the user presses the right mouse button on an item.
 
 \subsection{Typical Workflow}
 
-For example, a typical workflow could be
+The typical workflow for supervised component classification in blind source separation includes 
 \begin{itemize}
-  \item   the creation of a number of separation processes, followed by
-  \item   the extraction of the related features, followed by
-  \item   the creation of various labels with arbitrary precision, followed by
+  \item   the import of audio files (separated into components),
+  \item   the extraction of the related features,
+  \item   the creation of various labels with arbitrary precision,
   \item   the assignment of one or more labels to selected classification
-    objects, followed by
-  \item   the creation of one or more responses, followed by
-  \item   the assignment of classification objects to one or more responses
-    and finally
-  \item   the evaluation of a response.
+    objects,
+  \item   the creation of one or more responses, and finally
+  \item   the assignment of classification objects to one or more responses.
 \end{itemize}
 
 
@@ -460,13 +458,17 @@ worker-threads. Also, the number of threads should not exceed the number of
 available processors as there are only few disk operations but rather heavy
 computational costs involved in the separation process.
 
+The components of the chosen audio files will appear in the ``Classification
+objects'' tree on the left hand side of the Browser main window.
+
 
 \subsection{Feature Extraction}
 
 While it is possible to extract the features of individual classification object
-(see figure \ref{figure:FeatureExtraction}) via their context menu, the features
-of all classification objects can be extracted in one step as well by selecting
-the appropriate item from the application' menu.
+(see figure \ref{figure:FeatureExtraction}) via their context menu, the
+features of all classification objects can be extracted in one step as well by
+selecting the ``Database'' / ``Extract features from all data descriptors''
+item in the application's menu.
 
 Again, the number of threads can be specified when extracting all features at
 once and significantly reduces the processing time on multiprocessor machines.
@@ -478,7 +480,7 @@ once and significantly reduces the processing time on multiprocessor machines.
 \end{leftbar}
 
 \begin{figure}
-    \includegraphics[width=\textwidth]{images/FeatureExtraction.png}
+    \includegraphics[width=.7\textwidth]{images/FeatureExtraction.png}
     \caption{%
         \label{figure:FeatureExtraction}%
         Feature extraction
@@ -570,32 +572,10 @@ Figure \ref{figure:COAssignment} shows the described features.
 \end{figure}
 
 
-\subsection{Response Evaluation}
-
-Like mentioned before, the application provides a way of evaluating a response's
-quality and/or, for an even more detailed exploration, exporting all features
-related to the response's assigned classification objects to Weka.  This can be
-achieved by pressing the ``Quality feedback'' button, which automatically shows
-a dialog that calculates and displays all expected values and variances of the
-associated features. An example is shown in figure \ref{figure:QualityFeedback}.
-
-Pressing the dialog's ``Export to Weka'' button exports the corresponding data
-to a selected file in Weka's ARFF format. For a detailed description of this
-file format, please refer to \cite{Weka}.
-
-\begin{figure}
-    \includegraphics[width=\textwidth]{images/QualityFeedback.png}
-    \caption{%
-        \label{figure:QualityFeedback}
-        Response evaluation
-    }
-\end{figure}
-
-
-\subsection{Exporting selected Classification Objects}
+\subsection{Exporting Selected Objects}
 
 If a selection of classification objects should be exported as audio files, one
-can simply select the desired objects and choose ``Export selected components''
+can simply select the desired objects and choose ``Export selected objects as WAV''
 via the corresponding objects' context menu item. When selecting this item, a
 directory selection dialog shows up and allows selecting the destination
 directory for the exported files.
