@@ -11,11 +11,14 @@ separation from popular music using openBliSSART. It includes:
 A working installation of openBliSSART is required (see the INSTALL file in 
 the top-level source directory for instructions).
 
-Copy the directories "db", "etc", and "storage" into your openBliSSART installation directory (backup them if they already exist).
+Copy the directories "db", "etc", and "storage" into your openBliSSART
+installation directory (backup them if they already exist).
 
-The directory "wav" contains a set of short WAV extracts from popular music. 
+The directory "wav" contains a set of short WAV extracts from popular music.
 You can use these to test the drum beat separation with various parameters.
-Some of them correspond to the test cases from http://www.cs.tut.fi/~heln/demonstrations/NMF_SVM_demonstrations.html to allow comparison with that study.
+Some of them correspond to the test cases from
+http://www.cs.tut.fi/~heln/demonstrations/NMF_SVM_demonstrations.html to allow
+comparison with that study.
 
 Besides WAV, also OGG and FLAC formats are supported. MP3 may work, depending
 on the version of SDL_sound that you are using.
