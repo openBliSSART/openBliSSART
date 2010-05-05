@@ -10,7 +10,12 @@ installation and usage information.
 There is a variety of documentation available:
 
 - A reference manual, including a tutorial, can be found in the directory
-  doc/manual, and is compiled using LaTeX ("pdflatex manual").
+  doc/manual, and is compiled using LaTeX:
+    pdflatex manual
+    bibtex manual
+    pdflatex manual
+    pdflatex manual
+
 - A documentation of the framework API can be created by doxygen, either by
   issuing "make html" in the top-level directory, or explicitly running doxygen
   on doc/doxygen.cfg.
