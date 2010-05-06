@@ -104,11 +104,11 @@ you can obtain from http://qt.nokia.com/downloads (choose the LGPL license;
 you probably want the SDK, not the source version which you would have to 
 compile first).
 
-Install Qt, and add the directory <Qt-install-dir>\qt\bin (in which the
-qmake.exe file should be found) to your PATH environment variable. To this end,
-open the dialog My Computer / Properties / Advanced / Environment variables.
-Edit the PATH (or Path) variable, and append the directory, separated by a
-semicolon.
+Install Qt, and add the directory <Qt-install-dir>\qt\bin or, depending on your
+Qt version, <Qt-install-dir>\bin to your PATH environment variable. This
+directory should contain the file qmake.exe. To set the PATH variable, open the
+dialog My Computer / Properties / Advanced / Environment variables.  Edit the
+PATH (or Path) variable, and append the directory, separated by a semicolon.
 
 As the process of obtaining binaries for Windows is quite tedious, we provide a
 ZIP compressed archive that contains the required external libraries (binaries,
@@ -171,6 +171,9 @@ Finally, you have to set some environment variables (assuming the above paths):
 - add C:\devel\bin to the PATH variable: open the dialog My Computer /
   Properties / Advanced / Environment variables. Edit the PATH (or Path)
   variable, and append the directory, separated by a semicolon.
+- add C:\devel\bin on top of the "Executable directories" in Visual Studio
+  ("Tools" / "Options" / "Projects and Solutions" / "VC++ Directories") - this
+  is mainly needed for building the installer (see Section 2.2 below)
 - add C:\devel\lib to the "Library directories" in Visual Studio ("Tools" /
   "Options" / "Projects and Solutions" / "VC++ Directories")
 - add C:\devel\include to the "Include directories" in Visual Studio ("Tools" /
@@ -276,6 +279,17 @@ your have write access to, such as "My Documents\openBliSSART". Under Windows XP
 this is likely to cause problems due to the intransparent security policies of
 this system.
 
+If you have Visual Studio 2008 Professional, you can also use the
+"Setup_openBliSSART" installer project to create an installer that
+automatically copies the openBliSSART binaries to a location on your file
+system, and creates an entry in the Start menu for the Browser. To make sure
+the installer copies the right versions of the libraries, add the Qt binary
+directory (where the QtGui4.dll file resides) on *top* of the Visual Studio
+Executable directories (under Tools / Settings / Projects and Solutions / VC++
+Directories). Then right-click on the "Setup_openBliSSART" project and click
+"Make". In the "Release" subdirectory, an installer file (setup.exe) will be
+created.
+
 
 
 3. Integrate Matlab libraries (experimental!)
@@ -375,3 +389,17 @@ Cause: This might be caused by a erroneous ATLAS library shipped with openSUSE.
 Solution: Build ATLAS from source, and compile again. You can also build
 without ATLAS (by commenting out "HAVE_CBLAS_H" in config.h), but this will
 likely cause a significant performance loss.
+
+
+Problem: Under Windows, the Browser reports something like "Procedure entry
+point not found in QtXXX.dll".
+
+Cause: A version of Qt is in your PATH variable (e.g. from Matlab, or MikTeX)
+that is incompatible to the one that the Browser was linked against. A second
+reason could be that the installer copied a wrong version of the library.
+
+Solution: Check your PATH variable and the "bin" directory of openBliSSART. If
+the PATH variable contains multiple directories where Qt libraries are found,
+copy the version you used to build openBliSSART to the "bin" directory. Check
+that the Visual Studio executable directories contain the same Qt version as
+the Visual Studio library directories, and rebuild and reinstall if necessary.

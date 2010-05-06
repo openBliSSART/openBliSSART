@@ -91,6 +91,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cleanup", "src\cleanup\clea
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "benchmark", "src\benchmark\benchmark.vcproj", "{6C640B96-7E68-4E93-978F-1407D5B85896}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "exportaudio", "src\exportaudio\exportaudio.vcproj", "{5E7AAA27-A728-4477-8AB4-5284DB1A5E10}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -159,6 +161,10 @@ Global
 		{6C640B96-7E68-4E93-978F-1407D5B85896}.Debug|Win32.Build.0 = Debug|Win32
 		{6C640B96-7E68-4E93-978F-1407D5B85896}.Release|Win32.ActiveCfg = Release|Win32
 		{6C640B96-7E68-4E93-978F-1407D5B85896}.Release|Win32.Build.0 = Release|Win32
+		{5E7AAA27-A728-4477-8AB4-5284DB1A5E10}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5E7AAA27-A728-4477-8AB4-5284DB1A5E10}.Debug|Win32.Build.0 = Debug|Win32
+		{5E7AAA27-A728-4477-8AB4-5284DB1A5E10}.Release|Win32.ActiveCfg = Release|Win32
+		{5E7AAA27-A728-4477-8AB4-5284DB1A5E10}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
