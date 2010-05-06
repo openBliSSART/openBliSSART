@@ -110,15 +110,16 @@ has not yet been installed.
 1.2 Microsoft Windows
 
 If you want to build the browser GUI, you need the Qt SDK for Windows, which
-you can obtain from http://qt.nokia.com/downloads (choose the LGPL license;
-you probably want the SDK, not the source version which you would have to 
-compile first).
+you can obtain from http://qt.nokia.com/downloads (choose the LGPL license).
+You have to download the open-source framework version for VS2008, as the SDK
+seems to be incompatible with Visual Studio 2008. Anyway, check if the "lib"
+directory contains "*.lib" files, which Visual Studio needs for linking.
 
-Install Qt, and add the directory <Qt-install-dir>\qt\bin or, depending on your
-Qt version, <Qt-install-dir>\bin to your PATH environment variable. This
-directory should contain the file qmake.exe. To set the PATH variable, open the
-dialog My Computer / Properties / Advanced / Environment variables.  Edit the
-PATH (or Path) variable, and append the directory, separated by a semicolon.
+Install Qt, and add the directory <Qt-install-dir>\bin to your PATH environment
+variable. This directory should contain the file qmake.exe. To set the PATH
+variable, open the dialog My Computer / Properties / Advanced / Environment
+variables.  Edit the PATH (or Path) variable, and append the directory,
+separated by a semicolon.
 
 As the process of obtaining binaries for Windows is quite tedious, we provide a
 ZIP compressed archive that contains the required external libraries (binaries,
@@ -207,10 +208,14 @@ this library is currently not included e.g. in openSUSE.
 
 1.3.1 Compiling and Installing Poco
  
+Download Poco Complete Edition from http://www.pocoproject.org/download.
+For Unix/Linux, you will want the .tar.gz archive while for Windows you need
+the .zip archive.
+
 1.3.1.1 Unix/Linux
 
-After extracting the Poco (Complete Edition) source archive, the configure script should be called
-with the following parameters:
+After extracting the Poco (Complete Edition) source archive, the configure
+script should be called with the following parameters:
  
     ./configure --omit=Crypto,NetSSL_OpenSSL,Data/ODBC,Data/MySQL \
                 --no-tests --no-samples
@@ -218,18 +223,25 @@ with the following parameters:
 This line avoids building the parts of Poco which are dependent on third-party
 libraries, and are not required for openBliSSART.
 
+You can also specify a prefix where Poco should be installed, but in most cases
+you should leave the default /usr/local.
+
 Then, type "make" to compile and "make install" to install. If you are not
 logged in as root, try "sudo make install".
 
 Depending on where you have installed Poco, you may have to set the
-LD_LIBRARY_PATH environment variable to contain the Poco "lib" directory.
+LD_LIBRARY_PATH environment variable to contain the Poco "lib" directory. 
+Also, if you installed Poco in a non-standard location, you have to set the
+--with-poco-prefix option of the openBliSSART configure script (see Section
+2.1.1.3).
 
 
 1.3.1.2 Microsoft Windows
 
 After extracting the Poco Complete Edition from the ZIP file, open the file
 "components". To avoid building the parts of Poco which are dependent on
-third-party libraries, and are not required for openBliSSART, remove all lines but the following:
+third-party libraries, and are not required for openBliSSART, remove all lines
+but the following:
 
 CppUnit
 Foundation
@@ -302,7 +314,9 @@ The prefix defaults to /usr/local/blissart.
 The configure script will check if you have the required libraries installed,
 and exit with an error if you do not. The "config.log" file provides a hint to
 the source of error in that case (in most cases, libraries installed in a
-non-standard location).
+non-standard location). If you have obtained Qt and/or Poco from the Internet
+and installed manually, you may have to set the --with-qt-prefix and
+--with-poco-prefix parameters (see Section 2.1.1.3).
 
 Particularly, the configure script will automatically determine if you have the
 ATLAS libraries installed. It will output a message like "Checking for cblas.h
@@ -386,7 +400,7 @@ installation prefix, respectively):
 First, you can provide the library path every time when you are
 executing one of openBliSSART's binaries, e.g.
 
-$ LD_LIBRARY_PATH=<prefix>/lib <prefix>/bin/browser
+$ LD_LIBRARY_PATH=<prefix>/lib:$LD_LIBRARY_PATH <prefix>/bin/browser
 
 Second, you can alter your .profile file so as to export the
 corresponding variable, i.e. add the line
@@ -406,10 +420,21 @@ $ sudo ldconfig
 
 2.2 Microsoft Windows (Visual Studio 2008)
 
+First, you will ned to adjust the paths used by the browser project file,
+as they depend on the Qt installation location. To this end, execute the
+"make_vcproj.bat" file in the "src\browser" directory.
+
 Ensure you have set the paths to external libraries in the Visual Studio
-environment correctly (see Section 1.2). To compile openBliSSART using Visual
-Studio 2008, simply open the provided solution file ("openBliSSART.sln") and click "Make" / "Make solution". 
-If you do not have the ATLAS library installed on your system, please remove
+environment correctly (see Section 1.2). 
+
+To compile openBliSSART using Visual Studio 2008, open the provided solution 
+file ("openBliSSART.sln").
+
+Make sure that "Release" / "Win32" (NOT "Debug") is selected as configuration
+in the Visual Studio toolbar, and click "Make" / "Make solution". 
+
+If you do not have the ATLAS library installed on your system (you do if you
+used the blissart-3rdparty-win32.zip file), please remove
 the "HAVE_CBLAS_H" preprocessor definition from the LibLinAlg project file
 (right-click the LibLinAlg project in the solution tree, click on "C/C++ /
 Preprocessor", then change the line of definitions from
@@ -417,23 +442,26 @@ Preprocessor", then change the line of definitions from
 will be very slow if you do this.
 
 After compiling, openBliSSART libraries and tools will be available in the
-"bin\release" subdirectory. You should copy them into a suitable location where
-your have write access to, such as "My Documents\openBliSSART". Under Windows XP, it is probably fine to install in "C:\Program Files", but under Windows 7 
-this is likely to cause problems due to the intransparent security policies of
-this system.
-
-If you have Visual Studio 2008 Professional, you can also use the
-"Setup_openBliSSART" installer project to create an installer that
-automatically copies the openBliSSART binaries to a location on your file
+"bin\release" subdirectory. If you have Visual Studio 2008 Professional, you
+can also use the "Setup_openBliSSART" installer project to create an installer
+that automatically copies the openBliSSART binaries to a location on your file
 system, and creates an entry in the Start menu for the Browser. To make sure
 the installer copies the right versions of the libraries, add the Qt binary
-directory (where the QtGui4.dll file resides) on *top* of the Visual Studio
+directory (where the qmake.exe file resides) on *top* of the Visual Studio
 Executable directories (under Tools / Settings / Projects and Solutions / VC++
 Directories). Then right-click on the "Setup_openBliSSART" project and click
 "Make". In the "Release" subdirectory, an installer file (setup.exe) will be
 created which should be straightforward to use, lets you choose the
 installation directory, and copies external libraries to the openBliSSART
-installation directory.
+installation directory.  This installer should work fine even on Windows Vista
+/ Windows 7.
+
+If you cannot build the installer, copy the files from "bin\release" into a
+suitable location where your have write access to, such as "My
+Documents\openBliSSART". Under Windows XP, it is probably fine to install in
+"C:\Program Files", but under Windows 7 this is likely to cause problems due to
+the intransparent security policies of this system.
+
 
 
 
@@ -508,24 +536,6 @@ Here are some of the problems that have been reported by system users, and
 how they can be fixed:
 
 
-Problem: Most of the tools, including the testsuite, but not the icatool, crash
-instantly under Microsoft Windows, without an error message on the console. 
-
-Cause: This is probably caused by incompatibilities of the Poco binaries
-with your Visual Studio runtime.
-
-Solution: Compile Poco from source (Section 1.3.1.2), then build openBliSSART 
-again.
-
-
-Problem: Most of the tools exit with an error message like "Cannot write to database" under Windows.
-
-Cause: This is probably due to some "fancy" security policies of newer Windows
-versions (Vista, 7) that block file system access even for administrator users.
-
-Solution: Install openBliSSART in a directory like "My Documents" and try again.
-
-
 Problem: Under openSUSE, the separation tool crashes, giving no error message
 but "Aborted".
 
@@ -536,6 +546,25 @@ without ATLAS (by commenting out "HAVE_CBLAS_H" in config.h), but this will
 likely cause a significant performance loss.
 
 
+Problem: Most of the tools, including the testsuite, but not the icatool, crash
+instantly under Microsoft Windows, without an error message on the console. 
+
+Cause: This is probably caused by incompatibilities of the Poco binaries
+with your Visual Studio runtime.
+
+Solution: Compile Poco from source (Section 1.3.1.2), then build openBliSSART 
+again.
+
+
+Problem: Most of the tools exit with an error message like "Cannot write to
+database" under Windows.
+
+Cause: This is probably due to some "fancy" security policies of newer Windows
+versions (Vista, 7) that block file system access even for administrator users.
+
+Solution: Install openBliSSART in a directory like "My Documents" and try again.
+
+
 Problem: Under Windows, the Browser reports something like "Procedure entry
 point not found in QtXXX.dll".
 
@@ -543,8 +572,38 @@ Cause: A version of Qt is in your PATH variable (e.g. from Matlab, or MikTeX)
 that is incompatible to the one that the Browser was linked against. A second
 reason could be that the installer copied a wrong version of the library.
 
-Solution: Check your PATH variable and the "bin" directory of openBliSSART. If
-the PATH variable contains multiple directories where Qt libraries are found,
-copy the version you used to build openBliSSART to the "bin" directory. Check
-that the Visual Studio executable directories contain the same Qt version as
-the Visual Studio library directories, and rebuild and reinstall if necessary.
+Solution: Build and use the Windows installer if possible. Otherwise, check
+your PATH variable and the "bin" directory of openBliSSART. If the PATH
+variable contains multiple directories where Qt libraries are found, copy the
+version you used to build openBliSSART to the "bin" directory. Check that the
+Visual Studio executable directories contain the same Qt version as the Visual
+Studio library directories, and rebuild and reinstall if necessary.
+
+
+Problem: When executing the "make_vcproj.bat" in the "src\browser" directory
+(under Windows), an error message "Unable to generate output" appears.
+
+Cause: A common problem with Qt.
+
+Solution: Check that you have the right Qt version (which contains the Visual
+Studio export definitions for DLLs (*.lib) in the "lib" directory). Try to
+execute the following in the "src\browser" directory:
+set QMAKESPEC=win32-msvc2008
+qmake -tp vc
+
+
+Problem: When compiling under Visual Studio, an error message appears that
+"MOC xxx.h" fails.
+
+Cause: Incorrect paths in the browser project.
+
+Solution: Make sure that "make_vcproj.bat" in the "src\browser" directory
+has been executed correctly.
+
+
+Problem: Visual Studio reports a linking error (qtmain.lib could not be found).
+
+Cause: Incorrect Qt version.
+
+Solution: Check that you have installed the VS2008 version of Qt, which should
+contain that file in its "lib" directory.
