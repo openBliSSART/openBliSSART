@@ -23,9 +23,9 @@ performance (optional, and experimental).
 Finally, Section 4 describes some common pitfalls, and how to avoid them.
 
 
-1. Install the required libraries
+1. Dependencies
 
-openBliSSART requires several open source libraries to run. These include:
+openBliSSART depends on several open source libraries. These include:
 - FFTW3 (Fastest Fourier Transform in the West) 
 - SDL (>= 1.2.12) and SDL_sound for support of audio input from various formats
   (WAV, OGG, FLAC, etc., depending on the capabilities of the library)
@@ -42,8 +42,108 @@ libraries from source, check Section 1.3.
 
 1.1 Instructions for specific Linux distributions
 
-1.1.1 Ubuntu
-TODO (Alex)
+1.1.1 Ubuntu 10.04
+
+
+1.1.1.1 Installation of the required Libraries
+
+In order to satisfy the external library dependencies please make sure that the
+following packages are installed prior to the compilation of openBliSSART:
+
+g++
+libpoco-dev
+libfftw3-dev
+libsdl-sound1.2-dev
+libatlas-base-dev
+qt4-dev-tools
+
+
+1.1.1.2 Compilation and Installation of openBliSSART
+
+Then unpack the openBliSSART archive, e.g.
+
+$ mkdir -p ~/src
+$ tar xzf openBliSSART-1.2.tar.gz -C ~/src
+$ cd ~/src/openBliSSART-1.2
+
+Next you would typically run the `configure' script that comes with the
+sources. If there is no such file, you can create one yourself by typing
+
+$ ./bootstrap.sh
+
+at the command line, however make sure that you have both `automake' and
+`libtool' packages installed.
+
+The configure script can now be used to configure various parameters (type
+"./configure --help" for an overview), one of which is the installation prefix
+of openBliSSART. This prefix defaults to /usr/local/blissart.
+
+Note that openBliSSART requires its own directory hierarchy and that every user
+working with openBliSSART needs write access to the <prefix>/etc and
+<prefix>/db subdirectories of the installation.
+Hence you have to choose between a shared and a user-specific installation.
+
+
+1.1.1.2.1 Shared Installation
+
+For this, we'll be using the default prefix of /usr/local/blissart and install
+the software at this location. Then we'll create a corresponding group and set
+the necessary access rights.
+
+$ ./configure
+$ make
+$ sudo make install
+$ sudo groupadd blissart
+$ sudo chown -R :blissart /usr/local/blissart
+$ sudo chmod -R g+w /usr/local/blissart/db /usr/local/blissart/etc
+
+What remains is adding the respective users to the group which e.g. can be done
+via
+
+$ sudo gpasswd -a <username> blissart
+
+
+1.1.1.2.2 User-Specific Installation
+
+Aside from the shared installation which in turn requires superuser privileges,
+a user-specific installation is way easier to perform. We'll be using a
+user-specific installation prefix for the configuration step and that's it.
+
+$ ./configure --prefix=${HOME}/blissart
+$ make
+$ make install
+
+
+1.1.2 Running openBliSSART
+
+During the compilation process, a number of libraries were created which are
+required for openBliSSART to run. Since your operating system needs to know
+where to find these libraries, you have to choose between the following three
+options (where you'd have to replace the `<prefix>' placeholder with your chosen
+installation prefix, respectively):
+
+
+1.1.2.1 Firstly, you can provide the library path every time when you're
+executing one of openBliSSART's binaries, e.g.
+
+$ LD_LIBRARY_PATH=<prefix>/lib <prefix>/bin/browser
+
+
+1.1.2.2 Secondly, you can alter your .profile file so as to export the
+corresponding variable, i.e. add the line
+
+LD_LIBRARY_PATH="<prefix>/lib:$LD_LIBRARY_PATH"
+
+to your .profile.
+
+
+1.1.2.3 Thirdly, you can configure the system-wide tool `ldconfig' such that it
+automatically knows where to find the libraries. For this, you need
+administrator privileges though:
+
+$ sudo sh -c 'echo <prefix>/lib > /etc/ld.so.conf.d/blissart.conf'
+$ sudo ldconfig
+
 
 1.1.2 openSUSE (>= 11.1)
 
