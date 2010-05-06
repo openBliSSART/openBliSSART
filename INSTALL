@@ -10,12 +10,17 @@ These instructions cover the compilation and installation of openBliSSART on
 various platforms. 
 For compilation under Unix-like systems, we provide a configure script (GNU
 autotools). 
-For Microsoft Windows, we prepared Visual Studio 2008 solution files.
+For Microsoft Windows, we prepared Visual Studio 2008 solution files. As the
+project file format and the build process change with each version, we do not
+support other versions of Visual Studio. It is possible to compile openBliSSART
+with VC++ 2010 Express, but we do not "officially" support this at the moment.
+
 See Section 2 for compilation instructions.
 Prior to compiling openBliSSART, make sure you have the required libraries
 installed (Section 1).
 Section 3 covers the integration of Matlab BLAS libraries for enhanced
 performance (optional, and experimental).
+Finally, Section 4 describes some common pitfalls, and how to avoid them.
 
 
 1. Install the required libraries
@@ -94,6 +99,17 @@ has not yet been installed.
 
 1.2 Microsoft Windows
 
+If you want to build the browser GUI, you need the Qt SDK for Windows, which
+you can obtain from http://qt.nokia.com/downloads (choose the LGPL license;
+you probably want the SDK, not the source version which you would have to 
+compile first).
+
+Install Qt, and add the directory <Qt-install-dir>\qt\bin (in which the
+qmake.exe file should be found) to your PATH environment variable. To this end,
+open the dialog My Computer / Properties / Advanced / Environment variables.
+Edit the PATH (or Path) variable, and append the directory, separated by a
+semicolon.
+
 As the process of obtaining binaries for Windows is quite tedious, we provide a
 ZIP compressed archive that contains the required external libraries (binaries,
 export files, and header files) to build and run openBliSSART:
@@ -152,12 +168,13 @@ include directory, e.g. "C:\devel\include\SDL".
 1.2.3 Setting environment variables
 
 Finally, you have to set some environment variables (assuming the above paths): 
-- add C:\devel\bin to the PATH variable
-- add C:\devel\lib to the "Library directories" in Visual Studio ("Tools" / 
+- add C:\devel\bin to the PATH variable: open the dialog My Computer /
+  Properties / Advanced / Environment variables. Edit the PATH (or Path)
+  variable, and append the directory, separated by a semicolon.
+- add C:\devel\lib to the "Library directories" in Visual Studio ("Tools" /
   "Options" / "Projects and Solutions" / "VC++ Directories")
-- add C:\devel\include to the "Include directories" in Visual Studio ("Tools" / 
+- add C:\devel\include to the "Include directories" in Visual Studio ("Tools" /
   "Options" / "Projects and Solutions" / "VC++ Directories")
-TODO: check English names for VS
 
 
 1.3 Compiling libraries from source
@@ -254,8 +271,10 @@ Preprocessor", then change the line of definitions from
 will be very slow if you do this.
 
 After compiling, openBliSSART libraries and tools will be available in the
-"bin\release" subdirectory. You should copy them into a suitable location,
-such as "C:\Program Files\openBliSSART".
+"bin\release" subdirectory. You should copy them into a suitable location where
+your have write access to, such as "My Documents\openBliSSART". Under Windows XP, it is probably fine to install in "C:\Program Files", but under Windows 7 
+this is likely to cause problems due to the intransparent security policies of
+this system.
 
 
 
@@ -322,3 +341,37 @@ If your integer type is _NOT_ ptrdiff_t, add a definition of the form
 
 	BUILD_LIBLINALG;HAVE_MATLAB;MATLAB_INT_TYPE=int
 
+
+
+4. Troubleshooting
+
+Here are some of the problems that have been reported by system users, and
+how they can be fixed:
+
+
+Problem: Most of the tools, including the testsuite, but not the icatool, crash
+instantly under Microsoft Windows, without an error message on the console. 
+
+Cause: This is probably caused by incompatibilities of the Poco binaries
+with your Visual Studio runtime.
+
+Solution: Compile Poco from source (Section 1.3.1.2), then build openBliSSART 
+again.
+
+
+Problem: Most of the tools exit with an error message like "Cannot write to database" under Windows.
+
+Cause: This is probably due to some "fancy" security policies of newer Windows
+versions (Vista, 7) that block file system access even for administrator users.
+
+Solution: Install openBliSSART in a directory like "My Documents" and try again.
+
+
+Problem: Under openSUSE, the separation tool crashes, giving no error message
+but "Aborted".
+
+Cause: This might be caused by a erroneous ATLAS library shipped with openSUSE.
+
+Solution: Build ATLAS from source, and compile again. You can also build
+without ATLAS (by commenting out "HAVE_CBLAS_H" in config.h), but this will
+likely cause a significant performance loss.

@@ -20,24 +20,46 @@ Some of them correspond to the test cases from
 http://www.cs.tut.fi/~heln/demonstrations/NMF_SVM_demonstrations.html to allow
 comparison with that study.
 
-Besides WAV, also OGG and FLAC formats are supported. MP3 may work, depending
-on the version of SDL_sound that you are using.
+We provide short (< 10 seconds, and hence royalty-free) excerpts of the
+following pieces:
+- "Bolero" by Maurice Ravel
+- "Clocks" by Coldplay
+- "A Little Less Conversation" by Elvis vs. JXL
+- "Enter Sandman" by Metallica
+- "Hotel California" by The Eagles
+- "Like A Virgin" by Madonna
+- "Money for Nothing" by Dire Straits
+- "Rock DJ" by Robbie Williams
+- "Sultans of Swing" by Dire Straits
+- "Why Does My Heart Feel So Bad" by Moby
 
-Open a command line window in the "bin" directory. You may try the following 
-commands:
+These represent a good spectrum of music, with and without vocals, and include
+challenging tasks for drum beat separation such as cowbells, synthetic
+percussion, distorted guitars etc.
+
+You can also try the demonstrator on your own music files. Besides WAV, also
+OGG and FLAC formats are supported. MP3 may work, depending on the version of
+SDL_sound that you are using. If you encounter "empty" output files (i.e. no
+sound) when using MP3 input, this is probably due problems with SDL_sound's MP3
+implementation, and can be solved by decoding to WAV format first.
+
+Open a command line window and change to the openBliSSART "bin" directory. You
+may try the following commands (use "./septool" under Unix):
 
 septool -v -l9 <file.wav>
 
-Default drum beat separation process. Decomposes the signal into 20 components,
-classifies them as drum or harmonic, and creates two WAV files (file_Drum.wav
-and file_Harmonic.wav).
+This performs a "default" drum beat separation process which decomposes the
+signal into 20 components, classifies them as drum or harmonic, and creates two
+WAV files (file_Drum.wav and file_Harmonic.wav). The -v option tells the tool
+not to write anything to the database ("volatile" mode), and "-l9" is the
+database ID of the training set used for drum/harmonic classification.
 
-You can try to adjust the components parameter by using the -c option. Try, for
-once, 40 components:
+You can try to adjust the number of NMF components by using the -c option. Try,
+for once, 30 components:
 
-septool -v -l9 -c40 <file.wav>
+septool -v -l9 -c30 <file.wav>
 
-and compare the result.
+and compare the result. Try to increase the components so, say, 40 or 50.
 
 As NMF is initialized randomly, results may vary from execution to execution,
 so you can try the same command several times and listen to the results.
