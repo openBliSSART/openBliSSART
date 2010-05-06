@@ -42,10 +42,8 @@ using namespace std;
 using Poco::Util::LayeredConfiguration;
 
 
-//#define MINIMUM_WIDTH 1024
-//#define MINIMUM_HEIGHT 768
-#define MINIMUM_WIDTH 640
-#define MINIMUM_HEIGHT 480
+#define MINIMUM_WIDTH 1024
+#define MINIMUM_HEIGHT 768
 
 
 namespace blissart {
