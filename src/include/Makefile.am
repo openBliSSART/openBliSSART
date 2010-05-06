@@ -23,7 +23,6 @@
 ##
 
 nobase_include_HEADERS = baseName.h \
-						 common.h \
 						 blissart/AnovaFeatureSelector.h \
 						 blissart/AudioObject.h \
 						 blissart/BasicApplication.h \
@@ -47,8 +46,10 @@ nobase_include_HEADERS = baseName.h \
 						 blissart/FeatureExtractor.h \
 						 blissart/FeatureSelector.h \
 						 blissart/FeatureSet.h \
+						 blissart/GnuplotWriter.h \
 						 blissart/HTKWriter.h \
 						 blissart/Label.h \
+						 blissart/MatrixTransform.h \
 						 blissart/MinHeap.h \
 						 blissart/NMDTask.h \
 						 blissart/Process.h \
@@ -64,6 +65,7 @@ nobase_include_HEADERS = baseName.h \
 						 blissart/ThreadedApplication.h \
 						 blissart/WindowFunctions.h \
 						 blissart/audio/AudioData.h \
+						 blissart/audio/MelFilter.h \
 						 blissart/audio/Sound.h \
 						 blissart/audio/WaveEncoder.h \
 						 blissart/audio/audio.h \
@@ -80,6 +82,10 @@ nobase_include_HEADERS = baseName.h \
 						 blissart/linalg/generators/generators.h \
 						 blissart/nmf/Deconvolver.h \
 						 blissart/nmf/randomGenerator.h \
+						 blissart/transforms/MelFilterTransform.h \
+						 blissart/transforms/PowerTransform.h \
+						 blissart/transforms/SlidingWindowTransform.h \
 						 blissart/validators.h \
+						 common.h \
 						 libsvm/svm.h \
 						 types.h
