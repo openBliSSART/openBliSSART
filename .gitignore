@@ -43,7 +43,6 @@ src/Testsuite/testsuite
 src/benchmark/benchmark
 src/browser/Makefile.qt
 src/browser/browser
-src/browser/browser.vcproj
 src/cleanup/cleanup
 src/cvtool/cvtool
 src/export/export

@@ -1,0 +1,1161 @@
+<?xml version="1.0" encoding = "Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9,00"
+	Name="browser"
+	ProjectGUID="{C2A788E8-97BD-3573-9EB8-FE27ADEA07E6}"
+	Keyword="Qt4VSv1.0">
+	<Platforms>
+		<Platform
+			Name="Win32"/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="."
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			ConfigurationType="1"
+			IntermediateDirectory="..\..\build\debug\"
+			UseOfMfc="0">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;c:\Qt\4.6.0\include\QtCore&quot;,&quot;c:\Qt\4.6.0\include\QtGui&quot;,&quot;c:\Qt\4.6.0\include&quot;,&quot;..\include&quot;,&quot;c:\Qt\4.6.0\include\ActiveQt&quot;,&quot;..\..\build\debug&quot;,&quot;..\..\build\debug&quot;,c:\Qt\4.6.0\mkspecs\default"
+				AdditionalOptions="-Zm200 -w34100 -w34189 -w34100 -w34189"
+				AssemblerListingLocation="..\..\build\debug\"
+				BufferSecurityCheck="false"
+				DebugInformationFormat="3"
+				ExceptionHandling="1"
+				GeneratePreprocessedFile="0"
+				ObjectFile="..\..\build\debug\"
+				Optimization ="4"
+				PreprocessorDefinitions="_WINDOWS,UNICODE,WIN32,QT_LARGEFILE_SUPPORT,_DEBUG,QT_THREAD_SUPPORT,QT_DLL,QT_GUI_LIB,QT_CORE_LIB"
+				ProgramDataBaseFileName="$(IntDir)$(ProjectName).pdb"
+				RuntimeLibrary="3"
+				RuntimeTypeInfo="true"
+				SuppressStartupBanner="true"
+				TreatWChar_tAsBuiltInType="false"
+				WarningLevel="3"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="c:\Qt\4.6.0\lib\qtmaind.lib c:\Qt\4.6.0\lib\QtGuid4.lib c:\Qt\4.6.0\lib\QtCored4.lib"
+				AdditionalLibraryDirectories="c:\Qt\4.6.0\lib"
+				AdditionalOptions="&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot; &quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot;"
+				GenerateDebugInformation="true"
+				IgnoreImportLibrary="true"
+				LinkTimeCodeGeneration="0"
+				OutputFile="..\..\bin\debug\browser.exe"
+				ProgramDatabaseFile=""
+				SubSystem="2"
+				SuppressStartupBanner="true"/>
+			<Tool
+				Name="VCMIDLTool"
+				DefaultCharType="0"
+				EnableErrorChecks="1"
+				WarningLevel="0"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_WINDOWS,UNICODE,WIN32,QT_LARGEFILE_SUPPORT,_DEBUG,QT_THREAD_SUPPORT,QT_DLL,QT_GUI_LIB,QT_CORE_LIB,_DEBUG"/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="."
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			ConfigurationType="1"
+			IntermediateDirectory="..\..\build\release\"
+			UseOfMfc="0">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;c:\Qt\4.6.0\include\QtCore&quot;,&quot;c:\Qt\4.6.0\include\QtGui&quot;,&quot;c:\Qt\4.6.0\include&quot;,&quot;..\include&quot;,&quot;c:\Qt\4.6.0\include\ActiveQt&quot;,&quot;..\..\build\release&quot;,&quot;..\..\build\release&quot;,c:\Qt\4.6.0\mkspecs\default"
+				AdditionalOptions="-Zm200 -w34100 -w34189 -w34100 -w34189"
+				AssemblerListingLocation="..\..\build\release\"
+				BufferSecurityCheck="false"
+				DebugInformationFormat="0"
+				ExceptionHandling="1"
+				GeneratePreprocessedFile="0"
+				ObjectFile="..\..\build\release\"
+				Optimization ="2"
+				PreprocessorDefinitions="QT_NO_DEBUG,NDEBUG,_WINDOWS,UNICODE,WIN32,QT_LARGEFILE_SUPPORT,QT_NO_DEBUG_OUTPUT,QT_THREAD_SUPPORT,QT_DLL,QT_NO_DEBUG,QT_GUI_LIB,QT_CORE_LIB,NDEBUG"
+				ProgramDataBaseFileName="$(IntDir)$(ProjectName).pdb"
+				RuntimeLibrary="2"
+				RuntimeTypeInfo="true"
+				SuppressStartupBanner="true"
+				TreatWChar_tAsBuiltInType="false"
+				WarningLevel="3"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="c:\Qt\4.6.0\lib\qtmain.lib c:\Qt\4.6.0\lib\QtGui4.lib c:\Qt\4.6.0\lib\QtCore4.lib"
+				AdditionalLibraryDirectories="c:\Qt\4.6.0\lib"
+				AdditionalOptions="&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot; &quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot;"
+				GenerateDebugInformation="false"
+				IgnoreImportLibrary="true"
+				LinkIncremental="1"
+				LinkTimeCodeGeneration="0"
+				OutputFile="..\..\bin\release\browser.exe"
+				ProgramDatabaseFile=""
+				SubSystem="2"
+				SuppressStartupBanner="true"/>
+			<Tool
+				Name="VCMIDLTool"
+				DefaultCharType="0"
+				EnableErrorChecks="1"
+				WarningLevel="0"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="QT_NO_DEBUG,NDEBUG,_WINDOWS,UNICODE,WIN32,QT_LARGEFILE_SUPPORT,QT_NO_DEBUG_OUTPUT,QT_THREAD_SUPPORT,QT_DLL,QT_NO_DEBUG,QT_GUI_LIB,QT_CORE_LIB"/>
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
+			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
+			<File
+				RelativePath="BrowserController.cpp"/>
+			<File
+				RelativePath="BrowserMainWindow.cpp"/>
+			<File
+				RelativePath="ClassificationObjectItem.cpp"/>
+			<File
+				RelativePath="CreateProcessDialog.cpp"/>
+			<File
+				RelativePath="DataDescriptorItem.cpp"/>
+			<File
+				RelativePath="EditWidget.cpp"/>
+			<File
+				RelativePath="EditWidgetClassificationObject.cpp"/>
+			<File
+				RelativePath="EditWidgetLabel.cpp"/>
+			<File
+				RelativePath="EditWidgetResponse.cpp"/>
+			<File
+				RelativePath="EntityItem.cpp"/>
+			<File
+				RelativePath="ExportObjectsDlg.cpp"/>
+			<File
+				RelativePath="FeatureExtractionDialog.cpp"/>
+			<File
+				RelativePath="FeatureItem.cpp"/>
+			<File
+				RelativePath="FilesSelectionWidget.cpp"/>
+			<File
+				RelativePath="LabelItem.cpp"/>
+			<File
+				RelativePath="LabelSelectionDialog.cpp"/>
+			<File
+				RelativePath="PlaybackThread.cpp"/>
+			<File
+				RelativePath="PreferencesDlg.cpp"/>
+			<File
+				RelativePath="ProcessItem.cpp"/>
+			<File
+				RelativePath="ResponseItem.cpp"/>
+			<File
+				RelativePath="ResponseQualityDlg.cpp"/>
+			<File
+				RelativePath="SamplesPreviewCanvas.cpp"/>
+			<File
+				RelativePath="SamplesPreviewWidget.cpp"/>
+			<File
+				RelativePath="ThreadedDialog.cpp"/>
+			<File
+				RelativePath="TreeWidgetController.cpp"/>
+			<File
+				RelativePath="main.cpp"/>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;inc;xsd"
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath="BrowserController.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="BrowserController.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_BrowserController.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 BrowserController.h -o ..\..\build\debug\moc_BrowserController.cpp"
+						Description="MOC BrowserController.h"
+						Outputs="..\..\build\debug\moc_BrowserController.cpp"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="BrowserController.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_BrowserController.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 BrowserController.h -o ..\..\build\release\moc_BrowserController.cpp"
+						Description="MOC BrowserController.h"
+						Outputs="..\..\build\release\moc_BrowserController.cpp"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="BrowserMainWindow.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="BrowserMainWindow.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_BrowserMainWindow.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 BrowserMainWindow.h -o ..\..\build\debug\moc_BrowserMainWindow.cpp"
+						Description="MOC BrowserMainWindow.h"
+						Outputs="..\..\build\debug\moc_BrowserMainWindow.cpp"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="BrowserMainWindow.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_BrowserMainWindow.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 BrowserMainWindow.h -o ..\..\build\release\moc_BrowserMainWindow.cpp"
+						Description="MOC BrowserMainWindow.h"
+						Outputs="..\..\build\release\moc_BrowserMainWindow.cpp"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="ClassificationObjectItem.h"/>
+			<File
+				RelativePath="CreateProcessDialog.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="CreateProcessDialog.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_CreateProcessDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 CreateProcessDialog.h -o ..\..\build\debug\moc_CreateProcessDialog.cpp"
+						Description="MOC CreateProcessDialog.h"
+						Outputs="..\..\build\debug\moc_CreateProcessDialog.cpp"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="CreateProcessDialog.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_CreateProcessDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 CreateProcessDialog.h -o ..\..\build\release\moc_CreateProcessDialog.cpp"
+						Description="MOC CreateProcessDialog.h"
+						Outputs="..\..\build\release\moc_CreateProcessDialog.cpp"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="DataDescriptorItem.h"/>
+			<File
+				RelativePath="EditWidget.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="EditWidget.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_EditWidget.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 EditWidget.h -o ..\..\build\debug\moc_EditWidget.cpp"
+						Description="MOC EditWidget.h"
+						Outputs="..\..\build\debug\moc_EditWidget.cpp"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="EditWidget.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_EditWidget.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 EditWidget.h -o ..\..\build\release\moc_EditWidget.cpp"
+						Description="MOC EditWidget.h"
+						Outputs="..\..\build\release\moc_EditWidget.cpp"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="EditWidgetClassificationObject.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="EditWidgetClassificationObject.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_EditWidgetClassificationObject.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 EditWidgetClassificationObject.h -o ..\..\build\debug\moc_EditWidgetClassificationObject.cpp"
+						Description="MOC EditWidgetClassificationObject.h"
+						Outputs="..\..\build\debug\moc_EditWidgetClassificationObject.cpp"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="EditWidgetClassificationObject.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_EditWidgetClassificationObject.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 EditWidgetClassificationObject.h -o ..\..\build\release\moc_EditWidgetClassificationObject.cpp"
+						Description="MOC EditWidgetClassificationObject.h"
+						Outputs="..\..\build\release\moc_EditWidgetClassificationObject.cpp"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="EditWidgetLabel.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="EditWidgetLabel.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_EditWidgetLabel.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 EditWidgetLabel.h -o ..\..\build\debug\moc_EditWidgetLabel.cpp"
+						Description="MOC EditWidgetLabel.h"
+						Outputs="..\..\build\debug\moc_EditWidgetLabel.cpp"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="EditWidgetLabel.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_EditWidgetLabel.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 EditWidgetLabel.h -o ..\..\build\release\moc_EditWidgetLabel.cpp"
+						Description="MOC EditWidgetLabel.h"
+						Outputs="..\..\build\release\moc_EditWidgetLabel.cpp"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="EditWidgetResponse.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="EditWidgetResponse.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_EditWidgetResponse.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 EditWidgetResponse.h -o ..\..\build\debug\moc_EditWidgetResponse.cpp"
+						Description="MOC EditWidgetResponse.h"
+						Outputs="..\..\build\debug\moc_EditWidgetResponse.cpp"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="EditWidgetResponse.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_EditWidgetResponse.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 EditWidgetResponse.h -o ..\..\build\release\moc_EditWidgetResponse.cpp"
+						Description="MOC EditWidgetResponse.h"
+						Outputs="..\..\build\release\moc_EditWidgetResponse.cpp"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="EntityItem.h"/>
+			<File
+				RelativePath="ExportObjectsDlg.h"/>
+			<File
+				RelativePath="FeatureExtractionDialog.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="FeatureExtractionDialog.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_FeatureExtractionDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 FeatureExtractionDialog.h -o ..\..\build\debug\moc_FeatureExtractionDialog.cpp"
+						Description="MOC FeatureExtractionDialog.h"
+						Outputs="..\..\build\debug\moc_FeatureExtractionDialog.cpp"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="FeatureExtractionDialog.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_FeatureExtractionDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 FeatureExtractionDialog.h -o ..\..\build\release\moc_FeatureExtractionDialog.cpp"
+						Description="MOC FeatureExtractionDialog.h"
+						Outputs="..\..\build\release\moc_FeatureExtractionDialog.cpp"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="FeatureItem.h"/>
+			<File
+				RelativePath="FilesSelectionWidget.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="FilesSelectionWidget.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_FilesSelectionWidget.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 FilesSelectionWidget.h -o ..\..\build\debug\moc_FilesSelectionWidget.cpp"
+						Description="MOC FilesSelectionWidget.h"
+						Outputs="..\..\build\debug\moc_FilesSelectionWidget.cpp"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="FilesSelectionWidget.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_FilesSelectionWidget.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 FilesSelectionWidget.h -o ..\..\build\release\moc_FilesSelectionWidget.cpp"
+						Description="MOC FilesSelectionWidget.h"
+						Outputs="..\..\build\release\moc_FilesSelectionWidget.cpp"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="LabelItem.h"/>
+			<File
+				RelativePath="LabelSelectionDialog.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="LabelSelectionDialog.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_LabelSelectionDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 LabelSelectionDialog.h -o ..\..\build\debug\moc_LabelSelectionDialog.cpp"
+						Description="MOC LabelSelectionDialog.h"
+						Outputs="..\..\build\debug\moc_LabelSelectionDialog.cpp"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="LabelSelectionDialog.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_LabelSelectionDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 LabelSelectionDialog.h -o ..\..\build\release\moc_LabelSelectionDialog.cpp"
+						Description="MOC LabelSelectionDialog.h"
+						Outputs="..\..\build\release\moc_LabelSelectionDialog.cpp"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="PlaybackThread.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="PlaybackThread.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_PlaybackThread.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 PlaybackThread.h -o ..\..\build\debug\moc_PlaybackThread.cpp"
+						Description="MOC PlaybackThread.h"
+						Outputs="..\..\build\debug\moc_PlaybackThread.cpp"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="PlaybackThread.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_PlaybackThread.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 PlaybackThread.h -o ..\..\build\release\moc_PlaybackThread.cpp"
+						Description="MOC PlaybackThread.h"
+						Outputs="..\..\build\release\moc_PlaybackThread.cpp"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="PreferencesDlg.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="PreferencesDlg.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_PreferencesDlg.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 PreferencesDlg.h -o ..\..\build\debug\moc_PreferencesDlg.cpp"
+						Description="MOC PreferencesDlg.h"
+						Outputs="..\..\build\debug\moc_PreferencesDlg.cpp"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="PreferencesDlg.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_PreferencesDlg.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 PreferencesDlg.h -o ..\..\build\release\moc_PreferencesDlg.cpp"
+						Description="MOC PreferencesDlg.h"
+						Outputs="..\..\build\release\moc_PreferencesDlg.cpp"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="ProcessItem.h"/>
+			<File
+				RelativePath="ResponseItem.h"/>
+			<File
+				RelativePath="ResponseQualityDlg.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="Rem;ResponseQualityDlg.h"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_ResponseQualityDlg.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 ResponseQualityDlg.h -o ..\..\build\debug\moc_ResponseQualityDlg.cpp"
+						Description="MOC ResponseQualityDlg.h"
+						Outputs="..\..\build\debug\moc_ResponseQualityDlg.cpp"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="Rem;ResponseQualityDlg.h"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_ResponseQualityDlg.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 ResponseQualityDlg.h -o ..\..\build\release\moc_ResponseQualityDlg.cpp"
+						Description="MOC ResponseQualityDlg.h"
+						Outputs="..\..\build\release\moc_ResponseQualityDlg.cpp"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="SamplesPreviewCanvas.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="Rem;SamplesPreviewCanvas.h"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_SamplesPreviewCanvas.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 SamplesPreviewCanvas.h -o ..\..\build\debug\moc_SamplesPreviewCanvas.cpp"
+						Description="MOC SamplesPreviewCanvas.h"
+						Outputs="..\..\build\debug\moc_SamplesPreviewCanvas.cpp"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="Rem;SamplesPreviewCanvas.h"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_SamplesPreviewCanvas.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 SamplesPreviewCanvas.h -o ..\..\build\release\moc_SamplesPreviewCanvas.cpp"
+						Description="MOC SamplesPreviewCanvas.h"
+						Outputs="..\..\build\release\moc_SamplesPreviewCanvas.cpp"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="SamplesPreviewWidget.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="Rem;SamplesPreviewWidget.h"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_SamplesPreviewWidget.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 SamplesPreviewWidget.h -o ..\..\build\debug\moc_SamplesPreviewWidget.cpp"
+						Description="MOC SamplesPreviewWidget.h"
+						Outputs="..\..\build\debug\moc_SamplesPreviewWidget.cpp"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="Rem;SamplesPreviewWidget.h"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_SamplesPreviewWidget.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 SamplesPreviewWidget.h -o ..\..\build\release\moc_SamplesPreviewWidget.cpp"
+						Description="MOC SamplesPreviewWidget.h"
+						Outputs="..\..\build\release\moc_SamplesPreviewWidget.cpp"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="ThreadedDialog.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="Rem;ThreadedDialog.h"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_ThreadedDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 ThreadedDialog.h -o ..\..\build\debug\moc_ThreadedDialog.cpp"
+						Description="MOC ThreadedDialog.h"
+						Outputs="..\..\build\debug\moc_ThreadedDialog.cpp"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="Rem;ThreadedDialog.h"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_ThreadedDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 ThreadedDialog.h -o ..\..\build\release\moc_ThreadedDialog.cpp"
+						Description="MOC ThreadedDialog.h"
+						Outputs="..\..\build\release\moc_ThreadedDialog.cpp"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="TreeWidgetController.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="Rem;TreeWidgetController.h"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_TreeWidgetController.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 TreeWidgetController.h -o ..\..\build\debug\moc_TreeWidgetController.cpp"
+						Description="MOC TreeWidgetController.h"
+						Outputs="..\..\build\debug\moc_TreeWidgetController.cpp"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="Rem;TreeWidgetController.h"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_TreeWidgetController.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 TreeWidgetController.h -o ..\..\build\release\moc_TreeWidgetController.cpp"
+						Description="MOC TreeWidgetController.h"
+						Outputs="..\..\build\release\moc_TreeWidgetController.cpp"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+		</Filter>
+		<Filter
+			Name="Generated Files"
+			Filter="cpp;c;cxx;moc;h;def;odl;idl;res;"
+			UniqueIdentifier="{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}">
+			<File
+				RelativePath="..\..\build\debug\moc_BrowserController.cpp">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\moc_BrowserController.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\moc_BrowserMainWindow.cpp">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\moc_BrowserMainWindow.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\moc_CreateProcessDialog.cpp">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\moc_CreateProcessDialog.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\moc_EditWidget.cpp">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\moc_EditWidget.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\moc_EditWidgetClassificationObject.cpp">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\moc_EditWidgetClassificationObject.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\moc_EditWidgetLabel.cpp">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\moc_EditWidgetLabel.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\moc_EditWidgetResponse.cpp">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\moc_EditWidgetResponse.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\moc_FeatureExtractionDialog.cpp">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\moc_FeatureExtractionDialog.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\moc_FilesSelectionWidget.cpp">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\moc_FilesSelectionWidget.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\moc_LabelSelectionDialog.cpp">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\moc_LabelSelectionDialog.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\moc_PlaybackThread.cpp">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\moc_PlaybackThread.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\moc_PreferencesDlg.cpp">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\moc_PreferencesDlg.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\moc_ResponseQualityDlg.cpp">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\moc_ResponseQualityDlg.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\moc_SamplesPreviewCanvas.cpp">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\moc_SamplesPreviewCanvas.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\moc_SamplesPreviewWidget.cpp">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\moc_SamplesPreviewWidget.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\moc_ThreadedDialog.cpp">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\moc_ThreadedDialog.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\moc_TreeWidgetController.cpp">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\moc_TreeWidgetController.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\ui_BrowserForm.h">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\ui_BrowserForm.h">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\ui_CreateProcessDialog.h">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\ui_CreateProcessDialog.h">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\ui_EditWidgetClassificationObject.h">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\ui_EditWidgetClassificationObject.h">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\ui_EditWidgetLabel.h">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\ui_EditWidgetLabel.h">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\ui_EditWidgetResponse.h">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\ui_EditWidgetResponse.h">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\ui_FeatureExtractionDialog.h">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\ui_FeatureExtractionDialog.h">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\ui_FilesSelectionWidget.h">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\ui_FilesSelectionWidget.h">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\ui_LabelSelectionDialog.h">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\ui_LabelSelectionDialog.h">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\ui_PreferencesDlg.h">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\ui_PreferencesDlg.h">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\debug\ui_ResponseQualityDlg.h">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="..\..\build\release\ui_ResponseQualityDlg.h">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+		</Filter>
+		<Filter
+			Name="Form Files"
+			Filter="ui"
+			UniqueIdentifier="{99349809-55BA-4b9d-BF79-8FDBB0286EB3}"
+			ParseFiles="false">
+			<File
+				RelativePath="BrowserForm.ui">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="BrowserForm.ui;Rem;TreeWidgetController.h"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\ui_BrowserForm.h &#x0d;&#x0a; C:\Qt\4.6.0\bin\uic.exe BrowserForm.ui -o ..\..\build\debug\ui_BrowserForm.h"
+						Description="UIC BrowserForm.ui"
+						Outputs="..\..\build\debug\ui_BrowserForm.h"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="BrowserForm.ui;Rem;TreeWidgetController.h"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\ui_BrowserForm.h &#x0d;&#x0a; C:\Qt\4.6.0\bin\uic.exe BrowserForm.ui -o ..\..\build\release\ui_BrowserForm.h"
+						Description="UIC BrowserForm.ui"
+						Outputs="..\..\build\release\ui_BrowserForm.h"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="CreateProcessDialog.ui">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="CreateProcessDialog.ui;FilesSelectionWidget.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\ui_CreateProcessDialog.h &#x0d;&#x0a; C:\Qt\4.6.0\bin\uic.exe CreateProcessDialog.ui -o ..\..\build\debug\ui_CreateProcessDialog.h"
+						Description="UIC CreateProcessDialog.ui"
+						Outputs="..\..\build\debug\ui_CreateProcessDialog.h"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="CreateProcessDialog.ui;FilesSelectionWidget.h;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\ui_CreateProcessDialog.h &#x0d;&#x0a; C:\Qt\4.6.0\bin\uic.exe CreateProcessDialog.ui -o ..\..\build\release\ui_CreateProcessDialog.h"
+						Description="UIC CreateProcessDialog.ui"
+						Outputs="..\..\build\release\ui_CreateProcessDialog.h"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="EditWidgetClassificationObject.ui">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="EditWidgetClassificationObject.ui;Rem;SamplesPreviewWidget.h"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\ui_EditWidgetClassificationObject.h &#x0d;&#x0a; C:\Qt\4.6.0\bin\uic.exe EditWidgetClassificationObject.ui -o ..\..\build\debug\ui_EditWidgetClassificationObject.h"
+						Description="UIC EditWidgetClassificationObject.ui"
+						Outputs="..\..\build\debug\ui_EditWidgetClassificationObject.h"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="EditWidgetClassificationObject.ui;Rem;SamplesPreviewWidget.h"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\ui_EditWidgetClassificationObject.h &#x0d;&#x0a; C:\Qt\4.6.0\bin\uic.exe EditWidgetClassificationObject.ui -o ..\..\build\release\ui_EditWidgetClassificationObject.h"
+						Description="UIC EditWidgetClassificationObject.ui"
+						Outputs="..\..\build\release\ui_EditWidgetClassificationObject.h"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="EditWidgetLabel.ui">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="EditWidgetLabel.ui;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\ui_EditWidgetLabel.h &#x0d;&#x0a; C:\Qt\4.6.0\bin\uic.exe EditWidgetLabel.ui -o ..\..\build\debug\ui_EditWidgetLabel.h"
+						Description="UIC EditWidgetLabel.ui"
+						Outputs="..\..\build\debug\ui_EditWidgetLabel.h"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="EditWidgetLabel.ui;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\ui_EditWidgetLabel.h &#x0d;&#x0a; C:\Qt\4.6.0\bin\uic.exe EditWidgetLabel.ui -o ..\..\build\release\ui_EditWidgetLabel.h"
+						Description="UIC EditWidgetLabel.ui"
+						Outputs="..\..\build\release\ui_EditWidgetLabel.h"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="EditWidgetResponse.ui">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="EditWidgetResponse.ui;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\ui_EditWidgetResponse.h &#x0d;&#x0a; C:\Qt\4.6.0\bin\uic.exe EditWidgetResponse.ui -o ..\..\build\debug\ui_EditWidgetResponse.h"
+						Description="UIC EditWidgetResponse.ui"
+						Outputs="..\..\build\debug\ui_EditWidgetResponse.h"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="EditWidgetResponse.ui;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\ui_EditWidgetResponse.h &#x0d;&#x0a; C:\Qt\4.6.0\bin\uic.exe EditWidgetResponse.ui -o ..\..\build\release\ui_EditWidgetResponse.h"
+						Description="UIC EditWidgetResponse.ui"
+						Outputs="..\..\build\release\ui_EditWidgetResponse.h"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="FeatureExtractionDialog.ui">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="FeatureExtractionDialog.ui;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\ui_FeatureExtractionDialog.h &#x0d;&#x0a; C:\Qt\4.6.0\bin\uic.exe FeatureExtractionDialog.ui -o ..\..\build\debug\ui_FeatureExtractionDialog.h"
+						Description="UIC FeatureExtractionDialog.ui"
+						Outputs="..\..\build\debug\ui_FeatureExtractionDialog.h"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="FeatureExtractionDialog.ui;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\ui_FeatureExtractionDialog.h &#x0d;&#x0a; C:\Qt\4.6.0\bin\uic.exe FeatureExtractionDialog.ui -o ..\..\build\release\ui_FeatureExtractionDialog.h"
+						Description="UIC FeatureExtractionDialog.ui"
+						Outputs="..\..\build\release\ui_FeatureExtractionDialog.h"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="FilesSelectionWidget.ui">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="FilesSelectionWidget.ui;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\ui_FilesSelectionWidget.h &#x0d;&#x0a; C:\Qt\4.6.0\bin\uic.exe FilesSelectionWidget.ui -o ..\..\build\debug\ui_FilesSelectionWidget.h"
+						Description="UIC FilesSelectionWidget.ui"
+						Outputs="..\..\build\debug\ui_FilesSelectionWidget.h"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="FilesSelectionWidget.ui;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\ui_FilesSelectionWidget.h &#x0d;&#x0a; C:\Qt\4.6.0\bin\uic.exe FilesSelectionWidget.ui -o ..\..\build\release\ui_FilesSelectionWidget.h"
+						Description="UIC FilesSelectionWidget.ui"
+						Outputs="..\..\build\release\ui_FilesSelectionWidget.h"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="LabelSelectionDialog.ui">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="LabelSelectionDialog.ui;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\ui_LabelSelectionDialog.h &#x0d;&#x0a; C:\Qt\4.6.0\bin\uic.exe LabelSelectionDialog.ui -o ..\..\build\debug\ui_LabelSelectionDialog.h"
+						Description="UIC LabelSelectionDialog.ui"
+						Outputs="..\..\build\debug\ui_LabelSelectionDialog.h"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="LabelSelectionDialog.ui;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\ui_LabelSelectionDialog.h &#x0d;&#x0a; C:\Qt\4.6.0\bin\uic.exe LabelSelectionDialog.ui -o ..\..\build\release\ui_LabelSelectionDialog.h"
+						Description="UIC LabelSelectionDialog.ui"
+						Outputs="..\..\build\release\ui_LabelSelectionDialog.h"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="PreferencesDlg.ui">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="PreferencesDlg.ui;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\ui_PreferencesDlg.h &#x0d;&#x0a; C:\Qt\4.6.0\bin\uic.exe PreferencesDlg.ui -o ..\..\build\debug\ui_PreferencesDlg.h"
+						Description="UIC PreferencesDlg.ui"
+						Outputs="..\..\build\debug\ui_PreferencesDlg.h"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="PreferencesDlg.ui;Rem"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\ui_PreferencesDlg.h &#x0d;&#x0a; C:\Qt\4.6.0\bin\uic.exe PreferencesDlg.ui -o ..\..\build\release\ui_PreferencesDlg.h"
+						Description="UIC PreferencesDlg.ui"
+						Outputs="..\..\build\release\ui_PreferencesDlg.h"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="ResponseQualityDlg.ui">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="Rem;ResponseQualityDlg.ui"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\ui_ResponseQualityDlg.h &#x0d;&#x0a; C:\Qt\4.6.0\bin\uic.exe ResponseQualityDlg.ui -o ..\..\build\debug\ui_ResponseQualityDlg.h"
+						Description="UIC ResponseQualityDlg.ui"
+						Outputs="..\..\build\debug\ui_ResponseQualityDlg.h"
+						Path="."/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="Rem;ResponseQualityDlg.ui"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\ui_ResponseQualityDlg.h &#x0d;&#x0a; C:\Qt\4.6.0\bin\uic.exe ResponseQualityDlg.ui -o ..\..\build\release\ui_ResponseQualityDlg.h"
+						Description="UIC ResponseQualityDlg.ui"
+						Outputs="..\..\build\release\ui_ResponseQualityDlg.h"
+						Path="."/>
+				</FileConfiguration>
+			</File>
+		</Filter>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>
