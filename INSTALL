@@ -55,7 +55,14 @@ libatlas-base-dev
 qt4-dev-tools
 
 
-1.1.2 openSUSE (>= 11.1)
+1.1.2 Ubuntu 8.10
+
+Same as above, but the Poco package coming with this distribution is too old.
+Proceed as indicated in Section 1.3.1.1 to compile and install a recent Poco
+version (>= 1.3.6).
+
+
+1.1.3 openSUSE (>= 11.1)
 
 The following packages will provide the libraries required to compile and run
 openBliSSART, except Poco which you will have to compile from source (see
@@ -230,7 +237,13 @@ Then, type "make" to compile and "make install" to install. If you are not
 logged in as root, try "sudo make install".
 
 Depending on where you have installed Poco, you may have to set the
-LD_LIBRARY_PATH environment variable to contain the Poco "lib" directory. 
+LD_LIBRARY_PATH environment variable to contain the Poco "lib" directory, or run the ldconfig tool ($ indicates the shell prompt):
+
+$ sudo sh -c 'echo <prefix>/lib > /etc/ld.so.conf.d/poco.conf'
+$ sudo ldconfig
+
+where <prefix> is the Poco install prefix (by default /usr/local).
+
 Also, if you installed Poco in a non-standard location, you have to set the
 --with-poco-prefix option of the openBliSSART configure script (see Section
 2.1.1.3).
@@ -340,13 +353,17 @@ $ ./configure
 $ make
 $ sudo make install
 $ sudo groupadd blissart
-$ sudo chown -R :blissart /usr/local/blissart
-$ sudo chmod -R g+w /usr/local/blissart/db /usr/local/blissart/etc
+$ cd /usr/local/blissart
+$ sudo mkdir db etc storage
+$ sudo chown -R :blissart .
+$ sudo chmod -R g+w db etc storage
 
 What remains is adding the respective users to the group which e.g. can be done
 via
 
 $ sudo gpasswd -a <username> blissart
+
+You may have to re-login for the new permissions to take effect.
 
 
 2.1.1.2 User-Specific Installation
@@ -491,7 +508,7 @@ You need to pass the following parameters to the configure script:
 --with-matlab tells the configure script to compile with Matlab support.
 It will try to guess the Matlab integer type (varying from version to version).
 In case of compile errors, check the MATLAB_INT_TYPE definition in the
-"config.h" file against your Matlab BLAS include file (typically XXX:
+"config.h" file against your Matlab BLAS include file (typically
 <Matlab-dir>/extern/include/blas.h).
 
 --with-matlab-lib points to the directory where the Matlab libraries reside
@@ -544,6 +561,19 @@ Cause: This might be caused by a erroneous ATLAS library shipped with openSUSE.
 Solution: Build ATLAS from source, and compile again. You can also build
 without ATLAS (by commenting out "HAVE_CBLAS_H" in config.h), but this will
 likely cause a significant performance loss.
+
+
+Problem: Under Unix/Linux, most of the tools immediately crash with the error
+message: "Access to file denied: /usr/local/blissart/etc/blissart.properties"
+
+Cause: Insufficient permissions. The openBliSSART toolbox needs write access 
+to the configuration, database, and storage directories (etc, db, storage) 
+within the openBliSSART install directory.
+
+Solution: Make sure that you have write permissions to the openBliSSART install
+directory. Follow the procedure outlined in Section 2.1.1.1 for shared
+installations, or re-install in another directory (e.g. ${HOME}/blissart) where
+you have write permissions.
 
 
 Problem: Most of the tools, including the testsuite, but not the icatool, crash
