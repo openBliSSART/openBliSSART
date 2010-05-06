@@ -23,7 +23,7 @@
 #
 
 AC_PREREQ(2.13)
-AC_INIT([openBliSSART], [1.1.1], [lehmanna@in.tum.de])
+AC_INIT([openBliSSART], [1.2], [lehmanna@in.tum.de], [openBliSSART])
 AC_CONFIG_SRCDIR([src/septool/main.cpp])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([acbuild])
