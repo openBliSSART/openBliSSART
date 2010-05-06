@@ -44,9 +44,6 @@ libraries from source, check Section 1.3.
 
 1.1.1 Ubuntu 10.04
 
-
-1.1.1.1 Installation of the required Libraries
-
 In order to satisfy the external library dependencies please make sure that the
 following packages are installed prior to the compilation of openBliSSART:
 
@@ -56,93 +53,6 @@ libfftw3-dev
 libsdl-sound1.2-dev
 libatlas-base-dev
 qt4-dev-tools
-
-
-1.1.1.2 Compilation and Installation of openBliSSART
-
-Then unpack the openBliSSART archive, e.g.
-
-$ mkdir -p ~/src
-$ tar xzf openBliSSART-1.2.tar.gz -C ~/src
-$ cd ~/src/openBliSSART-1.2
-
-Next you would typically run the `configure' script that comes with the
-sources. If there is no such file, you can create one yourself by typing
-
-$ ./bootstrap.sh
-
-at the command line, however make sure that you have both `automake' and
-`libtool' packages installed.
-
-The configure script can now be used to configure various parameters (type
-"./configure --help" for an overview), one of which is the installation prefix
-of openBliSSART. This prefix defaults to /usr/local/blissart.
-
-Note that openBliSSART requires its own directory hierarchy and that every user
-working with openBliSSART needs write access to the <prefix>/etc and
-<prefix>/db subdirectories of the installation.
-Hence you have to choose between a shared and a user-specific installation.
-
-
-1.1.1.2.1 Shared Installation
-
-For this, we'll be using the default prefix of /usr/local/blissart and install
-the software at this location. Then we'll create a corresponding group and set
-the necessary access rights.
-
-$ ./configure
-$ make
-$ sudo make install
-$ sudo groupadd blissart
-$ sudo chown -R :blissart /usr/local/blissart
-$ sudo chmod -R g+w /usr/local/blissart/db /usr/local/blissart/etc
-
-What remains is adding the respective users to the group which e.g. can be done
-via
-
-$ sudo gpasswd -a <username> blissart
-
-
-1.1.1.2.2 User-Specific Installation
-
-Aside from the shared installation which in turn requires superuser privileges,
-a user-specific installation is way easier to perform. We'll be using a
-user-specific installation prefix for the configuration step and that's it.
-
-$ ./configure --prefix=${HOME}/blissart
-$ make
-$ make install
-
-
-1.1.2 Running openBliSSART
-
-During the compilation process, a number of libraries were created which are
-required for openBliSSART to run. Since your operating system needs to know
-where to find these libraries, you have to choose between the following three
-options (where you'd have to replace the `<prefix>' placeholder with your chosen
-installation prefix, respectively):
-
-
-1.1.2.1 Firstly, you can provide the library path every time when you're
-executing one of openBliSSART's binaries, e.g.
-
-$ LD_LIBRARY_PATH=<prefix>/lib <prefix>/bin/browser
-
-
-1.1.2.2 Secondly, you can alter your .profile file so as to export the
-corresponding variable, i.e. add the line
-
-LD_LIBRARY_PATH="<prefix>/lib:$LD_LIBRARY_PATH"
-
-to your .profile.
-
-
-1.1.2.3 Thirdly, you can configure the system-wide tool `ldconfig' such that it
-automatically knows where to find the libraries. For this, you need
-administrator privileges though:
-
-$ sudo sh -c 'echo <prefix>/lib > /etc/ld.so.conf.d/blissart.conf'
-$ sudo ldconfig
 
 
 1.1.2 openSUSE (>= 11.1)
@@ -311,6 +221,10 @@ libraries, and are not required for openBliSSART.
 Then, type "make" to compile and "make install" to install. If you are not
 logged in as root, try "sudo make install".
 
+Depending on where you have installed Poco, you may have to set the
+LD_LIBRARY_PATH environment variable to contain the Poco "lib" directory.
+
+
 1.3.1.2 Microsoft Windows
 
 After extracting the Poco Complete Edition from the ZIP file, open the file
@@ -353,13 +267,142 @@ Studio Include directories, in case it is not already there.
 2. Configure, compile, and install openBliSSART
 
 2.1 Unix/Linux
-(TODO Alex)
-Keywords: 
-- existence of ATLAS determined automatically
-- set prefix (need write access for storage/db!), so maybe $HOME if not root
-- Poco, QT prefixes can be given
-- CFLAGS and LDFLAGS can be set
-- set linker path (/etc/ld.so.conf) after installation
+
+The following installation instructions have been tested using the Ubuntu and
+openSUSE distributions, but should work on any Linux system, and theoretically
+on most Unix variants. 
+
+The "$ " at the beginning indicates the shell prompt, which might look
+different on your system.
+
+2.1.1 Configuration and installation
+
+Unpack the openBliSSART archive, e.g.
+
+$ mkdir -p ~/src
+$ tar xzf openBliSSART-1.2.tar.gz -C ~/src
+$ cd ~/src/openBliSSART-1.2
+
+Next you would typically run the `configure' script that comes with the
+sources. If there is no such file, you can create one yourself by typing
+
+$ ./bootstrap.sh
+
+at the command line, however make sure that you have both `automake' and
+`libtool' packages installed.
+
+The configure script can now be used to configure various parameters (type
+"./configure --help" for an overview), one of which is the installation prefix
+of openBliSSART. This prefix can be set via the --prefix option:
+
+./configure --prefix=<prefix>
+
+The prefix defaults to /usr/local/blissart.
+
+The configure script will check if you have the required libraries installed,
+and exit with an error if you do not. The "config.log" file provides a hint to
+the source of error in that case (in most cases, libraries installed in a
+non-standard location).
+
+Particularly, the configure script will automatically determine if you have the
+ATLAS libraries installed. It will output a message like "Checking for cblas.h
+presence". If it says "no", you should check the config.log file, otherwise
+openBliSSART will be compiled without the ATLAS libraries and show low
+performance.
+
+Note that openBliSSART requires its own directory hierarchy and that every user
+working with openBliSSART needs write access to the <prefix>/etc and
+<prefix>/db subdirectories of the installation.
+Hence you have to choose between a shared and a user-specific installation.
+
+
+2.1.1.1 Shared Installation
+
+For this, we will be using the default prefix of /usr/local/blissart and install
+the software at this location. Then we will create a corresponding group and set
+the necessary access rights.
+
+$ ./configure
+$ make
+$ sudo make install
+$ sudo groupadd blissart
+$ sudo chown -R :blissart /usr/local/blissart
+$ sudo chmod -R g+w /usr/local/blissart/db /usr/local/blissart/etc
+
+What remains is adding the respective users to the group which e.g. can be done
+via
+
+$ sudo gpasswd -a <username> blissart
+
+
+2.1.1.2 User-Specific Installation
+
+Aside from the shared installation which requires superuser privileges,
+a user-specific installation is maybe easier to perform. It suffices to specify
+an installation prefix within the user's home directory.
+
+$ ./configure --prefix=${HOME}/blissart
+$ make
+$ make install
+
+
+2.1.1.3 Other configure parameters
+
+Depending on your system configuration, you might find the following configure
+parameters helpful:
+
+--with-poco-prefix=<prefix> specifies the directory where your Poco
+installation can be found. This directory should contain the subdirectories
+"lib" and "include".
+
+--with-qt-prefix=<prefix> specifies your Qt installation directory. This option
+might be helpful if you obtained the Qt SDK from the Qt website instead of
+using your distribution's Qt packages. The directory should contain the "bin",
+"lib", and "include" subdirectories.
+
+As with any configure script, it is possible to set environment variables for
+the C compiler and linker:
+
+CPPFLAGS sets additional options for the C preprocessor, typically include
+directories:
+./configure <options> 'CPPFLAGS=-I=/path/to/my/includes'
+
+Conversely, LDFLAGS sets directories where the linker looks for libraries, and
+additional libraries that should be linked:
+./configure <options> 'LDFLAGS=-L/path/to/my/libs -lmylib'
+
+On some systems, it might be necessary to explicitly specify the math library:
+./configure <options> 'LDFLAGS=-lm'
+
+
+2.1.2 Running openBliSSART
+
+During the compilation process, a number of libraries were created which are
+required for openBliSSART to run. Since your operating system needs to know
+where to find these libraries, you have to choose between the following three
+options (where you have to replace the `<prefix>' placeholder with your chosen
+installation prefix, respectively):
+
+First, you can provide the library path every time when you are
+executing one of openBliSSART's binaries, e.g.
+
+$ LD_LIBRARY_PATH=<prefix>/lib <prefix>/bin/browser
+
+Second, you can alter your .profile file so as to export the
+corresponding variable, i.e. add the line
+
+LD_LIBRARY_PATH="<prefix>/lib:$LD_LIBRARY_PATH"
+
+to your .profile.
+
+Third, you can configure the system-wide tool `ldconfig' such that it
+automatically knows where to find the libraries. For this, you need
+administrator privileges though. Under openSUSE and Ubuntu, the following
+lines should work:
+
+$ sudo sh -c 'echo <prefix>/lib > /etc/ld.so.conf.d/blissart.conf'
+$ sudo ldconfig
+
 
 2.2 Microsoft Windows (Visual Studio 2008)
 
@@ -388,7 +431,9 @@ directory (where the QtGui4.dll file resides) on *top* of the Visual Studio
 Executable directories (under Tools / Settings / Projects and Solutions / VC++
 Directories). Then right-click on the "Setup_openBliSSART" project and click
 "Make". In the "Release" subdirectory, an installer file (setup.exe) will be
-created.
+created which should be straightforward to use, lets you choose the
+installation directory, and copies external libraries to the openBliSSART
+installation directory.
 
 
 
