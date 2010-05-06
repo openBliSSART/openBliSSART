@@ -35,5 +35,5 @@ benchmark_SOURCES = NMDBenchmark.cpp \
                     NMDBenchmark.h \
                     NMFBenchmark.cpp \
                     NMFBenchmark.h \
+					Benchmark.h \
                     main.cpp
-
