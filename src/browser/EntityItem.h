@@ -36,6 +36,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup browser
+ * @{
+ */
+
+/**
  * Encapsulation of a database entity within a tree widget item.
  */
 class EntityItem : public QTreeWidgetItem
@@ -83,6 +88,11 @@ protected:
     inline DatabaseSubsystem& dbSubsystem() const;
 };
 
+
+/**
+ * @}
+ */
+    
 
 // Inlines
 

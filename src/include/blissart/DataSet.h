@@ -37,6 +37,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * A labelled data point in the feature space, corresponding to a 
  * ClassificationObject. It is stored as a sparse vector.
  * Each dimension of the feature space is described by a FeatureDescriptor.
@@ -127,6 +132,11 @@ sigmoidSmooth(DataSet& dataSet, double lower = -1.0, double upper = 1.0);
  */
 void LibFramework_API
 upsample(DataSet& dataSet, std::map<int, int>& factors);
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

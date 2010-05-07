@@ -52,7 +52,6 @@ namespace ica {
  * @{
  */
 
-
 /**
  * Performs Independent Component Analysis using the FastICA algorithm by
  * Hyvaerinen.

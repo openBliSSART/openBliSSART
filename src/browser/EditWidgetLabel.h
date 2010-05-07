@@ -36,6 +36,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup browser
+ * @{
+ */
+
+/**
  * Represents a widget that implements GUI-based editing of 
  * the labels used for annotation.
  */
@@ -83,6 +88,11 @@ private:
     LabelPtr            _label;
 };
 
+
+/**
+ * @}
+ */
+    
 
 } // namespace blissart
 

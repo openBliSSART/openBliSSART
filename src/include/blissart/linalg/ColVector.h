@@ -39,6 +39,12 @@ class RowVector;
 
 
 /**
+ * \defgroup linalg Linear Algebra (LibLinAlg)
+ * \addtogroup linalg
+ * @{
+ */
+
+/**
  * Representation of real column-vectors.
  */
 class LibLinAlg_API ColVector : public Vector
@@ -167,6 +173,11 @@ public:
     friend class RowVector;
     friend class Matrix;
 };
+
+
+/**
+ * @}
+ */
 
 
 // Inlines

@@ -34,6 +34,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup browser
+ * @{
+ */
+
+/**
  * Represents an item in the Browser entity list that corresponds to a 
  * DataDescriptor entity in the database.
  */
@@ -79,6 +84,11 @@ private:
     DataDescriptorPtr _ddesc;
 };
 
+
+/**
+ * @}
+ */
+    
 
 } // namespace blissart
 

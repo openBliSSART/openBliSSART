@@ -40,7 +40,13 @@ namespace blissart {
 
 
 /**
- * Provides feature selection based on feature metric.
+ * \addtogroup framework
+ * @{
+ */
+
+/**
+ * Abstract base class for classes that provides feature selection based on 
+ * a feature metric.
  */
 class LibFramework_API FeatureSelector
 {
@@ -102,6 +108,11 @@ protected:
     double mean(const std::vector<double>& s);
     double variance(const std::vector<double>& s);
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

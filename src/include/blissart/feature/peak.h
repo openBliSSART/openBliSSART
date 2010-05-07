@@ -41,6 +41,11 @@ namespace feature {
 
 
 /**
+ * \addtogroup feature
+ * @{
+ */
+
+/**
  * Computes the average length of peaks in the given Vector.
  * @param  data       the input Vector for which peaks should be measured
  * @param  threshold  a peak is an area which is above threshold * max(data).
@@ -55,6 +60,11 @@ double LibFeature_API averagePeakLength(const linalg::Vector& data,
  */
 double LibFeature_API peakFluctuation(const linalg::Vector& data,
                                       double threshold = 0.2);
+
+
+/**
+ * @}
+ */
 
 
 } // namespace feature

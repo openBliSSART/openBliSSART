@@ -91,6 +91,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup misc
+ * @{
+ */
+
+/**
  * Implementation of a binary writer that works on stl output-streams
  * and provides (big|little)-endian ordering.
  */
@@ -272,6 +277,11 @@ private:
     std::ostream& _os;
     bool          _flip;
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

@@ -41,6 +41,11 @@ namespace linalg { class Matrix; }
 
 
 /**
+ * \addtogroup browser
+ * @{
+ */
+
+/**
  * A dialog that displays the mean and standard deviations of the features in 
  * a Response.
  */
@@ -96,6 +101,11 @@ private:
     ResponsePtr            _response;
 };
 
+
+/**
+ * @}
+ */
+    
 
 } // namespace blissart
 

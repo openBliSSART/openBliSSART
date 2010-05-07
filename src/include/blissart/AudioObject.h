@@ -40,6 +40,11 @@ namespace audio { class AudioData; }
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * An utility class that converts data in classification objects
  * to AudioData objects.
  */
@@ -54,6 +59,11 @@ public:
     static audio::AudioData*
     getAudioObject(ClassificationObjectPtr clo, ProgressObserver* obs = 0);
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

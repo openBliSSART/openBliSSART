@@ -41,6 +41,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup browser
+ * @{
+ */
+
+/**
  * Represents a dialog that can be used to load and separate audio files
  * into the database.
  */
@@ -75,6 +80,11 @@ private:
     std::vector<std::string>       _failedFileNames;
 };
 
+
+/**
+ * @}
+ */
+    
 
 } // namespace blissart
 

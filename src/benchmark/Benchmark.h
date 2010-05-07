@@ -41,6 +41,12 @@ namespace benchmark {
 
 
 /**
+ * \defgroup benchmark Benchmarking framework
+ * \addtogroup benchmark
+ * @{
+ */
+
+/**
  * An abstract base class for benchmarks
  */
 class Benchmark
@@ -73,6 +79,11 @@ public:
 protected:
 	ElapsedTimeVec _elapsedTimes;
 };
+
+
+/**
+ * @}
+ */
 
 
 Benchmark::ElapsedTimeVec Benchmark::elapsedTimes()

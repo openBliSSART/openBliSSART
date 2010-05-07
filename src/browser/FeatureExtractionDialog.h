@@ -39,6 +39,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup browser
+ * @{
+ */
+
+/**
  * A dialog that can be used to start feature extraction on a set of data 
  * descriptors, possibly using multi-threading.
  */
@@ -68,6 +73,11 @@ private:
     std::set<DataDescriptorPtr>   _descriptors;
 };
 
+
+/**
+ * @}
+ */
+    
 
 } // namespace blissart
 

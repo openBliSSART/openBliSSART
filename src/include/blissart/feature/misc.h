@@ -41,6 +41,12 @@ namespace feature {
 
 
 /**
+ * \addtogroup feature
+ * @{
+ */
+
+
+/**
  * Calculates the sample mean of the given vector.
  */
 double LibFeature_API mean(const linalg::Vector& data);
@@ -161,6 +167,11 @@ double LibFeature_API spectralDissonance(const linalg::Vector& data,
  * element-wise squared input vector.
  */
 double LibFeature_API spectralFlatness(const linalg::Vector& data);
+
+
+/**
+ * @}
+ */
 
 
 } // namespace feature

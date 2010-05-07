@@ -42,6 +42,11 @@ namespace audio {
 
 
 /**
+ * \addtogroup audio
+ * @{
+ */
+
+/**
  * A filter bank that transforms a discrete Fourier spectrum onto the Mel 
  * scale by triangular filters.
  */
@@ -112,6 +117,11 @@ private:
     int*         _filterIndex;
     unsigned int _lowestIndex, _highestIndex;
 };
+
+
+/**
+ * @}
+ */
 
 
 inline void MelFilter::setScaleFactor(double factor)

@@ -43,6 +43,11 @@ class Matrix;
 
 
 /**
+ * \addtogroup linalg
+ * @{
+ */
+
+/**
  * Abstract base class for real row- and column-vectors.
  */
 class LibLinAlg_API Vector 
@@ -363,6 +368,11 @@ protected:
     unsigned int _dim;
     double *     _data;
 };
+
+
+/**
+ * @}
+ */
 
 
 inline std::ostream& operator << (std::ostream& os, const Vector& v)

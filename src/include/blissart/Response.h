@@ -37,6 +37,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * Stores an assignment of labels to ClassificationObjects.
  */
 class LibFramework_API Response : public DatabaseEntity
@@ -92,6 +97,11 @@ public:
 
 
 typedef Poco::AutoPtr<Response> ResponsePtr;
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

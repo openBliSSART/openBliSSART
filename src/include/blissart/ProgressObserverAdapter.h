@@ -34,7 +34,13 @@ namespace blissart {
 
 
 /**
- * FIXME: Document me!
+ * \addtogroup framework
+ * @{
+ */
+
+/**
+ * An adapter class to enable notification of functions via a ProgressObserver
+ * interface.
  */
 template<class T>
 class LibFramework_API ProgressObserverAdapter : public ProgressObserver
@@ -60,6 +66,11 @@ private:
     T*       _object;
     Callback _separationMethod;
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

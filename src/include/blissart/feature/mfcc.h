@@ -42,6 +42,12 @@ namespace feature {
 
 
 /**
+ * \defgroup feature Audio Feature Extraction (LibFeature)
+ * \addtogroup feature
+ * @{
+ */
+
+/**
  * Compute the Mel cepstrum from the given magnitude spectrogram.
  * @param   spectrogram     a reference to a Matrix object containing the
  *                          magnitudes of short-time Fourier spectra
@@ -158,6 +164,11 @@ double melToHertz(double melFrequency)
 {
     return 700.0 * (exp(melFrequency / 1127.0) - 1.0);
 }
+
+
+/**
+ * @}
+ */
 
 
 } }  // namespace blissart::feature

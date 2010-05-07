@@ -46,6 +46,11 @@ class AudioData;
 
 
 /**
+ * \addtogroup audio
+ * @{
+ */
+
+/**
  * Utility class for saving of PCM wave files.
  */
 class LibAudio_API WaveEncoder {
@@ -91,6 +96,11 @@ private:
     WaveEncoder();
     WaveEncoder(const WaveEncoder&);
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace audio

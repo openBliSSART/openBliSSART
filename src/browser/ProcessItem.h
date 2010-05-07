@@ -34,6 +34,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup browser
+ * @{
+ */
+
+/**
  * Represents an item in the Browser entity list that corresponds to a 
  * Process entity in the database.
  */
@@ -95,6 +100,11 @@ private:
     QTreeWidgetItem  *_rootDataDescriptors;
 };
 
+
+/**
+ * @}
+ */
+    
 
 } // namespace blissart
 

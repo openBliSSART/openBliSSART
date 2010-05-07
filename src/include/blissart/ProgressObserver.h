@@ -31,6 +31,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * An interface for objects that should be notified of a task's progress.
  */
 class LibFramework_API ProgressObserver
@@ -44,6 +49,11 @@ public:
      */
     virtual void progressChanged(float progress) = 0;
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

@@ -38,6 +38,11 @@ namespace transforms {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * Calculation of the power spectrum. Implements MatrixTransform interface.
  */
 class LibFramework_API PowerTransform : public blissart::MatrixTransform
@@ -81,6 +86,11 @@ private:
 
     double _gamma;
 };
+
+
+/**
+ * @}
+ */
 
 
 inline void PowerTransform::setGamma(double gamma)

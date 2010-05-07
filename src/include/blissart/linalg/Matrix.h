@@ -57,6 +57,11 @@ class RowVector;
 
 
 /**
+ * \addtogroup linalg
+ * @{
+ */
+
+/**
  * Representation of real matrices.
  */
 class LibLinAlg_API Matrix
@@ -695,14 +700,16 @@ public:
 #endif
 
 
-    /* @} */
-
-
 private:
     unsigned int _rows;
     unsigned int _cols;
     double *     _data;
 };
+
+
+/**
+ * @}
+ */
 
 
 template<class T>

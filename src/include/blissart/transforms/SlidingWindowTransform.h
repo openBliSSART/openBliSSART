@@ -38,6 +38,11 @@ namespace transforms {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * Performs a "sliding window" transformation (i.e. create multiple-frame
  * observations.)
  * Implements MatrixTransform interface.
@@ -87,6 +92,11 @@ public:
 private:
     int _frameRate, _frameSize;
 };
+
+
+/**
+ * @}
+ */
 
 
 inline void SlidingWindowTransform::setFrameRate(int frameRate)

@@ -45,6 +45,11 @@ namespace linalg { class Matrix; }
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * A base class for tasks that operate on audio data in the frequency domain.
  */
 class LibFramework_API FTTask : public BasicTask
@@ -308,6 +313,11 @@ private:
 
 
 typedef Poco::AutoPtr<FTTask> FTTaskPtr;
+
+
+/**
+ * @}
+ */
 
 
 // Inlines

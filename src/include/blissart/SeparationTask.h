@@ -38,6 +38,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * An abstract base class for tasks that perform component separation.
  */
 class LibFramework_API SeparationTask : public FTTask
@@ -299,6 +304,11 @@ private:
 
 
 typedef Poco::AutoPtr<SeparationTask> SeparationTaskPtr;
+
+
+/**
+ * @}
+ */
 
 
 // Inlines

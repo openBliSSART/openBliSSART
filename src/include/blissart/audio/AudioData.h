@@ -59,6 +59,11 @@ namespace audio {
 
 
 /**
+ * \addtogroup audio
+ * @{
+ */
+
+/**
  * Encapsulation of audio data in terms of a number of channels, a number of
  * samples per channel and an overall sample rate.  The samples are represented
  * as real values within [-1,1].  Also offers methods to compute the spectogram
@@ -333,6 +338,11 @@ private:
     unsigned int         _sampleRate;
     std::string          _fileName;
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace audio

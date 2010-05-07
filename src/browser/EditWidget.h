@@ -37,6 +37,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup browser
+ * @{
+ */
+
+/**
  * An abstract base class for widgets that implement GUI-based editing of 
  * database entities.
  */
@@ -118,6 +123,11 @@ private:
     bool _dirty;
 };
 
+
+/**
+ * @}
+ */
+    
 
 // Inlines
 

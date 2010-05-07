@@ -60,6 +60,11 @@ namespace wave {
 
 
 /**
+ * \addtogroup audio
+ * @{
+ */
+
+/**
  * Description of a RIFF header
  */
 struct RiffHeader {
@@ -92,6 +97,11 @@ struct DataChunk {
     int32_t lChunkSize;
     unsigned char *data;
 };
+
+
+/**
+ * @}
+ */
 
 
 // No more byte-aligning

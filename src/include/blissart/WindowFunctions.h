@@ -34,67 +34,77 @@
 namespace blissart {
 
 
-    /**
-     * The signature of a function that is used to window data. The first parameter
-     * is the index of a data element, the second parameter is the total number of
-     * data elements.
-     */
-    typedef double(*WindowFunction)(unsigned int, unsigned int);
+/**
+ * \addtogroup framework
+ * @{
+ */
 
-    
-    /**
-     * The Hann function.
-     */
-    double LibFramework_API HannFunction(unsigned int index, unsigned int count);
-
-
-    /**
-     * The square root of the Hann function.
-     */
-    double LibFramework_API SqHannFunction(unsigned int index, unsigned int count);
-    
-    
-    /**
-     * The Hamming function.
-     */
-    double LibFramework_API HammingFunction(unsigned int index, unsigned int count);
-    
-
-    /**
-     * The rectangle function.
-     */
-    double LibFramework_API RectangleFunction(unsigned int index, unsigned int count);
+/**
+ * The signature of a function that is used to window data. The first parameter
+ * is the index of a data element, the second parameter is the total number of
+ * data elements.
+ */
+typedef double(*WindowFunction)(unsigned int, unsigned int);
 
 
-    /**
-     * Returns the name of a window function if the function pointer is known.
-     */
-    std::string LibFramework_API
-    windowFunctionName(WindowFunction wf);
+/**
+ * The Hann function.
+ */
+double LibFramework_API HannFunction(unsigned int index, unsigned int count);
 
 
-    /**
-     * Returns the short name of a window function if the function pointer 
-     * is known.
-     */
-    std::string LibFramework_API
-    windowFunctionShortName(WindowFunction wf);
+/**
+ * The square root of the Hann function.
+ */
+double LibFramework_API SqHannFunction(unsigned int index, unsigned int count);
 
 
-    /**
-     * Returns a function pointer to a window function of the given name,
-     * or null if no function of the given name exists.
-     */
-    WindowFunction LibFramework_API
-    windowFunctionForName(const std::string& wfName);
+/**
+ * The Hamming function.
+ */
+double LibFramework_API HammingFunction(unsigned int index, unsigned int count);
 
 
-    /**
-     * Returns a function pointer to a window function of the given name,
-     * or null if no function of the given name exists.
-     */
-    WindowFunction LibFramework_API
-    windowFunctionForShortName(const std::string& wfName);
+/**
+ * The rectangle function.
+ */
+double LibFramework_API RectangleFunction(unsigned int index, unsigned int count);
+
+
+/**
+ * Returns the name of a window function if the function pointer is known.
+ */
+std::string LibFramework_API
+windowFunctionName(WindowFunction wf);
+
+
+/**
+ * Returns the short name of a window function if the function pointer 
+ * is known.
+ */
+std::string LibFramework_API
+windowFunctionShortName(WindowFunction wf);
+
+
+/**
+ * Returns a function pointer to a window function of the given name,
+ * or null if no function of the given name exists.
+ */
+WindowFunction LibFramework_API
+windowFunctionForName(const std::string& wfName);
+
+
+/**
+ * Returns a function pointer to a window function of the given name,
+ * or null if no function of the given name exists.
+ */
+WindowFunction LibFramework_API
+windowFunctionForShortName(const std::string& wfName);
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

@@ -43,6 +43,11 @@ class ResponseItem;
 
 
 /**
+ * \addtogroup browser
+ * @{
+ */
+
+/**
  * A specialization of TreeWidget that retrieves its items from the 
  * openBliSSART database.
  */
@@ -162,6 +167,11 @@ protected:
     QTreeWidgetItem  *_rootProcesses;
     QTreeWidgetItem  *_rootClassificationObjects;
 };
+
+
+/**
+ * @}
+ */
     
 
 // Inlines

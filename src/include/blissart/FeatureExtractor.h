@@ -45,6 +45,11 @@ namespace linalg {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * Extracts features from vectors and matrices, as specified by the 
  * application's configuration.
  */
@@ -90,6 +95,11 @@ private:
     double     _sampleFreq;
     double     _gainsFreq;
 };
+
+
+/**
+ * @}
+ */
 
 
 // Inlines

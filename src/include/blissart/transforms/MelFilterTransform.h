@@ -38,6 +38,11 @@ namespace transforms {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * Calculation of the power spectrum. Implements MatrixTransform interface.
  */
 class LibFramework_API MelFilterTransform : public MatrixTransform
@@ -111,6 +116,11 @@ private:
     double _lowFreq, _highFreq;
     unsigned int _nBins;
 };
+
+
+/**
+ * @}
+ */
 
 
 inline void MelFilterTransform::setBands(int nBands)

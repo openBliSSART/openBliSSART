@@ -36,6 +36,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup browser
+ * @{
+ */
+
+/**
  * A base class for dialogs that start multiple threads.
  */
 class ThreadedDialog : public QDialog,
@@ -174,6 +179,11 @@ private:
     Poco::Event           _auxWaitEvent;
 };
 
+
+/**
+ * @}
+ */
+    
 
 } // namespace blissart
 

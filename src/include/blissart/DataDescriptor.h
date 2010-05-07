@@ -35,6 +35,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * A descriptor for data computed from an input file.
  */
 class LibFramework_API DataDescriptor : public DatabaseEntity
@@ -112,6 +117,11 @@ public:
 
 
 typedef Poco::AutoPtr<DataDescriptor> DataDescriptorPtr;
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

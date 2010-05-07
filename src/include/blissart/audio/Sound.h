@@ -50,6 +50,11 @@ namespace audio {
 
 
 /**
+ * \addtogroup audio
+ * @{
+ */
+
+/**
  * Convenience class for the playback of 16-bit mono sounds.
  */
 class LibAudio_API Sound
@@ -127,6 +132,11 @@ private:
     PlaybackState      _state;
     SDL_AudioSpec      *_audioSpec;
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace audio

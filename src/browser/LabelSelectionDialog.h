@@ -36,6 +36,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup browser
+ * @{
+ */
+
+/**
  * Implements a dialog that allows the user to select one or more Labels
  * for annotation of a ClassificationObject.
  */
@@ -86,6 +91,11 @@ private:
     std::map<int, LabelPtr>  _labels;
 };
 
+
+/**
+ * @}
+ */
+    
 
 } // namespace blissart
 

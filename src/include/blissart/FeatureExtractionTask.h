@@ -45,6 +45,11 @@ class StorageSubsystem;
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * Extracts features from matrices and vectors that are pointed to by
  * the given data descriptors.
  */
@@ -90,6 +95,11 @@ private:
 
 
 typedef Poco::AutoPtr<FeatureExtractionTask> FeatureExtractionTaskPtr;
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

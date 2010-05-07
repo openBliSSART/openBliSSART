@@ -38,6 +38,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * A collection of data descriptors that represent an object to be classified,
  * e.g. an audio component is made up of a spectrum and time-varying gains.
  */
@@ -96,6 +101,11 @@ public:
 
 
 typedef Poco::AutoPtr<ClassificationObject> ClassificationObjectPtr;
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

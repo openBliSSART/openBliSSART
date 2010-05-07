@@ -35,6 +35,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup browser
+ * @{
+ */
+
+/**
  * Implements a widget that edits a file list. 
  * Files can be added from various directories via a dialog.
  */
@@ -60,6 +65,11 @@ private:
     Ui::FilesSelectionWidget _ui;
 };
 
+
+/**
+ * @}
+ */
+    
 
 } // namespace blissart
 

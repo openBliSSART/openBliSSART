@@ -40,6 +40,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * A set of features to be extracted from data, or to be loaded from the database.
  */
 class LibFramework_API FeatureSet
@@ -121,6 +126,11 @@ private:
     FeatureMap _featureMap;
     int        _maxFeatureIndex;
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

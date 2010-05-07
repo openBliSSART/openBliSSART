@@ -35,6 +35,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * Selects features by performing analysis of variance (ANOVA).
  */
 class LibFramework_API AnovaFeatureSelector: public FeatureSelector
@@ -64,6 +69,11 @@ private:
     typedef std::map<int, Sample> SampleMap;
 
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

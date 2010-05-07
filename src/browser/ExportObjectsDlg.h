@@ -36,6 +36,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup browser
+ * @{
+ */
+
+/**
  * A dialog fitted to the needs of exporting lots of classification objects.
  */
 class ExportObjectsDlg : public QFileDialog
@@ -80,6 +85,11 @@ private:
     Poco::Logger                         &_logger;
 };
 
+
+/**
+ * @}
+ */
+    
 
 } // namespace blissart
 

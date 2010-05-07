@@ -75,6 +75,13 @@ namespace blissart {
 
 
 /**
+ * \defgroup misc Miscellaneous header-only classes and functions
+ * \addtogroup misc
+ * @{
+ */
+
+
+/**
  * Implementation of a binary reader that works on stl input-streams
  * and provides (big|little)-endian ordering.
  */
@@ -224,6 +231,11 @@ private:
     std::istream& _is;
     bool          _flip;
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

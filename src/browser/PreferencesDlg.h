@@ -35,6 +35,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup browser
+ * @{
+ */
+
+/**
  * A dialog that allows the user to change the preferences for the browser GUI.
  */
 class PreferencesDlg : public QDialog
@@ -66,6 +71,11 @@ private:
     Ui::PreferencesDlg            _ui;
 };
 
+
+/**
+ * @}
+ */
+    
 
 } // namespace blissart
 

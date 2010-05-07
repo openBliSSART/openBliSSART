@@ -39,6 +39,11 @@ namespace nmf {
 
 
 /**
+ * \addtogroup nmf
+ * @{
+ */
+
+/**
  * Static helper function for the randomized initialization
  * of matrices.
  * @return              a real value within [0.01, 0.02[
@@ -49,6 +54,11 @@ inline double uniformRandomGenerator(unsigned int, unsigned int)
 }
 
 
+/**
+ * Static helper function for the randomized initialization
+ * of matrices.
+ * @return              a real value drawn from a Gaussian distribution
+ */
 double LibNMF_API gaussianRandomGenerator(unsigned int, unsigned int);
 
 
@@ -75,6 +85,11 @@ randomGeneratorName(linalg::Matrix::GeneratorFunction gf);
  */
 LibNMF_API linalg::Matrix::GeneratorFunction 
 randomGeneratorForName(const std::string& name);
+
+
+/**
+ * @}
+ */
 
 
 } // namespace nmf

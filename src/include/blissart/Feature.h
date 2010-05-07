@@ -37,6 +37,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * A named data feature with a real value.
  */
 class LibFramework_API Feature : public DatabaseEntity
@@ -94,6 +99,11 @@ public:
 
 
 typedef Poco::AutoPtr<Feature> FeaturePtr;
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

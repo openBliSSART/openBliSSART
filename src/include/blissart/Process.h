@@ -45,6 +45,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * A computation process with parameters.
  */
 class LibFramework_API Process : public DatabaseEntity
@@ -203,13 +208,15 @@ public:
     void setSpectra(unsigned int t);
 
 
-    /**
-     * @}
-     */
 };
 
 
 typedef Poco::AutoPtr<Process> ProcessPtr;
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

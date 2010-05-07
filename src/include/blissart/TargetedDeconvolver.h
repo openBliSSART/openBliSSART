@@ -39,6 +39,12 @@ namespace blissart {
 
 namespace linalg { class Matrix; }
 
+
+/**
+ * \addtogroup framework
+ * @{
+ */
+
 /**
  * Performs NMD/NMF by initializing the spectral matrices with components from
  * the database. If less components are specified than the dimensionality of
@@ -92,6 +98,11 @@ private:
     int getNrOfSpectra(int clObjID);
     int getNrOfSpectra(ClassificationObjectPtr clObj);
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

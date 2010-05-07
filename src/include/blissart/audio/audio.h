@@ -42,6 +42,12 @@ namespace audio {
 
 
 /**
+ * \defgroup audio Audio functionality (LibAudio)
+ * \addtogroup audio
+ * @{
+ */
+
+/**
  * Base class for exceptions thrown by LibAudio.
  */
 class AudioException : public std::runtime_error
@@ -93,6 +99,11 @@ bool LibAudio_API isInitialized();
         if (!blissart::audio::isInitialized()) \
             throw AudioNotInitializedException(); \
     }
+
+
+/**
+ * @}
+ */
 
 
 } // namespace audio

@@ -37,6 +37,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * Serves as a base class for all database entities.
  */
 class LibFramework_API DatabaseEntity : public Poco::RefCountedObject
@@ -94,6 +99,11 @@ protected:
 
 
 typedef Poco::AutoPtr<DatabaseEntity> DatabaseEntityPtr;
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

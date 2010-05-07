@@ -50,6 +50,11 @@ class QueuedTaskManager;
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * Abstract base class for all tasks.
  */
 class LibFramework_API BasicTask : public Poco::Runnable,
@@ -170,6 +175,11 @@ private:
 
 
 typedef Poco::AutoPtr<BasicTask> BasicTaskPtr;
+
+
+/**
+ * @}
+ */
 
 
 // Inlines

@@ -36,6 +36,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * Exports a DataSet object in the ARFF format.
  *
  * @param   dataSet     The DataSet to export
@@ -49,6 +54,11 @@ bool LibFramework_API exportDataSet(const DataSet& dataSet,
                                     const std::string& fileName,
                                     const std::string& name,
                                     const std::string& description);
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

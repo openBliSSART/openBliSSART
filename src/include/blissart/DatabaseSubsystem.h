@@ -53,6 +53,11 @@ class FeatureSet;
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * Provides functions for storing objects in a SQLite database.
  */
 class LibFramework_API DatabaseSubsystem : public Poco::Util::Subsystem
@@ -85,7 +90,7 @@ public:
 
     /**
      * @name Process
-     * {@
+     * @{
      */
 
     /**
@@ -125,7 +130,7 @@ public:
 
     /**
      * @name DataDescriptor
-     * {@
+     * @{
      */
 
     /**
@@ -173,7 +178,7 @@ public:
 
     /**
      * @name Feature
-     * {@
+     * @{
      */
 
     /**
@@ -218,7 +223,7 @@ public:
 
     /**
      * @name ClassificationObject
-     * {@
+     * @{
      */
 
     /**
@@ -278,7 +283,7 @@ public:
 
     /**
      * @name Response
-     * {@
+     * @{
      */
 
     /**
@@ -312,7 +317,7 @@ public:
 
     /**
      * @name DataSet
-     * {@
+     * @{
      */
 
     /**
@@ -339,7 +344,7 @@ public:
 
     /**
      * @name Label
-     * {@
+     * @{
      */
 
     /**
@@ -492,6 +497,11 @@ private:
     Poco::FastMutex          _poolLock;
     Poco::Logger&            _logger;
 };
+
+
+/**
+ * @}
+ */
 
 
 //

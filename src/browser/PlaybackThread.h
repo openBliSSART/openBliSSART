@@ -40,6 +40,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup browser
+ * @{
+ */
+
+/**
  * Implements a thread that plays back an audio signal.
  */
 class PlaybackThread : public QThread
@@ -117,6 +122,11 @@ private:
     Poco::Logger                   &_logger;
 };
 
+
+/**
+ * @}
+ */
+    
 
 // Inlines
 audio::Sound::PlaybackState PlaybackThread::playbackState() const

@@ -41,8 +41,15 @@ namespace blissart { namespace linalg { class Matrix; } }
 namespace Testing {
 
 
+
 /**
- * An abstract base class for tests
+ * \defgroup test Unit-testing framework
+ * \addtogroup test
+ * @{
+ */
+
+/**
+ * An abstract base class for tests.
  */
 class Testable
 {
@@ -98,6 +105,11 @@ protected:
 
 
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace Testing

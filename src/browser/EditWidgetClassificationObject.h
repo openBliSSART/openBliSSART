@@ -41,6 +41,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup browser
+ * @{
+ */
+
+/**
  * Represents a widget that implements GUI-based editing of 
  * ClassificationObjects, including playback and annotation.
  */
@@ -126,6 +131,11 @@ private:
     QProgressDialog*                   _progressDlg;
 };
 
+
+/**
+ * @}
+ */
+    
 
 } // namespace blissart
 

@@ -39,6 +39,11 @@ class ColVector;
 
 
 /**
+ * \addtogroup linalg
+ * @{
+ */
+
+/**
  * Representation of real row-vectors.
  */
 class LibLinAlg_API RowVector : public Vector
@@ -175,6 +180,11 @@ public:
     // We want to be friends with the ColVector class
     friend class ColVector;
 };
+
+
+/**
+ * @}
+ */
 
 
 // Inlines

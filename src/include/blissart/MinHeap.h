@@ -37,6 +37,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * Implementation of a Minimum Binary Heap, i.e. the key of an element on the
  * heap is always less or equal than the keys of its children.
  */
@@ -180,6 +185,11 @@ private:
 
     std::vector<Node<T> *> _nodes;
 };
+
+
+/**
+ * @}
+ */
 
 
 template <typename T>

@@ -36,6 +36,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * Provides a standard interface and implementation for thread-safe progress
  * management.
  */
@@ -121,6 +126,11 @@ private:
     static int            _currentUniqueID;
     Poco::FastMutex       _mutex;
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

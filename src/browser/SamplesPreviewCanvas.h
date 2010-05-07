@@ -36,6 +36,11 @@ namespace internal {
 
 
 /**
+ * \addtogroup browser
+ * @{
+ */
+
+/**
  * Implements a canvas where an audio signal can be drawn.
  */
 class SamplesPreviewCanvas : public QWidget
@@ -182,6 +187,11 @@ private:
     bool         _markerVisible;
 };
 
+
+/**
+ * @}
+ */
+    
 
 } // namespace internal
 

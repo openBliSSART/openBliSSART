@@ -35,6 +35,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * Selects features by measuring correlation between their values and the
  * corresponding class labels.
  */
@@ -65,6 +70,11 @@ private:
     // Calculates the correlation coefficient of vectors x and y.
     double correlation(const std::vector<double>& x, const std::vector<double>& y);
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

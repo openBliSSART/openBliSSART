@@ -38,6 +38,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * A notification that is posted by a BasicTask.
  */
 class LibFramework_API BasicTaskNotification : public Poco::Notification
@@ -119,6 +124,11 @@ private:
 
 
 typedef Poco::AutoPtr<BasicTaskNotification> BasicTaskNotificationPtr;
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

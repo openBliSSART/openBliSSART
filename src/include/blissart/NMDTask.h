@@ -35,9 +35,10 @@
 namespace blissart {
 
 
-// Forward declarations
-//namespace nmf { class Deconvolver; }
-
+/**
+ * \addtogroup framework
+ * @{
+ */
 
 /**
  * A task that performs component separation using non-negative matrix 
@@ -152,6 +153,11 @@ private:
     bool                              _normalizeMatrices;
 
 };
+
+
+/**
+ * @}
+ */
 
 
 void NMDTask::setNormalizeMatrices(bool flag)

@@ -37,7 +37,12 @@ namespace blissart {
 
 
 /**
- * Represents a widgets that implements GUI-based editing of 
+ * \addtogroup browser
+ * @{
+ */
+
+/**
+ * Represents a widget that implements GUI-based editing of 
  * Responses, including selection of objects and labels.
  */
 class EditWidgetResponse : public EditWidget
@@ -179,6 +184,11 @@ private:
     std::map<int, int>                     _cloLabelsRelation;
 };
 
+
+/**
+ * @}
+ */
+    
 
 } // namespace blissart
 

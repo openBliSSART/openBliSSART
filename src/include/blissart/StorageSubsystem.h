@@ -45,6 +45,11 @@ namespace linalg {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * Stores objects described by DataDescriptors as files, using a standard
  * storage layout.
  */
@@ -109,6 +114,11 @@ private:
     Poco::Path             _storageDir;
     Poco::Logger&          _logger;
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

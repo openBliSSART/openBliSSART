@@ -35,6 +35,11 @@
 namespace blissart {
 
 
+/**
+ * \addtogroup framework
+ * @{
+ */
+
 /** 
  * Performs stratified cross-validation on a DataSet.
  */
@@ -75,6 +80,11 @@ private:
     std::vector<DataSet> _trainingSets;
     std::vector<DataSet> _validationSets;
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

@@ -42,6 +42,11 @@ namespace linalg { class Matrix; }
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * A task that classifies the audio components contained in a spectral and
  * gains matrix, as output by a non-negative matrix factorization, and
  * writes them to wave files.
@@ -149,6 +154,11 @@ private:
 
 
 typedef Poco::AutoPtr<ClassificationTask> ClassificationTaskPtr;
+
+
+/**
+ * @}
+ */
 
 
 // Inlines

@@ -47,6 +47,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * A base class for applications that operate using a number of BasicTasks
  * being managed by an instance of QueuedTaskManager. The number of threads
  * defaults to 1.
@@ -193,6 +198,11 @@ private:
 
     std::set<AbstractListener *>   _listeners;
 };
+
+
+/**
+ * @}
+ */
 
 
 template <class NotificationHandler>

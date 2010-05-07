@@ -49,6 +49,11 @@ namespace Data {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * TypeHandler specialization for Poco::AutoPtr.
  */
 template<class C>
@@ -442,6 +447,11 @@ public:
             defVal.text, pExtract);
     }
 };
+
+
+/**
+ * @}
+ */
 
 
 } } // namespace Poco::Data

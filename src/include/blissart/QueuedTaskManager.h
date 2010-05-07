@@ -49,6 +49,11 @@ class BasicTaskNotification;
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * Serves as a task manager in terms of managing a queue of ready tasks and
  * executing them as soon as any threads become available. Notifies registered
  * observers upon certain events.
@@ -215,6 +220,11 @@ private:
 
 
 typedef Poco::AutoPtr<QueuedTaskManager> QueuedTaskManagerPtr;
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

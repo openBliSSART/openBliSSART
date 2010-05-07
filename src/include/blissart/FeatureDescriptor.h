@@ -35,6 +35,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * Describes a feature for use in feature extraction and classification.
  */
 class LibFramework_API FeatureDescriptor
@@ -84,6 +89,11 @@ private:
     static bool isValidFeature(const std::string& name, 
         DataDescriptor::Type dataType);
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

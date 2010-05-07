@@ -44,6 +44,11 @@ namespace validators {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * Validates a Poco::Util::Option against lower and upper bounds.
  */
 template <typename ValueType>
@@ -83,6 +88,11 @@ private:
     bool       _isStrictUpper;
     ValueType  _upper;
 };
+
+
+/**
+ * @}
+ */
 
 
 template <typename ValueType>

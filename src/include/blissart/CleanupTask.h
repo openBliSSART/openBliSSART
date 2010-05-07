@@ -40,7 +40,12 @@ class StorageSubsystem;
 
 
 /**
- * A tasks that deletes all files from a directory that are not referenced
+ * \addtogroup framework
+ * @{
+ */
+
+/**
+ * A task that deletes all files from a directory that are not referenced
  * by any data descriptor in the database.
  */
 class LibFramework_API CleanupTask : public BasicTask
@@ -98,6 +103,11 @@ private:
     std::vector<Poco::Path> _removedFiles;
     StorageSubsystem&       _sts;
 };
+
+
+/**
+ * @}
+ */
 
 
 // Inlines

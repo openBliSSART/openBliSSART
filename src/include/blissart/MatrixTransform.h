@@ -46,6 +46,11 @@ namespace transforms { }
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * An interface for (in-place or out-of-place) 
  * matrix transformations, e.g. calculation of the power spectrum.
  */
@@ -75,6 +80,11 @@ public:
      */
     virtual linalg::Matrix * inverseTransform(linalg::Matrix* m) const = 0;
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

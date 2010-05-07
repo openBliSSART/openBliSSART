@@ -41,6 +41,11 @@ namespace ica {
 
 
 /**
+ * \addtogroup ica
+ * @{
+ */
+
+/**
  * Performs Principal Components Analysis.
  */
 class LibICA_API PCA
@@ -123,6 +128,11 @@ private:
 # pragma warning(pop)
 #endif
 };
+
+
+/**
+ * @}
+ */
 
 
 // Inlines

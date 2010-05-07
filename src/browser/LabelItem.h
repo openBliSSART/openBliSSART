@@ -34,6 +34,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup browser
+ * @{
+ */
+
+/**
  * Represents an item in the Browser entity list that corresponds to a 
  * Label entity in the database.
  */
@@ -73,6 +78,11 @@ private:
     LabelPtr _label;
 };
 
+
+/**
+ * @}
+ */
+    
 
 } // namespace blissart
 

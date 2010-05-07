@@ -45,6 +45,11 @@ namespace internal { class SamplesPreviewCanvas; }
 
 
 /**
+ * \addtogroup browser
+ * @{
+ */
+
+/**
  * A widget encapsulating a SamplesPreviewCanvas.
  */
 class SamplesPreviewWidget : public QWidget
@@ -165,6 +170,11 @@ private:
     PlaybackThread                 *_playbackThread;
 };
 
+
+/**
+ * @}
+ */
+    
 
 } // namespace blissart
 

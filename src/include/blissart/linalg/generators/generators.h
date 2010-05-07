@@ -35,43 +35,85 @@ namespace linalg {
 
 
 /**
- * Classes that implement generation of standard matrix types.
+ * Classes that implement generation of standard matrix and vector types.
  */
 namespace generators {
 
 
-// Vector related
+/**
+ * \addtogroup linalg
+ * @{
+ */
 
+
+/**
+ * @name Vector generators
+ */
+
+
+/**
+ * Generates a vector filled with uniform random numbers from the interval
+ * [0,1[.
+ */
 inline double random(unsigned int)
 {
     return (double)rand() / (double)RAND_MAX;
 }
 
     
+/**
+ * Generates an all-zero vector.
+ */
 inline double zero(unsigned int)
 {
     return 0.0;
 }
 
 
-// Matrix related
+/**
+ * @}
+ *
+ *
+ * @name Matrix generators
+ */
 
+
+/**
+ * Generates a matrix filled with uniform random numbers from the interval
+ * [0,1[.
+ */
 inline double random(unsigned int, unsigned int)
 {
     return (double)rand() / (double)RAND_MAX;
 }
 
 
+/**
+ * Generates the identity matrix.
+ */
 inline double identity(unsigned int i, unsigned int j)
 {
     return (i == j ? 1.0 : 0.0);
 }
 
 
+/**
+ * Generates an all-zero matrix.
+ */
 inline double zero(unsigned int, unsigned int)
 {
     return 0.0;
 }
+
+
+/**
+ * @}
+ */
+
+
+/**
+ * @}
+ */
 
 
 } // namespace generators

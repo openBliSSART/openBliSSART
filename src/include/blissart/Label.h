@@ -36,7 +36,12 @@ namespace blissart {
 
 
 /**
- * A computation process with parameters.
+ * \addtogroup framework
+ * @{
+ */
+
+/**
+ * A label used for annotation of objects in the database.
  */
 class LibFramework_API Label : public DatabaseEntity
 {
@@ -69,6 +74,11 @@ public:
 
 
 typedef Poco::AutoPtr<Label> LabelPtr;
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

@@ -43,6 +43,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * Creates SVM models from DataSets using LibSVM and classifies DataSets.
  */
 class LibFramework_API SVMModel
@@ -84,6 +89,11 @@ private:
     
     svm_model*       _svmModel;
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

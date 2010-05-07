@@ -40,6 +40,11 @@ namespace linalg { class Matrix; }
 
 
 /**
+ * \addtogroup framework
+ * @{
+ */
+
+/**
  * Writes data in HTK format.
  */
 class LibFramework_API HTKWriter : public Poco::BinaryWriter
@@ -115,6 +120,11 @@ public:
 private:
     HTKWriter();
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart
