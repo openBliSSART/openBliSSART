@@ -34,6 +34,9 @@
 namespace blissart {
 
 
+/**
+ * Functions to compute audio features in the time and frequency domains
+ */
 namespace feature {
 
 

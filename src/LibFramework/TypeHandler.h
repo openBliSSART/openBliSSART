@@ -36,7 +36,15 @@
 #include <blissart/Label.h>
 
 
+/**
+ * Classes that inherit the Poco (Portable Components) framework classes
+ */
 namespace Poco {
+
+    
+/**
+ * Classes that inherit the Poco database access classes
+ */
 namespace Data {
 
 

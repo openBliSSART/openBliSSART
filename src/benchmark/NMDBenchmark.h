@@ -34,6 +34,10 @@
 namespace benchmark {
 
 
+/**
+ * Measures the performance of algorithms for non-negative matrix deconvolution
+ * (NMD).
+ */
 class NMDBenchmark : public Benchmark, blissart::ProgressObserver
 {
 public:

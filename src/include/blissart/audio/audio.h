@@ -33,6 +33,11 @@
 
 namespace blissart {
 
+
+/**
+ * Classes related to audio de-/encoding, preprocessing in the time domain,
+ * and transformation to the spectral domain.
+ */
 namespace audio {
 
 

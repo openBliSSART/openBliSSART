@@ -34,6 +34,9 @@
 #include <Poco/Timestamp.h>
 
 
+/**
+ * Classes implementing component-level performance measures
+ */
 namespace benchmark {
 
 

@@ -40,6 +40,10 @@
 namespace blissart {
 
 
+/**
+ * Represents a dialog that can be used to load and separate audio files
+ * into the database.
+ */
 class CreateProcessDialog : public ThreadedDialog
 {
     Q_OBJECT

@@ -35,6 +35,10 @@
 namespace blissart {
 
 
+/**
+ * Implements a dialog that allows the user to select one or more Labels
+ * for annotation of a ClassificationObject.
+ */
 class LabelSelectionDialog : public QDialog
 {
     Q_OBJECT

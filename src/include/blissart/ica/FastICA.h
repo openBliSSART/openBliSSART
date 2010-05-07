@@ -40,12 +40,22 @@ namespace linalg {
 }
 
 
+/**
+ * Classes related to Independent Component Analysis.
+ */
 namespace ica {
 
 
 /**
+ * \defgroup ica Independent Component Analysis (LibICA)
+ * \addtogroup ica
+ * @{
+ */
+
+
+/**
  * Performs Independent Component Analysis using the FastICA algorithm by
- * Hyvaerinnen.
+ * Hyvaerinen.
  */
 class LibICA_API FastICA
 {
@@ -167,6 +177,11 @@ private:
     bool                _dataCentered;
     bool                _whiteningDone;
 };
+
+
+/**
+ * @}
+ */
 
 
 // Inlines

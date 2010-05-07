@@ -39,6 +39,9 @@ namespace Poco { class Logger; }
 namespace blissart {
 
 
+/**
+ * Implements a thread that plays back an audio signal.
+ */
 class PlaybackThread : public QThread
 {
     Q_OBJECT

@@ -39,6 +39,10 @@
 
 namespace blissart {
 
+
+/**
+ * Classes that implement matrix and vector operations.
+ */
 namespace linalg {
 
 

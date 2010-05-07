@@ -35,6 +35,9 @@
 namespace blissart {
 
 
+/**
+ * A base class for dialogs that start multiple threads.
+ */
 class ThreadedDialog : public QDialog,
                        public ThreadedApplication::AbstractListener
 {

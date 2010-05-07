@@ -40,6 +40,10 @@ namespace blissart {
 namespace linalg { class Matrix; }
 
 
+/**
+ * A dialog that displays the mean and standard deviations of the features in 
+ * a Response.
+ */
 class ResponseQualityDlg : public QDialog
 {
     Q_OBJECT

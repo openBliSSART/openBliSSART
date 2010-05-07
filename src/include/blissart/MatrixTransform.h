@@ -39,6 +39,13 @@ namespace linalg { class Matrix; }
 
 
 /**
+ * Classes that implement transformations of spectral matrices, such as 
+ * Mel filtering.
+ */
+namespace transforms { }
+
+
+/**
  * An interface for (in-place or out-of-place) 
  * matrix transformations, e.g. calculation of the power spectrum.
  */

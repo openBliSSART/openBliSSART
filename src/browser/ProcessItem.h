@@ -33,6 +33,10 @@
 namespace blissart {
 
 
+/**
+ * Represents an item in the Browser entity list that corresponds to a 
+ * Process entity in the database.
+ */
 class ProcessItem : public EntityItem
 {
 public:

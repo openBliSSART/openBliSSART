@@ -16,7 +16,8 @@ including different versions of openSUSE, Ubuntu, and Mac OS X.
 For Microsoft Windows, we prepared Visual Studio 2008 solution files. As the
 project file format and the build process change with each version, we
 currently do not support other versions of Visual Studio. We will probably add
-support for VS 2010 in the future.
+support for VS 2010 in the future. The Windows build process has been tested
+under Windows XP and Windows 7.
 
 Prior to compiling openBliSSART, make sure you have the required libraries
 installed (Section 1).
@@ -135,11 +136,11 @@ has not yet been installed.
 
 1.2 Microsoft Windows
 
-If you want to build the browser GUI, you need the Qt SDK for Windows, which
-you can obtain from http://qt.nokia.com/downloads (choose the LGPL license).
-You have to download the open-source framework version for VS2008, as the SDK
-seems to be incompatible with Visual Studio 2008. Anyway, check if the "lib"
-directory contains "*.lib" files, which Visual Studio needs for linking.
+If you want to build the browser GUI, you need Qt for Windows, which you can
+obtain from http://qt.nokia.com/downloads (choose the LGPL license).  You have
+to download the open-source framework version for VS2008 (NOT the SDK), as the
+SDK seems to be incompatible with Visual Studio 2008. Anyway, check if the
+"lib" directory contains "*.lib" files, which Visual Studio needs for linking.
 
 Install Qt, and add the directory <Qt-install-dir>\bin to your PATH environment
 variable. This directory should contain the file qmake.exe. To set the PATH
@@ -152,7 +153,7 @@ quite tedious, hence we provide a ZIP compressed archive that contains the
 Poco, FFTW3, ATLAS, SDL, and SDL_sound libraries (binaries, export files, and
 header files) to build and run openBliSSART:
 
-	http://github.com/openBliSSART/openBliSSART/blob/master/win32/blissart-3rdparty-win32.zip
+	http://github.com/downloads/openBliSSART/openBliSSART/blissart-3rdparty-win32.zip
 
 Unzip this file to a location like "C:\devel", so that you have the directories
 "C:\devel\lib", "C:\devel\bin", and "C:\devel\include". In most cases, this
@@ -469,7 +470,7 @@ $ sudo ldconfig
 
 2.2 Microsoft Windows (Visual Studio 2008)
 
-First, you will ned to adjust the paths used by the browser project file,
+First, you will need to adjust the paths used by the browser project file,
 as they depend on the Qt installation location. To this end, execute the
 "make_vcproj.bat" file in the "src\browser" directory.
 
@@ -480,7 +481,7 @@ To compile openBliSSART using Visual Studio 2008, open the provided solution
 file ("openBliSSART.sln").
 
 Make sure that "Release" / "Win32" (NOT "Debug") is selected as configuration
-in the Visual Studio toolbar, and click "Make" / "Make solution". 
+in the Visual Studio toolbar, and click "Build" / "Build solution". 
 
 If you do not have the ATLAS library installed on your system (you do if you
 used the blissart-3rdparty-win32.zip file), please remove

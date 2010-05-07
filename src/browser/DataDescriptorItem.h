@@ -33,6 +33,10 @@
 namespace blissart {
 
 
+/**
+ * Represents an item in the Browser entity list that corresponds to a 
+ * DataDescriptor entity in the database.
+ */
 class DataDescriptorItem : public EntityItem
 {
 public:

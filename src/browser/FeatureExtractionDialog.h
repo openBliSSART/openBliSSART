@@ -38,6 +38,10 @@
 namespace blissart {
 
 
+/**
+ * A dialog that can be used to start feature extraction on a set of data 
+ * descriptors, possibly using multi-threading.
+ */
 class FeatureExtractionDialog : public ThreadedDialog
 {
     Q_OBJECT

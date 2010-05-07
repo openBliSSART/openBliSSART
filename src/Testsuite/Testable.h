@@ -35,6 +35,9 @@
 namespace blissart { namespace linalg { class Matrix; } }
 
 
+/**
+ * Classes implementing component-level testing
+ */
 namespace Testing {
 
 

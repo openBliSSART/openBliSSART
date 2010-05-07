@@ -33,8 +33,18 @@
 #include <Poco/Util/Application.h>
 
 
+/**
+ * Classes that make up the openBliSSART application framework, 
+ * including GUI components
+ */
 namespace blissart {
 
+
+/**
+ * \defgroup framework openBliSSART application framework (LibFramework)
+ * \addtogroup framework
+ * @{
+ */
 
 /**
  * An extension of Poco's Application class that provides some utility methods
@@ -115,6 +125,11 @@ private:
     std::string _userConfigFile;
     bool        _echoCommand;
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart

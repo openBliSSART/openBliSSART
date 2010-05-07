@@ -44,6 +44,9 @@ namespace audio { class Sound; }
 namespace internal { class SamplesPreviewCanvas; }
 
 
+/**
+ * A widget encapsulating a SamplesPreviewCanvas.
+ */
 class SamplesPreviewWidget : public QWidget
 {
     Q_OBJECT

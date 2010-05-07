@@ -33,6 +33,10 @@
 namespace blissart {
 
 
+/**
+ * Represents an item in the Browser entity list that corresponds to a 
+ * Response entity in the database.
+ */
 class ResponseItem : public EntityItem
 {
 public:

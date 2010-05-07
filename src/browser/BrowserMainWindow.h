@@ -33,6 +33,9 @@
 namespace blissart {
 
 
+/**
+ * Represents the main window of the browser GUI, including the menu bar.
+ */
 class BrowserMainWindow : public QMainWindow
 {
     Q_OBJECT

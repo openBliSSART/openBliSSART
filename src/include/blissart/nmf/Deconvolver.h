@@ -40,12 +40,22 @@ namespace blissart {
 class ProgressObserver;
 
 
+/**
+ * Classes that implement NMF algorithms, or initialize NMF components.
+ */
 namespace nmf {
 
 
 /**
- * Performs non-negative matrix deconvolution minimizing either extended
- * KL divergence (Smaragdis 2004) or Euclidean distance (Wang 2009).
+ * \defgroup nmf NMF algorithms (LibNMF)
+ * \addtogroup nmf
+ * @{
+ */
+
+/**
+ * Performs non-negative matrix deconvolution or factorization using various
+ * cost functions,
+ * including KL divergence or Euclidean distance, and sparsity constraints.
  */
 class LibNMF_API Deconvolver
 {
@@ -314,6 +324,11 @@ private:
     Deconvolver(const Deconvolver&);
     Deconvolver& operator=(const Deconvolver&);
 };
+
+
+/**
+ * @}
+ */
 
 
 // Inlines

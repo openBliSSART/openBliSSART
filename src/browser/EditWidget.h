@@ -36,6 +36,10 @@
 namespace blissart {
 
 
+/**
+ * An abstract base class for widgets that implement GUI-based editing of 
+ * database entities.
+ */
 class EditWidget : public QWidget
 {
     Q_OBJECT

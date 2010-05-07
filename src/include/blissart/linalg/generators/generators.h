@@ -33,6 +33,10 @@ namespace blissart {
     
 namespace linalg {
 
+
+/**
+ * Classes that implement generation of standard matrix types.
+ */
 namespace generators {
 
 

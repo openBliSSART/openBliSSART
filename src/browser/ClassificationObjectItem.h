@@ -37,6 +37,10 @@ class QTreeWidgetItem;
 namespace blissart {
 
 
+/**
+ * Represents an item in the Browser entity list that corresponds to a 
+ * ClassificationObject in the database.
+ */
 class ClassificationObjectItem : public EntityItem
 {
 public:

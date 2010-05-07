@@ -34,6 +34,10 @@
 namespace benchmark {
 
 
+/**
+ * Measures the performance of algorithms for non-negative matrix factorization
+ * (NMF).
+ */
 class NMFBenchmark : public Benchmark, blissart::ProgressObserver
 {
 public:

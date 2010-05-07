@@ -42,6 +42,10 @@ class LabelItem;
 class ResponseItem;
 
 
+/**
+ * A specialization of TreeWidget that retrieves its items from the 
+ * openBliSSART database.
+ */
 class TreeWidgetController : public QTreeWidget
 {
     Q_OBJECT
@@ -71,14 +75,6 @@ public:
     LabelItem* insertNewLabel(LabelPtr l);
     
 
-//    /**
-//     * Removes all entity items from the tree that match the given database
-//     * entity.
-//     * @param  dbe              a pointer to a database entity
-//     */
-//    void removeEntityItems(DatabaseEntityPtr dbe);
-//
-//    
     /**
      * Updates all entity items from the tree that match the given database
      * entity, i.e. assures that they contain the same information.

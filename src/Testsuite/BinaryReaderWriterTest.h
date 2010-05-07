@@ -33,6 +33,9 @@
 namespace Testing {
 
 
+/**
+ * Test for the BinaryReader and BinaryWriter classes.
+ */
 class BinaryReaderWriterTest : public Testable
 {
 public:

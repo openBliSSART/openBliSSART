@@ -36,6 +36,10 @@
 
 namespace blissart {
 
+
+/**
+ * Classes that perform enhanced validation of command-line options.
+ */
 namespace validators {
 
 

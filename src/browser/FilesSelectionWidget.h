@@ -34,6 +34,10 @@
 namespace blissart {
 
 
+/**
+ * Implements a widget that edits a file list. 
+ * Files can be added from various directories via a dialog.
+ */
 class FilesSelectionWidget : public QWidget
 {
     Q_OBJECT

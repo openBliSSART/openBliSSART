@@ -40,6 +40,10 @@ class QProgressDialog;
 namespace blissart {
 
 
+/**
+ * Represents a widget that implements GUI-based editing of 
+ * ClassificationObjects, including playback and annotation.
+ */
 class EditWidgetClassificationObject : public EditWidget,
                                        public ProgressObserver
 {

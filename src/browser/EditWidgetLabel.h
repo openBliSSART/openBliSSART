@@ -35,6 +35,10 @@
 namespace blissart {
 
 
+/**
+ * Represents a widget that implements GUI-based editing of 
+ * the labels used for annotation.
+ */
 class EditWidgetLabel : public EditWidget
 {
     Q_OBJECT

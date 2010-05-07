@@ -34,6 +34,9 @@
 namespace blissart {
 
 
+/**
+ * A dialog that allows the user to change the preferences for the browser GUI.
+ */
 class PreferencesDlg : public QDialog
 {
     Q_OBJECT

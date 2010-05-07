@@ -33,6 +33,9 @@
 namespace Testing {
 
 
+/**
+ * Tests ANOVA- and correlation-based feature selection algorithms.
+ */
 class FeatureSelectionTest : public Testable
 {
 public:

@@ -33,6 +33,9 @@ namespace blissart {
 
 namespace audio {
 
+/**
+ * Structures for RIFF WAVE headers
+ */
 namespace wave {
 
 

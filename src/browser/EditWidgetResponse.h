@@ -36,6 +36,10 @@
 namespace blissart {
 
 
+/**
+ * Represents a widgets that implements GUI-based editing of 
+ * Responses, including selection of objects and labels.
+ */
 class EditWidgetResponse : public EditWidget
 {
     Q_OBJECT

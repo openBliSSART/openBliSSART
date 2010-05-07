@@ -35,6 +35,9 @@ namespace blissart {
 namespace internal {
 
 
+/**
+ * Implements a canvas where an audio signal can be drawn.
+ */
 class SamplesPreviewCanvas : public QWidget
 {
     Q_OBJECT
