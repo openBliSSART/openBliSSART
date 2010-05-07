@@ -447,10 +447,12 @@ alternatively the context menu of the tree view.
     }
 \end{figure}
 
-While an arbitrary number of input files can be specified on the left-hand side,
-the right-hand side allows the selection of the intended parameters for the
-separation process. Currently only a subset of the parameters of the separation
-tool is offered by the browser.
+While an arbitrary number of input files can be specified on the left-hand
+side, the right-hand side allows the selection of the intended parameters for
+the separation process. Currently only a subset of the parameters (\eg cost
+functions) of the separation tool is offered by the browser. The user can
+choose whether to perform a separation process, or whether to only load the
+file's spectrogram into the database.
 
 Note that increasing the number of threads is only useful when working with
 multiple files because they will be distributed individually among the available
@@ -581,6 +583,9 @@ directory selection dialog shows up and allows selecting the destination
 directory for the exported files.
 
 
+\subsection{Browser Preferences}
+
+
 \section{ICA Tool}
 
 The ICA tool (\verb!icatool!) performs blind source separation on multiple audio
@@ -679,7 +684,7 @@ The configuration files reside in the {\tt etc} directory of the installation
 tree.
 
 
-\subsubsection{Global Options}
+\subsection{Global Options}
 \label{section:ConfigFileGlobal}
 
 \begin{itemize}
@@ -703,7 +708,7 @@ tree.
 \end{itemize}
 
 
-\subsubsection{Audio Preprocessing}
+\subsection{Audio Preprocessing}
 \label{section:ConfigFileAudio}
 
 Audio preprocessing options can be specified in the configuration file {\tt
@@ -721,7 +726,7 @@ parameters to the separation tool.
 \end{itemize}
 
 
-\subsubsection{Transformation}
+\subsection{Transformation}
 \label{section:ConfigFileFFT}
 
 Options for the short-time Fourier transformation can be specified in the
@@ -760,7 +765,7 @@ below.
 \end{itemize}
  
   
-\subsubsection{Separation}
+\subsection{Separation}
 
 Options for the separation process can be specified in the
 configuration file {\tt blissart.properties}.
@@ -787,39 +792,47 @@ configuration file {\tt blissart.properties}.
 \end{itemize}
 
 
-\subsubsection{Feature Extraction}
+\subsection{Feature Extraction}
 \label{section:ConfigFileFex}
 
 Feature extraction options can be found in the configuration file {\tt
   blissart.properties}. Unless stated otherwise, these options are boolean
-values which include/exclude certain features in the feature set. By default,
-the following features are included, depending on the type of data descriptor:
-\begin{itemize}
-    \item   Magnitude matrices:
-        \begin{itemize}
-            \item   (Sampled) MFCCs
-            \item   Delta and delta-delta coefficients
-            \item   Mean and standard deviation of those coefficients
-        \end{itemize}
-    \item   Spectra:
-        \begin{itemize}
-            \item   MFCCs
-            \item   Standard deviation
-            \item   Spectral centroid
-            \item   Spectral rolloff
-            \item   Noise-likeness
-        \end{itemize}
-    \item   Gains vectors:
-        \begin{itemize}
-            \item   Periodicity
-            \item   Peak length
-            \item   Peak fluctuation
-            \item   Percussiveness
-        \end{itemize}
-\end{itemize}
+values which include/exclude certain features in the feature set. The available features, and the default set by data descriptor type, is shown in Table~\ref{tab:AvailFeatures}.
+
+\begin{table}
+\begin{tabular}{p{0.3\textwidth}|p{0.45\textwidth}|p{0.15\textwidth}}
+{\bf Data descriptor type} & {\bf Feature} & {\bf Default}\\
+\hline
+\multirow{3}{*}{Magnitude matrix} & (Sampled) MFCCs & x \\
+ & $\delta$ + $\delta\delta$ coefficients & x \\
+ &  Mean and standard deviation of $\delta$ + $\delta\delta$ coefficients & x \\
+\hline
+\multirow{10}{*}{Spectrum} & (Mean) MFCCs 0-12 & x \\
+ & (Sampled) MFCCs & \\
+ & $\delta$ + $\delta\delta$ coefficients & \\
+ & Mean and standard deviation of $\delta$ + $\delta\delta$ coefficients & \\
+ & Standard deviation & \\
+ & Spectral centroid & \\
+ & Spectral rolloff & \\
+ & Noise-likeness & \\
+ & Dissonance & \\
+ & Flatness & \\
+\hline
+\multirow{7}{*}{Gains} & Standard deviation & \\
+ & Skewness & \\
+ & Kurtosis & \\
+ & Periodicity & \\
+ & Peak length & \\
+ & Peak fluctuation & \\
+ & Percussiveness \\
+\end{tabular}
+\caption{Available Audio Features}
+\label{tab:AvailFeatures}
+\end{table}
 
 Note that for NMD, ``spectra'' are actually spectrograms, hence functionals of
-MFCCs and the other features are computed (mean, standard deviation).
+MFCCs and the other features are computed (mean, standard deviation), and
+sampled values of MFCCs can be computed.
 
 The following options control feature extraction from magnitude matrices:
 \begin{itemize}
@@ -874,8 +887,8 @@ blissart.features.spectrum.stddev\_mfcc} configuration options are available
 for spectra, but make only sense for NMD where each component is
 described by a spectrogram. 
 \\
-The default is to only compute the (mean) MFCCs.
-
+The default is to only compute the (mean) MFCCs.\\
+\\
 The following options control feature extraction from gains vectors:
 \begin{itemize}
   \item {\tt blissart.features.gains.stddev}: Whether to compute standard
@@ -900,7 +913,7 @@ The following options control feature extraction from gains vectors:
 \end{itemize}
 
 
-\subsubsection{Classification}
+\subsection{Classification}
 \label{section:ConfigFileClassification}
 
 Classification options control SVM parameters and scaling. They can be specified
@@ -944,4 +957,27 @@ options:
   \item {\tt blissart.classification.scaling.sigma} -- desired standard
     deviation of the feature values if {\tt
       blissart.classification.scaling.method} is set to {\tt musigma}.
+\end{itemize}
+
+
+\subsection{Browser}
+
+The browser configuration file {\tt browser.properties} contains options for
+the audio file preview, and the default settings for importing audio files.
+The options are listed below:
+
+\begin{itemize}
+  \item {\tt browser.featureExtraction.numThreads} -- the default number of threads to use for feature extraction. Default 1.
+  \item {\tt browser.mainwindow.height} -- stores the size of the browser window. Default 768.
+  \item {\tt browser.mainwindow.isMaximized} -- stores whether the browser window is maximized. Default {\tt false}.
+  \item {\tt browser.mainwindow.width} -- stores the width of the browser window. Default 1024.
+  \item {\tt browser.preview.alwaysEnabled} -- indicates whether the audio preview should be enabled by default. Default {\tt true}.
+  \item {\tt browser.preview.normalizeAudio} -- indicates whether the audio preview should be normalized in amplitude. Default {\tt true}.
+  \item {\tt browser.processCreation.costFunction} -- the default NMF cost function (0 for KL divergence, 1 for squared Euclidean distance). Default 0.
+  \item {\tt browser.processCreation.maxIterations} -- the default number of NMF iterations. Default 100.
+  \item {\tt browser.processCreation.numComponents} -- the default number of NMF components. Default 20.
+  \item {\tt browser.processCreation.numThreads} -- the default number of NMF separation threads. Default 1.
+  \item {\tt browser.processCreation.overlap} -- the default overlap to use for Fourier Transformation and NMD/NMF processes. Default 0.5.
+  \item {\tt browser.processCreation.windowFunction} -- the default window function to use for Fourier Transformation and NMD/NMF processes (0 = Square root of Hann function, 1 = Hann function, 2 = Hamming function, 3 = Rectangle function). Default 0.
+  \item {\tt browser.processCreation.windowSizeMS} -- the default window size in milliseconds to use for Fourier Transformation and NMD/NMF processes. Default 25
 \end{itemize}

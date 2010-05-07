@@ -41,6 +41,7 @@ PreferencesDlg::PreferencesDlg(QWidget *parent) : QDialog(parent)
     // Do NOT change the order of the following items:
     _ui.cbProcessCreationWindowFunction->addItem(tr("Square root of Hann function"));
     _ui.cbProcessCreationWindowFunction->addItem(tr("Hann function"));
+    _ui.cbProcessCreationWindowFunction->addItem(tr("Hamming function"));
     _ui.cbProcessCreationWindowFunction->addItem(tr("Rectangle function"));
 
     // Do NOT change the order of the following items:

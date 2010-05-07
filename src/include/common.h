@@ -36,7 +36,7 @@
  * openBliSSART source distribution.
  *
  * Keep in mind that openBliSSART is licensed under the GPL, which means that
- * your application must be provided as free software as well.
+ * applications using openBliSSART must be provided as free software as well.
  *
  * To get an overview of the libraries and classes that openBliSSART provides,
  * it is recommended to have a look at the Modules page first.
