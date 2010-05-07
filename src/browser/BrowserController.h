@@ -36,6 +36,11 @@ namespace blissart {
 
 
 /**
+ * \addtogroup browser
+ * @{
+ */
+
+/**
  * The controlling class of the Browser window.
  */
 class BrowserController : public QWidget
@@ -160,6 +165,11 @@ protected:
 private:
     Ui::BrowserForm  _ui;
 };
+
+
+/**
+ * @}
+ */
 
 
 // Inlines

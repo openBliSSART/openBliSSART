@@ -23,6 +23,26 @@
 //
 
 
+/**
+ * \mainpage 
+ *
+ * This is the documentation of the openBliSSART framework API.
+ * It is intended for developers that want to use parts of openBliSSART,
+ * such as NMF algorithms or the database-driven storage module,
+ * in their own applications.
+ *
+ * If you only want to use the openBliSSART source separation toolbox, please
+ * refer to the reference manual, which is contained in LaTeX format in the 
+ * openBliSSART source distribution.
+ *
+ * Keep in mind that openBliSSART is licensed under the GPL, which means that
+ * your application must be provided as free software as well.
+ *
+ * To get an overview of the libraries and classes that openBliSSART provides,
+ * it is recommended to have a look at the Modules page first.
+ */
+
+
 // DLL import/export specifications for Windows build
 #if defined(_WIN32) || defined(_MSC_VER)
 # ifdef BUILD_LIBNMF

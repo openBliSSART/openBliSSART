@@ -34,6 +34,12 @@ namespace blissart {
 
 
 /**
+ * \defgroup browser Browser GUI
+ * \addtogroup browser
+ * @{
+ */
+
+/**
  * Represents the main window of the browser GUI, including the menu bar.
  */
 class BrowserMainWindow : public QMainWindow
@@ -74,6 +80,11 @@ private:
      */
     void setupMenu();
 };
+
+
+/**
+ * @}
+ */
 
 
 } // namespace blissart
