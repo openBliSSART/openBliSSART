@@ -9,6 +9,9 @@ Alexander Lehmann <lehmanna@in.tum.de>
 These instructions cover the compilation and installation of openBliSSART on
 various platforms. 
 
+For the impatient Linux user, we have provided a sequence of commands that
+install the system provided that the required libraries are installed.
+
 For compilation under Unix-like systems, we provide a configure script (GNU
 autotools). The Unix build process has been tested on various operating systems,
 including different versions of openSUSE, Ubuntu, and Mac OS X.
@@ -30,6 +33,33 @@ performance (optional, and experimental).
 Finally, Section 4 describes some common pitfalls, and how to avoid them.
 In case of installation problems or application crashes, please consult this
 section.
+
+
+0. Installation for the Impatient Linux User
+
+Given that you have recent versions of FFTW3, SDL, SDL_sound, Poco, Qt, and
+ATLAS (and the corresponding "developer" packages, or whatever your
+distribution calls it) installed in standard locations, the following commands
+are sufficient:
+
+$ mkdir -p ~/src
+$ tar xzf openBliSSART-1.2.tar.gz -C ~/src
+$ cd ~/src/openBliSSART-1.2
+$ ./bootstrap.sh          # usually not necessary if "configure" already exists
+$ ./configure --prefix=${HOME}/blissart
+$ make
+$ make install
+
+Ensure that your linker finds the openBliSSART libraries:
+
+$ sudo sh -c "echo ${HOME}/blissart/lib > /etc/ld.so.conf.d/blissart.conf"
+$ sudo ldconfig
+
+You should now be able to run the browser GUI:
+
+$ ~/blissart/bin/browser
+
+If not, please go through the detailed instructions below.
 
 
 1. Dependencies
