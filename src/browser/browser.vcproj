@@ -19,7 +19,7 @@
 			UseOfMfc="0">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;c:\Qt\4.6.0\include\QtCore&quot;,&quot;c:\Qt\4.6.0\include\QtGui&quot;,&quot;c:\Qt\4.6.0\include&quot;,&quot;..\include&quot;,&quot;c:\Qt\4.6.0\include\ActiveQt&quot;,&quot;..\..\build\debug&quot;,&quot;..\..\build\debug&quot;,c:\Qt\4.6.0\mkspecs\default"
+				AdditionalIncludeDirectories="&quot;c:\Qt\4.6.0\include\QtCore&quot;,&quot;c:\Qt\4.6.0\include\QtGui&quot;,&quot;c:\Qt\4.6.0\include&quot;,&quot;..\include&quot;,&quot;c:\Qt\4.6.0\include\ActiveQt&quot;,&quot;..\..\build\debug&quot;,&quot;..\..\build\debug&quot;,c:\Qt\4.6.0\mkspecs\win32-msvc2008"
 				AdditionalOptions="-Zm200 -w34100 -w34189 -w34100 -w34189"
 				AssemblerListingLocation="..\..\build\debug\"
 				BufferSecurityCheck="false"
@@ -73,7 +73,7 @@
 			UseOfMfc="0">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;c:\Qt\4.6.0\include\QtCore&quot;,&quot;c:\Qt\4.6.0\include\QtGui&quot;,&quot;c:\Qt\4.6.0\include&quot;,&quot;..\include&quot;,&quot;c:\Qt\4.6.0\include\ActiveQt&quot;,&quot;..\..\build\release&quot;,&quot;..\..\build\release&quot;,c:\Qt\4.6.0\mkspecs\default"
+				AdditionalIncludeDirectories="&quot;c:\Qt\4.6.0\include\QtCore&quot;,&quot;c:\Qt\4.6.0\include\QtGui&quot;,&quot;c:\Qt\4.6.0\include&quot;,&quot;..\include&quot;,&quot;c:\Qt\4.6.0\include\ActiveQt&quot;,&quot;..\..\build\release&quot;,&quot;..\..\build\release&quot;,c:\Qt\4.6.0\mkspecs\win32-msvc2008"
 				AdditionalOptions="-Zm200 -w34100 -w34189 -w34100 -w34189"
 				AssemblerListingLocation="..\..\build\release\"
 				BufferSecurityCheck="false"
@@ -189,7 +189,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="BrowserController.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_BrowserController.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 BrowserController.h -o ..\..\build\debug\moc_BrowserController.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_BrowserController.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 BrowserController.h -o ..\..\build\debug\moc_BrowserController.cpp"
 						Description="MOC BrowserController.h"
 						Outputs="..\..\build\debug\moc_BrowserController.cpp"
 						Path="."/>
@@ -199,7 +199,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="BrowserController.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_BrowserController.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 BrowserController.h -o ..\..\build\release\moc_BrowserController.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_BrowserController.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 BrowserController.h -o ..\..\build\release\moc_BrowserController.cpp"
 						Description="MOC BrowserController.h"
 						Outputs="..\..\build\release\moc_BrowserController.cpp"
 						Path="."/>
@@ -212,7 +212,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="BrowserMainWindow.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_BrowserMainWindow.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 BrowserMainWindow.h -o ..\..\build\debug\moc_BrowserMainWindow.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_BrowserMainWindow.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 BrowserMainWindow.h -o ..\..\build\debug\moc_BrowserMainWindow.cpp"
 						Description="MOC BrowserMainWindow.h"
 						Outputs="..\..\build\debug\moc_BrowserMainWindow.cpp"
 						Path="."/>
@@ -222,7 +222,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="BrowserMainWindow.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_BrowserMainWindow.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 BrowserMainWindow.h -o ..\..\build\release\moc_BrowserMainWindow.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_BrowserMainWindow.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 BrowserMainWindow.h -o ..\..\build\release\moc_BrowserMainWindow.cpp"
 						Description="MOC BrowserMainWindow.h"
 						Outputs="..\..\build\release\moc_BrowserMainWindow.cpp"
 						Path="."/>
@@ -237,7 +237,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="CreateProcessDialog.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_CreateProcessDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 CreateProcessDialog.h -o ..\..\build\debug\moc_CreateProcessDialog.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_CreateProcessDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 CreateProcessDialog.h -o ..\..\build\debug\moc_CreateProcessDialog.cpp"
 						Description="MOC CreateProcessDialog.h"
 						Outputs="..\..\build\debug\moc_CreateProcessDialog.cpp"
 						Path="."/>
@@ -247,7 +247,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="CreateProcessDialog.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_CreateProcessDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 CreateProcessDialog.h -o ..\..\build\release\moc_CreateProcessDialog.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_CreateProcessDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 CreateProcessDialog.h -o ..\..\build\release\moc_CreateProcessDialog.cpp"
 						Description="MOC CreateProcessDialog.h"
 						Outputs="..\..\build\release\moc_CreateProcessDialog.cpp"
 						Path="."/>
@@ -262,7 +262,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="EditWidget.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_EditWidget.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 EditWidget.h -o ..\..\build\debug\moc_EditWidget.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_EditWidget.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 EditWidget.h -o ..\..\build\debug\moc_EditWidget.cpp"
 						Description="MOC EditWidget.h"
 						Outputs="..\..\build\debug\moc_EditWidget.cpp"
 						Path="."/>
@@ -272,7 +272,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="EditWidget.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_EditWidget.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 EditWidget.h -o ..\..\build\release\moc_EditWidget.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_EditWidget.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 EditWidget.h -o ..\..\build\release\moc_EditWidget.cpp"
 						Description="MOC EditWidget.h"
 						Outputs="..\..\build\release\moc_EditWidget.cpp"
 						Path="."/>
@@ -285,7 +285,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="EditWidgetClassificationObject.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_EditWidgetClassificationObject.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 EditWidgetClassificationObject.h -o ..\..\build\debug\moc_EditWidgetClassificationObject.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_EditWidgetClassificationObject.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 EditWidgetClassificationObject.h -o ..\..\build\debug\moc_EditWidgetClassificationObject.cpp"
 						Description="MOC EditWidgetClassificationObject.h"
 						Outputs="..\..\build\debug\moc_EditWidgetClassificationObject.cpp"
 						Path="."/>
@@ -295,7 +295,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="EditWidgetClassificationObject.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_EditWidgetClassificationObject.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 EditWidgetClassificationObject.h -o ..\..\build\release\moc_EditWidgetClassificationObject.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_EditWidgetClassificationObject.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 EditWidgetClassificationObject.h -o ..\..\build\release\moc_EditWidgetClassificationObject.cpp"
 						Description="MOC EditWidgetClassificationObject.h"
 						Outputs="..\..\build\release\moc_EditWidgetClassificationObject.cpp"
 						Path="."/>
@@ -308,7 +308,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="EditWidgetLabel.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_EditWidgetLabel.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 EditWidgetLabel.h -o ..\..\build\debug\moc_EditWidgetLabel.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_EditWidgetLabel.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 EditWidgetLabel.h -o ..\..\build\debug\moc_EditWidgetLabel.cpp"
 						Description="MOC EditWidgetLabel.h"
 						Outputs="..\..\build\debug\moc_EditWidgetLabel.cpp"
 						Path="."/>
@@ -318,7 +318,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="EditWidgetLabel.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_EditWidgetLabel.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 EditWidgetLabel.h -o ..\..\build\release\moc_EditWidgetLabel.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_EditWidgetLabel.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 EditWidgetLabel.h -o ..\..\build\release\moc_EditWidgetLabel.cpp"
 						Description="MOC EditWidgetLabel.h"
 						Outputs="..\..\build\release\moc_EditWidgetLabel.cpp"
 						Path="."/>
@@ -331,7 +331,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="EditWidgetResponse.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_EditWidgetResponse.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 EditWidgetResponse.h -o ..\..\build\debug\moc_EditWidgetResponse.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_EditWidgetResponse.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 EditWidgetResponse.h -o ..\..\build\debug\moc_EditWidgetResponse.cpp"
 						Description="MOC EditWidgetResponse.h"
 						Outputs="..\..\build\debug\moc_EditWidgetResponse.cpp"
 						Path="."/>
@@ -341,7 +341,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="EditWidgetResponse.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_EditWidgetResponse.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 EditWidgetResponse.h -o ..\..\build\release\moc_EditWidgetResponse.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_EditWidgetResponse.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 EditWidgetResponse.h -o ..\..\build\release\moc_EditWidgetResponse.cpp"
 						Description="MOC EditWidgetResponse.h"
 						Outputs="..\..\build\release\moc_EditWidgetResponse.cpp"
 						Path="."/>
@@ -358,7 +358,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="FeatureExtractionDialog.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_FeatureExtractionDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 FeatureExtractionDialog.h -o ..\..\build\debug\moc_FeatureExtractionDialog.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_FeatureExtractionDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 FeatureExtractionDialog.h -o ..\..\build\debug\moc_FeatureExtractionDialog.cpp"
 						Description="MOC FeatureExtractionDialog.h"
 						Outputs="..\..\build\debug\moc_FeatureExtractionDialog.cpp"
 						Path="."/>
@@ -368,7 +368,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="FeatureExtractionDialog.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_FeatureExtractionDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 FeatureExtractionDialog.h -o ..\..\build\release\moc_FeatureExtractionDialog.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_FeatureExtractionDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 FeatureExtractionDialog.h -o ..\..\build\release\moc_FeatureExtractionDialog.cpp"
 						Description="MOC FeatureExtractionDialog.h"
 						Outputs="..\..\build\release\moc_FeatureExtractionDialog.cpp"
 						Path="."/>
@@ -383,7 +383,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="FilesSelectionWidget.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_FilesSelectionWidget.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 FilesSelectionWidget.h -o ..\..\build\debug\moc_FilesSelectionWidget.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_FilesSelectionWidget.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 FilesSelectionWidget.h -o ..\..\build\debug\moc_FilesSelectionWidget.cpp"
 						Description="MOC FilesSelectionWidget.h"
 						Outputs="..\..\build\debug\moc_FilesSelectionWidget.cpp"
 						Path="."/>
@@ -393,7 +393,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="FilesSelectionWidget.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_FilesSelectionWidget.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 FilesSelectionWidget.h -o ..\..\build\release\moc_FilesSelectionWidget.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_FilesSelectionWidget.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 FilesSelectionWidget.h -o ..\..\build\release\moc_FilesSelectionWidget.cpp"
 						Description="MOC FilesSelectionWidget.h"
 						Outputs="..\..\build\release\moc_FilesSelectionWidget.cpp"
 						Path="."/>
@@ -408,7 +408,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="LabelSelectionDialog.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_LabelSelectionDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 LabelSelectionDialog.h -o ..\..\build\debug\moc_LabelSelectionDialog.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_LabelSelectionDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 LabelSelectionDialog.h -o ..\..\build\debug\moc_LabelSelectionDialog.cpp"
 						Description="MOC LabelSelectionDialog.h"
 						Outputs="..\..\build\debug\moc_LabelSelectionDialog.cpp"
 						Path="."/>
@@ -418,7 +418,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="LabelSelectionDialog.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_LabelSelectionDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 LabelSelectionDialog.h -o ..\..\build\release\moc_LabelSelectionDialog.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_LabelSelectionDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 LabelSelectionDialog.h -o ..\..\build\release\moc_LabelSelectionDialog.cpp"
 						Description="MOC LabelSelectionDialog.h"
 						Outputs="..\..\build\release\moc_LabelSelectionDialog.cpp"
 						Path="."/>
@@ -431,7 +431,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="PlaybackThread.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_PlaybackThread.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 PlaybackThread.h -o ..\..\build\debug\moc_PlaybackThread.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_PlaybackThread.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 PlaybackThread.h -o ..\..\build\debug\moc_PlaybackThread.cpp"
 						Description="MOC PlaybackThread.h"
 						Outputs="..\..\build\debug\moc_PlaybackThread.cpp"
 						Path="."/>
@@ -441,7 +441,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="PlaybackThread.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_PlaybackThread.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 PlaybackThread.h -o ..\..\build\release\moc_PlaybackThread.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_PlaybackThread.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 PlaybackThread.h -o ..\..\build\release\moc_PlaybackThread.cpp"
 						Description="MOC PlaybackThread.h"
 						Outputs="..\..\build\release\moc_PlaybackThread.cpp"
 						Path="."/>
@@ -454,7 +454,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="PreferencesDlg.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_PreferencesDlg.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 PreferencesDlg.h -o ..\..\build\debug\moc_PreferencesDlg.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_PreferencesDlg.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 PreferencesDlg.h -o ..\..\build\debug\moc_PreferencesDlg.cpp"
 						Description="MOC PreferencesDlg.h"
 						Outputs="..\..\build\debug\moc_PreferencesDlg.cpp"
 						Path="."/>
@@ -464,7 +464,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="PreferencesDlg.h;Rem"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_PreferencesDlg.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 PreferencesDlg.h -o ..\..\build\release\moc_PreferencesDlg.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_PreferencesDlg.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 PreferencesDlg.h -o ..\..\build\release\moc_PreferencesDlg.cpp"
 						Description="MOC PreferencesDlg.h"
 						Outputs="..\..\build\release\moc_PreferencesDlg.cpp"
 						Path="."/>
@@ -481,7 +481,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="Rem;ResponseQualityDlg.h"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_ResponseQualityDlg.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 ResponseQualityDlg.h -o ..\..\build\debug\moc_ResponseQualityDlg.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_ResponseQualityDlg.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 ResponseQualityDlg.h -o ..\..\build\debug\moc_ResponseQualityDlg.cpp"
 						Description="MOC ResponseQualityDlg.h"
 						Outputs="..\..\build\debug\moc_ResponseQualityDlg.cpp"
 						Path="."/>
@@ -491,7 +491,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="Rem;ResponseQualityDlg.h"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_ResponseQualityDlg.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 ResponseQualityDlg.h -o ..\..\build\release\moc_ResponseQualityDlg.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_ResponseQualityDlg.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 ResponseQualityDlg.h -o ..\..\build\release\moc_ResponseQualityDlg.cpp"
 						Description="MOC ResponseQualityDlg.h"
 						Outputs="..\..\build\release\moc_ResponseQualityDlg.cpp"
 						Path="."/>
@@ -504,7 +504,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="Rem;SamplesPreviewCanvas.h"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_SamplesPreviewCanvas.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 SamplesPreviewCanvas.h -o ..\..\build\debug\moc_SamplesPreviewCanvas.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_SamplesPreviewCanvas.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 SamplesPreviewCanvas.h -o ..\..\build\debug\moc_SamplesPreviewCanvas.cpp"
 						Description="MOC SamplesPreviewCanvas.h"
 						Outputs="..\..\build\debug\moc_SamplesPreviewCanvas.cpp"
 						Path="."/>
@@ -514,7 +514,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="Rem;SamplesPreviewCanvas.h"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_SamplesPreviewCanvas.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 SamplesPreviewCanvas.h -o ..\..\build\release\moc_SamplesPreviewCanvas.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_SamplesPreviewCanvas.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 SamplesPreviewCanvas.h -o ..\..\build\release\moc_SamplesPreviewCanvas.cpp"
 						Description="MOC SamplesPreviewCanvas.h"
 						Outputs="..\..\build\release\moc_SamplesPreviewCanvas.cpp"
 						Path="."/>
@@ -527,7 +527,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="Rem;SamplesPreviewWidget.h"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_SamplesPreviewWidget.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 SamplesPreviewWidget.h -o ..\..\build\debug\moc_SamplesPreviewWidget.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_SamplesPreviewWidget.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 SamplesPreviewWidget.h -o ..\..\build\debug\moc_SamplesPreviewWidget.cpp"
 						Description="MOC SamplesPreviewWidget.h"
 						Outputs="..\..\build\debug\moc_SamplesPreviewWidget.cpp"
 						Path="."/>
@@ -537,7 +537,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="Rem;SamplesPreviewWidget.h"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_SamplesPreviewWidget.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 SamplesPreviewWidget.h -o ..\..\build\release\moc_SamplesPreviewWidget.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_SamplesPreviewWidget.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 SamplesPreviewWidget.h -o ..\..\build\release\moc_SamplesPreviewWidget.cpp"
 						Description="MOC SamplesPreviewWidget.h"
 						Outputs="..\..\build\release\moc_SamplesPreviewWidget.cpp"
 						Path="."/>
@@ -550,7 +550,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="Rem;ThreadedDialog.h"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_ThreadedDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 ThreadedDialog.h -o ..\..\build\debug\moc_ThreadedDialog.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_ThreadedDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 ThreadedDialog.h -o ..\..\build\debug\moc_ThreadedDialog.cpp"
 						Description="MOC ThreadedDialog.h"
 						Outputs="..\..\build\debug\moc_ThreadedDialog.cpp"
 						Path="."/>
@@ -560,7 +560,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="Rem;ThreadedDialog.h"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_ThreadedDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 ThreadedDialog.h -o ..\..\build\release\moc_ThreadedDialog.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_ThreadedDialog.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 ThreadedDialog.h -o ..\..\build\release\moc_ThreadedDialog.cpp"
 						Description="MOC ThreadedDialog.h"
 						Outputs="..\..\build\release\moc_ThreadedDialog.cpp"
 						Path="."/>
@@ -573,7 +573,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="Rem;TreeWidgetController.h"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_TreeWidgetController.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 TreeWidgetController.h -o ..\..\build\debug\moc_TreeWidgetController.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\debug\moc_TreeWidgetController.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -D_DEBUG -DQT_THREAD_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\debug&quot; -I&quot;..\..\build\debug&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 TreeWidgetController.h -o ..\..\build\debug\moc_TreeWidgetController.cpp"
 						Description="MOC TreeWidgetController.h"
 						Outputs="..\..\build\debug\moc_TreeWidgetController.cpp"
 						Path="."/>
@@ -583,7 +583,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						AdditionalDependencies="Rem;TreeWidgetController.h"
-						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_TreeWidgetController.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\default -D_MSC_VER=1500 -DWIN32 TreeWidgetController.h -o ..\..\build\release\moc_TreeWidgetController.cpp"
+						CommandLine="Rem IncrediBuild_AllowRemote &#x0d;&#x0a; Rem IncrediBuild_OutputFile ..\..\build\release\moc_TreeWidgetController.cpp &#x0d;&#x0a; C:\Qt\4.6.0\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG_OUTPUT -DQT_THREAD_SUPPORT -DQT_DLL -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I&quot;c:\Qt\4.6.0\include\QtCore&quot; -I&quot;c:\Qt\4.6.0\include\QtGui&quot; -I&quot;c:\Qt\4.6.0\include&quot; -I&quot;..\include&quot; -I&quot;c:\Qt\4.6.0\include\ActiveQt&quot; -I&quot;..\..\build\release&quot; -I&quot;..\..\build\release&quot; -Ic:\Qt\4.6.0\mkspecs\win32-msvc2008 -D_MSC_VER=1500 -DWIN32 TreeWidgetController.h -o ..\..\build\release\moc_TreeWidgetController.cpp"
 						Description="MOC TreeWidgetController.h"
 						Outputs="..\..\build\release\moc_TreeWidgetController.cpp"
 						Path="."/>

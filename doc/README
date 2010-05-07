@@ -1,0 +1,20 @@
+This directory contains the openBliSSART documentation.
+
+First of all, a reference manual, including a tutorial, is included. It can be
+found in the directory doc/manual, and is compiled using LaTeX: 
+
+$ pdflatex manual
+$ bibtex manual 
+$ pdflatex manual 
+$ pdflatex manual
+
+Second, if you want to use the openBliSSART libraries, you should consult the
+HTML documentation of the framework API, which can be created by the doxygen utaility. This can be done either by issuing 
+
+$ make html 
+
+in the *top-level directory*, or explicitly running doxygen:
+
+$ doxygen doc/doxygen.cfg
+
+After that, open the file doc/html/index.html in your browser.

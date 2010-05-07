@@ -1,5 +1,11 @@
 openBliSSART is a set of C++ libraries and tools that provides "Blind Source
-Separation for Audio Recognition Tasks".
+Separation for Audio Recognition Tasks". Various source separation algorithms,
+mainly variants of Non-Negative Matrix Factorization, are supported.
+openBliSSART is fast: typical real-time factors are in the order of 0.1 on
+state-of-the-art desktop PCs.
+
+openBliSSART is free software and licensed under the GNU General Public License
+(see the COPYING file).
 
 Detailed installation instructions can be found in the INSTALL file.
 
@@ -7,18 +13,9 @@ For a first impression of openBliSSART, you may want to try the drum beat
 separation demonstrator which is included in the "demo" directory, along with
 installation and usage information.
 
-There is a variety of documentation available:
-
-- A reference manual, including a tutorial, can be found in the directory
-  doc/manual, and is compiled using LaTeX:
-    pdflatex manual
-    bibtex manual
-    pdflatex manual
-    pdflatex manual
-
-- A documentation of the framework API can be created by doxygen, either by
-  issuing "make html" in the top-level directory, or explicitly running doxygen
-  on doc/doxygen.cfg.
+There is a variety of documentation available in the "doc" directory, including
+a tutorial, reference manual, and API documentation. Please consult the file
+"doc/README" for details.
 
 If you want to use openBLiSSART for your research, please cite the following
 paper:

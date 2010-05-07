@@ -75,7 +75,7 @@ protected:
             formatter.setAutoIndent();
             formatter.setUsage(this->commandName() + " <options>\n");
             formatter.setHeader(
-                "export-audio, exports classification objects as audio files");
+                "exportaudio, exports classification objects as audio files");
             formatter.format(cout);
             return EXIT_USAGE;
         }
@@ -97,6 +97,8 @@ protected:
                 delete pAd;
             }
         }
+
+        return EXIT_OK;
     }
 
     
