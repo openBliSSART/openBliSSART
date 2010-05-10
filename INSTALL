@@ -40,7 +40,7 @@ section.
 Given that you have recent versions of FFTW3, SDL, SDL_sound, Poco, Qt, and
 ATLAS (and the corresponding "developer" packages, or whatever your
 distribution calls it) installed in standard locations, the following commands
-are sufficient:
+are sufficient for installation ($ indicates the shell prompt):
 
 $ mkdir -p ~/src
 $ tar xzf openBliSSART-1.2.tar.gz -C ~/src
@@ -50,10 +50,13 @@ $ ./configure --prefix=${HOME}/blissart
 $ make
 $ make install
 
-Ensure that your linker finds the openBliSSART libraries:
+Ensure that your linker finds the openBliSSART libraries. On many 
+distributions (e.g. Ubuntu and openSUSE), the following works: 
 
 $ sudo sh -c "echo ${HOME}/blissart/lib > /etc/ld.so.conf.d/blissart.conf"
 $ sudo ldconfig
+
+If not, check Section 2.1.2 for details on the linker configuration.
 
 You should now be able to run the browser GUI:
 
@@ -298,7 +301,9 @@ Then, type "make" to compile and "make install" to install. If you are not
 logged in as root, try "sudo make install".
 
 Depending on where you have installed Poco, you may have to set the
-LD_LIBRARY_PATH environment variable to contain the Poco "lib" directory, or run the ldconfig tool ($ indicates the shell prompt):
+LD_LIBRARY_PATH environment variable to contain the Poco "lib" directory, 
+or run the ldconfig tool. The following lines work with Ubuntu and openSUSE
+($ indicates the shell prompt):
 
 $ sudo sh -c 'echo <prefix>/lib > /etc/ld.so.conf.d/poco.conf'
 $ sudo ldconfig
@@ -496,6 +501,8 @@ lines should work:
 
 $ sudo sh -c 'echo <prefix>/lib > /etc/ld.so.conf.d/blissart.conf'
 $ sudo ldconfig
+
+Otherwise, check your distribution's manual.
 
 
 2.2 Microsoft Windows (Visual Studio 2008)
