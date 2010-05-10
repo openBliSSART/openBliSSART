@@ -48,6 +48,7 @@
     <h1><a href="http://github.com/openBliSSART/openBliSSART"><img src="openBliSSARTLogo.png" alt="openBliSSART" style="border:none"></a></h1>
     
     <p> [ 
+	<a href="#demo">Demo</a> |
     <a href="#license">License</a> | 
     <a href="#depend">Dependencies</a> |
     <a href="#install">Installation</a> |
@@ -58,21 +59,31 @@
     </p>
     
     <div class="description">
-      openBliSSART is a C++ framework and toolbox that provides "Blind Source Separation for Audio Recognition Tasks". Its areas of application include, but are not limited to, instrument separation (e.g. extraction of drum tracks from popular music), speech enhancement, and feature extraction. 
+		openBliSSART is a C++ framework and toolbox that provides <b>Blind Source Separation for Audio Recognition Tasks</b>. Its areas of application include, but are not limited to, instrument separation (e.g. extraction of drum tracks from popular music), speech enhancement, and feature extraction. 
     </div>
 
     <p>It features various source separation algorithms, with a strong focus on variants of Non-Negative Matrix Factorization (NMF). Besides basic blind (unsupervised) source separation, it provides support for component classification by Support Vector Machines (SVM) using common acoustic features from speech and music processing. For component playback and data set creation, a Qt-based GUI is available. Furthermore, supervised NMF can be performed for source separation as well as audio feature extraction.</p>
 
     </p>openBliSSART is <b>fast</b>: typical real-time factors are in the order of 0.1 (Euclidean NMF) on a state-of-the-art desktop PC. It is written in C++, enforcing strict <b>coding standards</b>, and adhering to modular design principles for seamless integration into multimedia applications.</p>
 
-    <p>We provide a demonstrator that uses various features of openBliSSART to separate drum tracks from popular music. This demonstrator, along with extensive documentation, including a tutorial, reference manual, and description of the framework API, can be found in the openBliSSART <a href="#download">source distribution</a>.</p>
+<a name="demo"></a>
+<h2>Demonstrator</h2>
+<p>We provide a live demonstrator that uses various features of openBliSSART to separate drum tracks from popular music. This demonstrator consists of an NMF component database and a configuration file to use with an openBliSSART installation, and can be found in the openBliSSART <a href="#download">source distribution</a> in the <code>demo</code> directory along with usage instructions.</p>
+<p>For a first impression of its capabilities, listen to the following wave files which we have generated using the demonstrator system:</p>
+<ul>
+	<li>Sultans of Swing - <a href="wav/sultans.wav">Original</a> <a href="wav/sultans_Drum.wav">Drum</a> <a href="wav/sultans_Harmonic.wav">Harmonic</a></li>
+	<li>Rock DJ - <a href="wav/rockdj.wav">Original</a> <a href="wav/rockdj_Drum.wav">Drum</a> <a href="wav/rockdj_Harmonic.wav">Harmonic</a></li>
+	<li>Why Does My Heart Feel So Bad - <a href="wav/whydoesmyheart.wav">Original</a> <a href="wav/whydoesmyheart_Drum.wav">Drum</a> <a href="wav/whydoesmyheart_Harmonic.wav">Harmonic</a></li>
+	
+</ul>
+<p>More audio examples as test cases are available in the openBliSSART source distribution. You can also try the demonstrator system on your own music collection!</p>
 
-<h2>License</h2>
 <a name="license"></a>
+<h2>License</h2>
     <p>openBliSSART is free software and licensed under the <a href="http://www.gnu.org/copyleft/gpl.html">GNU General Public License</a>.</p>
 
-<h2>Dependencies</h2>
 <a name="depend"></a>
+<h2>Dependencies</h2>
 <p>openBliSSART depends on the following libraries:
 
 <ul>
@@ -86,19 +97,19 @@
 Additionaly, performance can be vastly improved by installing the &quot;Automatically
 Tuned Linear Algebra Software&quot; (<a href="http://math-atlas.sourceforge.net">ATLAS</a>) libraries.</p>
 
-<h2>Installation</h2>
 <a name="install"></a>
+<h2>Installation</h2>
 <p>See the <a href="http://github.com/openBliSSART/openBliSSART/blob/master/INSTALL">INSTALL</a> file in the source distribution for detailed installation instructions covering various platforms, including Ubuntu and openSUSE Linux, Windows XP, Vista, and Windows 7.</p>
 
-<h2>Authors</h2>
 <a name="authors"></a>
+<h2>Authors</h2>
 <p>Felix Weninger (weninger.at.tum.de)
 <br/>Alexander Lehmann (lehmanna.at.in.tum.de)
-<br/>Björn Schuller (schuller.at.tum.de)      </p>
+<br/>Bjo&ouml;rn Schuller (schuller.at.tum.de)      </p>
 
 
-<h2>Download</h2>
 <a name="download"></a>
+<h2>Download</h2>
 <p>
     You can download this project in either
     <a href="http://github.com/openBliSSART/openBliSSART/zipball/master">zip</a> or
@@ -109,14 +120,14 @@ Tuned Linear Algebra Software&quot; (<a href="http://math-atlas.sourceforge.net"
     <pre>$ git clone git://github.com/openBliSSART/openBliSSART</pre>
 </p>
 
-<h2>Documentation</h2>
 <a name="doc"></a>
+<h2>Documentation</h2>
 <p>The openBliSSART documentation consists of a reference manual, including a tutorial, and the framework API description.</p>
 <p>To make sure that the documentation is always consistent with the current state of the source code, we encourage the user to build the documentation from source using doxygen and LaTeX. See the <code>doc/README</code> file in the source distribution for details.</p>
 <p>However, for convenience, we provide a <a href="manual.pdf">PDF version</a> of the manual that is regularly updated.</p>
 
-<h2>Citing openBliSSART</h2>
 <a name="citing"></a>
+<h2>Citing openBliSSART</h2>
 <p>If you use openBliSSART for your research, please cite the following
 paper:</p>
 <p>
