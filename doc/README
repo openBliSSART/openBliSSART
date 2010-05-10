@@ -8,8 +8,11 @@ $ bibtex manual
 $ pdflatex manual 
 $ pdflatex manual
 
+Note that you have to use 'pdflatex', not 'latex'.
+
 Second, if you want to use the openBliSSART libraries, you should consult the
-HTML documentation of the framework API, which can be created by the doxygen utaility. This can be done either by issuing 
+HTML documentation of the framework API, which can be created by the doxygen
+utility. This can be done either by issuing 
 
 $ make html 
 
