@@ -537,11 +537,11 @@ the installer copies the right versions of the libraries, add the Qt binary
 directory (where the qmake.exe file resides) on *top* of the Visual Studio
 Executable directories (under Tools / Settings / Projects and Solutions / VC++
 Directories). Then right-click on the "Setup_openBliSSART" project and click
-"Make". In the "Release" subdirectory, an installer file (setup.exe) will be
-created which should be straightforward to use, lets you choose the
-installation directory, and copies external libraries to the openBliSSART
-installation directory.  This installer should work fine even on Windows Vista
-/ Windows 7.
+"Make". In the "win32\Setup_openBliSSART\Release" subdirectory of the source
+tree, an installer file (setup.exe) will be created which should be
+straightforward to use, lets you choose the installation directory, and copies
+external libraries to the openBliSSART installation directory.  This installer
+should work fine even on Windows Vista / Windows 7.
 
 If you cannot build the installer, copy the files from "bin\release" into a
 suitable location where your have write access to, such as "My
