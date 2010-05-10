@@ -5,12 +5,12 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-	<title>openBliSSART/openBliSSART @ GitHub</title>
+	<title>openBliSSART</title>
 	
 	<style type="text/css">
 		body {
   		margin-top: 1.0em;
-  		background-color: #ea9414;
+  		background-color: white;
 		  font-family: "Helvetica,Arial,FreeSans";
   		color: #000000;
     }
@@ -45,58 +45,78 @@
         <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
     </div>
 
-    <h1><a href="http://github.com/openBliSSART/openBliSSART">openBliSSART</a>
-      <span class="small">by <a href="http://github.com/openBliSSART">openBliSSART</a></span></h1>
-
+    <h1><a href="http://github.com/openBliSSART/openBliSSART"><img src="openBliSSARTLogo.png" alt="openBliSSART" style="border:none"></a></h1>
+    
+    <p> [ 
+    <a href="#license">License</a> | 
+    <a href="#depend">Dependencies</a> |
+    <a href="#install">Installation</a> |
+    <a href="#authors">Authors</a> |
+    <a href="#download">Download</a> |
+    <a href="#citing">Citing openBliSSART</a> ]
+    </p>
+    
     <div class="description">
       openBliSSART is a C++ framework and toolbox that provides "Blind Source Separation for Audio Recognition Tasks". Its areas of application include, but are not limited to, instrument separation (e.g. extraction of drum tracks from popular music), speech enhancement, and feature extraction. It features various source separation algorithms, with a strong focus on variants of Non-Negative Matrix Factorization (NMF).
     </div>
 
-    <p>openBliSSART is a C++ framework and toolbox that provides "Blind Source Separation for Audio Recognition Tasks". Its areas of application include, but are not limited to, instrument separation (e.g. extraction of drum tracks from popular music), speech enhancement, and feature extraction. It features various source separation algorithms, with a strong focus on variants of Non-Negative Matrix Factorization (NMF).
+    <p>It features various source separation algorithms, with a strong focus on variants of Non-Negative Matrix Factorization (NMF). Besides basic blind (unsupervised) source separation, it provides support for component classification by Support Vector Machines (SVM) using common acoustic features from speech and music processing. For component playback and data set creation, a Qt-based GUI is available. Furthermore, supervised NMF can be performed for source separation as well as audio feature extraction.</p>
 
-Besides basic blind (unsupervised) source separation, it provides support for component classification by Support Vector Machines (SVM) using common acoustic features from speech and music processing. For component playback and data set creation, a Qt-based GUI is available. Furthermore, supervised NMF can be performed for source separation as well as audio feature extraction.
+    </p>openBliSSART is <b>fast</b>: typical real-time factors are in the order of 0.1 (Euclidean NMF) on a state-of-the-art desktop PC. It is written in C++, enforcing strict <b>coding standards</b>, and adhering to modular design principles for seamless integration into multimedia applications.</p>
 
-openBliSSART is fast: typical real-time factors are in the order of 0.1 (Euclidean NMF) on a state-of-the-art desktop PC. It is written in C++, enforcing strict coding standards, and adhering to modular design principles for seamless integration into multimedia applications.
+    <p>We provide a demonstrator that uses various features of openBliSSART to separate drum tracks from popular music. This demonstrator, along with extensive documentation, including a tutorial, reference manual, and description of the framework API, can be found in the openBliSSART source distribution.</p>
 
-Interfaces are provided to Weka and HTK (Hidden Markov Model Toolkit).
+<h2>License</h2>
+<a name="license"></a>
+    <p>openBliSSART is free software and licensed under the <a href="http://www.gnu.org/copyleft/gpl.html">GNU General Public License</a>.</p>
 
-openBliSSART is free software and licensed under the GNU General Public License.
-
-We provide a demonstrator that uses various features of openBliSSART to separate drum tracks from popular music. This demonstrator, along with extensive documentation, including a tutorial, reference manual, and description of the framework API, can be found in the openBliSSART source distribution.
-
-If you want to use openBliSSART for your research, please cite the following paper:
-
-    Bjoern Schuller, Alexander Lehmann, Felix Weninger, Florian Eyben, Gerhard Rigoll: "Blind Enhancement of the Rhythmic and Harmonic Sections by NMF: Does it help?", in Proc. NAG/DAGA 2009, Rotterdam, The Netherlands, pp. 361-364.</p><h2>Dependencies</h2>
+<h2>Dependencies</h2>
+<a name="depend"></a>
 <p>openBliSSART depends on the following libraries:
 
-- Poco Enterprise v1.3.6+ (incl. support for SQLite), http://pocoproject.org
-- Simple Direct Media Layer, http://libsdl.org
-- SDL_sound, http://icculus.org/SDL_sound
-- Qt 4.4.3+, http://www.qtsoftware.com
-- Fastest Fourier Transform in the West, http://www.fftw.org
+<ul>
+<li><a href="http://pocoproject.org">Poco Complete Edition</a> v1.3.6+ (includes support for SQLite)</li>
+<li><a href="http://libsdl.org">Simple Direct Media Layer</a> (SDL)</li>
+<li><a href="http:://icculus.org/SDL_sound">SDL_sound</a></li>
+<li><a href="http://www.qtsoftware.com">Qt</a> 4.4.3+</li>
+<li><a href="http://www.fftw.org">Fastest Fourier Transform in the West</a> (FFTW3)
+</ul>
 
-Additionaly, performance can be vastly improved by installing the `Automatically
-Tuned Linear Algebra Software' package, available at http://www.netlib.org/atlas.</p>
-<h2>Install</h2>
-<p>See the INSTALL file for detailed installation instructions covering various platforms.</p>
-<h2>License</h2>
-<p>GPL</p>
+Additionaly, performance can be vastly improved by installing the &quot;Automatically
+Tuned Linear Algebra Software&quot; (<a href="http://math-atlas.sourceforge.net">ATLAS</a>) libraries.</p>
+
+<h2>Installation</h2>
+<a name="install"></a>
+<p>See the <a href="http://github.com/openBliSSART/openBliSSART/blob/master/INSTALL">INSTALL</a> file in the source distribution for detailed installation instructions covering various platforms, including Ubuntu and openSUSE Linux, Windows XP, Vista, and Windows 7.</p>
+
 <h2>Authors</h2>
-<p>Felix Weninger (wen@mmk.ei.tum.de)<br/>Alexander Lehmann (lehmanna@in.tum.de)<br/>Björn Schuller (schuller@tum.de)      </p>
-<h2>Contact</h2>
-<p>wen@mmk.ei.tum.de<br/>      </p>
+<a name="authors"></a>
+<p>Felix Weninger (weninger.at.tum.de)
+<br/>Alexander Lehmann (lehmanna.at.in.tum.de)
+<br/>Björn Schuller (schuller.at.tum.de)      </p>
 
 
-    <h2>Download</h2>
-    <p>
-      You can download this project in either
-      <a href="http://github.com/openBliSSART/openBliSSART/zipball/master">zip</a> or
-      <a href="http://github.com/openBliSSART/openBliSSART/tarball/master">tar</a> formats.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-      <pre>$ git clone git://github.com/openBliSSART/openBliSSART</pre>
-    </p>
+<h2>Download</h2>
+<a name="download"></a>
+<p>
+    You can download this project in either
+    <a href="http://github.com/openBliSSART/openBliSSART/zipball/master">zip</a> or
+    <a href="http://github.com/openBliSSART/openBliSSART/tarball/master">tar</a> formats.
+</p>
+<p>You can also clone the project with <a href="http://git-scm.com">Git</a>
+    by running:
+    <pre>$ git clone git://github.com/openBliSSART/openBliSSART</pre>
+</p>
+
+<h2>Citing openBliSSART</h2>
+<a name="citing"></a>
+<p>If you want to use openBliSSART for your research, please cite the following
+paper:</p>
+<p>
+<small><font face="arial"><blockquote> 
+Bjoern Schuller, Alexander Lehmann, Felix Weninger, Florian Eyben, Gerhard Rigoll: <i>"Blind Enhancement of the Rhythmic and Harmonic Sections by NMF: Does it help?", </i>in Proc. NAG/DAGA 2009, Rotterdam, The Netherlands, pp. 361-364.</blockquote></font>
+</small>
+</p>
 
     <div class="footer">
       get the source code on GitHub : <a href="http://github.com/openBliSSART/openBliSSART">openBliSSART/openBliSSART</a>
