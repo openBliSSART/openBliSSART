@@ -50,8 +50,8 @@ QueuedTaskManager::QueuedTaskManager(unsigned int minThreads,
     // active threads in the ThreadPool is at the upper limit.
     // This is caused by the fact that when a BasicTask calls taskCancelled,
     // taskFailed or taskFinished, the associated thread is of course still
-    // running (remember that the _thread_ actually executes the code of the
-    // above mentioned methods).
+    // running (remember that the _thread itself_ actually executes the code
+    // of the above mentioned methods).
 
     _logger.debug("QueuedTaskManager is alive with " +
                   NumberFormatter::format(minThreads) + "/" +
@@ -63,6 +63,9 @@ QueuedTaskManager::QueuedTaskManager(unsigned int minThreads,
 QueuedTaskManager::~QueuedTaskManager()
 {
     _logger.debug("QueuedTaskManager shutting down.");
+
+    // TODO: Add a _shuttingDown flag? This way, misbehaved addition and
+    // execution of new tasks could be prevented in an obvious way.
 
     if (_threadPool) {
         _threadPool->joinAll();
@@ -108,6 +111,10 @@ void QueuedTaskManager::addTask(BasicTask &task, const TaskDeps &taskDeps)
     // Assert that the task has not already been added.
     if (_pendingTasks.find(&task))
         throw Poco::RuntimeException("Task cannot be added more than once!");
+
+    // Assert that the task doesn't depend on itself.
+    if (taskDeps.find(&task) != taskDeps.end())
+        throw Poco::RuntimeException("The task cannot depend on itself!");
 
     task.setTaskManager(this);
     if (!taskDeps.empty()) {
@@ -219,10 +226,8 @@ void QueuedTaskManager::postNotification(BasicTaskNotification *nf)
 
 void QueuedTaskManager::startNextPendingTask(BasicTask *proposedTask)
 {
-#if !defined(_WIN32) && !defined(_MSC_VER)
     // Assure that the _mutex has already been locked.
     debug_assert(!_mutex.tryLock());
-#endif
 
     if (_activeTasks.size() >= _maxThreads)
         return;
@@ -241,7 +246,8 @@ void QueuedTaskManager::startNextPendingTask(BasicTask *proposedTask)
         BasicTask *newTask;
         if (proposedTask) {
             newTask = proposedTask;
-            _pendingTasks.remove(proposedTask);
+            bool taskFound = _pendingTasks.remove(proposedTask);
+            debug_assert(taskFound);
         } else
             newTask = _pendingTasks.extractMin();
 
@@ -259,16 +265,14 @@ void QueuedTaskManager::startNextPendingTask(BasicTask *proposedTask)
 BasicTask* QueuedTaskManager::removeActiveTask(BasicTask *task,
                                                bool updateDeps)
 {
-#if !defined(_WIN32) && !defined(_MSC_VER)
     // Assure that the _mutex has already been locked.
     debug_assert(!_mutex.tryLock());
-#endif
 
     // First remove the task from the set of active tasks.
     _activeTasks.erase(task);
 
     // If the corresponding dependencies should be left alone, at least
-    // delete the task's dependencies before returning.
+    // remove the task's dependencies from the map before returning.
     if (!updateDeps) {
         _dependencies.erase(task);
         return NULL;
@@ -289,6 +293,7 @@ BasicTask* QueuedTaskManager::removeActiveTask(BasicTask *task,
             }
         }
 
+        // Finally, remove the task's dependencies from the map.
         _dependencies.erase(it);
     }
 
@@ -326,8 +331,7 @@ void QueuedTaskManager::taskCancelled(BasicTask *task)
 
 void QueuedTaskManager::taskFailed(BasicTask *task, const Poco::Exception &ex)
 {
-    BasicApplication::instance().logger().
-        error(task->nameAndTaskID() + " exception: " + ex.displayText());
+    _logger.error(task->nameAndTaskID() + " exception: " + ex.displayText());
 
     _mutex.lock();
     {
@@ -336,9 +340,7 @@ void QueuedTaskManager::taskFailed(BasicTask *task, const Poco::Exception &ex)
     }
     _mutex.unlock();
 
-    postNotification(
-        new BasicTaskFailedNotification(task, ex)
-    );
+    postNotification(new BasicTaskFailedNotification(task, ex));
 }
 
 

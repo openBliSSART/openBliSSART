@@ -28,7 +28,7 @@
 
 
 #include <blissart/BasicTask.h>
-#include "MinHeap.h"
+#include <blissart/MinHeap.h>
 
 #include <Poco/ThreadPool.h>
 #include <Poco/Mutex.h>
@@ -79,9 +79,10 @@ public:
 
     /**
      * Adds a BasicTask to the tasks queue. The task is started as soon as a
-     * thread is available. The task manager doesn't assume ownership of the
-     * task, thus the creator of the task is responsible for its deletion.
+     * thread becomes available. The task manager doesn't assume ownership of
+     * the task, thus the creator of the task is responsible for its deletion.
      * @param  task             the task to be added
+     * @throws                  std::runtime_error
      */
     void addTask(BasicTask &task);
 
@@ -91,14 +92,15 @@ public:
 
 
     /**
-     * Adds a BasicTasks to the tasks queue. The task is started as soon as a
-     * thread is available _and_ all the tasks specified in taskDeps have
+     * Adds a BasicTask to the tasks queue. The task is started as soon as a
+     * thread becomes available _and_ all the tasks specified in taskDeps have
      * ended (no matter if they were cancelled or just failed or finished).
      * The task manager doesn't assume ownership of the task, thus the creator
      * of the task is responsible for its deletion.
      * @param  task             the task to be added
      * @param  taskDeps         a vector of BasicTasks on whose completion
      *                          the task to be added depends on
+     * @throws                  std::runtime_error
      */
     void addTask(BasicTask &task, const TaskDeps &taskDeps);
 
@@ -144,6 +146,7 @@ public:
      * no pending or active threads.
      * @param  minThreads       the minimum # of threads
      * @param  maxThreads       the maximum capacity of threads
+     * @throws                  Poco::RuntimeException
      */
     void setNumThreads(unsigned int minThreads, unsigned int maxThreads);
 
@@ -158,8 +161,8 @@ protected:
 private:
     /**
      * Starts the next pending task if a thread is available and removes it from
-     * the queue. If proposedTask is specified, then start this one instead of
-     * taking an arbitrary task from the queue.
+     * the queue. If proposedTask is specified, then that very task is started
+     * instead of taking an arbitrary task from the queue.
      */
     void startNextPendingTask(BasicTask *proposedTask = NULL);
 
@@ -168,7 +171,7 @@ private:
      * Removes the given task from the _activeTasks list and, if specified,
      * updates the tasks that depend on it. If, thereafter, one of the dependent
      * tasks has a key <= 0, then this task is returned so that it can be
-     * executed right away (this can safery huge amounts of memory if lots of
+     * executed right away (this can safe huge amounts of memory if lots of
      * jobs are to be done).
      * @param  task             the task to be removed
      * @param  updateDeps       whether to update the corresponding dependencies
