@@ -50,13 +50,13 @@ class MinHeap {
 
 public:
     /**
-     * Destructs an instances of MinHeap and frees all allocated memory.
+     * Destructs an instance of MinHeap and frees all allocated memory.
      */
     virtual ~MinHeap();
 
 
     /**
-     * Inserts the given element on the heap using the given key.
+     * Inserts the given element into the heap using the given key.
      * @param key               The element's associated key.
      * @param data              The element to be inserted.
      */
@@ -80,6 +80,7 @@ public:
 
     /**
      * Returns the minimum key of the heap's elements.
+     * @throws                  std::runtime_error
      */
     inline int minKey() const;
 
@@ -220,16 +221,15 @@ const T MinHeap<T>::extractMin()
     const T result = _nodes[0]->data;
     delete _nodes[0];
 
-    // Now replace the root node with the last node and restore the heap
-    // invariant.
+    // Depending on the size of the heap, either replace the former root node
+    // with the last node and restore the heap invariant, or simply get rid of
+    // the extracted element.
     if (_nodes.size() > 1) {
         _nodes[0] = _nodes[_nodes.size() - 1];
+        _nodes.pop_back();
         reHeap(0);
-    }
-
-    // Now that the heap shrunk by one element, get rid of the last element
-    // of the _nodes vector.
-    _nodes.pop_back();
+    } else
+        _nodes.pop_back();
 
     return result;
 }
