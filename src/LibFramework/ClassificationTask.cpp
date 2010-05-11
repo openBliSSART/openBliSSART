@@ -230,12 +230,14 @@ void ClassificationTask::exportAsWav()
         // We're exporting .WAV, hence:
         file.setExtension("wav");
 
+        BasicApplication::lockFFTW();
         auto_ptr<AudioData> audioData(
             AudioData::fromSpectrogram(*(it->second),
                                        *_phaseMatrix,
                                        &SqHannFunction, _windowSize, _overlap,
                                        _sampleRate)
         );
+        BasicApplication::unlockFFTW();
 
         logger().debug(nameAndTaskID() + " writing " + file.toString() + ".");
         WaveEncoder::saveAsWav(audioData->getChannel(0),

@@ -178,9 +178,12 @@ AudioData* AudioObject::getAudioObject(ClassificationObjectPtr clo,
         amplitudeMatrix = (*rit)->inverseTransform(amplitudeMatrix);
     }
 
+    BasicApplication::lockFFTW();
     AudioData* ad = AudioData::fromSpectrogram(*amplitudeMatrix, *phaseMatrix,
                                                winFun, windowSize, overlap,
                                                process->sampleFreq, obs);
+    BasicApplication::unlockFFTW();
+
     return ad;
 }
 

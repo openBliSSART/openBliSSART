@@ -607,7 +607,7 @@ e.g. the type of the "m" parameter to the "dgemm" function.
 Add the "HAVE_MATLAB", and possibly remove the "HAVE_CBLAS_H" preprocessor
 definition from the LibLinAlg project file (right-click the LibLinAlg project
 in the solution tree, click on "C/C++ / Preprocessor", then change the line of
-definitions to "BUILD_LIBLINALG;HAVE_MATLAB". This preprocessor definition will
+definitions to "BUILD_LIBLINALG;HAVE_MATLAB"). This preprocessor definition will
 also cause the required libraries to be linked in. 
 
 If your integer type is _NOT_ ptrdiff_t, add a definition of the form
