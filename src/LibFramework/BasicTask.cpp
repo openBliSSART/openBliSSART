@@ -26,16 +26,19 @@
 #include <blissart/BasicTask.h>
 #include <blissart/QueuedTaskManager.h>
 #include <blissart/BasicApplication.h>
+
 #include <Poco/Exception.h>
+#include <Poco/AtomicCounter.h>
 
 
 using Poco::SystemException;
+using Poco::AtomicCounter;
 
 
 namespace blissart {
 
 
-/* static */ int _nextTaskID = 1;
+static AtomicCounter _nextTaskID(1);
 
 
 BasicTask::BasicTask(const std::string &name) :
@@ -57,9 +60,9 @@ BasicTask::~BasicTask()
 void BasicTask::run()
 {
     // NOTE: Don't access this instance's variables after calls to either
-    // taskCancelled(), taskFailed() or taskFinished(), because if these methods
+    // taskCancelled(), taskFailed() or taskFinished() because if these methods
     // are called, the task manager sends notifications to registered observers
-    // which might then in turn delete this instance.
+    // which might then in turn delete this instance (sic).
     
     _state = TASK_RUNNING;
     
@@ -74,11 +77,13 @@ void BasicTask::run()
             _state = TASK_CANCELLED;
             if (_taskManager)
                 _taskManager->taskCancelled(this);
+            // Don't add anything here (see above note).
         } else {
             logger().debug(nameAndTaskID() + " finished.");
             _state = TASK_FINISHED;
             if (_taskManager)
                 _taskManager->taskFinished(this);
+            // Don't add anything here (see above note).
         }
 
     } catch (Poco::Exception &ex) {
@@ -86,16 +91,19 @@ void BasicTask::run()
         _state = TASK_FAILED;
         if (_taskManager)
             _taskManager->taskFailed(this, ex);
+        // Don't add anything here (see above note).
     } catch (std::exception &ex) {
         logger().debug(nameAndTaskID() + " failed.");
         _state = TASK_FAILED;
         if (_taskManager)
             _taskManager->taskFailed(this, SystemException(ex.what()));
+        // Don't add anything here (see above note).
     } catch (...) {
         logger().debug(nameAndTaskID() + " failed.");
         _state = TASK_FAILED;
         if (_taskManager)
             _taskManager->taskFailed(this, SystemException("Unknown exception."));
+        // Don't add anything here (see above note).
     }
 }
 

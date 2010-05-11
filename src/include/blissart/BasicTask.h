@@ -100,7 +100,7 @@ public:
 
 
     /**
-     * Returns a string comprised the task's name plus it's id.
+     * Returns a string comprised of the task's name plus its id.
      */
     inline std::string nameAndTaskID() const;
     
@@ -112,7 +112,7 @@ public:
     
     
     /**
-     * Cancels this tasks, i.e. sets it's cancel flag.
+     * Cancels this tasks, i.e. sets its cancel flag.
      */
     inline void cancel();
     
@@ -125,6 +125,7 @@ public:
 
 protected:
     virtual void onProgressChanged();
+
 
     // Forbid instantiation on the stack.
     virtual ~BasicTask();
