@@ -230,18 +230,25 @@ void ClassificationTask::exportAsWav()
         // We're exporting .WAV, hence:
         file.setExtension("wav");
 
+        Poco::SharedPtr<AudioData> pAd;
         BasicApplication::lockFFTW();
-        auto_ptr<AudioData> audioData(
-            AudioData::fromSpectrogram(*(it->second),
-                                       *_phaseMatrix,
-                                       &SqHannFunction, _windowSize, _overlap,
-                                       _sampleRate)
-        );
+        try {
+            pAd = AudioData::fromSpectrogram(*(it->second),
+                                             *_phaseMatrix,
+                                             &SqHannFunction, 
+                                             _windowSize, 
+                                             _overlap,
+                                             _sampleRate);
+        }
+        catch (...) {
+            BasicApplication::unlockFFTW();
+            throw;
+        }
         BasicApplication::unlockFFTW();
 
         logger().debug(nameAndTaskID() + " writing " + file.toString() + ".");
-        WaveEncoder::saveAsWav(audioData->getChannel(0),
-                               audioData->nrOfSamples(),
+        WaveEncoder::saveAsWav(pAd->getChannel(0),
+                               pAd->nrOfSamples(),
                                _sampleRate, 1, file.toString());
     }
 }

@@ -174,14 +174,19 @@ void FTTask::computeSpectrogram()
     debug_assert(!_amplitudeMatrix);
 
     BasicApplication::lockFFTW();
-
+    pair<Matrix*, Matrix*> spectrogram;
     logger().debug(nameAndTaskID() + " computing spectrogram.");
-    pair<Matrix*, Matrix*> spectrogram = _audioData->
-        computeSpectrogram(_windowFunction, _windowSize, _overlap, 0,
-                           _zeroPadding, _removeDC);
-    _amplitudeMatrix = spectrogram.first;
-    _phaseMatrix = spectrogram.second;
-
+    try {
+        pair<Matrix*, Matrix*> spectrogram = _audioData->
+            computeSpectrogram(_windowFunction, _windowSize, _overlap, 0,
+                               _zeroPadding, _removeDC);
+        _amplitudeMatrix = spectrogram.first;
+        _phaseMatrix = spectrogram.second;
+    }
+    catch (...) {
+        BasicApplication::unlockFFTW();
+        throw;
+    }
     BasicApplication::unlockFFTW();
 
     // Add transformations if specified in the configuration.

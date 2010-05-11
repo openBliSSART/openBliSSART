@@ -27,6 +27,7 @@
 #include <blissart/audio/AudioData.h>
 #include <blissart/linalg/Matrix.h>
 #include <blissart/WindowFunctions.h>
+#include <Poco/Mutex.h>
 
 #include <iostream>
 #include <cstdlib>
@@ -41,6 +42,9 @@ using namespace blissart::linalg;
 
 
 namespace Testing {
+
+
+static Poco::FastMutex fftwMutex;
 
 
 bool SpectralAnalysisTest::performTest(int nSamples, int windowSize)
@@ -68,6 +72,12 @@ bool SpectralAnalysisTest::performTest(int nSamples, int windowSize)
 
     AudioData audioData(vector<double*>(1, data), nSamples, 1000);
 
+    // Actually, the Testsuite is single-threaded, but to be 100% sure we use
+    // a mutex here.
+    // We don't use the BasicApplication method since this is a component test
+    // for AudioData.
+    fftwMutex.lock();
+
     pair<Matrix*, Matrix*> spectrogram =
         audioData.computeSpectrogram(SqHannFunction, windowSize, overlap, 0);
     auto_ptr<Matrix> pAmplitudeMatrix(spectrogram.first);
@@ -81,6 +91,8 @@ bool SpectralAnalysisTest::performTest(int nSamples, int windowSize)
 
     auto_ptr<AudioData> pAudioData2(AudioData::fromSpectrogram(*pAmplitudeMatrix, *pPhaseMatrix,
         SqHannFunction, windowSize, overlap, 1000));
+
+    fftwMutex.unlock();
 
     cout << "Result data:" << endl;
     const double* data2 = pAudioData2->getChannel(0);

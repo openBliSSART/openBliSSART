@@ -330,13 +330,21 @@ void SeparationTask::exportComponents() const
         }
 
         // Create an AudioData object.
-        Poco::SharedPtr<AudioData> pAd =
-                AudioData::fromSpectrogram(*magnitudeSpectrum,
-                                           phaseMatrix(),
-                                           windowFunction(),
-                                           windowSize(),
-                                           overlap(),
-                                           sampleRate());
+        BasicApplication::lockFFTW();
+        Poco::SharedPtr<AudioData> pAd;
+        try {
+            pAd = AudioData::fromSpectrogram(*magnitudeSpectrum,
+                                             phaseMatrix(),
+                                             windowFunction(),
+                                             windowSize(),
+                                             overlap(),
+                                             sampleRate());
+        }
+        catch (...) {
+            BasicApplication::unlockFFTW();
+            throw;
+        }
+        BasicApplication::unlockFFTW();
 
         // Construct the filename.
         string prefix = getExportPrefix();
