@@ -64,13 +64,9 @@ public:
      * type.
      */
     BasicTaskNotification(BasicTask *source, Type what) :
-        _source(source),
+        _source(source, true /* duplicate */),
         _what(what)
     {
-        // When an ordinary pointer is assigned to a Poco::AutoPtr, the
-        // corresponding object's reference count remains unchanged. This
-        // is why we have to call duplicate() manually at this point.
-        _source->duplicate();
     }
 
 
@@ -87,8 +83,8 @@ public:
     
     
 private:
-    BasicTaskPtr _source;
-    const Type   _what;
+    const BasicTaskPtr _source;
+    const Type         _what;
 };
 
 
@@ -113,9 +109,7 @@ public:
     /**
      * Returns a reference to the exception that has been thrown.
      */
-    inline const Poco::Exception& reason() const {
-        return _exc;
-    }
+    inline const Poco::Exception& reason() const { return _exc; }
 
 
 private:

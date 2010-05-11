@@ -155,7 +155,8 @@ private:
 
     
     /**
-     * Sets the task manager for this task.
+     * Sets the task manager for this task. Only called by instances of the
+     * QueuedTaskManager.
      * @param  taskManager      a pointer to the QueuedTaskManager
      */
     void setTaskManager(QueuedTaskManager *taskManager);
