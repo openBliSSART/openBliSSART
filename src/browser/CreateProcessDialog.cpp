@@ -217,9 +217,9 @@ void CreateProcessDialog::showFailedFileNames()
 }
 
 
-void CreateProcessDialog::removeTask(BasicTaskPtr task)
+void CreateProcessDialog::taskAboutToBeRemoved(BasicTaskPtr task)
 {
-    ThreadedDialog::removeTask(task);
+    ThreadedDialog::taskAboutToBeRemoved(task);
 
     if (task->state() == BasicTask::TASK_CANCELLED ||
         task->state() == BasicTask::TASK_FAILED)

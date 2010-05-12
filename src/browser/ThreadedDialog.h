@@ -136,14 +136,15 @@ protected:
 
 
     /**
-     * Implementation of AbstractListener::removeTask. Can be overriden by
-     * subclasses in case they are interested in knowing once a task is being
-     * removed, e.g. when it has finished, failed or has been cancelled.
+     * Implementation of AbstractListener::taskAboutToBeRemoved.
+     * Can be overriden by subclasses in case they are interested in knowing
+     * once a task is being removed, e.g. when it has finished, failed or has
+     * been cancelled.
      *
      * It is advised that deriving subclasses should call this base class
      * implementation of removeTask for future compatibility.
      */
-    virtual void removeTask(const BasicTaskPtr &)
+    virtual void taskAboutToBeRemoved(const BasicTaskPtr &)
     {
         /* Intentionally left blank */
     }

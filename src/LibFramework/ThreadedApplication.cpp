@@ -82,7 +82,7 @@ void ThreadedApplication::removeTask(BasicTaskPtr task)
     for (set<AbstractListener *>::const_iterator it = _listeners.begin();
          it != _listeners.end(); ++it)
     {
-        (*it)->removeTask(task);
+        (*it)->taskAboutToBeRemoved(task);
     }
 
     // Removing the tasks from the task manager is only neccessary if

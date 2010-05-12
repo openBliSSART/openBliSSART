@@ -82,22 +82,31 @@ public:
     /**
      * Helper class that enables other classes to be notified in case a task
      * is being removed.
+     * This listener architecture is mainly intended for classes that cannot be
+     * derived directly from ThreadApplication and hence cannot override
+     * the removeTask or handleTaskNotification methods of the latter.
+     * \see ThreadedApplication::removeTask
+     * \see ThreadedApplication::handleTaskNotification
+     * \see ThreadedApplication::registerListener
+     * \see ThreadedApplication::unregisterListener
      */
     class AbstractListener {
     public:
         virtual ~AbstractListener() {};
-        virtual void removeTask(const BasicTaskPtr &task) = 0;
+        virtual void taskAboutToBeRemoved(const BasicTaskPtr &task) = 0;
     };
 
 
     /**
      * Registers a listener for tasks being removed.
+     * Refer to \ref AbstractListener for further explication.
      */
     inline void registerListener(AbstractListener *callback);
 
 
     /**
      * Unregisters a listener for tasks being removed.
+     * Refer to \ref AbstractListener for further explication.
      */
     inline void unregisterListener(AbstractListener *callback);
 
@@ -106,7 +115,7 @@ protected:
     /**
      * Initializes the ThreadedApplication's QueuedTaskManager.
      * The template parameter must be set to the class that handles the
-     * tasks' notifications.
+     * task notifications.
      */
     template <class NotificationHandler> void initializeTaskManager();
 
@@ -144,8 +153,9 @@ protected:
     /**
      * Removes a task from the set of tasks and from the task manager.
      * Deriving classes can override this method in case they need to perform
-     * something w.r.t. to the removal of the given task. However, note that
-     * calling the base implementation is MANDATORY!
+     * some action in advance of the actual removal of the given task.
+     * However, note that in case this method is overridden, calling this base
+     * implementation is MANDATORY!
      * @param  task             the task to be removed
      */
     virtual void removeTask(BasicTaskPtr task);

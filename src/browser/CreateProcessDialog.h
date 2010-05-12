@@ -66,7 +66,7 @@ protected:
     void showFailedFileNames();
 
 
-    virtual void removeTask(BasicTaskPtr task);
+    virtual void taskAboutToBeRemoved(BasicTaskPtr task);
 
 
 protected slots:
