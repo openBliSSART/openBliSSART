@@ -85,10 +85,7 @@ void ThreadedApplication::removeTask(BasicTaskPtr task)
         (*it)->taskAboutToBeRemoved(task);
     }
 
-    // Removing the tasks from the task manager is only neccessary if
-    // subclasses make own use of removeTask.
     _taskManager->removeTask(*task);
-    // Removing tasks from the set of tasks, however, is mandatory.
     _tasks.erase(task);
 }
 
@@ -106,6 +103,8 @@ void ThreadedApplication::handleTaskNotification(const BasicTaskNotificationPtr 
         case BasicTaskNotification::Failed:
         case BasicTaskNotification::Finished:
             removeTask(nf->source());
+            // Make sure that the task's progress is set to 100% in order to
+            // assure correct overall progress reporting.
             setTaskProgress(_myUniqueID, nf->source()->taskID(), 1.0f);
             break;
 
