@@ -245,7 +245,6 @@ void QueuedTaskManager::startNextPendingTask(BasicTask *proposedTask)
         // if a task was cancelled or has failed. Users of the QueuedTaskManager
         // need to make sure that they handle this situation appropriately
         // through the observation mechanism.
-        _logger.debug("minKey > 0, but noone is ready!");
         return;
     }
     else if (_threadPool->available() > 0) {
