@@ -498,10 +498,8 @@ void DatabaseSubsystem::removeProcess(ProcessPtr process)
 }
 
 
-void DatabaseSubsystem::getProcessParams(Session &session, ProcessPtr process)
+void DatabaseSubsystem::getProcessParams(Session& session, ProcessPtr process)
 {
-    RWLock::ScopedLock lock(_dbLock);
-
     string paramName, paramValue;
     Statement stmt = (session <<
         "SELECT param_name, param_value FROM process_param WHERE process_id = ?",
@@ -809,7 +807,7 @@ void DatabaseSubsystem::insertClassificationObjectLabelIDs(Session& session,
 }
 
 
-void DatabaseSubsystem::getClassificationObjectDescrIDs(Session &session,
+void DatabaseSubsystem::getClassificationObjectDescrIDs(Session& session,
     ClassificationObjectPtr& clObj)
 {
     session << "SELECT descr_id FROM classification_object_data "
@@ -820,7 +818,7 @@ void DatabaseSubsystem::getClassificationObjectDescrIDs(Session &session,
 }
 
 
-void DatabaseSubsystem::getClassificationObjectLabelIDs(Session &session,
+void DatabaseSubsystem::getClassificationObjectLabelIDs(Session& session,
     ClassificationObjectPtr& clObj)
 {
     session << "SELECT label_id FROM classification_object_label "
@@ -1096,7 +1094,7 @@ DatabaseSubsystem::getClassificationObjectsByFilename(const string& filename)
 
 
 void DatabaseSubsystem::insertResponseLabels(Session& session,
-                                           ResponsePtr& response)
+                                             ResponsePtr& response)
 {
     for (map<int, int>::const_iterator itr = response->labels.begin();
          itr != response->labels.end(); ++itr)
@@ -1158,8 +1156,6 @@ void DatabaseSubsystem::removeResponse(ResponsePtr response)
 void DatabaseSubsystem::getResponseLabels(Session& session,
                                           ResponsePtr& response)
 {
-    RWLock::ScopedLock lock(_dbLock);
-
     int objectID;
     int labelID;
     Statement stmt = (session <<
