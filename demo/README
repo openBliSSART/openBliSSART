@@ -52,9 +52,10 @@ septool -v -l9 <file.wav>
 
 This performs a "default" drum beat separation process which decomposes the
 signal into 20 components, classifies them as drum or harmonic, and creates two
-WAV files (file_Drum.wav and file_Harmonic.wav). The -v option tells the tool
-not to write anything to the database ("volatile" mode), and "-l9" is the
-database ID of the training set used for drum/harmonic classification.
+WAV files (file_Drum.wav and file_Harmonic.wav) in the same directory as the
+original WAV file. The -v option tells the tool not to write anything to the
+database ("volatile" mode), and "-l9" is the database ID of the training set
+used for drum/harmonic classification.
 
 You can try to adjust the number of NMF components by using the -c option. Try,
 for once, 30 components:
@@ -66,7 +67,8 @@ and compare the result. Try to increase the components so, say, 40 or 50.
 openBliSSART also features stereophonic subtraction as a preprocessing step.
 Due the the recording setting, often drum beats and harmonic sounds occur in
 one channel of stereophonic music more than in the other. To this end, use the
-"--reduce-mids" option of the septool:
+"--reduce-mids" option of the septool, and a stereophonic file like 
+"demo\wav\tempo.wav":
 
 septool -v -l9 -c30 --reduce-mids <file.wav>
 
