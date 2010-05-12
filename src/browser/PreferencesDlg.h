@@ -47,23 +47,45 @@ class PreferencesDlg : public QDialog
     Q_OBJECT
     
 public:
+    /**
+     * Constructs a new intance of PreferencesDlg.
+     */
     PreferencesDlg(QWidget *parent = 0);
     
     
 public slots:
+    /**
+     * Handles the dialog's accept signal and stores the preferences.
+     */
     virtual void accept();
     
     
 protected:
+    /**
+     * Sets up a mapping from UI elements to configuration items. Only those
+     * UI elements that are relevant for the configuration are taken into
+     * account.
+     */
     void setupConfigMap();
     
     
+    /**
+     * Walks over the mapping from UI elements to configuration items and
+     * stores the respective data.
+     */
     void setConfig();
 
-    
+
+    /**
+     * Walks over the mapping from UI elements to configuration items and
+     * restores the respective data.
+     */
     void getConfig();
 
     
+    /**
+     * A mapping from UI elements to configuration items.
+     */
     QMap<QWidget *, const char *> _configMap;
     
 

@@ -48,16 +48,28 @@ class FilesSelectionWidget : public QWidget
     Q_OBJECT
     
 public:
+    /**
+     * Constructs a new instance of FilesSelectionWidget.
+     */
     FilesSelectionWidget(QWidget *parent);
     
     
+    /**
+     * Returns a list of all contained files.
+     */
     QStringList fileNames() const;
     
     
 protected slots:
+    /**
+     * Handles the addition of one or more files.
+     */
     void on_pbAddFiles_clicked();
     
     
+    /**
+     * Removes the selected files.
+     */
     void on_pbRemoveSelected_clicked();
     
 

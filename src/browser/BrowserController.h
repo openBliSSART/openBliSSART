@@ -133,9 +133,15 @@ protected slots:
     void handleExportComponents();
 
 
+    /**
+     * Handles the creation of a response from the selected items.
+     */
     void handleCreateResponseFromItems();
 
 
+    /**
+     * Handles the batch selection of labels for the selected items.
+     */
     void handleSelectLabelForItems();
 
 

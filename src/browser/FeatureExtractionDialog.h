@@ -65,6 +65,9 @@ public:
 
 
 public slots:
+    /**
+     * Handles the dialog's accept signal and performs the feature extraction.
+     */
     void accept();
 
 
