@@ -74,3 +74,5 @@ libFramework_la_SOURCES = AnovaFeatureSelector.cpp \
 						  exportDataSet.cpp \
 						  libsvm/svm.cpp \
 						  TypeHandler.h
+
+EXTRA_DIST = LibFramework.vcproj

@@ -37,3 +37,5 @@ benchmark_SOURCES = NMDBenchmark.cpp \
                     NMFBenchmark.h \
 					Benchmark.h \
                     main.cpp
+
+EXTRA_DIST = benchmark.vcproj

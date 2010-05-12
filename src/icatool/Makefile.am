@@ -40,3 +40,5 @@ icatool_SOURCES = ARFFExporter.cpp \
                   WaveExporter.cpp \
                   WaveExporter.h \
                   main.cpp
+
+EXTRA_DIST = icatool.vcproj

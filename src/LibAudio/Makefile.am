@@ -37,3 +37,5 @@ libAudio_la_SOURCES = AudioData.cpp \
                       Sound.cpp \
                       wave.h \
                       audio.cpp
+
+EXTRA_DIST = LibAudio.vcproj

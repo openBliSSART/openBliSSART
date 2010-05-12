@@ -31,3 +31,4 @@ export_CPPFLAGS = -I../include @POCO_CPPFLAGS@
 
 export_SOURCES = main.cpp
 
+EXTRA_DIST = export.vcproj

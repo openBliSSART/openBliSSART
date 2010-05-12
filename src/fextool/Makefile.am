@@ -33,3 +33,5 @@ fextool_LDADD = $(top_srcdir)/src/LibFeature/libFeature.la \
                 -lPocoXML -lPocoSQLite -lfftw3
 
 fextool_SOURCES = main.cpp
+
+EXTRA_DIST = fextool.vcproj

@@ -81,3 +81,5 @@ testsuite_SOURCES = BinaryReaderWriterTest.cpp \
 					WaveTest.cpp \
 					WaveTest.h \
 					main.cpp
+
+EXTRA_DIST = Testsuite.vcproj

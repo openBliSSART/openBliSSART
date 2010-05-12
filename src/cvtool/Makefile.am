@@ -34,3 +34,4 @@ cvtool_CPPFLAGS = -I../include @POCO_CPPFLAGS@
 
 cvtool_SOURCES = main.cpp
 
+EXTRA_DIST = cvtool.vcproj

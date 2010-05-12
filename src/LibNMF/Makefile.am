@@ -31,3 +31,5 @@ libNMF_la_CPPFLAGS = -I../include
 libNMF_la_CXXFLAGS = -fPIC
 
 libNMF_la_SOURCES = Deconvolver.cpp randomGenerator.cpp
+
+EXTRA_DIST = LibNMF.vcproj

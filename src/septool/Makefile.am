@@ -33,3 +33,4 @@ septool_CPPFLAGS = -I../include @POCO_CPPFLAGS@
 
 septool_SOURCES = main.cpp
 
+EXTRA_DIST = septool.vcproj

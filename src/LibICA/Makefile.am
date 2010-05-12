@@ -31,3 +31,5 @@ libICA_la_CPPFLAGS = -I../include
 libICA_la_CXXFLAGS = -fPIC
 
 libICA_la_SOURCES = FastICA.cpp PCA.cpp
+
+EXTRA_DIST = LibICA.vcproj

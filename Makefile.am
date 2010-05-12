@@ -24,4 +24,4 @@
 
 ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = src doc
-EXTRA_DIST = demo
+EXTRA_DIST = demo openBliSSART.sln win32

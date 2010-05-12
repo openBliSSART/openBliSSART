@@ -31,3 +31,4 @@ cleanup_CPPFLAGS = -I../include @POCO_CPPFLAGS@
 
 cleanup_SOURCES = main.cpp
 
+EXTRA_DIST = cleanup.vcproj

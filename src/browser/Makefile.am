@@ -29,7 +29,7 @@ clean-local: Makefile.qt
 	$(MAKE) -f Makefile.qt $(AM_MAKEFLAGS) clean
 	-rm -f browser
 
-EXTRA_DIST = *.cpp *.h *.ui browser.pro
+EXTRA_DIST = *.cpp *.h *.ui browser.pro browser.vcproj make_vcproj.bat
 
 .PHONY: install-exec-local Makefile.qt
 install-exec-local: all

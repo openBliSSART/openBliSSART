@@ -12,4 +12,4 @@ mostly-clean:
 #	-mkdir -p $(destdir)
 #	-cp -a html $(destdir)
 
-EXTRA_DIST = doxygen.cfg
+EXTRA_DIST = doxygen.cfg manual

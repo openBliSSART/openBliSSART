@@ -32,3 +32,4 @@ exportaudio_CPPFLAGS = -I../include @POCO_CPPFLAGS@
 
 exportaudio_SOURCES = main.cpp
 
+EXTRA_DIST = exportaudio.vcproj

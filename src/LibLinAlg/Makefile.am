@@ -34,3 +34,5 @@ libLinAlg_la_SOURCES = ColVector.cpp \
                        Matrix.cpp \
                        RowVector.cpp \
                        Vector.cpp
+
+EXTRA_DIST = LibLinAlg.vcproj

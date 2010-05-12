@@ -31,3 +31,5 @@ libFeature_la_CPPFLAGS = -I../include
 libFeature_la_CXXFLAGS = -fPIC
 
 libFeature_la_SOURCES = mfcc.cpp misc.cpp peak.cpp
+
+EXTRA_DIST = LibFeature.vcproj
