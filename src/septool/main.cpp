@@ -442,9 +442,10 @@ protected:
         if (_classify && task->state() != BasicTask::TASK_FINISHED) {
             SeparationTaskPtr sepTask = task.cast<SeparationTask>();
             if (!sepTask.isNull()) {
-                // This SeparationTask failed. Thus add the corresponding
-                // filename to the _failedFileNames list and remove the
-                // corresponding ClassificationTask as well.
+                // This SeparationTask was cancelled or simply failed.
+                // Thus the corresponding filename is added to the
+                // _failedFileNames list and the respective ClassificationTask
+                // removed accordingly.
                 ClassificationTaskPtr clTask;
                 _genMutex.lock();
                 {
@@ -453,7 +454,7 @@ protected:
                     _tasksMap.erase(sepTask);
                 }
                 _genMutex.unlock();
-                removeTask(clTask);
+                ThreadedApplication::removeTask(clTask);
             }
         }
 
