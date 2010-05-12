@@ -712,7 +712,13 @@ tree.
     coefficient is multiplied with $1 + L / \sin(2\pi i / L)$, i.e. if
     $L=0$ this procedure has no effect. More information can be found in
     the HTK book \cite{HTKBook}.
-  \item   {\tt blissart.global.mel\_bands} (positive integer): The number of
+  \item   {\tt blissart.global.mel\_filter.high\_freq} (double): the upper
+    limit frequency of the Mel filter bank. If this is 0 (default), the Nyquist
+    frequency is assumed. If this is larger than the Nyquist frequency, an error
+    is raised.
+  \item   {\tt blissart.global.mel\_filter.low\_freq} (double): the lower limit
+    frequency of the Mel filter bank. Default 0.
+  \item   {\tt blissart.global.mel\_bands} (positive integer): the number of
     Mel frequency bands to use for Mel filtering (e.g. in MFCC computation).
   \item   {\tt blissart.global.deltaregression.theta} (positive integer): The
     parameter $\theta$ for the regression procedure which is used to

@@ -709,6 +709,15 @@ Solution: Make sure that you have executed "make_vcproj.bat" in the
 been updated (check the file modification time).
 
 
+Problem: Visual Studio reports a linking error: XXXd.lib could not be found.
+
+Cause: You try to compile the debug version, but have no debug libraries
+installed.
+
+Solution: Make sure you have selected the "Release/Win32" configuration in the
+Visual Studio toolbar.
+
+
 Problem: Visual Studio reports a linking error (qtmain.lib could not be found).
 
 Cause: Incorrect Qt version.
