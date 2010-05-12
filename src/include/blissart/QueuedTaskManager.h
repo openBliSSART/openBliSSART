@@ -168,15 +168,14 @@ private:
 
 
     /**
-     * Removes the given task from the _activeTasks list and, if specified,
-     * updates the tasks that depend on it. If, thereafter, one of the dependent
-     * tasks has a key <= 0, then this task is returned so that it can be
-     * executed right away (this can safe huge amounts of memory if lots of
-     * jobs are to be done).
+     * Removes the given task from the _activeTasks list. If the task has
+     * finished successfully, updates the keys of any possible dependent tasks.
+     * If, thereafter, one of the dependent tasks has a key <= 0, then this task
+     * is returned so that it can be executed right away (this can safe huge
+     * amounts of memory if lots of jobs are to be processed).
      * @param  task             the task to be removed
-     * @param  updateDeps       whether to update the corresponding dependencies
      */
-    BasicTask *removeActiveTask(BasicTask *task, bool updateDeps);
+    BasicTask *removeActiveTask(BasicTask *task);
 
 
     /**

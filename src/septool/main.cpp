@@ -442,7 +442,7 @@ protected:
         if (_classify && task->state() != BasicTask::TASK_FINISHED) {
             SeparationTaskPtr sepTask = task.cast<SeparationTask>();
             if (!sepTask.isNull()) {
-                // This SeparationTask was cancelled or simply failed.
+                // This SeparationTask instance was cancelled or simply failed.
                 // Thus the corresponding filename is added to the
                 // _failedFileNames list and the respective ClassificationTask
                 // removed accordingly.

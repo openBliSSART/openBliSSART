@@ -151,6 +151,8 @@ void QueuedTaskManager::removeTask(BasicTask &task)
         throw Poco::RuntimeException("Active tasks cannot be removed!");
 
     _pendingTasks.remove(&task);
+    if (_pendingTasks.empty())
+        _emptyQueueEvent.set();
 }
 
 
@@ -239,8 +241,11 @@ void QueuedTaskManager::startNextPendingTask(BasicTask *proposedTask)
         _emptyQueueEvent.set();
     }
     else if (_pendingTasks.minKey() > 0) {
-        // None of the tasks is ready due to dependencies.
-        debug_assert(!_activeTasks.empty());
+        // None of the tasks is ready due to dependencies. This can happen
+        // if a task was cancelled or has failed. Users of the QueuedTaskManager
+        // need to make sure that they handle this situation appropriately
+        // through the observation mechanism.
+        _logger.debug("minKey > 0, but noone is ready!");
         return;
     }
     else if (_threadPool->available() > 0) {
@@ -248,8 +253,7 @@ void QueuedTaskManager::startNextPendingTask(BasicTask *proposedTask)
         BasicTask *newTask;
         if (proposedTask) {
             newTask = proposedTask;
-            bool taskFound = _pendingTasks.remove(proposedTask);
-            debug_assert(taskFound);
+            _pendingTasks.remove(proposedTask);
         } else
             newTask = _pendingTasks.extractMin();
 
@@ -264,8 +268,7 @@ void QueuedTaskManager::startNextPendingTask(BasicTask *proposedTask)
 }
 
 
-BasicTask* QueuedTaskManager::removeActiveTask(BasicTask *task,
-                                               bool updateDeps)
+BasicTask* QueuedTaskManager::removeActiveTask(BasicTask *task)
 {
 #if !defined(_WIN32) && !defined(_MSC_VER)
     // Assure that the _mutex has already been locked.
@@ -275,33 +278,33 @@ BasicTask* QueuedTaskManager::removeActiveTask(BasicTask *task,
     // First remove the task from the set of active tasks.
     _activeTasks.erase(task);
 
-    // If the corresponding dependencies should be left alone, at least
-    // remove the task's dependencies from the map before returning.
-    if (!updateDeps) {
-        _dependencies.erase(task);
-        return NULL;
-    }
+    BasicTask* nextTaskToRun = NULL;
 
-    BasicTask *result = NULL;
-
-    // Then see if any tasks depend on it and update their keys accordingly.
-    map<BasicTask *, TaskDeps>::iterator it = _dependencies.find(task);
-    if (it != _dependencies.end()) {
-        TaskDeps &td = it->second;
-        for (TaskDeps::iterator tdi = td.begin(); tdi != td.end(); ++tdi) {
-            int newKey = _pendingTasks.decreaseKey(*tdi, 1);
-            if (newKey <= 0 && !result) {
-                // So this is a task that directly depends on the completion
-                // of the task is to removed and that is now ready to go.
-                result = *tdi;
+    // Only update the keys of the tasks that possibly depend on this one
+    // if the task has actually finished. This is to avoid the starting of
+    // possibly dependent threads in case this one was cancelled or failed.
+    if (task->state() == BasicTask::TASK_FINISHED) {
+        // See if any tasks depend on this one and update their keys
+        // accordingly.
+        map<BasicTask *, TaskDeps>::iterator it = _dependencies.find(task);
+        if (it != _dependencies.end()) {
+            TaskDeps &td = it->second;
+            for (TaskDeps::iterator tdi = td.begin(); tdi != td.end(); ++tdi) {
+                int newKey = _pendingTasks.decreaseKey(*tdi, 1);
+                if (newKey <= 0 && !nextTaskToRun) {
+                    // So this is a task that directly depends on the completion
+                    // of the task being removed and that is ready to go now.
+                    nextTaskToRun = *tdi;
+                }
             }
         }
-
-        // Finally, remove the task's dependencies from the map.
-        _dependencies.erase(it);
     }
 
-    return result;
+    // Make sure that this task's dependencies (if any) are removed from the
+    // respective map.
+    _dependencies.erase(task);
+
+    return nextTaskToRun;
 }
 
 
@@ -322,7 +325,7 @@ void QueuedTaskManager::taskCancelled(BasicTask *task)
 {
     _mutex.lock();
     {
-        BasicTask *proposedTask = removeActiveTask(task, false);
+        BasicTask *proposedTask = removeActiveTask(task);
         startNextPendingTask(proposedTask);
     }
     _mutex.unlock();
@@ -339,7 +342,7 @@ void QueuedTaskManager::taskFailed(BasicTask *task, const Poco::Exception &ex)
 
     _mutex.lock();
     {
-        BasicTask *proposedTask = removeActiveTask(task, false);
+        BasicTask *proposedTask = removeActiveTask(task);
         startNextPendingTask(proposedTask);
     }
     _mutex.unlock();
@@ -352,7 +355,7 @@ void QueuedTaskManager::taskFinished(BasicTask *task)
 {
     _mutex.lock();
     {
-        BasicTask *proposedTask = removeActiveTask(task, true);
+        BasicTask *proposedTask = removeActiveTask(task);
         startNextPendingTask(proposedTask);
     }
     _mutex.unlock();

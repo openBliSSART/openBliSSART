@@ -85,6 +85,10 @@ void ThreadedApplication::removeTask(BasicTaskPtr task)
         (*it)->taskAboutToBeRemoved(task);
     }
 
+    // Make sure that the task's progress is set to 100% in order to
+    // assure correct overall progress reporting.
+    setTaskProgress(_myUniqueID, task->taskID(), 1.0f);
+
     _taskManager->removeTask(*task);
     _tasks.erase(task);
 }
@@ -103,9 +107,6 @@ void ThreadedApplication::handleTaskNotification(const BasicTaskNotificationPtr 
         case BasicTaskNotification::Failed:
         case BasicTaskNotification::Finished:
             removeTask(nf->source());
-            // Make sure that the task's progress is set to 100% in order to
-            // assure correct overall progress reporting.
-            setTaskProgress(_myUniqueID, nf->source()->taskID(), 1.0f);
             break;
 
         default:
