@@ -507,18 +507,33 @@ Otherwise, check your distribution's manual.
 
 2.2 Microsoft Windows (Visual Studio 2008)
 
-First, you will need to adjust the paths used by the browser project file,
-as they depend on the Qt installation location. To this end, execute the
-"make_vcproj.bat" file in the "src\browser" directory.
-
-Ensure you have set the paths to external libraries in the Visual Studio
-environment correctly (see Section 1.2). 
+2.2.1 Preparing the solution file
 
 To compile openBliSSART using Visual Studio 2008, open the provided solution 
 file ("openBliSSART.sln").
 
-Make sure that "Release" / "Win32" (NOT "Debug") is selected as configuration
-in the Visual Studio toolbar, and click "Build" / "Build solution". 
+VERY IMPORTANT: The next step must be executed while the solution file is opened
+in Visual Studio, otherwise the installer project will not work.
+
+You will need to adjust the paths used by the browser project file,
+as they depend on your Qt installation location. To this end, execute the
+"make_vcproj.bat" file in the "src\browser" directory.
+
+If you have older versions of Visual Studio (e.g. 2005) installed, the project
+file will be built for the lowest version you have. To avoid this, start the
+make_vcproj.bat from the Visual Studio 2008 Command Prompt which can be found
+in the Start menu in the "Visual Studio 2008 Tools" folder. Otherwise, the
+project will be automatically converted and should work fine.
+
+After executing make_vcproj.bat, a message will appear in the Visual Studio
+solution window that "browser.vcproj" has changed. Click on "Reload" to accept
+the new browser project file.
+
+
+2.2.2 Preparing the build process
+
+Ensure you have set the paths to external libraries in the Visual Studio
+environment correctly (see Section 1.2). 
 
 If you do not have the ATLAS library installed on your system (you do if you
 used the blissart-3rdparty-win32.zip file), please remove
@@ -527,6 +542,12 @@ the "HAVE_CBLAS_H" preprocessor definition from the LibLinAlg project file
 Preprocessor", then change the line of definitions from
 "BUILD_LIBLINALG;HAVE_CBLAS_H" to "BUILD_LIBLINALG" only). However performance
 will be very slow if you do this.
+
+
+2.2.3 Building and installing openBliSSART
+
+Make sure that "Release" / "Win32" (NOT "Debug") is selected as configuration
+in the Visual Studio toolbar, and click "Build" / "Build solution". 
 
 After compiling, openBliSSART libraries and tools will be available in the
 "bin\release" subdirectory. If you have Visual Studio 2008 Professional, you
