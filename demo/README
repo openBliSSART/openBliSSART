@@ -32,6 +32,7 @@ following pieces:
 - "Rock DJ" by Robbie Williams
 - "Sultans of Swing" by Dire Straits
 - "Why Does My Heart Feel So Bad" by Moby
+- "Tempo Di Estate" by jazz trio Durham, Conte, Farao
 
 These represent a good spectrum of music, with and without vocals, and include
 challenging tasks for drum beat separation such as cowbells, synthetic
@@ -41,7 +42,8 @@ You can also try the demonstrator on your own music files. Besides WAV, also
 OGG and FLAC formats are supported. MP3 may work, depending on the version of
 SDL_sound that you are using. If you encounter "empty" output files (i.e. no
 sound) when using MP3 input, this is probably due problems with SDL_sound's MP3
-implementation, and can be solved by decoding to WAV format first.
+implementation, and can be solved by decoding to WAV format first (e.g. using
+mpg123).
 
 Open a command line window and change to the openBliSSART "bin" directory. You
 may try the following commands (use "./septool" under Unix):
@@ -60,6 +62,13 @@ for once, 30 components:
 septool -v -l9 -c30 <file.wav>
 
 and compare the result. Try to increase the components so, say, 40 or 50.
+
+openBliSSART also features stereophonic subtraction as a preprocessing step.
+Due the the recording setting, often drum beats and harmonic sounds occur in
+one channel of stereophonic music more than in the other. To this end, use the
+"--reduce-mids" option of the septool:
+
+septool -v -l9 -c30 --reduce-mids <file.wav>
 
 As NMF is initialized randomly, results may vary from execution to execution,
 so you can try the same command several times and listen to the results.
