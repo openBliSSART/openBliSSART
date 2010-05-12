@@ -79,7 +79,15 @@ protected slots:
     
     
 protected:
+    /**
+     * Preprocesses the features for the underlying response.
+     */
     void initialize();
+
+
+    /**
+     * Sets up the tree widget and corresponding (items|item groups).
+     */
     void setupTreeWidget();
     
     

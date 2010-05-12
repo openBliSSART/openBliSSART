@@ -59,13 +59,24 @@ public:
 
 
 public slots:
+    /**
+     * Handles the dialog's accept signal and performs the process creation.
+     */
     virtual void accept();
 
 
 protected:
+    /**
+     * Shows a dialog box displaying the names of those files that were not
+     * processed.
+     */
     void showFailedFileNames();
 
 
+    /**
+     * Allows for logging the filenames of corresponding tasks in case they were
+     * cancelled or have failed.
+     */
     virtual void taskAboutToBeRemoved(BasicTaskPtr task);
 
 
