@@ -226,8 +226,10 @@ void QueuedTaskManager::postNotification(BasicTaskNotification *nf)
 
 void QueuedTaskManager::startNextPendingTask(BasicTask *proposedTask)
 {
+#if !defined(_WIN32) && !defined(_MSC_VER)
     // Assure that the _mutex has already been locked.
     debug_assert(!_mutex.tryLock());
+#endif
 
     if (_activeTasks.size() >= _maxThreads)
         return;
@@ -265,8 +267,10 @@ void QueuedTaskManager::startNextPendingTask(BasicTask *proposedTask)
 BasicTask* QueuedTaskManager::removeActiveTask(BasicTask *task,
                                                bool updateDeps)
 {
+#if !defined(_WIN32) && !defined(_MSC_VER)
     // Assure that the _mutex has already been locked.
     debug_assert(!_mutex.tryLock());
+#endif
 
     // First remove the task from the set of active tasks.
     _activeTasks.erase(task);
