@@ -193,6 +193,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CNMFTest.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DatabaseSubsystemTest.cpp"
 				>
 			</File>
@@ -292,6 +296,10 @@
 			>
 			<File
 				RelativePath=".\BinaryReaderWriterTest.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CNMFTest.h"
 				>
 			</File>
 			<File

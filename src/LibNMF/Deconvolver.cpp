@@ -27,6 +27,7 @@
 #include <blissart/nmf/randomGenerator.h>
 #include <blissart/linalg/generators/generators.h>
 #include <blissart/ProgressObserver.h>
+#include <blissart/linalg/RowVector.h>
 
 #include <stdexcept>
 #include <sstream>
@@ -59,6 +60,8 @@ const char* Deconvolver::costFunctionName(Deconvolver::NMFCostFunction cf)
         return "Extended KL divergence + sparseness constraint";
     if (cf == Deconvolver::EuclideanDistanceSparseNormalized)
         return "Squared ED (normalized basis) + sparseness";
+    if (cf == Deconvolver::KLDivergenceContinuous)
+        return "Extended KL divergence + continuity constraint";
     // should not occur ...
     return "Unknown";
 }
@@ -176,6 +179,12 @@ void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
             throw std::runtime_error("Sparse NMD not implemented");
         }
         factorizeNMFKLSparse(maxSteps, eps, observer);
+    }
+    else if (cf == KLDivergenceContinuous) {
+        if (_t > 1) {
+            throw std::runtime_error("Continuous NMD not implemented");
+        }
+        factorizeNMFKLTempCont(maxSteps, eps, observer);
     }
     else if (cf == EuclideanDistanceSparseNormalized) {
         if (_t > 1) {
@@ -657,6 +666,118 @@ void Deconvolver::factorizeNMFKLSparse(unsigned int maxSteps, double eps,
     delete[] wColSums;
 }
 
+void Deconvolver::factorizeNMFKLTempCont(unsigned int maxSteps, double eps,
+                                       ProgressObserver *observer)
+{
+    assert(_t == 1);
+
+    Matrix& w = *(_w[0]);
+    Matrix vOverApprox(_v.rows(), _v.cols());
+    Matrix wUpdateNum(_v.rows(), _h.rows());
+    Matrix hUpdateMatrixNum(_h.rows(), _h.cols());
+	
+    // need to backup old H for proper gradient calculation
+    Matrix oldH(_h.rows(), _h.cols());
+    
+    // helper variables
+    double denom;
+    double hRowSumSq, hDeltaSumSq;
+
+    // parts of gradient which are equal for each row
+    double *ctplus = new double[_h.rows()];
+    double *ctminus1 = new double[_h.rows()];
+    double *ctminus2 = new double[_h.rows()];
+
+    // row sums are used for H as well as W update
+    double *hRowSums = new double[_h.rows()];
+
+    // col sums for H update
+    double *wColSums = new double[w.cols()];
+
+    _numSteps = 0;
+    while (_numSteps < maxSteps) {
+
+        // compute approximation
+        computeApprox();
+
+        // convergence criterion
+        if (checkConvergence(eps, false))
+            break;
+
+        oldH = _h;
+
+        // numerator for W updates (fast calculation by matrix product)
+        _v.elementWiseDivision(_approx, &vOverApprox);
+        vOverApprox.multWithTransposedMatrix(_h, &wUpdateNum);
+
+        // precompute H row sums
+        for (unsigned int i = 0; i < _h.rows(); ++i) {
+            hRowSums[i] = _h.rowSum(i);
+        }
+
+        // W Update
+        if (!_wConstant) {
+            for (unsigned int j = 0; j < w.cols(); ++j) {
+                if (!_wColConstant[j]) {
+                    for (unsigned int i = 0; i < w.rows(); ++i) {
+                        w(i, j) *= (wUpdateNum(i, j) / hRowSums[j]);
+                    }
+                }
+            }
+
+            // recompute approximation
+            computeApprox();
+            _v.elementWiseDivision(_approx, &vOverApprox);
+        }
+
+        // H Update
+
+        // Row-wise precomputation of the parts of the gradient which do not 
+        // depend on the column index
+        for (unsigned int i = 0; i < _h.rows(); ++i) {
+            hRowSumSq = Matrix::dotRowRow(_h, i, _h, i);
+            
+            // also precompute W column sums in this loop
+            wColSums[i] = w.colSum(i);
+
+            hDeltaSumSq = 0.0;
+            for (unsigned int j = 1; j < _h.cols(); ++j) {
+                double hDelta = _h(i, j) - _h(i, j-1);
+                hDeltaSumSq += hDelta * hDelta;
+            }
+
+			ctplus[i] = 4 * (double) _h.cols() / hRowSumSq;
+			ctminus1[i] = 2 * (double) _h.cols() / hRowSumSq;
+			ctminus2[i] = 2 * (double) _h.cols() * hDeltaSumSq / (hRowSumSq * hRowSumSq);
+        }
+
+        w.multWithMatrix(vOverApprox, &hUpdateMatrixNum,
+            true, false,
+            _h.rows(), _v.rows(), _h.cols(),
+            0, 0, 0, 0, 0, 0);
+
+        for (unsigned int j = 0; j < _h.cols(); ++j) {
+            for (unsigned int i = 0; i < _h.rows(); ++i) {
+                denom = wColSums[i] + _s(i,j) * _h(i, j) * ctplus[i];
+                if (denom <= 0.0) denom = DIVISOR_FLOOR;
+                double l = j == 0 ? 0.0 : oldH(i, j - 1);
+                double r = j == _h.cols() - 1 ? 0.0 : _h(i, j + 1);
+				_h(i, j) *= 
+					(hUpdateMatrixNum(i, j)  // reconstruction error
+                    + _s(i,j) * ((l + r) * ctminus1[i] + _h(i,j) * ctminus2[i]))
+					/ denom;
+            }
+        }
+
+        nextItStep(observer, maxSteps);
+    }
+
+    delete[] ctminus1;
+	delete[] ctminus2;
+    delete[] ctplus;
+    delete[] hRowSums;
+    delete[] wColSums;
+}
 
 void Deconvolver::factorizeNMFEDSparseNorm(unsigned int maxSteps, double eps,
                                            ProgressObserver *observer)

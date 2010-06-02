@@ -45,6 +45,7 @@
 #include "PCATest.h"
 #include "ScalingTest.h"
 #include "SNMFTest.h"
+#include "CNMFTest.h"
 #include "SVMModelTest.h"
 #include "SpectralAnalysisTest.h"
 #include "StorageSubsystemTest.h"
@@ -120,6 +121,7 @@ protected:
         options.addOption(Option("nmf", "", "Test NMF routines"));
         options.addOption(Option("pca", "", "Test PCA routine"));
         options.addOption(Option("snmf", "", "Test sparse NMF routines"));
+        options.addOption(Option("cnmf", "", "Test continuous NMF routines"));
         options.addOption(Option("spec", "", "Test spectral analysis functions"));
         options.addOption(Option("storage", "", "Test StorageManager functions"));
         options.addOption(Option("sc", "", "Test scaling and smoothing"));
@@ -171,6 +173,8 @@ protected:
             pushTest(new NMFTest());
         if (name == "all" || name == "snmf") 
             pushTest(new SNMFTest());
+        if (name == "all" || name == "cnmf")
+            pushTest(new CNMFTest());
         if (name == "all" || name == "brw")
             pushTest(new BinaryReaderWriterTest());
         if (name == "all" || name == "td")

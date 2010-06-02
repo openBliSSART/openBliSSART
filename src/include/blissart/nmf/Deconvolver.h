@@ -40,22 +40,12 @@ namespace blissart {
 class ProgressObserver;
 
 
-/**
- * Classes that implement NMF algorithms, or initialize NMF components.
- */
 namespace nmf {
 
 
 /**
- * \defgroup nmf NMF algorithms (LibNMF)
- * \addtogroup nmf
- * @{
- */
-
-/**
- * Performs non-negative matrix deconvolution or factorization using various
- * cost functions,
- * including KL divergence or Euclidean distance, and sparsity constraints.
+ * Performs non-negative matrix deconvolution minimizing either extended
+ * KL divergence (Smaragdis 2004) or Euclidean distance (Wang 2009).
  */
 class LibNMF_API Deconvolver
 {
@@ -69,6 +59,7 @@ public:
         KLDivergence,
         EuclideanDistanceSparse,
         KLDivergenceSparse,
+        KLDivergenceContinuous,
         EuclideanDistanceSparseNormalized
     } NMFCostFunction;
 
@@ -272,6 +263,11 @@ protected:
     void factorizeNMFKLSparse(unsigned int maxSteps, double eps,
                               ProgressObserver *observer = 0);
 
+	// Temporal continuity NMF according to Virtanen 2007, measuring reconstruction error
+    // using extended KL divergence.
+    void factorizeNMFKLTempCont(unsigned int maxSteps, double eps,
+                              ProgressObserver *observer = 0);
+
     // Sparse NMF minimizing Euclidean distance, measured using normalized
     // basis vectors (Eggert and Körner 2004).
     void factorizeNMFEDSparseNorm(unsigned int maxSteps, double eps,
@@ -324,11 +320,6 @@ private:
     Deconvolver(const Deconvolver&);
     Deconvolver& operator=(const Deconvolver&);
 };
-
-
-/**
- * @}
- */
 
 
 // Inlines
