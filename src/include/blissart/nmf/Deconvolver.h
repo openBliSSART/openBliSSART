@@ -157,14 +157,24 @@ public:
         = gaussianRandomGenerator);
 
     /**
-     * Sets the sparsity parameters for each entry of H, given as a matrix.
+     * Sets the sparsity weight for each entry of H, given as a matrix.
      */
-    inline void setS(const blissart::linalg::Matrix& s);
+    inline void setSparsity(const blissart::linalg::Matrix& s);
 
     /**
-     * Returns the sparsity parameters for each entry of H as a matrix.
+     * Returns the sparsity weight for each entry of H as a matrix.
      */
-    inline const blissart::linalg::Matrix& getS() const;
+    inline const blissart::linalg::Matrix& getSparsity() const;
+
+    /**
+     * Sets the continuity weight for each entry of H, given as a matrix.
+     */
+    inline void setContinuity(const blissart::linalg::Matrix& c);
+
+    /**
+     * Returns the continuity weight for each entry of H as a matrix.
+     */
+    inline const blissart::linalg::Matrix& getContinuity() const;
 
     /**
      * Returns the current value of approximation of V.
@@ -295,7 +305,7 @@ protected:
     void ensureNonnegativity(blissart::linalg::Matrix& m, 
         double epsilon = 1e-9);
 
-    // Normalizes W[p] columns to unity for all p
+    // Normalizes Frobenius norm of H to unity.
     void normalizeMatrices();
 
     const blissart::linalg::Matrix& _v;
@@ -306,8 +316,9 @@ protected:
     bool*                       _wColConstant;
     bool                        _normalizeMatrices;
     unsigned int                _t;
-    blissart::linalg::Matrix        _h;
-    blissart::linalg::Matrix        _s;
+    blissart::linalg::Matrix    _h;
+    blissart::linalg::Matrix    _s;
+    blissart::linalg::Matrix    _c;   
     unsigned int                _numSteps;
     double                      _absoluteError;
     double                      _relativeError;
@@ -373,16 +384,29 @@ const blissart::linalg::Matrix& Deconvolver::getH() const
 }
 
 
-void Deconvolver::setS(const blissart::linalg::Matrix& s)
+void Deconvolver::setSparsity(const blissart::linalg::Matrix& s)
 {
-    assert(_s.rows() == _h.rows() && _s.cols() && _h.cols());
+    assert(s.rows() == _h.rows() && s.cols() == _h.cols());
     _s = s;
 }
 
 
-const blissart::linalg::Matrix& Deconvolver::getS() const
+const blissart::linalg::Matrix& Deconvolver::getSparsity() const
 {
     return _s;
+}
+
+
+void Deconvolver::setContinuity(const blissart::linalg::Matrix& c)
+{
+    assert(c.rows() == _h.rows() && c.cols() == _h.cols());
+    _c = c;
+}
+
+
+const blissart::linalg::Matrix& Deconvolver::getContinuity() const
+{
+    return _c;
 }
 
 

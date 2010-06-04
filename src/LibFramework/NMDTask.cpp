@@ -111,13 +111,26 @@ void NMDTask::initialize()
         );
     }
 
+    // Currently the sparsity and continuity parameters are the same for the
+    // whole H matrix, but the Deconvolver allows a different parameter for
+    // each entry.
+
     Matrix s(nrOfComponents(), amplitudeMatrix().cols());
     for (unsigned int j = 0; j < s.cols(); ++j) {
         for (unsigned int i = 0; i < s.rows(); ++i) {
             s(i, j) = _sparsity;
         }
     }
-    _deconvolver->setS(s);
+    _deconvolver->setSparsity(s);
+
+    Matrix c(nrOfComponents(), amplitudeMatrix().cols());
+    for (unsigned int j = 0; j < c.cols(); ++j) {
+        for (unsigned int i = 0; i < c.rows(); ++i) {
+            c(i, j) = _continuity;
+        }
+    }
+    _deconvolver->setContinuity(c);
+
     _deconvolver->setNormalizeMatrices(_normalizeMatrices);
 }
 

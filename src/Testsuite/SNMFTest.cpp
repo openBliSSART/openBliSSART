@@ -123,7 +123,7 @@ bool SNMFTest::performTest()
                     s(i, j) = sparsity[si];
                 }
             }
-            d.setS(s);
+            d.setSparsity(s);
 
             d.decompose(nmf::Deconvolver::KLDivergenceSparse, 100, 0.0);
             d.computeApprox();
@@ -164,7 +164,7 @@ bool SNMFTest::performTest()
                     s(i, j) = sparsity[si];
                 }
             }
-            d.setS(s);
+            d.setSparsity(s);
 
             d.decompose(nmf::Deconvolver::EuclideanDistanceSparse, 1000, 1e-5);
             d.computeApprox();
@@ -205,7 +205,7 @@ bool SNMFTest::performTest()
                     s(i, j) = sparsity[si];
                 }
             }
-            d.setS(s);
+            d.setSparsity(s);
 
             d.decompose(nmf::Deconvolver::EuclideanDistanceSparseNormalized, 1000, 1e-5);
             d.computeApprox();

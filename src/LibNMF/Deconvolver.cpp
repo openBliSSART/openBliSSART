@@ -80,6 +80,7 @@ Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t,
     _t(t),
     _h(r, v.cols(), hGenerator),
     _s(r, v.cols(), generators::zero),      // zero --> no sparsity
+    _c(r, v.cols(), generators::zero),      // zero --> no continuity
     _numSteps(0),
     _absoluteError(-1),
     _relativeError(-1),
@@ -758,13 +759,13 @@ void Deconvolver::factorizeNMFKLTempCont(unsigned int maxSteps, double eps,
 
         for (unsigned int j = 0; j < _h.cols(); ++j) {
             for (unsigned int i = 0; i < _h.rows(); ++i) {
-                denom = wColSums[i] + _s(i,j) * _h(i, j) * ctplus[i];
+                denom = wColSums[i] + _c(i,j) * _h(i, j) * ctplus[i];
                 if (denom <= 0.0) denom = DIVISOR_FLOOR;
                 double l = j == 0 ? 0.0 : oldH(i, j - 1);
                 double r = j == _h.cols() - 1 ? 0.0 : _h(i, j + 1);
 				_h(i, j) *= 
 					(hUpdateMatrixNum(i, j)  // reconstruction error
-                    + _s(i,j) * ((l + r) * ctminus1[i] + _h(i,j) * ctminus2[i]))
+                    + _c(i,j) * ((l + r) * ctminus1[i] + _h(i,j) * ctminus2[i]))
 					/ denom;
             }
         }
@@ -778,6 +779,7 @@ void Deconvolver::factorizeNMFKLTempCont(unsigned int maxSteps, double eps,
     delete[] hRowSums;
     delete[] wColSums;
 }
+
 
 void Deconvolver::factorizeNMFEDSparseNorm(unsigned int maxSteps, double eps,
                                            ProgressObserver *observer)

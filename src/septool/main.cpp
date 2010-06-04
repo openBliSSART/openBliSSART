@@ -68,6 +68,7 @@ public:
         _algName("Multiplicative update (divergence)"),
         _cfName("Extended KL divergence"),
         _nmdSparsity(0.0),
+        _nmdContinuity(0.0),
         _nmfCostFunction(nmf::Deconvolver::KLDivergence),
         _nrComponents(20),
         _nrSpectra(1),
@@ -205,14 +206,20 @@ protected:
         options.addOption(
             Option("cost-function", "f",
                    "NMF cost function. Must be one of the following: "
-                   "\"ed\", \"kl\", \"eds\", \"kls\" or \"edsn\". "
+                   "\"ed\", \"kl\", \"eds\", \"kls\", \"klc\", or \"edsn\". "
                    "Default is \"kl\".",
                    false, "<name>", true)
-            .validator(new RegExpValidator("eds?|kls?|edsn")));
+            .validator(new RegExpValidator("eds?|kl(c|s)?|edsn")));
 
         options.addOption(
             Option("sparsity", "y",
                    "Sparsity weight for NMF cost function. ",
+                   false, "<number>", true)
+            .validator(new RangeValidator<double>(0.0)));
+
+        options.addOption(
+            Option("continuity", "t",
+                   "Continuity weight for NMF cost function. ",
                    false, "<number>", true)
             .validator(new RangeValidator<double>(0.0)));
 
@@ -356,6 +363,9 @@ protected:
             else if (value == "kls") {
                 _nmfCostFunction = nmf::Deconvolver::KLDivergenceSparse;
             }
+            else if (value == "klc") {
+                _nmfCostFunction = nmf::Deconvolver::KLDivergenceContinuous;
+            }
             else if (value == "edsn") {
                 _nmfCostFunction = nmf::Deconvolver::EuclideanDistanceSparseNormalized;
             }
@@ -363,6 +373,9 @@ protected:
         }
         else if (name == "sparsity") {
             _nmdSparsity = NumberParser::parseFloat(value);
+        }
+        else if (name == "continuity") {
+            _nmdContinuity = NumberParser::parseFloat(value);
         }
         else if (name == "normalize-spectra") {
             _nmdNormalize = true;
@@ -520,6 +533,9 @@ protected:
             {
                 cout << setw(20) << "sparsity: " << _nmdSparsity << endl;
             }
+            if (_nmfCostFunction == nmf::Deconvolver::KLDivergenceContinuous) {
+                cout << setw(20) << "continuity: " << _nmdContinuity << endl;
+            }
             cout << setw(20) << "normalize matrices: "
                  << (_nmdNormalize ? "True" : "False") << endl;
         }
@@ -577,6 +593,7 @@ protected:
                 );
                 nmdTask->setGeneratorFunction(_matrixGenFunc);
                 nmdTask->setSparsity(_nmdSparsity);
+                nmdTask->setContinuity(_nmdContinuity);
                 nmdTask->setNormalizeMatrices(_nmdNormalize);
                 newSepTask = nmdTask;
                 break;
@@ -673,6 +690,7 @@ private:
     string             _algName;
     string             _cfName;
     double             _nmdSparsity;
+    double             _nmdContinuity;
     bool               _nmdNormalize;
     nmf::Deconvolver::NMFCostFunction _nmfCostFunction;
     int                _nrComponents;

@@ -108,6 +108,20 @@ public:
 
     
     /**
+     * Sets the continuity parameter for continuous NMF
+     * (cost function KLDivergenceContinuous).
+     */
+    inline void setContinuity(double mu);
+
+
+    /**
+     * Returns the continuity parameter for continuous NMF
+     * (cost function KLDivergenceContinuous).
+     */
+    inline double getContinuity() const;
+
+    
+    /**
      * Sets whether the W and H matrices should be normalized after
      * computation.
      */
@@ -150,6 +164,7 @@ private:
     nmf::Deconvolver*                 _deconvolver;
     nmf::Deconvolver::NMFCostFunction _cf;
     double                            _sparsity;
+    double                            _continuity;
     bool                              _normalizeMatrices;
 
 };
@@ -181,6 +196,18 @@ void NMDTask::setSparsity(double lambda)
 double NMDTask::getSparsity() const
 {
     return _sparsity;
+}
+
+
+void NMDTask::setContinuity(double mu)
+{
+    _continuity = mu;
+}
+
+
+double NMDTask::getContinuity() const
+{
+    return _continuity;
 }
 
 
