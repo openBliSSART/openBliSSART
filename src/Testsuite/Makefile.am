@@ -36,6 +36,8 @@ testsuite_LDADD = $(top_srcdir)/src/LibAudio/libAudio.la \
 
 testsuite_SOURCES = BinaryReaderWriterTest.cpp \
 					BinaryReaderWriterTest.h \
+                    CNMFTest.cpp \
+                    CNMFTest.h \
 					DatabaseSubsystemTest.cpp \
 					DatabaseSubsystemTest.h \
 					FeatureExtractionTest.cpp \
