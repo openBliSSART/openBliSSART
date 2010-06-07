@@ -461,22 +461,32 @@ protected:
 
     virtual void removeTask(BasicTaskPtr task)
     {
-        if (_classify && task->state() != BasicTask::TASK_FINISHED) {
+        // Handle task instances that where cancelled or simply failed.
+        if (task->state() != BasicTask::TASK_FINISHED) {
+            // Handle SeparationTasks.
             SeparationTaskPtr sepTask = task.cast<SeparationTask>();
             if (!sepTask.isNull()) {
-                // This SeparationTask instance was cancelled or simply failed.
-                // Thus the corresponding filename is added to the
-                // _failedFileNames list and the respective ClassificationTask
-                // removed accordingly.
-                ClassificationTaskPtr clTask;
-                _genMutex.lock();
-                {
-                    _failedFileNames.push_back(sepTask->fileName());
-                    clTask = _tasksMap[sepTask];
-                    _tasksMap.erase(sepTask);
+                // Push the input file name to the list of failed files.
+                _failedFileNames.push_back(sepTask->fileName());
+                // Remove the associated ClassificationTask, if applicable.
+                if (_classify) {
+                    ClassificationTaskPtr clTask;
+                    _genMutex.lock();
+                    {
+                        clTask = _tasksMap[sepTask];
+                        _tasksMap.erase(sepTask);
+                    }
+                    _genMutex.unlock();
+                    ThreadedApplication::removeTask(clTask);
                 }
-                _genMutex.unlock();
-                ThreadedApplication::removeTask(clTask);
+            }
+            // Handle ClassificationTasks.
+            else {
+                ClassificationTaskPtr clTask = task.cast<ClassificationTask>();
+                if (!clTask.isNull()) {
+                    // Push the input file name to the list of failed files.
+                    _failedFileNames.push_back(clTask->fileName());
+                }
             }
         }
 

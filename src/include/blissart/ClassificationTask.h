@@ -105,10 +105,26 @@ public:
     virtual void runTask();
 
 
+    /**
+     * Returns a pointer to the associated SeparationTask.
+     */
     inline SeparationTaskPtr separationTask() const;
 
 
+    /**
+     * Presets a class label for a component, ignoring the output of the
+     * classifier for that component.
+     * @param componentIndex the component index
+     * @param classLabel     the class label to set
+     */
     void presetClassLabel(int componentIndex, int classLabel);
+
+
+    /**
+     * Returns the name of the wave file that this ClassificationTask is
+     * processing.
+     */
+    inline const std::string& fileName() const;
 
 
 protected:
@@ -173,6 +189,12 @@ inline SeparationTaskPtr ClassificationTask::separationTask() const
 inline const DataSet& ClassificationTask::dataSet() const
 {
     return _dataSet;
+}
+
+
+inline const std::string& ClassificationTask::fileName() const
+{
+    return _fileName;
 }
 
 
