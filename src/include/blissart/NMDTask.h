@@ -92,6 +92,12 @@ public:
 
 
     /**
+     * Implementation of SeparationTask interface.
+     */
+    virtual double relativeError();
+
+
+    /**
      * Sets the sparsity parameter for sparse NMF
      * (cost functions KLDivergenceSparse, EuclideanDistanceSparse, 
      * EuclideanDistanceSparseNormalized).

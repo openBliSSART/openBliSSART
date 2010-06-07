@@ -170,4 +170,12 @@ void NMDTask::progressChanged(float progress)
 }
 
 
+double NMDTask::relativeError()
+{
+    if (_deconvolver != 0) 
+        return _deconvolver->relativeError();
+    return 0.0;
+}
+
+
 } // namespace blissart

@@ -216,6 +216,13 @@ public:
     virtual const linalg::Matrix& gainsMatrix() const = 0;
 
 
+    /**
+     * Returns the relative error of the separation result, with respect to the
+     * original spectrogram.
+     */
+    virtual double relativeError() = 0;
+
+
 protected:
     /**
      * Performs initialization of the separation matrices, either randomly or

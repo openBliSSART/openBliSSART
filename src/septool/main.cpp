@@ -58,6 +58,7 @@ public:
     SeparationTool() :
         _scripted(false),
         _classify(false),
+        _displayRelativeError(false),
         _displayUsage(false),
         _volatile(false),
         _epsilon(0.0),
@@ -151,6 +152,11 @@ protected:
             Option("volatile", "v",
                    "Run in volatile mode, i.e. do not write anything to the "
                    "database.",
+                   false));
+
+        options.addOption(
+            Option("relative-error", "E",
+                   "Displays the relative error for each file.",
                    false));
 
         options.addOption(
@@ -329,8 +335,6 @@ protected:
     {
         BasicApplication::handleOption(name, value);
 
-        if (name == "window-size") {
-        }
         if (name == "help") {
             _displayUsage = true;
             stopOptionsProcessing();
@@ -340,6 +344,9 @@ protected:
         }
         else if (name == "volatile") {
             _volatile = true;
+        }
+        else if (name == "relative-error") {
+            _displayRelativeError = true;
         }
         else if (name == "window-function") {
             config().setString("blissart.fft.windowfunction", value);
@@ -487,6 +494,15 @@ protected:
                     // Push the input file name to the list of failed files.
                     _failedFileNames.push_back(clTask->fileName());
                 }
+            }
+        }
+
+        // Handle successful task instances.
+        else {
+            // Handle SeparationTasks.
+            SeparationTaskPtr sepTask = task.cast<SeparationTask>();
+            if (!sepTask.isNull() && _displayRelativeError) {
+                _errorMap[sepTask->fileName()] = sepTask->relativeError();
             }
         }
 
@@ -695,6 +711,15 @@ protected:
             }
         }
 
+        if (_displayRelativeError) {
+            cout << endl << "Relative factorization error:" << endl;
+            for (ErrorMap::const_iterator it = _errorMap.begin();
+                it != _errorMap.end(); ++it)
+            {
+                cerr << "\t" << it->first << "\t" << it->second << endl;
+            }
+        }
+
         return EXIT_OK;
     }
 
@@ -702,6 +727,7 @@ protected:
 private:
     bool               _scripted;
     bool               _classify;
+    bool               _displayRelativeError;
     bool               _displayUsage;
     bool               _volatile;
     double             _epsilon;
@@ -743,6 +769,10 @@ private:
     // Tasks related stuff.
     typedef map<SeparationTaskPtr, ClassificationTaskPtr> TasksMap;
     TasksMap                           _tasksMap;
+
+    // Store the relative error upon completion of SeparationTasks.
+    typedef map<std::string, double> ErrorMap;
+    ErrorMap                           _errorMap;
 
     // The following mutex is used to lock both _failedFilesNames and _tasksMap.
     FastMutex                          _genMutex;
