@@ -638,6 +638,7 @@ protected:
                 throw Poco::NotImplementedException("Unhandled method type.");
             }
 
+            newSepTask->setComputeRelativeError(_displayRelativeError);
             newSepTask->setExportComponents(_exportComponents);
             newSepTask->setExportSpectrogram(_exportSpectrogram);
             newSepTask->setExportSpectra(_exportSpectra);

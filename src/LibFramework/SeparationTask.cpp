@@ -73,6 +73,7 @@ SeparationTask::SeparationTask(const SeparationMethod sepMethod,
     _genFunc(nmf::gaussianRandomGenerator),
     _maxIterations(maxIterations),
     _epsilon(epsilon),
+    _relativeError(0.0),
     _isVolatile(isVolatile),
     _exportComponents(false),
     _exportSpectra(false),
@@ -132,6 +133,9 @@ void SeparationTask::runTask()
         // Raise hell ;-)
         initialize();
         performSeparation();
+        if (_computeRelativeError) {
+            computeRelativeError();
+        }
         setTaskProgress(_myUniqueID, 1, 1.0f);
 
         // Mandatory check.
@@ -145,11 +149,9 @@ void SeparationTask::runTask()
             incTotalProgress(0.1f);
         }
 
-        // The original amplitude matrix isn't needed anymore unless we plan
-        // to export audio files. Hence, free some memory.
-        if (!_exportComponents) {
-            deleteAmplitudeMatrix();
-        }
+        // The original amplitude matrix isn't needed anymore.
+        // Hence, free some memory.
+        deleteAmplitudeMatrix();
 
         // Mandatory check.
         if (isCancelled())
@@ -161,6 +163,7 @@ void SeparationTask::runTask()
             incTotalProgress(0.1f);
         }
 
+        // Export reconstructed spectrogram, if desired.
         if (_exportSpectrogram) {
             exportSpectrogram();
             incTotalProgress(0.1f);

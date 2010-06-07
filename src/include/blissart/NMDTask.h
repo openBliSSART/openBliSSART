@@ -94,7 +94,7 @@ public:
     /**
      * Implementation of SeparationTask interface.
      */
-    virtual double relativeError();
+    virtual void computeRelativeError();
 
 
     /**

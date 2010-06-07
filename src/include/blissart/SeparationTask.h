@@ -128,6 +128,12 @@ public:
 
 
     /**
+     * Controls whether the relative error should be computed after separation.
+     */
+    inline void setComputeRelativeError(bool flag);
+
+
+    /**
      * Sets the generator function for initialization of the W and H matrices.
      * If W is initialized from objects, the function is ignored for W.
      */
@@ -217,10 +223,12 @@ public:
 
 
     /**
-     * Returns the relative error of the separation result, with respect to the
-     * original spectrogram.
+     * Returns the relative error of the separation result, as computed 
+     * previously by computeRelativeError().
+     * This method is separate since the original spectrogram is deleted
+     * before the task finishes.
      */
-    virtual double relativeError() = 0;
+    inline double relativeError() const;
 
 
 protected:
@@ -244,6 +252,13 @@ protected:
     void setSeparationProgress(float progress);
 
 
+    /**
+     * Computes the relative error of the separation result, with respect to the
+     * original spectrogram.
+     */
+    virtual void computeRelativeError() = 0;
+    
+    
     /**
      * Sets the number of completed steps.
      * Overrides FTTask method.
@@ -305,6 +320,8 @@ protected:
     std::string getExportPrefix() const;
 
 
+    double                  _relativeError;
+
 private:
     // Forbid copy constructor and operator=.
     SeparationTask(const SeparationTask &other);
@@ -323,6 +340,7 @@ private:
     const unsigned int      _maxIterations;
     const double            _epsilon;
 
+    bool                    _computeRelativeError;
     const bool              _isVolatile;
     bool                    _exportComponents;
     bool                    _exportSpectrogram;
@@ -372,6 +390,12 @@ inline unsigned int SeparationTask::maxIterations() const
 inline double SeparationTask::epsilon() const
 {
     return _epsilon;
+}
+
+
+inline void SeparationTask::setComputeRelativeError(bool flag)
+{
+    _computeRelativeError = flag;
 }
 
 
@@ -435,6 +459,12 @@ inline bool SeparationTask::constantInitializedComponentSpectra() const
 inline unsigned int SeparationTask::numInitializationObjects() const
 {
     return (unsigned int)_initObjects.size();
+}
+
+
+inline double SeparationTask::relativeError() const
+{
+    return _relativeError;
 }
 
 

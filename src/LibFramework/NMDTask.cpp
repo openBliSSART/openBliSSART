@@ -170,11 +170,10 @@ void NMDTask::progressChanged(float progress)
 }
 
 
-double NMDTask::relativeError()
+void NMDTask::computeRelativeError()
 {
     if (_deconvolver != 0) 
-        return _deconvolver->relativeError();
-    return 0.0;
+        _relativeError = _deconvolver->relativeError();
 }
 
 
