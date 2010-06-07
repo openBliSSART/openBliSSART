@@ -38,6 +38,7 @@
 #include <blissart/linalg/ColVector.h>
 #include <blissart/linalg/RowVector.h>
 #include <blissart/linalg/Matrix.h>
+#include <blissart/linalg/generators/generators.h>
 
 #include <blissart/audio/AudioData.h>
 #include <blissart/audio/WaveEncoder.h>
@@ -98,6 +99,8 @@ void SeparationTask::runTask()
     // Take into account export of components / matrices.
     if (_exportComponents)
         incMaxProgress(0.1f);
+    if (_exportSpectrogram)
+        incMaxProgress(0.1f);
     if (_exportSpectra || _exportGains)
         incMaxProgress(0.1f);
 
@@ -155,6 +158,11 @@ void SeparationTask::runTask()
         // Export components as audio files, if desired.
         if (_exportComponents) {
             exportComponents();
+            incTotalProgress(0.1f);
+        }
+
+        if (_exportSpectrogram) {
+            exportSpectrogram();
             incTotalProgress(0.1f);
         }
 
@@ -284,6 +292,49 @@ void SeparationTask::storeComponents() const
 }
 
 
+// XXX: maybe merge with AudioObject code?
+
+void SeparationTask::spectrogramToAudioFile(
+    Poco::SharedPtr<Matrix> magnitudeSpectrum,
+    const std::string& outputFile) const
+{
+    // Revert any transformations, in reverse order.
+    vector<MatrixTransform*>::const_reverse_iterator tflast(transforms().end());
+    vector<MatrixTransform*>::const_reverse_iterator tffirst(transforms().begin());
+    for (vector<MatrixTransform*>::const_reverse_iterator rit = tflast;
+         rit != tffirst; ++rit) // YES, it's operator ++ ;-)
+    {
+        if (string((*rit)->name()) == "Mel filter") {
+            ((transforms::MelFilterTransform*)(*rit))->setBins(
+               windowSize() * sampleRate() / 1000 / 2 + 1);
+        }
+        // Let Poco::SharedPtr do the dirty work of pointer handling!
+        magnitudeSpectrum = (*rit)->inverseTransform(magnitudeSpectrum);
+    }
+
+    // Create an AudioData object.
+    BasicApplication::lockFFTW();
+    Poco::SharedPtr<AudioData> pAd;
+    try {
+        pAd = AudioData::fromSpectrogram(*magnitudeSpectrum,
+                                         phaseMatrix(),
+                                         windowFunction(),
+                                         windowSize(),
+                                         overlap(),
+                                         sampleRate());
+    }
+    catch (...) {
+        BasicApplication::unlockFFTW();
+        throw;
+    }
+    BasicApplication::unlockFFTW();
+
+    // Eventually export the component.
+    if (!WaveEncoder::saveAsWav(*pAd, outputFile))
+        throw runtime_error("Couldn't export to " + outputFile + "!");
+}
+
+
 void SeparationTask::exportComponents() const
 {
     debug_assert(&phaseMatrix() &&
@@ -315,37 +366,6 @@ void SeparationTask::exportComponents() const
             *magnitudeSpectrum = componentSpectrum * componentGains;
         }
 
-        // Revert any transformations, in reverse order.
-        vector<MatrixTransform*>::const_reverse_iterator tflast(transforms().end());
-        vector<MatrixTransform*>::const_reverse_iterator tffirst(transforms().begin());
-        for (vector<MatrixTransform*>::const_reverse_iterator rit = tflast;
-             rit != tffirst; ++rit) // YES, it's operator ++ ;-)
-        {
-            if (string((*rit)->name()) == "Mel filter") {
-                ((transforms::MelFilterTransform*)(*rit))->setBins(
-                   windowSize() * sampleRate() / 1000 / 2 + 1);
-            }
-            // Let Poco::SharedPtr do the dirty work of pointer handling!
-            magnitudeSpectrum = (*rit)->inverseTransform(magnitudeSpectrum);
-        }
-
-        // Create an AudioData object.
-        BasicApplication::lockFFTW();
-        Poco::SharedPtr<AudioData> pAd;
-        try {
-            pAd = AudioData::fromSpectrogram(*magnitudeSpectrum,
-                                             phaseMatrix(),
-                                             windowFunction(),
-                                             windowSize(),
-                                             overlap(),
-                                             sampleRate());
-        }
-        catch (...) {
-            BasicApplication::unlockFFTW();
-            throw;
-        }
-        BasicApplication::unlockFFTW();
-
         // Construct the filename.
         string prefix = getExportPrefix();
         const int numDigits = (int)(1 + log10f((float)_nrOfComponents));
@@ -353,10 +373,37 @@ void SeparationTask::exportComponents() const
         ss << prefix /* << '_' << taskID() */ << '_'
            << setfill('0') << setw(numDigits) << i << ".wav";
 
-        // Eventually export the component.
-        if (!WaveEncoder::saveAsWav(*pAd, ss.str()))
-            throw runtime_error("Couldn't export to " + ss.str() + "!");
+
+        // Convert component spectrogram to time signal and save it as WAV.
+        spectrogramToAudioFile(magnitudeSpectrum, ss.str());
     }
+}
+
+
+void SeparationTask::exportSpectrogram() const
+{
+    debug_assert(&phaseMatrix() &&
+                 &magnitudeSpectraMatrix(0) &&
+                 &gainsMatrix());
+
+    logger().debug(nameAndTaskID() + 
+                   " exporting the reconstructed spectrogram.");
+
+    Poco::SharedPtr<Matrix> spectrogram = 
+        new Matrix(phaseMatrix().rows(), phaseMatrix().cols(),
+                   generators::zero);
+    if (_nrOfSpectra > 1) {
+        Matrix hShifted = gainsMatrix();
+        for (unsigned int t = 0; t < _nrOfSpectra; ++t) {
+            spectrogram->add(magnitudeSpectraMatrix(t) * hShifted);
+            hShifted.shiftColumnsRight();
+        }
+    }
+    else {
+        *spectrogram = magnitudeSpectraMatrix(0) * gainsMatrix();
+    }
+
+    spectrogramToAudioFile(spectrogram, getExportPrefix() + "_WH.wav");
 }
 
 

@@ -82,6 +82,7 @@ public:
         _zeroPadding(false),
         _removeDC(false),
         _exportComponents(false),
+        _exportSpectrogram(false),
         _exportSpectra(false),
         _exportGains(false),
         _separationMethod(SeparationTask::NMD)
@@ -311,6 +312,11 @@ protected:
                    false));
 
         options.addOption(
+            Option("export-spectrogram", "",
+                   "Export the reconstructed spectrogram as a WAV file.",
+                   false));
+
+        options.addOption(
             Option("export-matrices", "",
                    "Export the separation matrices. Use \"W\" for spectra, "
                    "\"H\" for gains or \"WH\" for both (not the product!)",
@@ -435,6 +441,9 @@ protected:
         else if (name == "export-components") {
             _exportComponents = true;
         }
+        else if (name == "export-spectrogram") {
+            _exportSpectrogram = true;
+        }
         else if (name == "export-matrices") {
             if (value.find('W') != string::npos) 
                 _exportSpectra = true;
@@ -557,6 +566,8 @@ protected:
              << setw(20) << "Export: ";
         if (_exportComponents)
             cout << "Components ";
+        if (_exportSpectrogram)
+            cout << "Spectrogram ";
         if (_exportSpectra)
             cout << "Spectra ";
         if (_exportGains)
@@ -602,6 +613,7 @@ protected:
             }
 
             newSepTask->setExportComponents(_exportComponents);
+            newSepTask->setExportSpectrogram(_exportSpectrogram);
             newSepTask->setExportSpectra(_exportSpectra);
             newSepTask->setExportGains(_exportGains);
 
@@ -706,6 +718,7 @@ private:
     bool               _zeroPadding;
     bool               _removeDC;
     bool               _exportComponents;
+    bool               _exportSpectrogram;
     bool               _exportSpectra;
     bool               _exportGains;
     string             _exportPrefix;

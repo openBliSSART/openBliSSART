@@ -32,6 +32,7 @@
 #include <blissart/WindowFunctions.h>
 #include <blissart/ClassificationObject.h>
 #include <blissart/linalg/Matrix.h>
+#include <Poco/SharedPtr.h>
 
 
 namespace blissart {
@@ -137,6 +138,13 @@ public:
      * Controls whether separated components should be exported to audio files.
      */
     inline void setExportComponents(bool flag);
+
+
+    /**
+     * Controls whether the reconstructed spectrogram (product of spectra and 
+     * gains) should be exported as an audio file.
+     */
+    inline void setExportSpectrogram(bool flag);
 
 
     /**
@@ -257,6 +265,21 @@ protected:
 
 
     /**
+     *
+     */
+    void exportSpectrogram() const;
+
+
+    /**
+     * Converts a magnitude spectrogram to a time signal, using the original
+     * phase matrix, and save the result as a WAV file.
+     */
+    void spectrogramToAudioFile(
+        Poco::SharedPtr<linalg::Matrix> magnitudeSpectrogram,
+        const std::string& outputFile) const;
+
+
+    /**
      * Exports the separation matrices (spectra and/or gains).
      */
     void exportMatrices() const;
@@ -295,6 +318,7 @@ private:
 
     const bool              _isVolatile;
     bool                    _exportComponents;
+    bool                    _exportSpectrogram;
     bool                    _exportSpectra;
     bool                    _exportGains;
     std::string             _exportPrefix;
@@ -353,6 +377,12 @@ inline void SeparationTask::setExportPrefix(const std::string& prefix)
 inline void SeparationTask::setExportComponents(bool flag)
 {
     _exportComponents = flag;
+}
+
+
+inline void SeparationTask::setExportSpectrogram(bool flag)
+{
+    _exportSpectrogram = flag;
 }
 
 
