@@ -390,7 +390,7 @@ protected:
         else if (name == "continuity") {
             _nmdContinuity = NumberParser::parseFloat(value);
         }
-        else if (name == "normalize-spectra") {
+        else if (name == "normalize-matrices") {
             _nmdNormalize = true;
         }
         else if (name == "components") {
