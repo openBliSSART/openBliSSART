@@ -923,6 +923,7 @@ void Deconvolver::computeWpH(unsigned int p, Matrix& wpH)
 
 void Deconvolver::computeError()
 {
+    computeApprox();
     Matrix errorMatrix(_approx);
     errorMatrix.sub(_v);
     _absoluteError = errorMatrix.frobeniusNorm();
