@@ -107,6 +107,12 @@ public:
     void setBins(unsigned int bins);
 
 
+    /**
+     * Returns an associative array of this MelFilterTransform's parameters.
+     */
+    virtual TransformParameters getParameters() const;
+
+
 private:
     // Forbid default constructor.
     MelFilterTransform();

@@ -30,6 +30,7 @@
 
 #include <Poco/Util/LayeredConfiguration.h>
 #include <Poco/Util/Application.h>
+#include <Poco/NumberFormatter.h>
 
 #include <cassert>
 #include <cmath>
@@ -79,6 +80,20 @@ Matrix* MelFilterTransform::inverseTransform(Matrix* melSpectrogram) const
 const char* MelFilterTransform::name() const
 {
     return "Mel filter";
+}
+
+
+MatrixTransform::TransformParameters MelFilterTransform::getParameters() const
+{
+    MatrixTransform::TransformParameters p;
+    p["bands"]    = Poco::NumberFormatter::format(_nBands);
+    // XXX: this might cause problems when parsing because of locale settings.
+    // Maybe we have to introduce a general formatDouble function that ignores
+    // locale settings. Right now, this string is only used for information
+    // purposes, so it should be OK.
+    p["low_freq"] = Poco::NumberFormatter::format(_lowFreq);
+    p["high_freq"] = Poco::NumberFormatter::format(_highFreq);
+    return p;
 }
 
 

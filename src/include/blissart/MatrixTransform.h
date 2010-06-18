@@ -29,6 +29,7 @@
 
 #include <common.h>
 #include <string>
+#include <map>
 
 
 namespace blissart {
@@ -79,6 +80,19 @@ public:
      * Must be implemented by subclasses.
      */
     virtual linalg::Matrix * inverseTransform(linalg::Matrix* m) const = 0;
+
+
+    /**
+     * An associative array of the transformation's parameters.
+     */
+    typedef std::map<std::string,std::string> TransformParameters;
+
+
+    /**
+     * Returns the transformation's parameters. May be overridden by 
+     * subclasses.
+     */
+    virtual TransformParameters getParameters() const;
 };
 
 

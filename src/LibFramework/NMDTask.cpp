@@ -149,6 +149,7 @@ void NMDTask::setProcessParameters(ProcessPtr process) const
     SeparationTask::setProcessParameters(process);
     process->parameters["costFunction"] = nmf::Deconvolver::costFunctionName(_cf);
     process->parameters["sparsity"] = Process::formatDouble(_sparsity);
+    process->parameters["normalizeMatrices"] = _normalizeMatrices ? "true" : "false";
 }
 
 

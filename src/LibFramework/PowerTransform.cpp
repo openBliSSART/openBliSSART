@@ -28,6 +28,7 @@
 
 #include <Poco/Util/LayeredConfiguration.h>
 #include <Poco/Util/Application.h>
+#include <Poco/NumberFormatter.h>
 
 #include <cassert>
 #include <cmath>
@@ -78,6 +79,14 @@ void PowerTransform::powMatrix(Matrix* m, double exp) const
 const char* PowerTransform::name() const
 {
     return "Power spectrum";
+}
+
+
+MatrixTransform::TransformParameters PowerTransform::getParameters() const
+{
+    MatrixTransform::TransformParameters p;
+    p["exponent"] = Poco::NumberFormatter::format(_gamma);
+    return p;
 }
 
 

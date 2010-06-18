@@ -89,6 +89,12 @@ public:
     void setFrameSize(int frameSize);
 
 
+    /**
+     * Returns an associative array of this transformation's parameters.
+     */
+    virtual TransformParameters getParameters() const;
+
+
 private:
     int _frameRate, _frameSize;
 };

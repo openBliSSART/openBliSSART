@@ -80,6 +80,12 @@ public:
     void setGamma(double gamma);
 
 
+    /**
+     * Returns an associative array of this transformation's parameters.
+     */
+    virtual TransformParameters getParameters() const;
+
+
 private:
     // Applies pow to a Matrix.
     void powMatrix(linalg::Matrix* m, double exp) const;

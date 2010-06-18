@@ -132,6 +132,16 @@ const char* SlidingWindowTransform::name() const
 }
 
 
+MatrixTransform::TransformParameters 
+SlidingWindowTransform::getParameters() const
+{
+    MatrixTransform::TransformParameters p;
+    p["frameSize"] = Poco::NumberFormatter::format(_frameSize);
+    p["frameRate"] = Poco::NumberFormatter::format(_frameRate);
+    return p;
+}
+
+
 } // namespace transforms
 
 

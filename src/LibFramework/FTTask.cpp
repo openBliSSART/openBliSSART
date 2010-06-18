@@ -233,7 +233,13 @@ void FTTask::setProcessParameters(ProcessPtr process) const
     {
         string paramName = "transform" + Poco::NumberFormatter::format(trIndex);
         process->parameters[paramName] = (*it)->name();
-        // TODO: store transformation parameters?
+        MatrixTransform::TransformParameters tp = (*it)->getParameters();
+        for (MatrixTransform::TransformParameters::const_iterator 
+             pit = tp.begin(); pit != tp.end(); ++pit)
+        {
+            string tparamName = paramName + pit->first;
+            process->parameters[tparamName] = pit->second;
+        }
     }
 }
 

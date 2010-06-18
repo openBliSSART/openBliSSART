@@ -57,6 +57,7 @@ libFramework_la_SOURCES = AnovaFeatureSelector.cpp \
                           GnuplotWriter.cpp \
 						  HTKWriter.cpp \
 						  Label.cpp \
+                          MatrixTransform.cpp \
                           MelFilterTransform.cpp \
 						  NMDTask.cpp \
                           PowerTransform.cpp \
