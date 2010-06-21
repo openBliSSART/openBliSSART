@@ -105,11 +105,12 @@ void NMDTask::initialize()
                     nrOfComponents(),
                     nrOfSpectra(),
                     generatorFunction(), generatorFunction());
-        _deconvolver->setProgressNotificationDelay(
-            BasicApplication::instance().config().
-                getInt("blissart.separation.notificationSteps", 25)
-        );
     }
+
+    _deconvolver->setProgressNotificationDelay(
+        BasicApplication::instance().config().
+            getInt("blissart.separation.notificationSteps", 25)
+    );
 
     // Currently the sparsity and continuity parameters are the same for the
     // whole H matrix, but the Deconvolver allows a different parameter for
@@ -130,8 +131,6 @@ void NMDTask::initialize()
         }
     }
     _deconvolver->setContinuity(c);
-
-    _deconvolver->setNormalizeMatrices(_normalizeMatrices);
 }
 
 
@@ -141,6 +140,7 @@ void NMDTask::performSeparation()
 
     logger().debug(nameAndTaskID() + " factorizing.");
     _deconvolver->decompose(_cf, maxIterations(), epsilon(), this);
+    _deconvolver->normalizeMatrices(_normalizeMatrices);
 }
 
 

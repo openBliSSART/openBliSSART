@@ -70,6 +70,7 @@ public:
         _cfName("Extended KL divergence"),
         _nmdSparsity(0.0),
         _nmdContinuity(0.0),
+        _nmdNormalize(nmf::Deconvolver::NoNorm),
         _nmfCostFunction(nmf::Deconvolver::KLDivergence),
         _nrComponents(20),
         _nrSpectra(1),
@@ -232,8 +233,12 @@ protected:
 
         options.addOption(
             Option("normalize-matrices", "N",
-                   "Normalize NMF/NMD matrices such that H has unity Frobenius norm.",
-                   false));
+                   "Normalize NMF/NMD matrices: "
+                   "\"H\": normalize H such that it has unity Frobenius "
+                   "norm. \"W\": normalize columns of W to unity Euclidean "
+                   "norm (NMF only).",
+                   false, "<method>", true)
+            .validator(new RegExpValidator("W|H")));
 
         options.addOption(
             Option("components", "c",
@@ -391,7 +396,12 @@ protected:
             _nmdContinuity = NumberParser::parseFloat(value);
         }
         else if (name == "normalize-matrices") {
-            _nmdNormalize = true;
+            if (value == "W") {
+                _nmdNormalize = nmf::Deconvolver::NormWColumnsEucl;
+            }
+            else if (value == "H") {
+                _nmdNormalize = nmf::Deconvolver::NormHFrob;
+            }
         }
         else if (name == "components") {
             _nrComponents = NumberParser::parse(value);
@@ -572,7 +582,8 @@ protected:
                 cout << setw(20) << "continuity: " << _nmdContinuity << endl;
             }
             cout << setw(20) << "normalize matrices: "
-                 << (_nmdNormalize ? "True" : "False") << endl;
+                 << (_nmdNormalize == nmf::Deconvolver::NoNorm ? "False" : "True") 
+                 << endl;
         }
 
         cout << setw(20) << "Max. iterations: " << _maxIter << endl
@@ -740,7 +751,7 @@ private:
     string             _cfName;
     double             _nmdSparsity;
     double             _nmdContinuity;
-    bool               _nmdNormalize;
+    nmf::Deconvolver::MatrixNormalization _nmdNormalize;
     nmf::Deconvolver::NMFCostFunction _nmfCostFunction;
     int                _nrComponents;
     int                _nrSpectra;

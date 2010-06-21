@@ -26,7 +26,6 @@
 #include <blissart/FeatureExtractor.h>
 #include <blissart/BasicApplication.h>
 #include <blissart/DatabaseSubsystem.h>
-#include <blissart/TargetedDeconvolver.h>
 
 #include <blissart/linalg/Vector.h>
 #include <blissart/linalg/ColVector.h>

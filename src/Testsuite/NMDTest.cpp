@@ -82,8 +82,8 @@ bool NMDTest::performTest()
              << endl;
 
         nmf::Deconvolver d(x, 10, t);
-        d.setNormalizeMatrices(true);
         d.decompose(nmf::Deconvolver::KLDivergence, 5000, 1e-5);
+        d.normalizeMatrices(nmf::Deconvolver::NormHFrob);
         cout << "# steps: " << d.numSteps() << endl;
         cout << "absolute error: " << d.absoluteError() << endl;
         cout << "relative error: " << d.relativeError() << endl;

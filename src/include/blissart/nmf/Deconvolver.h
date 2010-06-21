@@ -124,15 +124,22 @@ public:
      */
     inline void keepWColumnConstant(unsigned int index, bool flag);
 
-    /**
-     * Sets whether the W and H matrices should be normalized.
-     */
-    inline void setNormalizeMatrices(bool flag);
 
     /**
-     * Returns whether the W and H matrices are normalized.
+     * Various methods to normalize NMF matrices after computation.
      */
-    inline bool getNormalizeMatrices() const;
+    typedef enum {
+        NoNorm,           // no normalization
+        NormHFrob,        // normalize H to unity Frobenius norm
+        NormWColumnsEucl  // normalize each column of W to unity Euclidean norm
+    } MatrixNormalization;
+
+
+    /**
+     * Normalizes the matrices according to the given method.
+     */
+    void normalizeMatrices(MatrixNormalization method);
+
 
     /**
      * Generates all W matrices using the specified generator function.
@@ -306,7 +313,10 @@ protected:
         double epsilon = 1e-9);
 
     // Normalizes Frobenius norm of H to unity.
-    void normalizeMatrices();
+    void normalizeHFrob();
+
+    // Normalizes Euclidean norm of each W column to unity.
+    void normalizeWColumnsEucl();
 
     const blissart::linalg::Matrix& _v;
     blissart::linalg::Matrix        _approx;
@@ -314,7 +324,6 @@ protected:
     blissart::linalg::Matrix**      _w;
     bool                        _wConstant;
     bool*                       _wColConstant;
-    bool                        _normalizeMatrices;
     unsigned int                _t;
     blissart::linalg::Matrix    _h;
     blissart::linalg::Matrix    _s;
@@ -363,18 +372,6 @@ void Deconvolver::keepWConstant(bool flag)
 void Deconvolver::keepWColumnConstant(unsigned int index, bool flag)
 {
     _wColConstant[index] = flag;
-}
-
-
-void Deconvolver::setNormalizeMatrices(bool flag)
-{
-    _normalizeMatrices = flag;
-}
-
-
-bool Deconvolver::getNormalizeMatrices() const
-{
-    return _normalizeMatrices;
 }
 
 

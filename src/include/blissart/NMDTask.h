@@ -131,14 +131,15 @@ public:
      * Sets whether the W and H matrices should be normalized after
      * computation.
      */
-    inline void setNormalizeMatrices(bool flag);
+    inline void setNormalizeMatrices(
+        nmf::Deconvolver::MatrixNormalization flag);
 
 
     /**
      * Tells whether the W and H matrices should be normalized after
      * computation.
      */
-    inline bool getNormalizeMatrices() const;
+    inline nmf::Deconvolver::MatrixNormalization getNormalizeMatrices() const;
 
 
 protected:
@@ -167,11 +168,11 @@ private:
     virtual void progressChanged(float);
 
 
-    nmf::Deconvolver*                 _deconvolver;
-    nmf::Deconvolver::NMFCostFunction _cf;
-    double                            _sparsity;
-    double                            _continuity;
-    bool                              _normalizeMatrices;
+    nmf::Deconvolver*                      _deconvolver;
+    nmf::Deconvolver::NMFCostFunction      _cf;
+    double                                 _sparsity;
+    double                                 _continuity;
+    nmf::Deconvolver::MatrixNormalization  _normalizeMatrices;
 
 };
 
@@ -181,13 +182,13 @@ private:
  */
 
 
-void NMDTask::setNormalizeMatrices(bool flag)
+void NMDTask::setNormalizeMatrices(nmf::Deconvolver::MatrixNormalization flag)
 {
     _normalizeMatrices = flag;
 }
 
 
-bool NMDTask::getNormalizeMatrices() const
+nmf::Deconvolver::MatrixNormalization NMDTask::getNormalizeMatrices() const
 {
     return _normalizeMatrices;
 }

@@ -29,6 +29,13 @@
 #include "Testable.h"
 
 
+// Fwd decl.
+namespace blissart { 
+    namespace nmf { class Deconvolver; } 
+    namespace linalg { class Matrix; }
+}
+
+
 namespace Testing {
 
 
@@ -40,6 +47,10 @@ class NMFTest : public Testable
 public:
     bool performTest();
     inline const char *name() { return "NMFTest"; }
+
+protected:
+    bool outputAndCheck(blissart::linalg::Matrix& x,
+                        blissart::nmf::Deconvolver& d);
 };
 
 

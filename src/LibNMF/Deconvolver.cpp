@@ -76,7 +76,6 @@ Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t,
     _w(new Matrix*[t]),
     _wConstant(false),
     _wColConstant(new bool[r]),
-    _normalizeMatrices(false),
     _t(t),
     _h(r, v.cols(), hGenerator),
     _s(r, v.cols(), generators::zero),      // zero --> no sparsity
@@ -196,10 +195,6 @@ void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
     else {
         throw std::runtime_error("Invalid cost function");
     }
-
-    // Perform post-processing if desired.
-    if (_normalizeMatrices)
-        normalizeMatrices();
 
     // Ensure the ProgressObserver sees that we have finished.
     if (observer)
@@ -943,7 +938,21 @@ void Deconvolver::ensureNonnegativity(Matrix &m, double epsilon)
 }
 
 
-void Deconvolver::normalizeMatrices()
+void Deconvolver::normalizeMatrices(Deconvolver::MatrixNormalization method)
+{
+    switch (method)
+    {
+        case NormHFrob:
+            normalizeHFrob();
+            break;
+        case NormWColumnsEucl:
+            normalizeWColumnsEucl();
+            break;
+    }
+}
+
+
+void Deconvolver::normalizeHFrob()
 {
     // according to Wenwu Wang:
     // "We use the norm of the matrix H^q to normalise the each element in
@@ -974,6 +983,27 @@ void Deconvolver::normalizeMatrices()
             for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
                 _w[p]->at(i, j) *= (hNorm - hNormRight[p]);
             }
+        }
+    }
+}
+
+
+void Deconvolver::normalizeWColumnsEucl()
+{
+    if (_t > 1) {
+        throw std::runtime_error("Cannot normalize W columns for NMD");
+    }
+
+    // just a shortcut
+    Matrix& w = *(_w[0]);
+    // Normalize W and H
+    for (unsigned int j = 0; j < w.cols(); ++j) {
+        double norm = sqrt(Matrix::dotColCol(w, j, w, j));
+        for (unsigned int i = 0; i < w.rows(); ++i) {
+            w(i, j) = w(i, j) / norm;
+        }
+        for (unsigned int t = 0; t < _h.cols(); ++t) {
+            _h(j, t) = _h(j, t) * norm;
         }
     }
 }

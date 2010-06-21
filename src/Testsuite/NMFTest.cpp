@@ -38,6 +38,28 @@ using namespace blissart::linalg;
 namespace Testing {
 
 
+bool NMFTest::outputAndCheck(Matrix& x, nmf::Deconvolver& d)
+{
+    cout << "W = " << endl;
+    cout << d.getW(0) << endl;
+    cout << "H = " << endl;
+    cout << d.getH() << endl;
+    cout << "Approx = " << endl;
+    d.computeApprox();
+    Matrix l(d.getApprox());
+    cout << l << endl;
+    
+    for (unsigned int i = 0; i < x.rows(); i++) {
+        for (unsigned int j = 0; j < x.cols(); j++) {
+            if (!epsilonCheck(x(i,j), l(i,j), 1e-2))
+                return false;
+        }
+    }
+
+    return true;
+}
+
+
 bool NMFTest::performTest()
 {
     srand((unsigned int) time(NULL));
@@ -56,21 +78,22 @@ bool NMFTest::performTest()
         cout << "absolute error: " << d.absoluteError() << endl;
         cout << "relative error: " << d.relativeError() << endl;
         cout << endl;
-        cout << "W = " << endl;
-        cout << d.getW(0) << endl;
-        cout << "H = " << endl;
-        cout << d.getH() << endl;
-        cout << "Approx = " << endl;
-        d.computeApprox();
-        Matrix l(d.getApprox());
-        cout << l << endl;
-        
-        for (unsigned int i = 0; i < x.rows(); i++) {
-            for (unsigned int j = 0; j < x.cols(); j++) {
-                if (!epsilonCheck(x(i,j), l(i,j), 1e-2))
-                    return false;
-            }
+
+        if (!outputAndCheck(x, d)) return false;
+
+        cout << "Normalizing (H)" << endl;
+        d.normalizeMatrices(nmf::Deconvolver::NormHFrob);
+        if (!outputAndCheck(x, d)) return false;
+        double hfn = d.getH().frobeniusNorm();
+        if (!epsilonCheck(hfn, 1.000, 1e-3)) {
+            cout << "Error: Expected normalized H, norm is " << hfn << endl;
+            return false;
         }
+
+        cout << endl;
+        cout << "Normalizing (W)" << endl;
+        d.normalizeMatrices(nmf::Deconvolver::NormWColumnsEucl);
+        if (!outputAndCheck(x, d)) return false;
     }
 
     {
@@ -82,21 +105,8 @@ bool NMFTest::performTest()
         cout << "absolute error: " << d.absoluteError() << endl;
         cout << "relative error: " << d.relativeError() << endl;
         cout << endl;
-        cout << "W = " << endl;
-        cout << d.getW(0) << endl;
-        cout << "H = " << endl;
-        cout << d.getH() << endl;
-        cout << "Approx = " << endl;
-        d.computeApprox();
-        Matrix l(d.getApprox());
-        cout << l << endl;
-        
-        for (unsigned int i = 0; i < x.rows(); i++) {
-            for (unsigned int j = 0; j < x.cols(); j++) {
-                if (!epsilonCheck(x(i,j), l(i,j), 5e-2))
-                    return false;
-            }
-        }
+
+        if (!outputAndCheck(x, d)) return false;
     }
 
     return true;
