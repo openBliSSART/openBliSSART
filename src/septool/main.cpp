@@ -56,6 +56,8 @@ class SeparationTool : public ThreadedApplication
 {
 public:
     SeparationTool() :
+        _haveRandomSeed(false),
+        _randomSeed(0),
         _scripted(false),
         _classify(false),
         _displayRelativeError(false),
@@ -142,6 +144,14 @@ protected:
             Option("help", "h",
                    "Displays usage screen",
                    false));
+
+        options.addOption(
+            Option("random-seed", "R",
+                   "Provide a random seed for initialization of the NMF "
+                   "components. If this option is not given, the current "
+                   "time is used.", 
+                   false, "<seed>", true).
+            validator(new RangeValidator<int>(0)));
 
         options.addOption(
             Option("scripted", "S",
@@ -343,6 +353,10 @@ protected:
         if (name == "help") {
             _displayUsage = true;
             stopOptionsProcessing();
+        }
+        else if (name == "random-seed") {
+            _haveRandomSeed = true;
+            _randomSeed = NumberParser::parse(value);
         }
         else if (name == "scripted") {
             _scripted = true;
@@ -618,7 +632,12 @@ protected:
         cout << endl;
 
         // Initialize the random generator.
-        srand((unsigned)time(NULL));
+        if (_haveRandomSeed) {
+            srand(_randomSeed);
+        }
+        else {
+            srand((unsigned int) time(NULL));
+        }
 
         // Initialize the task manager.
         initializeTaskManager<ThreadedApplication>();
@@ -737,6 +756,8 @@ protected:
 
 
 private:
+    bool               _haveRandomSeed;
+    unsigned int       _randomSeed;
     bool               _scripted;
     bool               _classify;
     bool               _displayRelativeError;
