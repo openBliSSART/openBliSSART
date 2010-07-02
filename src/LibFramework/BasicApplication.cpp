@@ -118,17 +118,39 @@ void BasicApplication::initializeDirectories()
     dir.popDirectory();
 
     // The storage subsystem's realm...
-    dir.pushDirectory("storage");
-    File(dir).createDirectory();
-    config().setString("blissart.storageDir", dir.toString());
-    dir.popDirectory();
+    if (!_storageDir.empty()) {
+        Path sdPath = Path::forDirectory(_storageDir);
+        File(sdPath).createDirectories();
+        logger().information("Using storage directory: " + sdPath.toString());
+        config().setString("blissart.storageDir", sdPath.toString());
+    }
+    else {
+        dir.pushDirectory("storage");
+        File(dir).createDirectory();
+        config().setString("blissart.storageDir", dir.toString());
+        dir.popDirectory();
+    }
 
     // Where the database subsystem roams...
-    dir.pushDirectory("db");
-    File(dir).createDirectory();
-    config().setString("blissart.databaseDir", dir.toString());
-    dir.setFileName("openBliSSART.db");
-    config().setString("blissart.databaseFile", dir.toString());
+    if (!_dbFile.empty()) {
+        Path dbFilePath(Path::expand(_dbFile));
+        dbFilePath.makeFile();
+        if (dbFilePath.depth() > 0) {
+            Path dbParentDir(dbFilePath);
+            dbParentDir.setFileName("");
+            //dbParentDir.popDirectory();
+            File(dbParentDir).createDirectories();
+        }
+        logger().information("Using database file: " + dbFilePath.toString());
+        config().setString("blissart.databaseFile", dbFilePath.toString());
+    }
+    else {
+        dir.pushDirectory("db");
+        File(dir).createDirectory();
+        config().setString("blissart.databaseDir", dir.toString());
+        dir.setFileName("openBliSSART.db");
+        config().setString("blissart.databaseFile", dir.toString());
+    }
 }
 
 
@@ -165,6 +187,12 @@ void BasicApplication::handleOption(const string& name, const string& value)
     else if (name == "config") {
         _userConfigFile = value;
     }
+    else if (name == "storage-dir") {
+        _storageDir = value;
+    }
+    else if (name == "db-file") {
+        _dbFile = value;
+    }
     _optionsString += " --" + name;
     if (!value.empty()) {
         _optionsString += '=' + value;
@@ -182,6 +210,14 @@ void BasicApplication::defineOptions(OptionSet& options)
     options.addOption(Option("config", "C",
         "Specifies a config file to use instead of "
         "blissart-dir/etc/blissart.properties",
+        false, "<filename>", true));
+    options.addOption(Option("storage-dir", "G",
+        "Specifies a directory to use for component storage, instead "
+        "of blissart-dir/storage",
+        false, "<directory>", true));
+    options.addOption(Option("db-file", "D",
+        "Specifies a database file to use for component storage, instead "
+        "of blissart-dir/db/openBliSSART.db",
         false, "<filename>", true));
 }
 
