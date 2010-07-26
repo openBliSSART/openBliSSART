@@ -948,6 +948,9 @@ void Deconvolver::normalizeMatrices(Deconvolver::MatrixNormalization method)
         case NormWColumnsEucl:
             normalizeWColumnsEucl();
             break;
+        case NoNorm: // fallthrough
+        default:
+            break;
     }
 }
 

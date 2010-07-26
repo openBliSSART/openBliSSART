@@ -88,7 +88,9 @@ TargetedDeconvolver::buildW(const vector<ClassificationObjectPtr>& clObjs)
     {
         Poco::SharedPtr<Matrix> spectrum;
 
-        if ((*itr)->type != ClassificationObject::NMDComponent) {
+        if ((*itr)->type != ClassificationObject::NMDComponent &&
+            (*itr)->type != ClassificationObject::Spectrogram) 
+        {
             throw Poco::InvalidArgumentException(
                 "Invalid classification object type for initialization");
         }
@@ -97,10 +99,19 @@ TargetedDeconvolver::buildW(const vector<ClassificationObjectPtr>& clObjs)
         for (vector<DataDescriptorPtr>::const_iterator dItr = dds.begin();
              dItr != dds.end(); ++dItr)
         {
-            if ((*dItr)->type == DataDescriptor::Spectrum) {
+            if ((*dItr)->type == DataDescriptor::Spectrum ||
+                (*dItr)->type == DataDescriptor::MagnitudeMatrix)
+            {
                 spectrum = 
                     new Matrix(sts.getLocation(*dItr).toString());
             }
+        }
+
+        if (spectrum->cols() != _t) {
+            throw Poco::InvalidArgumentException(
+                "Wrong number of columns in initialization object #"
+                + Poco::NumberFormatter::format((*itr)->objectID)
+                );
         }
 
         for (unsigned int t = 0; t < spectrum->cols(); ++t) {
@@ -135,8 +146,32 @@ TargetedDeconvolver::getNrOfSpectra(ClassificationObjectPtr clObj)
 {
     DatabaseSubsystem& dbs = 
         BasicApplication::instance().getSubsystem<DatabaseSubsystem>();
-    ProcessPtr process = dbs.getProcess(clObj);
-    return process->spectra();
+    vector<DataDescriptorPtr> dds = dbs.getDataDescriptors(clObj);
+
+    int result;
+    if (clObj->type == ClassificationObject::NMDComponent) {
+        ProcessPtr process = dbs.getProcess(clObj);
+        result = process->spectra();
+    }
+    else if (clObj->type == ClassificationObject::Spectrogram) {
+        for (vector<DataDescriptorPtr>::const_iterator dItr = dds.begin();
+             dItr != dds.end(); ++dItr)
+        {
+            if ((*dItr)->type == DataDescriptor::MagnitudeMatrix)
+            {
+                StorageSubsystem& sts = BasicApplication::instance().
+                    getSubsystem<StorageSubsystem>();
+                Matrix tmp (sts.getLocation(*dItr).toString());
+                result = tmp.cols();
+                break;
+            }
+        }
+    }
+    else {
+        throw Poco::InvalidArgumentException(
+            "Invalid classification object type for initialization");
+    }
+    return result;
 }
 
 

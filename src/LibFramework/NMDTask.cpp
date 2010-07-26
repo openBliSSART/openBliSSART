@@ -139,6 +139,7 @@ void NMDTask::performSeparation()
     debug_assert(&amplitudeMatrix() && _deconvolver);
 
     logger().debug(nameAndTaskID() + " factorizing.");
+    _deconvolver->normalizeMatrices(_normalizeMatrices);
     _deconvolver->decompose(_cf, maxIterations(), epsilon(), this);
     _deconvolver->normalizeMatrices(_normalizeMatrices);
 }

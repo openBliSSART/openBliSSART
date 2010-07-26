@@ -89,6 +89,7 @@ public:
         _exportSpectrogram(false),
         _exportSpectra(false),
         _exportGains(false),
+        _doSeparation(true),
         _separationMethod(SeparationTask::NMD)
     {
     }
@@ -217,7 +218,8 @@ protected:
         options.addOption(
             Option("method", "m",
                    "The method to be used for component separation. "
-                   "Currently, this option has no effect.",
+                   "Use \"none\" to only perform STFT. No other methods "
+                   "except \"nmd\" can be used at the moment.",
                    false, "<method>", true)
             .validator(new RegExpValidator("nmd")));
 
@@ -484,6 +486,8 @@ protected:
         else if (name == "method") {
             if (value == "nmd")
                 _separationMethod = SeparationTask::NMD;
+            else if (value == "none") 
+                _doSeparation = false;
             else
                 throw Poco::NotImplementedException("Unknown separation method.");
         }
@@ -649,6 +653,12 @@ protected:
         for (vector<string>::const_iterator it = inputFiles.begin();
             it != inputFiles.end(); ++it)
         {
+            if (!_doSeparation) {
+                FTTask* ftTask = new FTTask("FT", *it);
+                addTask(ftTask);
+                continue;
+            }
+
             NMDTask* nmdTask;
             // SeparationTask:
             SeparationTaskPtr newSepTask;
@@ -742,7 +752,7 @@ protected:
             }
         }
 
-        if (_displayRelativeError) {
+        if (_displayRelativeError && _doSeparation) {
             cout << endl << "Relative factorization error:" << endl;
             for (ErrorMap::const_iterator it = _errorMap.begin();
                 it != _errorMap.end(); ++it)
@@ -793,6 +803,7 @@ private:
     string             _exportPrefix;
 
     // The method to be used for component separation.
+    bool               _doSeparation;
     SeparationTask::SeparationMethod   _separationMethod;
 
     // This vector holds the names of the files during whose processing errors

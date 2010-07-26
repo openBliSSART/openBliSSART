@@ -260,25 +260,39 @@ void FTTask::storeComponents() const
     setProcessParameters(process);
     dbs.createProcess(process);
 
-    // Create a DataDescriptor for the magnitude matrix and save it.
-    DataDescriptorPtr magnMatrixDescr = new DataDescriptor;
-    magnMatrixDescr->type = DataDescriptor::MagnitudeMatrix;
-    magnMatrixDescr->processID = process->processID;
-    dbs.createDataDescriptor(magnMatrixDescr);
-    sts.store(*_amplitudeMatrix, magnMatrixDescr);
+    Poco::Util::LayeredConfiguration& cfg =
+        BasicApplication::instance().config();
+    int phaseMatrixID = 0, magnitudeMatrixID = 0;
 
     // Create a DataDescriptor for the phase matrix and save it.
-    DataDescriptorPtr phaseMatrixDescr = new DataDescriptor;
-    phaseMatrixDescr->type = DataDescriptor::PhaseMatrix;
-    phaseMatrixDescr->processID = process->processID;
-    dbs.createDataDescriptor(phaseMatrixDescr);
-    sts.store(*_phaseMatrix, phaseMatrixDescr);
+    if (cfg.getBool("blissart.fft.storage.phasematrix", true)) {
+        DataDescriptorPtr phaseMatrixDescr = new DataDescriptor;
+        phaseMatrixDescr->type = DataDescriptor::PhaseMatrix;
+        phaseMatrixDescr->processID = process->processID;
+        dbs.createDataDescriptor(phaseMatrixDescr);
+        phaseMatrixID = phaseMatrixDescr->descrID;
+        sts.store(*_phaseMatrix, phaseMatrixDescr);
+    }
+
+    // Create a DataDescriptor for the magnitude matrix and save it.
+    if (cfg.getBool("blissart.fft.storage.magnitudematrix", true)) {
+        DataDescriptorPtr magnMatrixDescr = new DataDescriptor;
+        magnMatrixDescr->type = DataDescriptor::MagnitudeMatrix;
+        magnMatrixDescr->processID = process->processID;
+        dbs.createDataDescriptor(magnMatrixDescr);
+        magnitudeMatrixID = magnMatrixDescr->descrID;
+        sts.store(*_amplitudeMatrix, magnMatrixDescr);
+    }
 
     // Create a ClassificationObject for the spectrogram.
     ClassificationObjectPtr clObj = new ClassificationObject;
     clObj->type = ClassificationObject::Spectrogram;
-    clObj->descrIDs.insert(magnMatrixDescr->descrID);
-    clObj->descrIDs.insert(phaseMatrixDescr->descrID);
+    if (phaseMatrixID > 0) {
+        clObj->descrIDs.insert(phaseMatrixID);
+    }
+    if (magnitudeMatrixID > 0) {
+        clObj->descrIDs.insert(magnitudeMatrixID);
+    }
     dbs.createClassificationObject(clObj);
 }
 
