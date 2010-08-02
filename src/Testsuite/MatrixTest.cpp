@@ -40,9 +40,9 @@ using namespace blissart;
 using namespace blissart::linalg;
 
 
-#ifdef ISEP_ROW_MAJOR
-# error The matrix tests depend on !ISEP_ROW_MAJOR. See Matrix.h.
-#endif
+//#ifdef ISEP_ROW_MAJOR
+//# error The matrix tests depend on !ISEP_ROW_MAJOR. See Matrix.h.
+//#endif
 
 
 namespace Testing {
@@ -364,13 +364,15 @@ bool MatrixTest::performTest()
             1, 3, 2, 2, 0, 0);
         X.multWithMatrix(H, &XHT, 
             false, true,
-            2, 3, 2,
+            X.rows(), X.cols() - 1, H.rows(),
             0, 1, 0, 0, 0, 0);
         W.multWithMatrix(X, &WTX,
             true, false,
             2, 2, 3,
             0, 0, 0, 1, 0, 1);
         cout << "C = " << endl << C << "D = " << endl << D << "E = " << endl << E;
+        cout << "X = " << endl << X;
+        cout << "H = " << endl << H;
         cout << "X*H(->1)^T = " << endl << XHT;
         cout << "W^T*X(<-1) = " << endl << WTX;
         //return false;
@@ -500,6 +502,11 @@ bool MatrixTest::performTest()
         cout << "Sum of column 1: " << cs << endl;
         cout << "Sum of row 1: " << rs << endl;
         if (cs != 10 || rs != 19)
+            return false;
+
+        rs = A.rowSum(1, 1, 2);
+        cout << "Sum of row 1 (cols 1-2): " << rs << endl;
+        if (rs != 15)
             return false;
     }
 

@@ -557,57 +557,65 @@ protected:
              << DateTimeFormatter::format(LocalDateTime(), "%Y/%m/%d %H:%M:%S")
              << endl << endl
              << setw(20) << "Method: ";
-        switch (_separationMethod) {
-        case SeparationTask::NMD:
-            if (_nrSpectra == 1)
-                cout << "Non-Negative Matrix Factorization";
-            else
-                cout << "Non-Negative Matrix Deconvolution";
-            break;
-        default:
-            throw Poco::NotImplementedException("Unknown separation method.");
+        if (_doSeparation) {
+            switch (_separationMethod) {
+            case SeparationTask::NMD:
+                if (_nrSpectra == 1)
+                    cout << "Non-Negative Matrix Factorization";
+                else
+                    cout << "Non-Negative Matrix Deconvolution";
+                break;
+            default:
+                throw Poco::NotImplementedException("Unknown separation method.");
+            }
+        }
+        else {
+            cout << "Fourier Transform";
         }
         cout << endl
              << setw(20) << "Window function: " << _wfName << endl
              << setw(20) << "Window size: " << _windowSize << " ms" << endl
              << setw(20) << "Overlap: " << _overlap << endl;
 
-        if (_separationMethod == SeparationTask::NMD) {
-            cout << setw(20) << "Cost function: " << _cfName << endl;
-        }
-
-        cout << setw(20) << "# of components: " << _nrComponents << endl;
-
-        if (_initObjectIDs.size() > 0) {
-            cout << setw(20) << "# of initialized spectra: " 
-                 << _initObjectIDs.size() << endl;
-            cout << setw(20) << "Preserve initialized spectra: "
-                 << (_preserveInit ? "True" : "False") << endl;
-        }
-
-        cout << setw(20) << "Initialization: "  
-             << nmf::randomGeneratorName(_matrixGenFunc) << endl;
-
-        if (_separationMethod == SeparationTask::NMD) {
-            cout << setw(20) << "# of spectra: " << _nrSpectra << endl;
-            if (_nmfCostFunction == nmf::Deconvolver::EuclideanDistanceSparse ||
-                _nmfCostFunction == nmf::Deconvolver::KLDivergenceSparse ||
-                _nmfCostFunction == nmf::Deconvolver::EuclideanDistanceSparseNormalized)
-            {
-                cout << setw(20) << "sparsity: " << _nmdSparsity << endl;
+        if (_doSeparation) {
+            if (_separationMethod == SeparationTask::NMD) {
+                cout << setw(20) << "Cost function: " << _cfName << endl;
             }
-            if (_nmfCostFunction == nmf::Deconvolver::KLDivergenceContinuous) {
-                cout << setw(20) << "continuity: " << _nmdContinuity << endl;
+
+            cout << setw(20) << "# of components: " << _nrComponents << endl;
+
+            if (_initObjectIDs.size() > 0) {
+                cout << setw(20) << "# of initialized spectra: " 
+                     << _initObjectIDs.size() << endl;
+                cout << setw(20) << "Preserve initialized spectra: "
+                     << (_preserveInit ? "True" : "False") << endl;
             }
-            cout << setw(20) << "normalize matrices: "
-                 << (_nmdNormalize == nmf::Deconvolver::NoNorm ? "False" : "True") 
-                 << endl;
+
+            cout << setw(20) << "Initialization: "  
+                 << nmf::randomGeneratorName(_matrixGenFunc) << endl;
+
+            if (_separationMethod == SeparationTask::NMD) {
+                cout << setw(20) << "# of spectra: " << _nrSpectra << endl;
+                if (_nmfCostFunction == nmf::Deconvolver::EuclideanDistanceSparse ||
+                    _nmfCostFunction == nmf::Deconvolver::KLDivergenceSparse ||
+                    _nmfCostFunction == nmf::Deconvolver::EuclideanDistanceSparseNormalized)
+                {
+                    cout << setw(20) << "sparsity: " << _nmdSparsity << endl;
+                }
+                if (_nmfCostFunction == nmf::Deconvolver::KLDivergenceContinuous) {
+                    cout << setw(20) << "continuity: " << _nmdContinuity << endl;
+                }
+                cout << setw(20) << "normalize matrices: "
+                     << (_nmdNormalize == nmf::Deconvolver::NoNorm ? "False" : "True") 
+                     << endl;
+            }
+
+            cout << setw(20) << "Max. iterations: " << _maxIter << endl
+                 << setw(20) << "Epsilon: " << _epsilon
+                 << (_epsilon > 0 ? "" : " (all iterations)") << endl;
         }
 
-        cout << setw(20) << "Max. iterations: " << _maxIter << endl
-             << setw(20) << "Epsilon: " << _epsilon
-             << (_epsilon > 0 ? "" : " (all iterations)") << endl
-             << setw(20) << "# of threads: " << numThreads() << endl
+        cout << setw(20) << "# of threads: " << numThreads() << endl
              << setw(20) << "Volatile: "
              << (_volatile ? "True " : "False") << endl
              << setw(20) << "Reduce mids: "
@@ -617,30 +625,37 @@ protected:
              << setw(20) << "Zero-Padding: "
              << (_zeroPadding ? "True" : "False") << endl
              << setw(20) << "Preemphasis (k): "
-             << _preemphasisCoeff << endl
-             << setw(20) << "Export: ";
-        if (_exportComponents)
-            cout << "Components ";
-        if (_exportSpectrogram)
-            cout << "Spectrogram ";
-        if (_exportSpectra)
-            cout << "Spectra ";
-        if (_exportGains)
-            cout << "Gains";
-        cout << endl;
+             << _preemphasisCoeff << endl;
 
-        if (_classify) {
-            cout << setw(20) << "Classification: " << "using Response #"
-                 << _clResponseID << endl;
+        if (_doSeparation) {
+            cout << setw(20) << "Export: ";
+            if (_exportComponents)
+                cout << "Components ";
+            if (_exportSpectrogram)
+                cout << "Spectrogram ";
+            if (_exportSpectra)
+                cout << "Spectra ";
+            if (_exportGains)
+                cout << "Gains";
+            cout << endl;
+
+            if (_classify) {
+                cout << setw(20) << "Classification: " << "using Response #"
+                     << _clResponseID << endl;
+            }
+
         }
+
         cout << endl;
 
         // Initialize the random generator.
-        if (_haveRandomSeed) {
-            srand(_randomSeed);
+        if (!_haveRandomSeed) {
+            _randomSeed = (unsigned int) time(NULL);
         }
-        else {
-            srand((unsigned int) time(NULL));
+        srand((unsigned int) time(NULL));
+
+        if (_doSeparation) {
+            cout << setw(20) << "Seed: " << _randomSeed << endl;
         }
 
         // Initialize the task manager.

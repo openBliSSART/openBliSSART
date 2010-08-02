@@ -503,6 +503,17 @@ public:
      */
     double rowSum(unsigned int row) const;
 
+    /**
+     * Returns the sum of the elements of the given row in the given column 
+     * range.
+     * @param   row                 the number of the row
+     * @param   col1                start column
+     * @param   col2                end column
+     * @return                      the sum of the row's elements
+     */
+    double rowSum(unsigned int row, unsigned int col1, unsigned int col2) 
+        const;
+
 
     /**
      * Computes the dot-product of the given matrices' columns.

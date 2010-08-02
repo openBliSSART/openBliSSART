@@ -213,7 +213,6 @@ void Deconvolver::factorizeNMDKL(unsigned int maxSteps, double eps,
                                  ProgressObserver *observer)
 {
     Matrix vOverApprox(_v.rows(), _v.cols());
-    Matrix hShifted(_h.rows(), _h.cols());
     Matrix wUpdateNum(_v.rows(), _h.rows());
     Matrix hUpdate(_h.rows(), _h.cols());
     Matrix hUpdateMatrixNum(_h.rows(), _h.cols());
@@ -235,7 +234,6 @@ void Deconvolver::factorizeNMDKL(unsigned int maxSteps, double eps,
         if (!_wConstant) {
             Matrix* wpH = 0;
             // Update all W_t
-            hShifted = _h;
             for (unsigned int p = 0; p < _t; ++p) {
                 if (_t > 1) {
                     wpH = new Matrix(_v.rows(), _v.cols());
@@ -243,11 +241,15 @@ void Deconvolver::factorizeNMDKL(unsigned int maxSteps, double eps,
                     computeWpH(p, *wpH);
                     _approx.sub(*wpH);
                 }
-                vOverApprox.multWithTransposedMatrix(hShifted, &wUpdateNum);
+                // Compute (V./.Lambda) * (H(->p))^T
+                vOverApprox.multWithMatrix(_h, &wUpdateNum,
+                    false, true,
+                    _v.rows(), _v.cols() - p, _h.rows(),
+                    0, p, 0, 0, 0, 0);
                 for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
                     if (!_wColConstant[j]) {
                         // Precalculation of sum of row j of H
-                        double hRowSum = hShifted.rowSum(j);
+                        double hRowSum = _h.rowSum(j, 0, _h.cols() - p - 1);
                         for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
                             _w[p]->at(i, j) *= (wUpdateNum(i, j) / hRowSum);
                         }
@@ -258,7 +260,6 @@ void Deconvolver::factorizeNMDKL(unsigned int maxSteps, double eps,
                     _approx.add(*wpH);
                     delete wpH;
                     ensureNonnegativity(_approx);
-                    hShifted.shiftColumnsRight();
                 }
             }
         }

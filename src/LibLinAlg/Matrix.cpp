@@ -859,6 +859,29 @@ double Matrix::rowSum(unsigned int row) const
 }
 
 
+double Matrix::rowSum(unsigned int row, unsigned int col1, unsigned int col2) 
+const
+{
+    double result = 0.0;
+#  ifdef ISEP_ROW_MAJOR
+    double *pRow = _data + row * _cols + col1;
+    double *pRowEnd = _data + row * _cols + col2;
+    while (pRow <= pRowEnd) {
+        result += *(pRow++);
+    }
+#  else // !ISEP_ROW_MAJOR
+    double *pData = _data + col1 * _rows + row;
+    double *pDataEnd = _data + col2 * _rows + row;
+    while (pData <= pDataEnd) {
+        result += *pData;
+        pData += _rows;
+    }
+#  endif // ISEP_ROW_MAJOR
+    return result;
+//#endif // HAVE_CBLAS_H
+}
+
+
 double Matrix::dotColCol(const Matrix &a, unsigned int aCol,
                          const Matrix &b, unsigned int bCol)
 {
