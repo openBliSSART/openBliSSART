@@ -26,6 +26,7 @@
 #include <blissart/Process.h>
 #include <Poco/NumberFormatter.h>
 #include <Poco/NumberParser.h>
+#include <blissart/transforms/SpectralSubtractionTransform.h>
 #include <blissart/transforms/PowerTransform.h>
 #include <blissart/transforms/MelFilterTransform.h>
 #include <blissart/transforms/SlidingWindowTransform.h>
@@ -152,6 +153,9 @@ const vector<MatrixTransform*> Process::transforms() const
                 }
                 else if (tfName == "Sliding window spectrum") {
                     tf = new SlidingWindowTransform();
+                }
+                else if (tfName == "Spectral subtraction") {
+                    tf = new SpectralSubtractionTransform;
                 }
                 else {
                     throw Poco::InvalidArgumentException(

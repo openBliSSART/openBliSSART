@@ -24,6 +24,7 @@
 
 
 #include <blissart/FTTask.h>
+#include <blissart/transforms/SpectralSubtractionTransform.h>
 #include <blissart/transforms/PowerTransform.h>
 #include <blissart/transforms/SlidingWindowTransform.h>
 #include <blissart/transforms/MelFilterTransform.h>
@@ -194,6 +195,9 @@ void FTTask::computeSpectrogram()
     // which they were added, thus the order of these statements is vital!
     Poco::Util::LayeredConfiguration& cfg =
         BasicApplication::instance().config();
+    if (cfg.getBool("blissart.fft.transformations.spectralSubtraction", false)) {
+        addTransformation(new transforms::SpectralSubtractionTransform);
+    }
     if (cfg.getBool("blissart.fft.transformations.powerSpectrum", false)) {
         addTransformation(new transforms::PowerTransform);
     }

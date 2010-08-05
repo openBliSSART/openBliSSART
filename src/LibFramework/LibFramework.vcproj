@@ -265,6 +265,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MatrixTransform.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\MelFilterTransform.cpp"
 				>
 			</File>
@@ -298,6 +302,10 @@
 			</File>
 			<File
 				RelativePath=".\SlidingWindowTransform.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SpectralSubtractionTransform.cpp"
 				>
 			</File>
 			<File
@@ -476,6 +484,10 @@
 			</File>
 			<File
 				RelativePath="..\include\blissart\transforms\SlidingWindowTransform.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\blissart\transforms\SpectralSubtractionTransform.h"
 				>
 			</File>
 			<File
