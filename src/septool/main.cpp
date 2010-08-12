@@ -669,7 +669,7 @@ protected:
             it != inputFiles.end(); ++it)
         {
             if (!_doSeparation) {
-                FTTask* ftTask = new FTTask("FT", *it);
+                FTTask* ftTask = new FTTask("FT", *it, _volatile);
                 addTask(ftTask);
                 continue;
             }

@@ -60,7 +60,8 @@ public:
      * @param  typeIdentifier   Type identifier, e.g. "FTTask".
      * @param  fileName         the name of the input file
      */
-    FTTask(const std::string& typeIdentifier, const std::string &fileName);
+    FTTask(const std::string& typeIdentifier, const std::string &fileName, 
+        bool isVolatile);
 
 
     /**
@@ -128,6 +129,12 @@ public:
      * Returns the file name of the audio source.
      */
     inline const std::string& fileName() const;
+
+
+    /**
+     * TODO
+     */
+    inline bool isVolatile() const;
 
 
     /**
@@ -294,6 +301,7 @@ private:
     FTTask& operator=(const FTTask &other);
 
     const std::string       _fileName;
+    const bool              _isVolatile;
     WindowFunction          _windowFunction;
     unsigned int            _windowSize;
     double                  _overlap;
@@ -381,6 +389,12 @@ inline unsigned int FTTask::sampleRate() const
 inline const std::string& FTTask::fileName() const
 {
     return _fileName;
+}
+
+
+inline bool FTTask::isVolatile() const
+{
+    return _isVolatile;
 }
 
 

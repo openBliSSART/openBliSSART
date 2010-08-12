@@ -65,7 +65,7 @@ SeparationTask::SeparationTask(const SeparationMethod sepMethod,
                  unsigned int nrOfComponents, unsigned int nrOfSpectra,
                  unsigned int maxIterations,
                  double epsilon, bool isVolatile) :
-    FTTask(typeIdentifier, fileName),
+    FTTask(typeIdentifier, fileName, isVolatile),
     _separationMethod(sepMethod),
     _nrOfComponents(nrOfComponents),
     _nrOfSpectra(nrOfSpectra),
@@ -74,7 +74,6 @@ SeparationTask::SeparationTask(const SeparationMethod sepMethod,
     _maxIterations(maxIterations),
     _epsilon(epsilon),
     _relativeError(0.0),
-    _isVolatile(isVolatile),
     _exportComponents(false),
     _exportSpectra(false),
     _exportGains(false),
@@ -95,7 +94,7 @@ void SeparationTask::runTask()
     // Take into account additional transformations.
     incMaxProgress(0.05f * transforms().size());
     // Take into account storage of components.
-    if (!_isVolatile)
+    if (!isVolatile())
         incMaxProgress(0.1f);
     // Take into account export of components / matrices.
     if (_exportComponents)
@@ -144,7 +143,7 @@ void SeparationTask::runTask()
 
         // Store the components. We don't want cancellation during the storage
         // process.
-        if (!_isVolatile) {
+        if (!isVolatile()) {
             storeComponents();
             incTotalProgress(0.1f);
         }

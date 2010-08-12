@@ -341,7 +341,6 @@ private:
     const double            _epsilon;
 
     bool                    _computeRelativeError;
-    const bool              _isVolatile;
     bool                    _exportComponents;
     bool                    _exportSpectrogram;
     bool                    _exportSpectra;

@@ -389,7 +389,12 @@ AudioData* AudioData::fromFile(const string& fileName, bool makeMono)
         const char* errorMsg = Sound_GetError();
         // Free the allocated sample
         Sound_FreeSample(sample);
-        throw AudioException(errorMsg);
+        if (errorMsg) {
+            throw AudioException(errorMsg);
+        }
+        else {
+            throw AudioException("Could not decode audio sample!");
+        }
     }
 
     // Determine important informations about the sample.

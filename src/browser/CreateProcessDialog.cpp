@@ -170,7 +170,7 @@ void CreateProcessDialog::accept()
         }
         // STFT only
         else {
-            task = new FTTask("FT", fileName.toStdString());
+            task = new FTTask("FT", fileName.toStdString(), false);
         }
         task->setWindowFunction(windowFunction);
         task->setWindowSize(_ui.sbWindowSize->value());

@@ -55,9 +55,11 @@ namespace blissart {
 
 
 FTTask::FTTask(const std::string& typeIdentifier,
-               const std::string &fileName) :
+               const std::string &fileName,
+               bool isVolatile) :
     BasicTask(typeIdentifier),
     _fileName(fileName),
+    _isVolatile(isVolatile),
     _audioData(0),
     _sampleRate(0),
     _amplitudeMatrix(0),
@@ -105,7 +107,10 @@ FTTask::~FTTask()
 void FTTask::runTask()
 {
     // Steps: Read audio, compute spectrogram, save it.
-    incMaxProgress(3.0f);
+    incMaxProgress(2.0f);
+    if (!isVolatile())
+        incMaxProgress(1.0f);
+
     // Take into account additional transformations.
     incMaxProgress(0.5f * _transforms.size());
 
@@ -136,8 +141,10 @@ void FTTask::runTask()
             break;
 
         // Store the matrices.
-        storeComponents();
-        incTotalProgress(1.0f);
+        if (!isVolatile()) {
+            storeComponents();
+            incTotalProgress(1.0f);
+        }
 
         // Mandatory check.
         if (isCancelled())
