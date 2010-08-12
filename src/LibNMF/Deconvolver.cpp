@@ -492,15 +492,22 @@ void Deconvolver::factorizeNMDED(unsigned int maxSteps, double eps,
                     denom = hUpdateMatrixDenom(i, j);
                     // Avoid division by zero
                     if (denom <= 0.0) denom = DIVISOR_FLOOR;
-                    hSum(i, j) += _h(i, j) * hUpdateMatrixNum(i, j) / denom;
+                    hSum(i, j) += hUpdateMatrixNum(i, j) / denom;
                 }
             }
         }
 
         // Apply average update to H
-        for (unsigned int j = 0; j < _h.cols(); ++j) {
+        double updateNorm = _t;
+        for (unsigned int j = 0; j <= _h.cols() - _t; ++j) {
             for (unsigned int i = 0; i < _h.rows(); ++i) {
-                _h(i, j) = hSum(i, j) / (double) _t;
+                _h(i, j) *= hSum(i, j) / updateNorm;
+            }
+        }
+        for (unsigned int j = _h.cols() - _t + 1; j < _h.cols(); ++j) {
+            //--updateNorm;
+            for (unsigned int i = 0; i < _h.rows(); ++i) {
+                _h(i, j) *= hSum(i, j) / updateNorm;
             }
         }
 
