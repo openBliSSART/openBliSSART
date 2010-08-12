@@ -65,9 +65,10 @@ libFramework_la_SOURCES = AnovaFeatureSelector.cpp \
 						  ProgressInterface.cpp \
 						  QueuedTaskManager.cpp \
 						  Response.cpp \
-                          SlidingWindowTransform.cpp \
-						  SVMModel.cpp \
 						  SeparationTask.cpp \
+                          SlidingWindowTransform.cpp \
+                          SpectralSubtractionTransform.cpp \
+						  SVMModel.cpp \
 						  StorageSubsystem.cpp \
 						  TargetedDeconvolver.cpp \
 						  ThreadedApplication.cpp \
