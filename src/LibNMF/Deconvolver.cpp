@@ -111,6 +111,7 @@ Deconvolver::~Deconvolver()
     delete[] _wColConstant;
     if (_oldApprox) {
         delete _oldApprox;
+        _oldApprox = 0;
     }
 }
 
@@ -316,7 +317,7 @@ void Deconvolver::factorizeNMDKL(unsigned int maxSteps, double eps,
 }
 
 
-void Deconvolver::factorizeNMFEDWUpdate(Matrix& w) const
+void Deconvolver::factorizeNMFEDWUpdate(Matrix& w)
 {
     static Matrix wUpdateMatrixNum(_v.rows(), _h.rows());
     static Matrix wUpdateMatrixDenom(_v.rows(), _h.rows());
@@ -327,8 +328,17 @@ void Deconvolver::factorizeNMFEDWUpdate(Matrix& w) const
         // W*(H*H^T), which is much faster, assuming common
         // dimensions of W and H.
         _v.multWithTransposedMatrix(_h, &wUpdateMatrixNum);
-        _h.multWithTransposedMatrix(_h, &hhT);
-        w.multWithMatrix(hhT, &wUpdateMatrixDenom);
+#ifdef OVERCOMPLETE
+//        if (isOvercomplete()) {
+            computeApprox();
+            _approx.multWithTransposedMatrix(_h, &wUpdateMatrixDenom);
+//        }
+#else
+//        else {
+            _h.multWithTransposedMatrix(_h, &hhT);
+            w.multWithMatrix(hhT, &wUpdateMatrixDenom);
+//        }
+#endif
         for (unsigned int j = 0; j < w.cols(); ++j) {
             if (!_wColConstant[j]) {
                 for (unsigned int i = 0; i < w.rows(); ++i) {
@@ -343,9 +353,8 @@ void Deconvolver::factorizeNMFEDWUpdate(Matrix& w) const
 
 
 void Deconvolver::calculateNMFEDHUpdate(blissart::linalg::Matrix& num,
-                                        blissart::linalg::Matrix& denom) const
+                                        blissart::linalg::Matrix& denom)
 {
-    static Matrix wTw(_h.rows(), _h.rows());
     // Calculate W^T * V
     _w[0]->multWithMatrix(_v, &num, true, false,
            _h.rows(), _v.rows(), _h.cols(),
@@ -354,10 +363,24 @@ void Deconvolver::calculateNMFEDHUpdate(blissart::linalg::Matrix& num,
     // Here the trick is to calculate (W^T * W) * H instead of
     // W^T * (W * H).
     // Calculate W^T * W
-    _w[0]->multWithMatrix(*(_w[0]), &wTw, true, false,
-           _h.rows(), _w[0]->rows(), _h.rows(),
-           0, 0, 0, 0, 0, 0);
-    wTw.multWithMatrix(_h, &denom);
+#ifdef OVERCOMPLETE
+//    if (isOvercomplete()) {
+        computeApprox();
+        _approx.multWithMatrix(*(_w[0]), &denom, true, false,
+                _h.rows(), _w[0]->rows(), _h.rows(),
+                0, 0, 0, 0, 0, 0);
+
+//    }
+#else
+//    else {
+        // FIXME: Don't always allocate this!!!
+        static Matrix wTw(_h.rows(), _h.rows());
+        _w[0]->multWithMatrix(*(_w[0]), &wTw, true, false,
+               _h.rows(), _w[0]->rows(), _h.rows(),
+               0, 0, 0, 0, 0, 0);
+        wTw.multWithMatrix(_h, &denom);
+//    }
+#endif
 }
 
 

@@ -70,14 +70,31 @@ public:
     virtual ~Benchmark() {}
     
 
-	typedef std::map<std::string, Poco::Timestamp::TimeDiff> ElapsedTimeVec;
+    typedef double ElapsedTime;
+    typedef clock_t ClockTime;
 
 
-	inline ElapsedTimeVec elapsedTimes();
+	typedef std::map<std::string, ElapsedTime> ElapsedTimeMap;
+
+
+	inline ElapsedTimeMap elapsedTimes();
 
 
 protected:
-	ElapsedTimeVec _elapsedTimes;
+    class ScopedStopwatch
+    {
+    public:
+        ScopedStopwatch(Benchmark& parent, const std::string& id);
+        virtual ~ScopedStopwatch();
+    private:
+        ClockTime _start;
+        Benchmark& _parent;
+        std::string _id;
+    };
+
+
+    inline void setElapsedTime(const std::string& id, ElapsedTime time);
+	ElapsedTimeMap _elapsedTimes;
 };
 
 
@@ -86,9 +103,15 @@ protected:
  */
 
 
-Benchmark::ElapsedTimeVec Benchmark::elapsedTimes()
+Benchmark::ElapsedTimeMap Benchmark::elapsedTimes()
 {
 	return _elapsedTimes;
+}
+
+
+void Benchmark::setElapsedTime(const std::string& id, ElapsedTime time)
+{
+    _elapsedTimes[id] = time;
 }
 
 

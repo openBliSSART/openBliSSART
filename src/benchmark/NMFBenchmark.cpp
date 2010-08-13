@@ -27,11 +27,11 @@
 
 #include <blissart/nmf/Deconvolver.h>
 #include <blissart/nmf/randomGenerator.h>
+#include <Poco/Thread.h>
 
-#include <iomanip>
+#include <sstream>
 
 
-using Poco::Timestamp;
 using blissart::nmf::Deconvolver;
 using blissart::linalg::Matrix;
 using namespace std;
@@ -42,58 +42,63 @@ namespace benchmark {
 
 void NMFBenchmark::run()
 {
-	Matrix v(500, 1000, blissart::nmf::gaussianRandomGenerator);
+    // Numbers of components to consider
+    const unsigned int nc[] = { 1, 5, 10, 20, 50, 100, 200, 500, 1000 } ;
+    const unsigned int nnc = 9;
 
-    // sparsity matrix
-    Matrix s(20, 1000);
-    for (unsigned int j = 0; j < s.cols(); ++j) {
-        for (unsigned int i = 0; i < s.rows(); ++i) {
-            s(i, j) = 0.1;
+    // Create 100x1000 Gaussian random matrix
+	Matrix v(100, 1000, blissart::nmf::gaussianRandomGenerator);
+
+	// NMF, Euclidean distance
+    for (int i = 0; i < nnc; ++i) {
+		Deconvolver d(v, nc[i], 1);
+        stringstream bnStr;
+        bnStr << "NMF-ED " << v.rows() << "x" << v.cols() 
+              << " r=" << nc[i];
+        {
+            ScopedStopwatch s(*this, bnStr.str());
+            // fixed number of iterations (100)
+            d.decompose(Deconvolver::EuclideanDistance, 100, 0.0, this);
         }
-    }
-
-	// NMF, Euclidean distance,
-	// 500x1000 Gaussian random matrix, 20 components
-	// fixed number of iterations (100)
-	{
-		Deconvolver d(v, 20, 1);
-		Timestamp start;
-        d.decompose(Deconvolver::EuclideanDistance, 100, 0.0, this);
-		Timestamp end;
-		_elapsedTimes["NMF-ED 500x1000 r=20"] = end - start;
 	}
 
-    // NMF, KL divergence,
-	// 500x1000 Gaussian random matrix, 20 components
-	// fixed number of iterations (100)
-	{
-		Deconvolver d(v, 20, 1);
-		Timestamp start;
-        d.decompose(Deconvolver::KLDivergence, 100, 0.0, this);
-		Timestamp end;
-		_elapsedTimes["NMF-KL 500x1000 r=20"] = end - start;
+	// NMF, KL divergence
+    for (int i = 0; i < nnc; ++i) {
+		Deconvolver d(v, nc[i], 1);
+        stringstream bnStr;
+        bnStr << "NMF-ED " << v.rows() << "x" << v.cols() 
+              << " r=" << nc[i];
+        {
+            ScopedStopwatch s(*this, bnStr.str());
+            // fixed number of iterations (100)
+            d.decompose(Deconvolver::KLDivergence, 100, 0.0, this);
+        }
 	}
 
-	// Sparse NMF, Euclidean distance,
-	// 500x1000 Gaussian random matrix, 20 components
-	// fixed number of iterations (100)
-	{
-		Deconvolver d(v, 20, 1);
-		Timestamp start;
-        d.decompose(Deconvolver::EuclideanDistanceSparse, 100, 0.0, this);
-		Timestamp end;
-		_elapsedTimes["SNMF-ED 500x1000 r=20"] = end - start;
+	// Sparse NMF, Euclidean distance
+    for (int i = 0; i < nnc; ++i) {
+		Deconvolver d(v, nc[i], 1);
+        stringstream bnStr;
+        bnStr << "NMF-ED " << v.rows() << "x" << v.cols() 
+              << " r=" << nc[i];
+        {
+            ScopedStopwatch s(*this, bnStr.str());
+            // fixed number of iterations (100)
+            d.decompose(Deconvolver::EuclideanDistanceSparse, 100, 0.0, this);
+        }
 	}
 
-    // Sparse NMF, KL divergence,
-	// 500x1000 Gaussian random matrix, 20 components
-	// fixed number of iterations (100)
-	{
-		Deconvolver d(v, 20, 1);
-		Timestamp start;
-        d.decompose(Deconvolver::KLDivergenceSparse, 100, 0.0, this);
-		Timestamp end;
-		_elapsedTimes["SNMF-KL 500x1000 r=20"] = end - start;
+    // Sparse NMF, KL divergence
+    for (int i = 0; i < nnc; ++i) {
+		Deconvolver d(v, nc[i], 1);
+        stringstream bnStr;
+        bnStr << "NMF-ED " << v.rows() << "x" << v.cols() 
+              << " r=" << nc[i];
+        {
+            ScopedStopwatch s(*this, bnStr.str());
+            // fixed number of iterations (100)
+            d.decompose(Deconvolver::KLDivergenceSparse, 100, 0.0, this);
+        }
 	}
 }
 
