@@ -354,17 +354,18 @@ void Deconvolver::calculateNMFEDHUpdate(blissart::linalg::Matrix& num,
            _h.rows(), _v.rows(), _h.cols(),
            0, 0, 0, 0, 0, 0);
 
-    // Here the trick is to calculate (W^T * W) * H instead of
-    // W^T * (W * H).
-    // Calculate W^T * W
     if (isOvercomplete()) {
+        // W * H
         computeApprox();
-        _approx.multWithMatrix(*(_w[0]), &denom, true, false,
-                _h.rows(), _w[0]->rows(), _h.rows(),
+        // W^T * (W * H) (cf. above, with WH instead of V)
+        _w[0]->multWithMatrix(_approx, &denom, true, false,
+                _h.rows(), _v.rows(), _h.cols(),
                 0, 0, 0, 0, 0, 0);
-
     }
     else {
+        // Here the trick is to calculate (W^T * W) * H instead of
+        // W^T * (W * H).
+        // Calculate W^T * W
         _w[0]->multWithMatrix(*(_w[0]), _wTw, true, false,
                _h.rows(), _w[0]->rows(), _h.rows(),
                0, 0, 0, 0, 0, 0);
@@ -427,7 +428,7 @@ void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
         nextItStep(observer, maxSteps);
     }
 
-    //factorizeNMFEDUninitialize();
+    factorizeNMFEDUninitialize();
 }
 
 

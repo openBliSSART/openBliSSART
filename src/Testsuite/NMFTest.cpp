@@ -62,7 +62,7 @@ bool NMFTest::outputAndCheck(Matrix& x, nmf::Deconvolver& d)
 
 bool NMFTest::performTest()
 {
-    srand((unsigned int) time(NULL));
+    srand(1);
 
     cout << "Creating 10x5 random matrix:" << endl;
     Matrix x(10, 5, nmf::gaussianRandomGenerator);
