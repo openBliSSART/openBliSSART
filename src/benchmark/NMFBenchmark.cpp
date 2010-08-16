@@ -49,7 +49,7 @@ void NMFBenchmark::run()
     // Create 100x1000 Gaussian random matrix
 	Matrix v(100, 1000, blissart::nmf::gaussianRandomGenerator);
 
-	/*// NMF, Euclidean distance
+	// NMF, Euclidean distance
     for (int i = 0; i < nnc; ++i) {
 		Deconvolver d(v, nc[i], 1);
         stringstream bnStr;
@@ -73,7 +73,7 @@ void NMFBenchmark::run()
             // fixed number of iterations (100)
             d.decompose(Deconvolver::KLDivergence, 100, 0.0, this);
         }
-	}*/
+	}
 
 	// Sparse NMF, Euclidean distance
     for (int i = 0; i < nnc; ++i) {
@@ -88,18 +88,18 @@ void NMFBenchmark::run()
         }
 	}
 
-    /*// Sparse NMF, KL divergence
+    // Sparse NMF, KL divergence
     for (int i = 0; i < nnc; ++i) {
 		Deconvolver d(v, nc[i], 1);
         stringstream bnStr;
-        bnStr << "NMF-ED " << v.rows() << "x" << v.cols() 
+        bnStr << "NMF-KL(s) " << v.rows() << "x" << v.cols() 
               << " r=" << nc[i];
         {
             ScopedStopwatch s(*this, bnStr.str());
             // fixed number of iterations (100)
             d.decompose(Deconvolver::KLDivergenceSparse, 100, 0.0, this);
         }
-	}*/
+	}
 }
 
 
