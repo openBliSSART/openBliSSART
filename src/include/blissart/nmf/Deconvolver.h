@@ -341,6 +341,10 @@ protected:
 
 
 private:
+    // Allocate helper variables if needed
+    void factorizeNMFEDInitialize();
+    // Deallocate these helper variables if previously allocated
+    void factorizeNMFEDUninitialize();
     // Some helper variables to make factorizeNMFED() more efficient.
     // They are not allocated if another factorization method is used.
     blissart::linalg::Matrix *_hhT, *_wTw, 
@@ -363,9 +367,18 @@ unsigned int Deconvolver::nrOfComponents() const
 
 bool Deconvolver::isOvercomplete() const
 {
-    // (m+n)r > mn?
-    return (_v.rows() + _v.cols()) * _h.rows() 
-         > _v.rows() * _v.cols();
+    return 
+#ifdef NMF_OVERCOMPLETE
+        true;
+#else
+#   ifdef NMF_INCOMPLETE
+        false;
+#   else
+        // (m+n)r > mn?
+        (_v.rows() + _v.cols()) * _h.rows() 
+        > _v.rows() * _v.cols();
+#   endif
+#endif
 }
 
 
