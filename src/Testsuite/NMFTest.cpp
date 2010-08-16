@@ -99,14 +99,32 @@ bool NMFTest::performTest()
     {
         cout << "Performing NMF using Euclidean distance" << endl;
 
-        nmf::Deconvolver d(x, 10, 1);
-        d.decompose(nmf::Deconvolver::EuclideanDistance, 5000, 1e-5);
-        cout << "# steps: " << d.numSteps() << endl;
-        cout << "absolute error: " << d.absoluteError() << endl;
-        cout << "relative error: " << d.relativeError() << endl;
-        cout << endl;
+        {
+            srand(2);
+            cout << endl << "--- Overcomplete" << endl;
+            nmf::Deconvolver d(x, 10, 1);
+            d.setAlgorithm(nmf::Deconvolver::Overcomplete);
+            d.decompose(nmf::Deconvolver::EuclideanDistance, 5000, 1e-5);
+            cout << "# steps: " << d.numSteps() << endl;
+            cout << "absolute error: " << d.absoluteError() << endl;
+            cout << "relative error: " << d.relativeError() << endl;
+            cout << endl;
 
-        if (!outputAndCheck(x, d)) return false;
+            if (!outputAndCheck(x, d)) return false;
+        }
+        {
+            srand(2);
+            cout << endl << "--- Incomplete" << endl;
+            nmf::Deconvolver d(x, 10, 1);
+            d.setAlgorithm(nmf::Deconvolver::Incomplete);
+            d.decompose(nmf::Deconvolver::EuclideanDistance, 5000, 1e-5);
+            cout << "# steps: " << d.numSteps() << endl;
+            cout << "absolute error: " << d.absoluteError() << endl;
+            cout << "relative error: " << d.relativeError() << endl;
+            cout << endl;
+
+            if (!outputAndCheck(x, d)) return false;
+        }
     }
 
     return true;

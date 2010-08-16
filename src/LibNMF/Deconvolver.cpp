@@ -70,6 +70,7 @@ const char* Deconvolver::costFunctionName(Deconvolver::NMFCostFunction cf)
 Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t,
                          Matrix::GeneratorFunction wGenerator,
                          Matrix::GeneratorFunction hGenerator) :
+    _alg(Deconvolver::Auto),
     _v(v),
     _approx(v.rows(), v.cols(), generators::zero),
     _oldApprox(0),
@@ -321,15 +322,15 @@ void Deconvolver::factorizeNMFEDWUpdate(Matrix& w)
 {
     double denom;
     if (!_wConstant) {
-        // The trick is not to calculate (W*H)*H^T, but
-        // W*(H*H^T), which is much faster, assuming common
-        // dimensions of W and H.
         _v.multWithTransposedMatrix(_h, _wUpdateMatrixNum);
-        if (isOvercomplete()) {
+        if (!useIncompleteAlg()) {
             computeApprox();
             _approx.multWithTransposedMatrix(_h, _wUpdateMatrixDenom);
         }
         else {
+            // The trick is not to calculate (W*H)*H^T, but
+            // W*(H*H^T), which is much faster, assuming common
+            // dimensions of W and H.
             _h.multWithTransposedMatrix(_h, _hhT);
             w.multWithMatrix(*_hhT, _wUpdateMatrixDenom);
         }
@@ -354,7 +355,7 @@ void Deconvolver::calculateNMFEDHUpdate(blissart::linalg::Matrix& num,
            _h.rows(), _v.rows(), _h.cols(),
            0, 0, 0, 0, 0, 0);
 
-    if (isOvercomplete()) {
+    if (!useIncompleteAlg()) {
         // W * H
         computeApprox();
         // W^T * (W * H) (cf. above, with WH instead of V)
@@ -379,9 +380,11 @@ void Deconvolver::factorizeNMFEDInitialize()
     if (!_wConstant) {
         _wUpdateMatrixDenom = new Matrix(_w[0]->rows(), _w[0]->cols());
         _wUpdateMatrixNum   = new Matrix(_w[0]->rows(), _w[0]->cols());
-        if (!isOvercomplete()) _hhT = new Matrix(_h.rows(), _h.rows());
+        if (useIncompleteAlg()) {
+            _hhT = new Matrix(_h.rows(), _h.rows());
+        }
     }
-    if (!isOvercomplete()) _wTw = new Matrix(_h.rows(), _h.rows());
+    if (useIncompleteAlg()) _wTw = new Matrix(_h.rows(), _h.rows());
 }
 
 
@@ -391,9 +394,9 @@ void Deconvolver::factorizeNMFEDUninitialize()
     if (!_wConstant) {
         //delete _wUpdateMatrixDenom;
         delete _wUpdateMatrixNum;
-        if (!isOvercomplete()) delete _hhT;
+        if (useIncompleteAlg()) delete _hhT;
     }
-    if (!isOvercomplete()) delete _wTw;
+    if (useIncompleteAlg()) delete _wTw;
 }
 
 

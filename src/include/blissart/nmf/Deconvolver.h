@@ -65,6 +65,17 @@ public:
 
 
     /**
+     * Type of algorithm to use for NMF (not necessarily used).
+     */
+    typedef enum
+    {
+        Auto,
+        Incomplete,
+        Overcomplete
+    } NMFAlgorithm;
+
+
+    /**
      * Returns a textual description for the given element of the 
      * NMFCostFunction enumeration.
      */
@@ -96,6 +107,16 @@ public:
      * Returns the number of components.
      */
     inline unsigned int nrOfComponents() const;
+
+    /**
+     * TODO
+     */
+    inline void setAlgorithm(NMFAlgorithm a);
+
+    /**
+     * TODO
+     */
+    inline NMFAlgorithm getAlgorithm() const;
 
     /**
      * TODO
@@ -323,6 +344,9 @@ protected:
     // Normalizes Euclidean norm of each W column to unity.
     void normalizeWColumnsEucl();
 
+    inline bool useIncompleteAlg() const;
+
+    NMFAlgorithm                    _alg;
     const blissart::linalg::Matrix& _v;
     blissart::linalg::Matrix        _approx;
     blissart::linalg::Matrix*       _oldApprox;
@@ -365,20 +389,30 @@ unsigned int Deconvolver::nrOfComponents() const
 }
 
 
+inline void Deconvolver::setAlgorithm(Deconvolver::NMFAlgorithm a)
+{
+    _alg = a;
+}
+
+
+inline Deconvolver::NMFAlgorithm Deconvolver::getAlgorithm() const
+{
+    return _alg;
+}
+
+
 bool Deconvolver::isOvercomplete() const
 {
     return 
-#ifdef NMF_OVERCOMPLETE
-        true;
-#else
-#   ifdef NMF_INCOMPLETE
-        false;
-#   else
         // (m+n)r > mn?
         (_v.rows() + _v.cols()) * _h.rows() 
         > _v.rows() * _v.cols();
-#   endif
-#endif
+}
+
+
+bool Deconvolver::useIncompleteAlg() const
+{
+    return (_alg == Auto && isOvercomplete()) || _alg == Overcomplete;
 }
 
 

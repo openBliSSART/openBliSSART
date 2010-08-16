@@ -71,17 +71,19 @@ public:
     virtual const char *name() const = 0;
 
 
+    typedef double ElapsedTime;
+	typedef std::map<std::string, ElapsedTime> ElapsedTimeMap;
+    typedef std::map<std::string, std::string> OptionsMap;
+
+
+    virtual void setOptions(const OptionsMap& optionsMap);
     Poco::Logger& logger() const;
 
 
     virtual ~Benchmark() {}
     
 
-    typedef double ElapsedTime;
     typedef clock_t ClockTime;
-
-
-	typedef std::map<std::string, ElapsedTime> ElapsedTimeMap;
 
 
 	inline ElapsedTimeMap elapsedTimes();

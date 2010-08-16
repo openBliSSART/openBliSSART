@@ -53,4 +53,9 @@ Poco::Logger& Benchmark::logger() const
 }
 
 
+void Benchmark::setOptions(const Benchmark::OptionsMap &optionsMap)
+{
+}
+
+
 }

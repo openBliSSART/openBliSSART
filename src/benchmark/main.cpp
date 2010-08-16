@@ -84,6 +84,13 @@ protected:
     void defineOptions(OptionSet &options)
     {
         Application::defineOptions(options);
+        void (*addOptions[])(Poco::Util::OptionSet&) = {
+            &NMFBenchmark::addOptions,
+            0
+        };
+        for (void (**fp)(Poco::Util::OptionSet&) = addOptions; *fp != 0; ++fp) {
+            (*fp)(options);
+        }
         options.addOption(Option("nmd", "", "Run NMD benchmark"));
         options.addOption(Option("nmf", "", "Run NMF benchmark"));
 		options.addOption(Option("all", "", "Run all of the above benchmarks"));
@@ -98,11 +105,14 @@ protected:
 
         if (name == "all" || name == "nmd")
             pushBenchmark(new NMDBenchmark());
-        if (name == "all" || name == "nmf")
+        else if (name == "all" || name == "nmf")
             pushBenchmark(new NMFBenchmark());
-        if (name == "log") {
+        else if (name == "log") {
             _outputToFile = true;
             _logFile = value;
+        }
+        else {
+            _bOptions[name] = value;
         }
     }
 
@@ -135,6 +145,7 @@ protected:
             for (vector<Benchmark *>::iterator it = _benchs.begin(); 
 				it != _benchs.end(); it++) 
 			{
+                (*it)->setOptions(_bOptions);
                 cout << "#### Performing " << (*it)->name() << ":" << endl;
 				try {
 					(*it)->run();
@@ -191,6 +202,7 @@ protected:
     vector<Benchmark*> _benchs;
     string _logFile;
     bool   _outputToFile;
+    map<string, string> _bOptions;
 };
 
 

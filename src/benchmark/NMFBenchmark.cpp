@@ -28,6 +28,7 @@
 #include <blissart/nmf/Deconvolver.h>
 #include <blissart/nmf/randomGenerator.h>
 #include <Poco/Util/Application.h>
+#include <Poco/NumberParser.h>
 
 #include <sstream>
 
@@ -40,18 +41,38 @@ using namespace std;
 namespace benchmark {
 
 
+void NMFBenchmark::addOptions(Poco::Util::OptionSet& options)
+{
+    options.addOption(
+        Poco::Util::Option("nmf-comp", "c", "Number of NMF components", 
+        false, "<n>", true)
+    );
+}
+
+
+void NMFBenchmark::setOptions(const Benchmark::OptionsMap& options)
+{
+    OptionsMap::const_iterator tmp = options.find("nmf-comp");
+    if (tmp != options.end())
+        _nComp = Poco::NumberParser::parse(tmp->second);
+    else
+        _nComp = 100;
+}
+
+
 void NMFBenchmark::run()
 {
     // Numbers of components to consider
     const unsigned int nc[] = { 1, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000 } ;
-    const unsigned int nnc = 10;
+    const unsigned int nnc  =   11;
 
     // Create 100x1000 Gaussian random matrix
-	Matrix v(100, 1000, blissart::nmf::gaussianRandomGenerator);
+	Matrix v(_nComp, 1000, blissart::nmf::gaussianRandomGenerator);
 
-	// NMF, Euclidean distance
+	// NMF, Euclidean distance, optimized for overcomplete fact.
     for (int i = 0; i < nnc; ++i) {
 		Deconvolver d(v, nc[i], 1);
+        d.setAlgorithm(Deconvolver::Overcomplete);
         stringstream bnStr;
         bnStr << "NMF-ED " << v.rows() << "x" << v.cols() 
               << " r=" << nc[i];
@@ -62,7 +83,23 @@ void NMFBenchmark::run()
             d.decompose(Deconvolver::EuclideanDistance, 100, 0.0, this);
         }
 	}
-    return;
+
+    // NMF, Euclidean distance, optimized for incomplete fact.
+    for (int i = 0; i < nnc; ++i) {
+		Deconvolver d(v, nc[i], 1);
+        d.setAlgorithm(Deconvolver::Incomplete);
+        stringstream bnStr;
+        bnStr << "NMF-EDinc " << v.rows() << "x" << v.cols() 
+              << " r=" << nc[i];
+        logger().information(bnStr.str());
+        {
+            ScopedStopwatch s(*this, bnStr.str());
+            // fixed number of iterations (100)
+            d.decompose(Deconvolver::EuclideanDistance, 100, 0.0, this);
+        }
+	}
+
+    //return;
 
 	// NMF, KL divergence
     for (int i = 0; i < nnc; ++i) {
