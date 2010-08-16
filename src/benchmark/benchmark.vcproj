@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="benchmark"
 	ProjectGUID="{6C640B96-7E68-4E93-978F-1407D5B85896}"
 	RootNamespace="benchmark"
@@ -188,6 +188,10 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
+			<File
+				RelativePath=".\Benchmark.cpp"
+				>
+			</File>
 			<File
 				RelativePath=".\main.cpp"
 				>
