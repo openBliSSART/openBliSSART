@@ -31,7 +31,11 @@
 #include <common.h>
 #include <map>
 #include <string>
-#include <Poco/Timestamp.h>
+#include <ctime>
+
+
+// Forward declaration
+namespace Poco { class Logger; }
 
 
 /**
@@ -65,6 +69,9 @@ public:
      * @return  a pointer to a string
      */
     virtual const char *name() const = 0;
+
+
+    Poco::Logger& logger() const;
 
 
     virtual ~Benchmark() {}

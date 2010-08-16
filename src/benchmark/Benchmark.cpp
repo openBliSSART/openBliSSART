@@ -25,6 +25,8 @@
 
 #include "Benchmark.h"
 #include <ctime>
+#include <Poco/Logger.h>
+#include <Poco/Util/Application.h>
 
 
 namespace benchmark {
@@ -42,6 +44,12 @@ Benchmark::ScopedStopwatch::~ScopedStopwatch()
 {
     _parent.setElapsedTime(_id, 
         ((double) (clock() - _start)) / CLOCKS_PER_SEC);
+}
+
+
+Poco::Logger& Benchmark::logger() const
+{
+    return Poco::Util::Application::instance().logger();
 }
 
 

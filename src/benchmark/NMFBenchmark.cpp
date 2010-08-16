@@ -27,7 +27,7 @@
 
 #include <blissart/nmf/Deconvolver.h>
 #include <blissart/nmf/randomGenerator.h>
-#include <Poco/Thread.h>
+#include <Poco/Util/Application.h>
 
 #include <sstream>
 
@@ -43,8 +43,8 @@ namespace benchmark {
 void NMFBenchmark::run()
 {
     // Numbers of components to consider
-    const unsigned int nc[] = { 1, 5, 10, 20, 50, 100 } ;
-    const unsigned int nnc = 6;
+    const unsigned int nc[] = { 1, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000 } ;
+    const unsigned int nnc = 10;
 
     // Create 100x1000 Gaussian random matrix
 	Matrix v(100, 1000, blissart::nmf::gaussianRandomGenerator);
@@ -55,12 +55,14 @@ void NMFBenchmark::run()
         stringstream bnStr;
         bnStr << "NMF-ED " << v.rows() << "x" << v.cols() 
               << " r=" << nc[i];
+        logger().information(bnStr.str());
         {
             ScopedStopwatch s(*this, bnStr.str());
             // fixed number of iterations (100)
             d.decompose(Deconvolver::EuclideanDistance, 100, 0.0, this);
         }
 	}
+    return;
 
 	// NMF, KL divergence
     for (int i = 0; i < nnc; ++i) {

@@ -31,7 +31,6 @@
 #include <iomanip>
 
 
-using Poco::Timestamp;
 using blissart::nmf::Deconvolver;
 using blissart::linalg::Matrix;
 using namespace std;

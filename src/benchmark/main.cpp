@@ -30,6 +30,7 @@
 #include <iostream>
 #include <iomanip>
 #include <cstring> // for strcmp
+#include <fstream>
 
 #include <blissart/audio/audio.h>
 
@@ -86,6 +87,8 @@ protected:
         options.addOption(Option("nmd", "", "Run NMD benchmark"));
         options.addOption(Option("nmf", "", "Run NMF benchmark"));
 		options.addOption(Option("all", "", "Run all of the above benchmarks"));
+        options.addOption(Option("log", "l", "File name for results", 
+            false, "<file>", true));
     }
 
 
@@ -97,6 +100,10 @@ protected:
             pushBenchmark(new NMDBenchmark());
         if (name == "all" || name == "nmf")
             pushBenchmark(new NMFBenchmark());
+        if (name == "log") {
+            _outputToFile = true;
+            _logFile = value;
+        }
     }
 
 
@@ -151,6 +158,13 @@ protected:
 						 << fixed << setprecision(2)
 						 << etItr->second << "s"
 						 << endl;
+                    if (_outputToFile) {
+                        std::ofstream logS(_logFile.c_str(), ios_base::app | ios_base::out);
+                        logS << etItr->first << "\t" 
+						     << fixed << setprecision(2)
+						     << etItr->second << "s"
+						     << endl;
+                    }
 					totalTime += etItr->second;
 				}
 				cout << "-----------------------" << endl;
@@ -175,6 +189,8 @@ protected:
 
 
     vector<Benchmark*> _benchs;
+    string _logFile;
+    bool   _outputToFile;
 };
 
 
