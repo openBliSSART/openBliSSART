@@ -26,7 +26,6 @@
 #include <blissart/nmf/Deconvolver.h>
 #include <blissart/linalg/generators/generators.h>
 #include <iostream>
-#include <ctime>
 #include <cstdlib>
 
 
@@ -40,7 +39,7 @@ namespace Testing {
 
 bool NMDTest::performTest()
 {
-    srand((unsigned int) time(NULL));
+    srand(1);
 
     cout << "Creating 10x5 random matrix:" << endl;
     Matrix x(10, 5, nmf::gaussianRandomGenerator);

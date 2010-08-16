@@ -98,6 +98,11 @@ public:
     inline unsigned int nrOfComponents() const;
 
     /**
+     * TODO
+     */
+    inline bool isOvercomplete() const;
+
+    /**
      * Returns the number of spectra.
      */
     inline unsigned int nrOfSpectra() const;
@@ -266,14 +271,14 @@ protected:
                               ProgressObserver *observer = 0);
 
     // The W update (common for factorizeNMFED and factorizeEDSparse).
-    void factorizeNMFEDWUpdate(blissart::linalg::Matrix& w) const;
+    void factorizeNMFEDWUpdate(blissart::linalg::Matrix& w);
 
     // Calculate the update matrices (numerator/denominator) for the H update
     // (common for factorizeNMFED and factorizeNMFEDSparse).
     // Note that the actual update differs between sparse and non-sparse
     // versions.
     void calculateNMFEDHUpdate(blissart::linalg::Matrix& num,
-                               blissart::linalg::Matrix& denom) const;
+                               blissart::linalg::Matrix& denom);
 
     // Sparse NMF according to Virtanen 2007, measuring reconstruction error
     // using extended KL divergence.
@@ -348,6 +353,14 @@ private:
 unsigned int Deconvolver::nrOfComponents() const
 {
     return _h.rows();
+}
+
+
+bool Deconvolver::isOvercomplete() const
+{
+    // (m+n)r > mn?
+    return (_v.rows() + _v.cols()) * _h.rows() 
+         > _v.rows() * _v.cols();
 }
 
 

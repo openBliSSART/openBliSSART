@@ -142,23 +142,21 @@ protected:
 					cerr << "UNKNOWN ERROR" << endl;
 				}
 
-				Poco::Timestamp::TimeDiff totalTime(0);
-				Benchmark::ElapsedTimeVec et = (*it)->elapsedTimes();
-				for (Benchmark::ElapsedTimeVec::const_iterator etItr = et.begin();
+				Benchmark::ElapsedTime totalTime(0);
+				Benchmark::ElapsedTimeMap et = (*it)->elapsedTimes();
+				for (Benchmark::ElapsedTimeMap::const_iterator etItr = et.begin();
 					etItr != et.end(); ++etItr)
 				{
-					cout << etItr->first << " took " 
+					cout << etItr->first << "\t" 
 						 << fixed << setprecision(2)
-						 << ((double) etItr->second) / 1.0e6 << "s (" 
-						 << etItr->second << "us)"
+						 << etItr->second << "s"
 						 << endl;
 					totalTime += etItr->second;
 				}
 				cout << "-----------------------" << endl;
-				cout << (*it)->name() << " took "
+				cout << (*it)->name() << "\t"
 					 << fixed << setprecision(2)
-					 << ((double) totalTime) / 1.0e6 << "s (" 
-					 << totalTime << "us)"
+					 << totalTime << "s"
 					 << endl;
             }
 
