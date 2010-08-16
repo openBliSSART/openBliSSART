@@ -341,6 +341,11 @@ protected:
 
 
 private:
+    // Some helper variables to make factorizeNMFED() more efficient.
+    // They are not allocated if another factorization method is used.
+    blissart::linalg::Matrix *_hhT, *_wTw, 
+                             *_wUpdateMatrixNum, *_wUpdateMatrixDenom;
+
     // Forbid copy constructor and operator=.
     Deconvolver(const Deconvolver&);
     Deconvolver& operator=(const Deconvolver&);

@@ -43,8 +43,8 @@ namespace benchmark {
 void NMFBenchmark::run()
 {
     // Numbers of components to consider
-    const unsigned int nc[] = { 1, 5, 10, 20, 50, 100, 200, 500, 1000 } ;
-    const unsigned int nnc = 9;
+    const unsigned int nc[] = { 1, 5, 10, 20, 50, 100 } ;
+    const unsigned int nnc = 6;
 
     // Create 100x1000 Gaussian random matrix
 	Matrix v(100, 1000, blissart::nmf::gaussianRandomGenerator);
@@ -66,7 +66,7 @@ void NMFBenchmark::run()
     for (int i = 0; i < nnc; ++i) {
 		Deconvolver d(v, nc[i], 1);
         stringstream bnStr;
-        bnStr << "NMF-ED " << v.rows() << "x" << v.cols() 
+        bnStr << "NMF-KL " << v.rows() << "x" << v.cols() 
               << " r=" << nc[i];
         {
             ScopedStopwatch s(*this, bnStr.str());
@@ -75,7 +75,7 @@ void NMFBenchmark::run()
         }
 	}
 
-	// Sparse NMF, Euclidean distance
+	/*// Sparse NMF, Euclidean distance
     for (int i = 0; i < nnc; ++i) {
 		Deconvolver d(v, nc[i], 1);
         stringstream bnStr;
@@ -99,7 +99,7 @@ void NMFBenchmark::run()
             // fixed number of iterations (100)
             d.decompose(Deconvolver::KLDivergenceSparse, 100, 0.0, this);
         }
-	}
+	}*/
 }
 
 

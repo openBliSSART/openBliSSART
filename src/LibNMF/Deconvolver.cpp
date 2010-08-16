@@ -319,15 +319,12 @@ void Deconvolver::factorizeNMDKL(unsigned int maxSteps, double eps,
 
 void Deconvolver::factorizeNMFEDWUpdate(Matrix& w)
 {
-    static Matrix wUpdateMatrixNum(_v.rows(), _h.rows());
-    static Matrix wUpdateMatrixDenom(_v.rows(), _h.rows());
-    static Matrix hhT(_h.rows(), _h.rows());
     double denom;
     if (!_wConstant) {
         // The trick is not to calculate (W*H)*H^T, but
         // W*(H*H^T), which is much faster, assuming common
         // dimensions of W and H.
-        _v.multWithTransposedMatrix(_h, &wUpdateMatrixNum);
+        _v.multWithTransposedMatrix(_h, _wUpdateMatrixNum);
 #ifdef OVERCOMPLETE
 //        if (isOvercomplete()) {
             computeApprox();
@@ -335,16 +332,16 @@ void Deconvolver::factorizeNMFEDWUpdate(Matrix& w)
 //        }
 #else
 //        else {
-            _h.multWithTransposedMatrix(_h, &hhT);
-            w.multWithMatrix(hhT, &wUpdateMatrixDenom);
+            _h.multWithTransposedMatrix(_h, _hhT);
+            w.multWithMatrix(*_hhT, _wUpdateMatrixDenom);
 //        }
 #endif
         for (unsigned int j = 0; j < w.cols(); ++j) {
             if (!_wColConstant[j]) {
                 for (unsigned int i = 0; i < w.rows(); ++i) {
-                    denom = wUpdateMatrixDenom(i, j);
+                    denom = _wUpdateMatrixDenom->at(i, j);
                     if (denom <= 0.0) denom = DIVISOR_FLOOR;
-                    w(i, j) *= (wUpdateMatrixNum(i, j) / denom);
+                    w(i, j) *= (_wUpdateMatrixNum->at(i, j) / denom);
                 }
             }
         }
@@ -374,11 +371,10 @@ void Deconvolver::calculateNMFEDHUpdate(blissart::linalg::Matrix& num,
 #else
 //    else {
         // FIXME: Don't always allocate this!!!
-        static Matrix wTw(_h.rows(), _h.rows());
-        _w[0]->multWithMatrix(*(_w[0]), &wTw, true, false,
+        _w[0]->multWithMatrix(*(_w[0]), _wTw, true, false,
                _h.rows(), _w[0]->rows(), _h.rows(),
                0, 0, 0, 0, 0, 0);
-        wTw.multWithMatrix(_h, &denom);
+        _wTw->multWithMatrix(_h, &denom);
 //    }
 #endif
 }
@@ -392,6 +388,18 @@ void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
     Matrix& w = *(_w[0]); // for convenience
     Matrix hUpdateMatrixNum(_h.rows(), _h.cols());
     Matrix hUpdateMatrixDenom(_h.rows(), _h.cols());
+    
+    // allocate helper variables if needed
+    if (!_wConstant) {
+        _wUpdateMatrixDenom = new Matrix(w.rows(), w.cols());
+        _wUpdateMatrixNum   = new Matrix(w.rows(), w.cols());
+#ifndef OVERCOMPLETE
+        _hhT = new Matrix(_h.rows(), _h.rows());
+#endif
+    }
+#ifndef OVERCOMPLETE
+    _wTw = new Matrix(_h.rows(), _h.rows());
+#endif
     double denom;
 
     _numSteps = 0;
@@ -412,6 +420,18 @@ void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
 
         nextItStep(observer, maxSteps);
     }
+
+    // delete helper variables
+    if (!_wConstant) {
+        delete _wUpdateMatrixDenom;
+        delete _wUpdateMatrixNum;
+#ifndef OVERCOMPLETE
+        delete _hhT;
+#endif
+    }
+#ifndef OVERCOMPLETE
+    delete _wTw;
+#endif
 }
 
 

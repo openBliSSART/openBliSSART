@@ -49,10 +49,10 @@ void NMDBenchmark::run()
 	// fixed number of iterations (100)
 	{
 		Deconvolver d(v, 20, 5);
-		Timestamp start;
-        d.decompose(Deconvolver::EuclideanDistance, 100, 0.0, this);
-		Timestamp end;
-		_elapsedTimes["NMD-ED 500x1000 r=20 t=5"] = end - start;
+        {
+            ScopedStopwatch s(*this, "NMD-ED 500x1000 r=20 t=5");
+            d.decompose(Deconvolver::EuclideanDistance, 100, 0.0, this);
+        }
 	}
 }
 
