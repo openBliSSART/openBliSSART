@@ -323,7 +323,7 @@ void Deconvolver::factorizeNMFEDWUpdate(Matrix& w)
     double denom;
     if (!_wConstant) {
         _v.multWithTransposedMatrix(_h, _wUpdateMatrixNum);
-        if (!useIncompleteAlg()) {
+        if (useOvercompleteAlg()) {
             computeApprox();
             _approx.multWithTransposedMatrix(_h, _wUpdateMatrixDenom);
         }
@@ -355,7 +355,7 @@ void Deconvolver::calculateNMFEDHUpdate(blissart::linalg::Matrix& num,
            _h.rows(), _v.rows(), _h.cols(),
            0, 0, 0, 0, 0, 0);
 
-    if (!useIncompleteAlg()) {
+    if (useOvercompleteAlg()) {
         // W * H
         computeApprox();
         // W^T * (W * H) (cf. above, with WH instead of V)
@@ -380,11 +380,11 @@ void Deconvolver::factorizeNMFEDInitialize()
     if (!_wConstant) {
         _wUpdateMatrixDenom = new Matrix(_w[0]->rows(), _w[0]->cols());
         _wUpdateMatrixNum   = new Matrix(_w[0]->rows(), _w[0]->cols());
-        if (useIncompleteAlg()) {
+        if (!useOvercompleteAlg()) {
             _hhT = new Matrix(_h.rows(), _h.rows());
         }
     }
-    if (useIncompleteAlg()) _wTw = new Matrix(_h.rows(), _h.rows());
+    if (!useOvercompleteAlg()) _wTw = new Matrix(_h.rows(), _h.rows());
 }
 
 
@@ -394,9 +394,9 @@ void Deconvolver::factorizeNMFEDUninitialize()
     if (!_wConstant) {
         //delete _wUpdateMatrixDenom;
         delete _wUpdateMatrixNum;
-        if (useIncompleteAlg()) delete _hhT;
+        if (!useOvercompleteAlg()) delete _hhT;
     }
-    if (useIncompleteAlg()) delete _wTw;
+    if (!useOvercompleteAlg()) delete _wTw;
 }
 
 

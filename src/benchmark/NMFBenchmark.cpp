@@ -63,8 +63,8 @@ void NMFBenchmark::setOptions(const Benchmark::OptionsMap& options)
 void NMFBenchmark::run()
 {
     // Numbers of components to consider
-    const unsigned int nc[] = { 1, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000 } ;
-    const unsigned int nnc  =   11;
+    const unsigned int nc[] = { 1, 5, 10, 20, 50, 100, 200, 500, 1000, 2000 } ;
+    const unsigned int nnc  =   10;
 
     // Create 100x1000 Gaussian random matrix
 	Matrix v(_nComp, 1000, blissart::nmf::gaussianRandomGenerator);
@@ -99,7 +99,7 @@ void NMFBenchmark::run()
         }
 	}
 
-    //return;
+    return;
 
 	// NMF, KL divergence
     for (int i = 0; i < nnc; ++i) {
