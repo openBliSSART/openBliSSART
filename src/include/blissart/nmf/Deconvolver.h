@@ -344,7 +344,7 @@ protected:
     // Normalizes Euclidean norm of each W column to unity.
     void normalizeWColumnsEucl();
 
-    inline bool useIncompleteAlg() const;
+    inline bool useOvercompleteAlg() const;
 
     NMFAlgorithm                    _alg;
     const blissart::linalg::Matrix& _v;
@@ -410,7 +410,7 @@ bool Deconvolver::isOvercomplete() const
 }
 
 
-bool Deconvolver::useIncompleteAlg() const
+bool Deconvolver::useOvercompleteAlg() const
 {
     return (_alg == Auto && isOvercomplete()) || _alg == Overcomplete;
 }
