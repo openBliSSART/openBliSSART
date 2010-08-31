@@ -136,6 +136,32 @@ void ClassificationTask::runTask()
         }
     }
 
+    Poco::Util::LayeredConfiguration& cfg =
+        BasicApplication::instance().config();
+    bool wienerRec = cfg.getBool("blissart.separation.export.wienerrec", 
+                                    false)
+    // Can only perform Wiener reconstruction if amplitude matrix is set.
+                     && !_sepTask.isNull();
+
+    // FIXME: Move to SeparationTask method.
+    Poco::SharedPtr<Matrix> reconst;
+    if (wienerRec) {
+        reconst = new Matrix(_sepTask->phaseMatrix().rows(), 
+                             _sepTask->phaseMatrix().cols());
+        if (_sepTask->nrOfSpectra() > 1) {
+            reconst->zero();
+            Matrix hShifted = _sepTask->gainsMatrix();
+            for (unsigned int t = 0; t < _sepTask->nrOfSpectra(); ++t) {
+                reconst->add(_sepTask->magnitudeSpectraMatrix(t) * hShifted);
+                hShifted.shiftColumnsRight();
+            }
+        }
+        else {
+            _sepTask->magnitudeSpectraMatrix(0).multWithMatrix(
+                _sepTask->gainsMatrix(), reconst);
+        }
+    }
+
     Poco::Util::Application& app = BasicApplication::instance();
     DatabaseSubsystem &dbs = app.getSubsystem<DatabaseSubsystem>();
 
@@ -207,6 +233,18 @@ void ClassificationTask::runTask()
             componentGains.shiftRight();
         }
     }
+
+    if (wienerRec) {
+        //logger().information("Aha");
+        for (map<int, Matrix*>::iterator it = _spectraMap.begin();
+             it != _spectraMap.end(); ++it)
+        {
+            it->second->elementWiseDivision(*reconst, it->second);
+            it->second->elementWiseMultiplication(_sepTask->amplitudeMatrix(), 
+                                                  it->second);
+        }
+    }
+
     incTotalProgress(0.25f);
 
     exportAsWav();

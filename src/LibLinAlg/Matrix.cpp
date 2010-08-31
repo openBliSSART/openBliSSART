@@ -473,6 +473,21 @@ void Matrix::elementWiseDivision(const Matrix& other, Matrix* target) const
 }
 
 
+void Matrix::elementWiseMultiplication(const Matrix& other, Matrix* target) const
+{
+    debug_assert(_rows == other._rows &&
+                 _cols == other._cols &&
+                 target->_rows == _rows &&
+                 target->_cols == _cols);
+
+    double *p1 = _data, *p1Max = _data + _rows * _cols;
+    double *p2 = other._data;
+    double *p3 = target->_data;
+    while (p1 < p1Max)
+        *(p3++) = *(p1++) * *(p2++);
+}
+
+
 void Matrix::transpose(Matrix* target) const
 {
     debug_assert(target->_rows == _cols &&

@@ -150,7 +150,7 @@ void SeparationTask::runTask()
 
         // The original amplitude matrix isn't needed anymore.
         // Hence, free some memory.
-        deleteAmplitudeMatrix();
+        // deleteAmplitudeMatrix();
 
         // Mandatory check.
         if (isCancelled())
@@ -183,7 +183,7 @@ void SeparationTask::runTask()
     // This has to be done again since it is possible that due to user
     // cancellation the upper do-while block was left before the first
     // free-attempt.
-    deleteAmplitudeMatrix();
+    //deleteAmplitudeMatrix();
 }
 
 
@@ -345,6 +345,27 @@ void SeparationTask::exportComponents() const
 
     logger().debug(nameAndTaskID() + " exporting the components.");
 
+    Poco::Util::LayeredConfiguration& cfg =
+        BasicApplication::instance().config();
+    bool wienerRec = cfg.getBool("blissart.separation.export.wienerrec", 
+                                    false);
+
+    Poco::SharedPtr<Matrix> reconst;
+    if (wienerRec) {
+        reconst = new Matrix(phaseMatrix().rows(), phaseMatrix().cols());
+        if (_nrOfSpectra > 1) {
+            reconst->zero();
+            Matrix hShifted = gainsMatrix();
+            for (unsigned int t = 0; t < _nrOfSpectra; ++t) {
+                reconst->add(magnitudeSpectraMatrix(t) * hShifted);
+                hShifted.shiftColumnsRight();
+            }
+        }
+        else {
+            magnitudeSpectraMatrix(0).multWithMatrix(gainsMatrix(), reconst);
+        }
+    }
+
     // Store the components.
     for (unsigned int i = 0; i < _nrOfComponents; i++) {
         // Compute the component's magnitude spectrum.
@@ -375,6 +396,13 @@ void SeparationTask::exportComponents() const
         ss << prefix /* << '_' << taskID() */ << '_'
            << setfill('0') << setw(numDigits) << i << ".wav";
 
+        if (wienerRec) {
+            // (Component/Whole) reconstruction
+            magnitudeSpectrum->elementWiseDivision(*reconst, magnitudeSpectrum);
+            // Use as filter for original spectrogram
+            magnitudeSpectrum->elementWiseMultiplication(amplitudeMatrix(),
+                                                   magnitudeSpectrum);
+        }
 
         // Convert component spectrogram to time signal and save it as WAV.
         spectrogramToAudioFile(magnitudeSpectrum, ss.str());

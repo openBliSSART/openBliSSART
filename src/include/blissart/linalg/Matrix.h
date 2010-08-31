@@ -375,6 +375,15 @@ public:
      */
     void elementWiseDivision(const Matrix& other, Matrix* target) const;
 
+    /**
+     * Computes the Hadamard product (element-wise multiplication) of this 
+     * matrix with another matrix and stores the result in the given target
+     * which may be identical to the original matrix (in-place operation).
+     * @param   other       a Matrix
+     * @param   target      a pointer to a Matrix that will hold the results
+     */
+    void elementWiseMultiplication(const Matrix& other, Matrix* target) const;
+
 
     /**
      * Stores the transpose of the matrix in the given Matrix.

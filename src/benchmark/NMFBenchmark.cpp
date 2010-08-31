@@ -99,7 +99,7 @@ void NMFBenchmark::run()
         }
 	}
 
-    //return;
+    return;
 
 	// NMF, KL divergence
     for (int i = 0; i < nnc; ++i) {
