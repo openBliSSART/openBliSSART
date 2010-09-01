@@ -45,6 +45,12 @@ class NMFBenchmark : public Benchmark, blissart::ProgressObserver
 {
 public:
     /**
+     * Constructor, sets default options.
+     */
+    NMFBenchmark();
+
+
+    /**
      * Implementation of Benchmark interface.
      */
 	void run();
@@ -79,6 +85,7 @@ public:
 
 private:
     unsigned int _nComp;
+    std::string  _cf;
 };
 
 

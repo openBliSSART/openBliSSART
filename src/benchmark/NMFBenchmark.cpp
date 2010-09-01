@@ -41,11 +41,20 @@ using namespace std;
 namespace benchmark {
 
 
+NMFBenchmark::NMFBenchmark() : _cf("all"), _nComp(100)
+{
+}
+
+
 void NMFBenchmark::addOptions(Poco::Util::OptionSet& options)
 {
     options.addOption(
         Poco::Util::Option("nmf-comp", "c", "Number of NMF components", 
         false, "<n>", true)
+    );
+    options.addOption(
+        Poco::Util::Option("cf", "f", "NMF cost function (or \"all\")",
+        false, "<func>", true)
     );
 }
 
@@ -55,88 +64,115 @@ void NMFBenchmark::setOptions(const Benchmark::OptionsMap& options)
     OptionsMap::const_iterator tmp = options.find("nmf-comp");
     if (tmp != options.end())
         _nComp = Poco::NumberParser::parse(tmp->second);
-    else
-        _nComp = 100;
+
+    tmp = options.find("cf");
+    if (tmp != options.end())
+        _cf = tmp->second;
 }
 
 
 void NMFBenchmark::run()
 {
     // Numbers of components to consider
-    const unsigned int nc[] = { 1, 5, 10, 20, 50, 100, 200, 500, 1000, 2000 } ;
-    const unsigned int nnc  =   10;
+    const unsigned int nc[] = { 1, 5, 10, 20, 50, 100, 200 } ;
+    const unsigned int nnc  =   7;
 
     // Create 100x1000 Gaussian random matrix
 	Matrix v(_nComp, 1000, blissart::nmf::gaussianRandomGenerator);
 
 	// NMF, Euclidean distance, optimized for overcomplete fact.
-    for (int i = 0; i < nnc; ++i) {
-		Deconvolver d(v, nc[i], 1);
-        d.setAlgorithm(Deconvolver::Overcomplete);
-        stringstream bnStr;
-        bnStr << "NMF-ED " << v.rows() << "x" << v.cols() 
-              << " r=" << nc[i];
-        logger().information(bnStr.str());
-        {
-            ScopedStopwatch s(*this, bnStr.str());
-            // fixed number of iterations (100)
-            d.decompose(Deconvolver::EuclideanDistance, 100, 0.0, this);
+    if (_cf == "all" || _cf == "ed") {
+        for (int i = 0; i < nnc; ++i) {
+            Deconvolver d(v, nc[i], 1);
+            d.setAlgorithm(Deconvolver::Overcomplete);
+            stringstream bnStr;
+            bnStr << "NMF-ED " << v.rows() << "x" << v.cols() 
+                  << " r=" << nc[i];
+            logger().information(bnStr.str());
+            {
+                ScopedStopwatch s(*this, bnStr.str());
+                // fixed number of iterations (100)
+                d.decompose(Deconvolver::EuclideanDistance, 100, 0.0, this);
+            }
         }
-	}
 
-    // NMF, Euclidean distance, optimized for incomplete fact.
-    for (int i = 0; i < nnc; ++i) {
-		Deconvolver d(v, nc[i], 1);
-        d.setAlgorithm(Deconvolver::Incomplete);
-        stringstream bnStr;
-        bnStr << "NMF-EDinc " << v.rows() << "x" << v.cols() 
-              << " r=" << nc[i];
-        logger().information(bnStr.str());
-        {
-            ScopedStopwatch s(*this, bnStr.str());
-            // fixed number of iterations (100)
-            d.decompose(Deconvolver::EuclideanDistance, 100, 0.0, this);
+        // NMF, Euclidean distance, optimized for incomplete fact.
+        for (int i = 0; i < nnc; ++i) {
+            Deconvolver d(v, nc[i], 1);
+            d.setAlgorithm(Deconvolver::Incomplete);
+            stringstream bnStr;
+            bnStr << "NMF-EDinc " << v.rows() << "x" << v.cols() 
+                  << " r=" << nc[i];
+            logger().information(bnStr.str());
+            {
+                ScopedStopwatch s(*this, bnStr.str());
+                // fixed number of iterations (100)
+                d.decompose(Deconvolver::EuclideanDistance, 100, 0.0, this);
+            }
         }
-	}
+    } // _cf == ed
 
-    return;
-
-	// NMF, KL divergence
-    for (int i = 0; i < nnc; ++i) {
-		Deconvolver d(v, nc[i], 1);
-        stringstream bnStr;
-        bnStr << "NMF-KL " << v.rows() << "x" << v.cols() 
-              << " r=" << nc[i];
-        {
-            ScopedStopwatch s(*this, bnStr.str());
-            // fixed number of iterations (100)
-            d.decompose(Deconvolver::KLDivergence, 100, 0.0, this);
+    if (_cf == "all" || _cf == "is") {
+        // NMF, IS divergence
+        for (int i = 0; i < nnc; ++i) {
+            Deconvolver d(v, nc[i], 1);
+            stringstream bnStr;
+            bnStr << "NMF-IS " << v.rows() << "x" << v.cols() 
+                  << " r=" << nc[i];
+            logger().information(bnStr.str());
+            {
+                ScopedStopwatch s(*this, bnStr.str());
+                // fixed number of iterations (100)
+                d.decompose(Deconvolver::ISDivergence, 100, 0.0, this);
+            }
         }
-	}
+    }
 
-	// Sparse NMF, Euclidean distance
-    for (int i = 0; i < nnc; ++i) {
-		Deconvolver d(v, nc[i], 1);
-        stringstream bnStr;
-        bnStr << "NMF-ED(s) " << v.rows() << "x" << v.cols() 
-              << " r=" << nc[i];
-        {
-            ScopedStopwatch s(*this, bnStr.str());
-            // fixed number of iterations (100)
-            d.decompose(Deconvolver::EuclideanDistanceSparse, 100, 0.0, this);
+    if (_cf == "all" || _cf == "kl") {
+        // NMF, KL divergence
+        for (int i = 0; i < nnc; ++i) {
+            Deconvolver d(v, nc[i], 1);
+            stringstream bnStr;
+            bnStr << "NMF-KL " << v.rows() << "x" << v.cols() 
+                  << " r=" << nc[i];
+            logger().information(bnStr.str());
+            {
+                ScopedStopwatch s(*this, bnStr.str());
+                // fixed number of iterations (100)
+                d.decompose(Deconvolver::KLDivergence, 100, 0.0, this);
+            }
         }
-	}
+    }
 
-    // Sparse NMF, KL divergence
-    for (int i = 0; i < nnc; ++i) {
-		Deconvolver d(v, nc[i], 1);
-        stringstream bnStr;
-        bnStr << "NMF-KL(s) " << v.rows() << "x" << v.cols() 
-              << " r=" << nc[i];
-        {
-            ScopedStopwatch s(*this, bnStr.str());
-            // fixed number of iterations (100)
-            d.decompose(Deconvolver::KLDivergenceSparse, 100, 0.0, this);
+    if (_cf == "all" || _cf == "eds") {
+        // Sparse NMF, Euclidean distance
+        for (int i = 0; i < nnc; ++i) {
+            Deconvolver d(v, nc[i], 1);
+            stringstream bnStr;
+            bnStr << "NMF-ED(s) " << v.rows() << "x" << v.cols() 
+                  << " r=" << nc[i];
+            logger().information(bnStr.str());
+            {
+                ScopedStopwatch s(*this, bnStr.str());
+                // fixed number of iterations (100)
+                d.decompose(Deconvolver::EuclideanDistanceSparse, 100, 0.0, this);
+            }
+        }
+    }
+
+    if (_cf == "all" || _cf == "kls") {
+        // Sparse NMF, KL divergence
+        for (int i = 0; i < nnc; ++i) {
+            Deconvolver d(v, nc[i], 1);
+            stringstream bnStr;
+            bnStr << "NMF-KL(s) " << v.rows() << "x" << v.cols() 
+                  << " r=" << nc[i];
+            logger().information(bnStr.str());
+            {
+                ScopedStopwatch s(*this, bnStr.str());
+                // fixed number of iterations (100)
+                d.decompose(Deconvolver::KLDivergenceSparse, 100, 0.0, this);
+            }
         }
 	}
 }
