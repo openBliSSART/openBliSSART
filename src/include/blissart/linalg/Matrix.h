@@ -359,12 +359,27 @@ public:
     /**
      * Multiplies this matrix by the given matrix' transpose and stores the
      * result in the given target matrix.
+     * Note that this operation does not use extra memory for transposing the
+     * matrix.
      * This function is a wrapper for multWithMatrix and is provided for
      * convenience only.
      * @param   other       a Matrix
      * @param   target      a pointer to a Matrix that will hold the results
      */
     void multWithTransposedMatrix(const Matrix& other, Matrix* target) const;
+
+
+    /**
+     * Multiplies the transposed of this matrix by the given matrix and stores 
+     * the result in the given target matrix.
+     * Note that this operation does not use extra memory for transposing the
+     * matrix.
+     * This function is a wrapper for multWithMatrix and is provided for
+     * convenience only.
+     * @param   other       a Matrix
+     * @param   target      a pointer to a Matrix that will hold the results
+     */
+    void transposedMultWithMatrix(const Matrix& other, Matrix* target) const;
 
 
     /**
@@ -383,6 +398,12 @@ public:
      * @param   target      a pointer to a Matrix that will hold the results
      */
     void elementWiseMultiplication(const Matrix& other, Matrix* target) const;
+
+
+    /**
+     * TODO
+     */
+    void pow(double exponent);
 
 
     /**

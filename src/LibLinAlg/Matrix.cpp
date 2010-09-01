@@ -450,6 +450,15 @@ void Matrix::multWithTransposedMatrix(const Matrix& other, Matrix* target) const
 }
 
 
+void Matrix::transposedMultWithMatrix(const Matrix& other, Matrix* target) const
+{
+    multWithMatrix(other, target,
+        true, false,
+        this->_cols, this->_rows, other._cols,
+        0, 0, 0, 0, 0, 0);
+}
+
+
 Matrix Matrix::multWithTransposedMatrix(const Matrix& other) const
 {
     Matrix result(_rows, other._rows);
@@ -485,6 +494,23 @@ void Matrix::elementWiseMultiplication(const Matrix& other, Matrix* target) cons
     double *p3 = target->_data;
     while (p1 < p1Max)
         *(p3++) = *(p1++) * *(p2++);
+}
+
+
+void Matrix::pow(double exponent) {
+    double *p1 = _data, *p1Max = _data + _rows * _cols;
+    if (exponent == -1.0) {
+        while (p1 < p1Max) {
+            *p1 = 1.0 / *p1;
+            p1++;
+        }
+    }
+    else {
+        while (p1 < p1Max) {
+            *p1 = std::pow(*p1, exponent);
+            p1++;
+        }
+    }
 }
 
 

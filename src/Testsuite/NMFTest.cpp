@@ -70,6 +70,21 @@ bool NMFTest::performTest()
     cout << "---" << endl;
 
     {
+        cout << "Performing NMF using IS divergence" << endl;
+
+        nmf::Deconvolver d(x, 10, 1);
+        d.decompose(nmf::Deconvolver::ISDivergence, 5000, 1e-5);
+        cout << "# steps: " << d.numSteps() << endl;
+        cout << "absolute error: " << d.absoluteError() << endl;
+        cout << "relative error: " << d.relativeError() << endl;
+        cout << endl;
+
+        if (!outputAndCheck(x, d)) return false;
+    }
+
+    srand(1);
+
+    {
         cout << "Performing NMF using KL divergence" << endl;
 
         nmf::Deconvolver d(x, 10, 1);

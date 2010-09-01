@@ -57,6 +57,7 @@ public:
     {
         EuclideanDistance,
         KLDivergence,
+        ISDivergence,
         EuclideanDistanceSparse,
         KLDivergenceSparse,
         KLDivergenceContinuous,
@@ -271,6 +272,12 @@ protected:
      * not be used in production code.
      */
     void factorizeNMDKL(unsigned int maxSteps, double eps,
+                        ProgressObserver *observer = 0);
+
+    /**
+     * TODO
+     */
+    void factorizeNMFIS(unsigned int maxSteps, double eps,
                         ProgressObserver *observer = 0);
 
     /** 

@@ -226,10 +226,11 @@ protected:
         options.addOption(
             Option("cost-function", "f",
                    "NMF cost function. Must be one of the following: "
-                   "\"ed\", \"kl\", \"eds\", \"kls\", \"klc\", or \"edsn\". "
+                   "\"ed\", \"kl\", \"eds\", \"kls\", \"klc\", \"is\", "
+                   "or \"edsn\". "
                    "Default is \"kl\".",
                    false, "<name>", true)
-            .validator(new RegExpValidator("eds?|kl(c|s)?|edsn")));
+            .validator(new RegExpValidator("eds?|kl(c|s)?|edsn|is")));
 
         options.addOption(
             Option("sparsity", "y",
@@ -402,6 +403,9 @@ protected:
             }
             else if (value == "edsn") {
                 _nmfCostFunction = nmf::Deconvolver::EuclideanDistanceSparseNormalized;
+            }
+            else if (value == "is") {
+                _nmfCostFunction = nmf::Deconvolver::ISDivergence;
             }
             _cfName = nmf::Deconvolver::costFunctionName(_nmfCostFunction);
         }

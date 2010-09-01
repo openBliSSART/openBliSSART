@@ -62,6 +62,8 @@ const char* Deconvolver::costFunctionName(Deconvolver::NMFCostFunction cf)
         return "Squared Euclidean distance";
     if (cf == Deconvolver::KLDivergence)
         return "Extended KL divergence";
+    if (cf == Deconvolver::ISDivergence)
+        return "Itakura-Saito divergence";
     if (cf == Deconvolver::EuclideanDistanceSparse)
         return "Squared Euclidean distance + sparseness constraint";
     if (cf == Deconvolver::KLDivergenceSparse)
@@ -178,6 +180,12 @@ void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
     else if (cf == KLDivergence) {
         factorizeNMDKL(maxSteps, eps, observer);
     }
+    else if (cf == ISDivergence) {
+        if (_t > 1) {
+            throw std::runtime_error("IS-NMD not implemented");
+        }
+        factorizeNMFIS(maxSteps, eps, observer);
+    }
     else if (cf == EuclideanDistanceSparse) {
         if (_t > 1) {
             throw std::runtime_error("Sparse NMD not implemented");
@@ -215,6 +223,58 @@ void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
     if (_oldApprox) {
         delete _oldApprox;
         _oldApprox = 0;
+    }
+}
+
+
+void Deconvolver::factorizeNMFIS(unsigned int maxSteps, double eps,
+                                 ProgressObserver *observer)
+{
+    Matrix& w = *(_w[0]);
+    Matrix hUpdateNum(_h.rows(), _h.cols());
+    Matrix hUpdateDenom(_h.rows(), _h.cols());
+    Matrix wUpdateNum(w.rows(), w.cols());
+    Matrix wUpdateDenom(w.rows(), w.cols());
+
+    _numSteps = 0;
+    while (_numSteps < maxSteps) {
+        computeApprox();
+
+        if (checkConvergence(eps, false))
+            break;
+
+        if (!_wConstant) {
+            _approx.pow(-1);
+            _approx.multWithTransposedMatrix(_h, &wUpdateDenom);
+            _approx.elementWiseMultiplication(_approx, &_approx);
+            _approx.elementWiseMultiplication(_v, &_approx);
+            _approx.multWithTransposedMatrix(_h, &wUpdateNum);
+            for (unsigned int j = 0; j < w.cols(); ++j) {
+                if (!_wColConstant[j]) {
+                    for (unsigned int i = 0; i < w.rows(); ++i) {
+                        double denom = wUpdateDenom(i, j);
+                        if (denom <= 0.0) denom = DIVISOR_FLOOR;
+                        w(i, j) *= (wUpdateNum(i, j) / denom);
+                    }
+                }
+            }
+        }
+
+        computeApprox();
+        _approx.pow(-1);
+        w.transposedMultWithMatrix(_approx, &hUpdateDenom);
+        _approx.elementWiseMultiplication(_approx, &_approx);
+        _approx.elementWiseMultiplication(_v, &_approx);
+        w.transposedMultWithMatrix(_approx, &hUpdateNum);
+        for (unsigned int j = 0; j < _h.cols(); ++j) {
+            for (unsigned int i = 0; i < _h.rows(); ++i) {
+                double denom = hUpdateDenom(i, j);
+                if (denom <= 0.0) denom = DIVISOR_FLOOR;
+                _h(i, j) *= (hUpdateNum(i, j) / denom);
+            }
+        }
+        
+        nextItStep(observer, maxSteps);
     }
 }
 
