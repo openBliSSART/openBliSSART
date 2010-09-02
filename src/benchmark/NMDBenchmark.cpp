@@ -41,16 +41,16 @@ namespace benchmark {
 
 void NMDBenchmark::run()
 {
-	Matrix v(500, 1000, blissart::nmf::gaussianRandomGenerator);
+	Matrix v(100, 500, blissart::nmf::gaussianRandomGenerator);
 
 	// NMD, Euclidean distance, 
 	// 500x1000 Gaussian random matrix, 20 components, 5 spectra
 	// fixed number of iterations (100)
 	{
-		Deconvolver d(v, 20, 5);
+		Deconvolver d(v, 10, 5);
         {
             ScopedStopwatch s(*this, "NMD-ED 500x1000 r=20 t=5");
-            d.decompose(Deconvolver::EuclideanDistance, 100, 0.0, this);
+            d.decompose(Deconvolver::KLDivergence, 100, 0.0, this);
         }
 	}
 }

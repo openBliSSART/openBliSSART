@@ -277,8 +277,8 @@ protected:
     /**
      * TODO
      */
-    void factorizeNMDIS(unsigned int maxSteps, double eps,
-                        ProgressObserver *observer = 0);
+    void factorizeNMDBreg(unsigned int maxSteps, double eps,
+                          ProgressObserver *observer = 0, double beta = 1);
 
     /** 
      * Performs NMD minimizing squared Euclidean distance,

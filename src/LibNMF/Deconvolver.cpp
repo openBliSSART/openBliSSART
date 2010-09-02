@@ -178,10 +178,11 @@ void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
         }
     }
     else if (cf == KLDivergence) {
-        factorizeNMDKL(maxSteps, eps, observer);
+        //factorizeNMDKL(maxSteps, eps, observer);
+        factorizeNMDBreg(maxSteps, eps, observer, 1);
     }
     else if (cf == ISDivergence) {
-        factorizeNMDIS(maxSteps, eps, observer);
+        factorizeNMDBreg(maxSteps, eps, observer, 0);
     }
     else if (cf == EuclideanDistanceSparse) {
         if (_t > 1) {
@@ -224,10 +225,9 @@ void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
 }
 
 
-void Deconvolver::factorizeNMDIS(unsigned int maxSteps, double eps,
-                                 ProgressObserver *observer)
+void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
+                                   ProgressObserver *observer, double beta)
 {
-    const double beta = 0;
     Matrix approxInv(_v.rows(), _v.cols());
     Matrix vOverApprox(_v.rows(), _v.cols()); // "V Over Approx" from NMD-KL
     Matrix hUpdate(_h.rows(), _h.cols());
@@ -235,16 +235,28 @@ void Deconvolver::factorizeNMDIS(unsigned int maxSteps, double eps,
     Matrix hUpdateDenom(_h.rows(), _h.cols());
     Matrix wUpdateNum(_v.rows(), _h.rows());
     Matrix wUpdateDenom(_v.rows(), _h.rows());
+    RowVector wpColSums(_h.rows());
 
     _numSteps = 0;
     while (_numSteps < maxSteps) {
         computeApprox();
-        // precomputation needs more space, but faster
-        _approx.apply(std::pow, beta-2, &approxInv);
-        approxInv.apply(Matrix::mul, _v, &vOverApprox);
-        // vOverApprox now contains Approx^{Beta - 2} .* V
-        approxInv.apply(Matrix::mul, _approx, &approxInv);
-        // approxInv now contains Approx^{Beta - 1};
+        // Euclidean distance
+        /*if (beta == 2) {
+            // TODO: use pointer!
+            vOverApprox = _v;
+        }*/
+        // KL divergence
+        if (beta == 1) {
+            _v.apply(Matrix::div, _approx, &vOverApprox);
+        }
+        else {
+            // precomputation needs more space, but faster
+            _approx.apply(std::pow, beta-2, &approxInv);
+            approxInv.apply(Matrix::mul, _v, &vOverApprox);
+            // vOverApprox now contains Approx^{Beta - 2} .* V
+            approxInv.apply(Matrix::mul, _approx, &approxInv);
+            // approxInv now contains Approx^{Beta - 1};
+        }
 
         // for NMF (T=1) we could also overwrite _approx ... but makes not much sense since we need 1 buffer matrix anyway...
 
@@ -270,11 +282,13 @@ void Deconvolver::factorizeNMDIS(unsigned int maxSteps, double eps,
                 // W Update, Denominator (for KL this is a all-one matrix)
                 // for ED the original approximation can be used
                 // --> neither for ED nor KL we need approxInv
-                approxInv.multWithMatrix(_h, &wUpdateDenom,
-                    false, true,
-                    _v.rows(), _v.cols() - p, _h.rows(),
-                    0, p, 0, 0, 0, 0);
-                ensureNonnegativity(wUpdateDenom);
+                if (beta != 1) {
+                    approxInv.multWithMatrix(_h, &wUpdateDenom,
+                        false, true,
+                        _v.rows(), _v.cols() - p, _h.rows(),
+                        0, p, 0, 0, 0, 0);
+                    ensureNonnegativity(wUpdateDenom);
+                }
 
                 // for KL divergence: more efficient to use V over Approx (element wise division)
                 // use row sum for denominator
@@ -283,10 +297,23 @@ void Deconvolver::factorizeNMDIS(unsigned int maxSteps, double eps,
                 // need this below, too, but maybe to complicated to get into separate function
 
                 // W multiplicative update
-                for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
-                    if (!_wColConstant[j]) {
-                        for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
-                            _w[p]->at(i, j) *= (wUpdateNum(i, j) / wUpdateDenom(i, j));
+                if (beta == 1) {
+                    for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
+                        if (!_wColConstant[j]) {
+                            double hRowSum = _h.rowSum(j, 0, _h.cols() - p - 1);
+                            if (hRowSum <= 0.0) hRowSum = DIVISOR_FLOOR;
+                            for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
+                                _w[p]->at(i, j) *= (wUpdateNum(i, j) / hRowSum);
+                            }
+                        }
+                    }
+                }
+                else {
+                    for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
+                        if (!_wColConstant[j]) {
+                            for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
+                                _w[p]->at(i, j) *= (wUpdateNum(i, j) / wUpdateDenom(i, j));
+                            }
                         }
                     }
                 }
@@ -309,13 +336,27 @@ void Deconvolver::factorizeNMDIS(unsigned int maxSteps, double eps,
 
         // Now the approximation is up-to-date in any case.
         // see above
-        _approx.apply(std::pow, beta-2, &approxInv);
-        approxInv.apply(Matrix::mul, _v, &vOverApprox);
-        approxInv.apply(Matrix::mul, _approx, &approxInv);
+        if (beta == 1) {
+            _v.apply(Matrix::div, _approx, &vOverApprox);
+        }
+        else {
+            _approx.apply(std::pow, beta-2, &approxInv);
+            approxInv.apply(Matrix::mul, _v, &vOverApprox);
+            approxInv.apply(Matrix::mul, _approx, &approxInv);
+        }
 
         // H Update
         hUpdate.zero();
         for (unsigned int p = 0; p < _t; ++p) {
+            if (beta == 1) {
+                // Precalculation of column-sums of W_t
+                for (unsigned int i = 0; i < _h.rows(); ++i) {
+                    wpColSums(i) = _w[p]->colSum(i);
+                    if (wpColSums(i) == 0.0)
+                        wpColSums(i) = DIVISOR_FLOOR;
+                }
+            }
+
             // Numerator
             _w[p]->multWithMatrix(vOverApprox, &hUpdateNum,
                 // transpose W[p]
@@ -324,16 +365,27 @@ void Deconvolver::factorizeNMDIS(unsigned int maxSteps, double eps,
                 _w[p]->cols(), _w[p]->rows(), _v.cols() - p,
                 0, 0, 0, p, 0, 0);
             // Denominator
-            _w[p]->multWithMatrix(approxInv, &hUpdateDenom,
-                // transpose W[p]
-                true, false, 
-                // target dimension: R x (N-p)
-                _w[p]->cols(), _w[p]->rows(), _v.cols() - p,
-                0, 0, 0, p, 0, 0);
-            ensureNonnegativity(hUpdateDenom, DIVISOR_FLOOR);
-            for (unsigned int j = 0; j < _h.cols() - p; ++j) {
-                for (unsigned int i = 0; i < _h.rows(); ++i) {
-                    hUpdate(i, j) += (hUpdateNum(i, j) / hUpdateDenom(i, j));
+            if (beta != 1) {
+                _w[p]->multWithMatrix(approxInv, &hUpdateDenom,
+                    // transpose W[p]
+                    true, false, 
+                    // target dimension: R x (N-p)
+                    _w[p]->cols(), _w[p]->rows(), _v.cols() - p,
+                    0, 0, 0, p, 0, 0);
+                ensureNonnegativity(hUpdateDenom, DIVISOR_FLOOR);
+            }
+            if (beta == 1) {
+                for (unsigned int j = 0; j < _h.cols() - p; ++j) {
+                    for (unsigned int i = 0; i < _h.rows(); ++i) {
+                        hUpdate(i, j) += (hUpdateNum(i, j) / wpColSums(i));
+                    }
+                }
+            }
+            else {
+                for (unsigned int j = 0; j < _h.cols() - p; ++j) {
+                    for (unsigned int i = 0; i < _h.rows(); ++i) {
+                        hUpdate(i, j) += (hUpdateNum(i, j) / hUpdateDenom(i, j));
+                    }
                 }
             }
         }
