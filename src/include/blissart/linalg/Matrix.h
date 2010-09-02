@@ -390,6 +390,9 @@ public:
     void apply(double (*func) (double, double), double other);
     void apply(double (*func) (double, double), double other, Matrix* target) const;
 
+    inline static double mul(double a, double b);
+    inline static double div(double a, double b);
+
 
     /**
      * Performs element-wise division of this matrix elements by another given
@@ -865,6 +868,18 @@ unsigned int Matrix::rows() const
 unsigned int Matrix::cols() const
 {
     return _cols;
+}
+
+
+double Matrix::mul(double a, double b)
+{
+    return a * b;
+}
+
+
+double Matrix::div(double a, double b)
+{
+    return a / b;
 }
 
 

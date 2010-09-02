@@ -228,9 +228,8 @@ void Deconvolver::factorizeNMDIS(unsigned int maxSteps, double eps,
                                  ProgressObserver *observer)
 {
     const double beta = 0;
-    Matrix approx1(_v.rows(), _v.cols());
-    //Matrix approx2(_v.rows(), _v.cols());
-    Matrix approxTmp(_v.rows(), _v.cols()); // "V Over Approx" from NMD-KL
+    Matrix approxInv(_v.rows(), _v.cols());
+    Matrix vOverApprox(_v.rows(), _v.cols()); // "V Over Approx" from NMD-KL
     Matrix hUpdate(_h.rows(), _h.cols());
     Matrix hUpdateNum(_h.rows(), _h.cols());
     Matrix hUpdateDenom(_h.rows(), _h.cols());
@@ -241,11 +240,11 @@ void Deconvolver::factorizeNMDIS(unsigned int maxSteps, double eps,
     while (_numSteps < maxSteps) {
         computeApprox();
         // precomputation needs more space, but faster
-        _approx.apply(std::pow, beta-2, &approx1);
-        approx1.elementWiseMultiplication(_v, &approxTmp); 
-        // approxTmp now contains Approx^{Beta - 2} .* V
-        approx1.elementWiseMultiplication(_approx, &approx1);
-        // approx1 now contains Approx^{Beta - 1};
+        _approx.apply(std::pow, beta-2, &approxInv);
+        approxInv.apply(Matrix::mul, _v, &vOverApprox);
+        // vOverApprox now contains Approx^{Beta - 2} .* V
+        approxInv.apply(Matrix::mul, _approx, &approxInv);
+        // approxInv now contains Approx^{Beta - 1};
 
         // for NMF (T=1) we could also overwrite _approx ... but makes not much sense since we need 1 buffer matrix anyway...
 
@@ -263,15 +262,15 @@ void Deconvolver::factorizeNMDIS(unsigned int maxSteps, double eps,
                 }
 
                 // W Update, Numerator
-                approxTmp.multWithMatrix(_h, &wUpdateNum,
+                vOverApprox.multWithMatrix(_h, &wUpdateNum,
                     false, true,
                     _v.rows(), _v.cols() - p, _h.rows(),
                     0, p, 0, 0, 0, 0);
 
                 // W Update, Denominator (for KL this is a all-one matrix)
                 // for ED the original approximation can be used
-                // --> neither for ED nor KL we need approx1
-                approx1.multWithMatrix(_h, &wUpdateDenom,
+                // --> neither for ED nor KL we need approxInv
+                approxInv.multWithMatrix(_h, &wUpdateDenom,
                     false, true,
                     _v.rows(), _v.cols() - p, _h.rows(),
                     0, p, 0, 0, 0, 0);
@@ -280,7 +279,7 @@ void Deconvolver::factorizeNMDIS(unsigned int maxSteps, double eps,
                 // for KL divergence: more efficient to use V over Approx (element wise division)
                 // use row sum for denominator
                 // for Euclidean Distance: nothing (pow with 1)
-                // Finished calculation of approxTmp / vOverApprox etc.
+                // Finished calculation of vOverApprox / vOverApprox etc.
                 // need this below, too, but maybe to complicated to get into separate function
 
                 // W multiplicative update
@@ -310,22 +309,22 @@ void Deconvolver::factorizeNMDIS(unsigned int maxSteps, double eps,
 
         // Now the approximation is up-to-date in any case.
         // see above
-        _approx.apply(std::pow, beta-2, &approx1);
-        approx1.elementWiseMultiplication(_v, &approxTmp); 
-        approx1.elementWiseMultiplication(_approx, &approx1);
+        _approx.apply(std::pow, beta-2, &approxInv);
+        approxInv.apply(Matrix::mul, _v, &vOverApprox);
+        approxInv.apply(Matrix::mul, _approx, &approxInv);
 
         // H Update
         hUpdate.zero();
         for (unsigned int p = 0; p < _t; ++p) {
             // Numerator
-            _w[p]->multWithMatrix(approxTmp, &hUpdateNum,
+            _w[p]->multWithMatrix(vOverApprox, &hUpdateNum,
                 // transpose W[p]
                 true, false, 
                 // target dimension: R x (N-p)
                 _w[p]->cols(), _w[p]->rows(), _v.cols() - p,
                 0, 0, 0, p, 0, 0);
             // Denominator
-            _w[p]->multWithMatrix(approx1, &hUpdateDenom,
+            _w[p]->multWithMatrix(approxInv, &hUpdateDenom,
                 // transpose W[p]
                 true, false, 
                 // target dimension: R x (N-p)
