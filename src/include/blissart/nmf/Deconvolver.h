@@ -277,7 +277,7 @@ protected:
     /**
      * TODO
      */
-    void factorizeNMFIS(unsigned int maxSteps, double eps,
+    void factorizeNMDIS(unsigned int maxSteps, double eps,
                         ProgressObserver *observer = 0);
 
     /** 

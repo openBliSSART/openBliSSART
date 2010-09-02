@@ -181,10 +181,7 @@ void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
         factorizeNMDKL(maxSteps, eps, observer);
     }
     else if (cf == ISDivergence) {
-        if (_t > 1) {
-            throw std::runtime_error("IS-NMD not implemented");
-        }
-        factorizeNMFIS(maxSteps, eps, observer);
+        factorizeNMDIS(maxSteps, eps, observer);
     }
     else if (cf == EuclideanDistanceSparse) {
         if (_t > 1) {
@@ -227,14 +224,14 @@ void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
 }
 
 
-void Deconvolver::factorizeNMFIS(unsigned int maxSteps, double eps,
+void Deconvolver::factorizeNMDIS(unsigned int maxSteps, double eps,
                                  ProgressObserver *observer)
 {
-    Matrix& w = *(_w[0]);
+    Matrix hUpdate(_h.rows(), _h.cols());
     Matrix hUpdateNum(_h.rows(), _h.cols());
     Matrix hUpdateDenom(_h.rows(), _h.cols());
-    Matrix wUpdateNum(w.rows(), w.cols());
-    Matrix wUpdateDenom(w.rows(), w.cols());
+    Matrix wUpdateNum(_v.rows(), _h.rows());
+    Matrix wUpdateDenom(_v.rows(), _h.rows());
 
     _numSteps = 0;
     while (_numSteps < maxSteps) {
@@ -244,33 +241,80 @@ void Deconvolver::factorizeNMFIS(unsigned int maxSteps, double eps,
             break;
 
         if (!_wConstant) {
-            _approx.pow(-1);
-            _approx.multWithTransposedMatrix(_h, &wUpdateDenom);
-            _approx.elementWiseMultiplication(_approx, &_approx);
-            _approx.elementWiseMultiplication(_v, &_approx);
-            _approx.multWithTransposedMatrix(_h, &wUpdateNum);
-            for (unsigned int j = 0; j < w.cols(); ++j) {
-                if (!_wColConstant[j]) {
-                    for (unsigned int i = 0; i < w.rows(); ++i) {
-                        double denom = wUpdateDenom(i, j);
-                        if (denom <= 0.0) denom = DIVISOR_FLOOR;
-                        w(i, j) *= (wUpdateNum(i, j) / denom);
+            Matrix* wpH = 0;
+            for (unsigned int p = 0; p < _t; ++p) {
+                if (_t > 1) {
+                    wpH = new Matrix(_v.rows(), _v.cols());
+                    // Difference-based calculation of new approximation
+                    computeWpH(p, *wpH);
+                    _approx.sub(*wpH);
+                }
+                computeApprox();
+                _approx.pow(-1);
+                _approx.multWithMatrix(_h, &wUpdateDenom,
+                    false, true,
+                    _v.rows(), _v.cols() - p, _h.rows(),
+                    0, p, 0, 0, 0, 0);
+                _approx.elementWiseMultiplication(_approx, &_approx);
+                _approx.elementWiseMultiplication(_v, &_approx);
+                _approx.multWithMatrix(_h, &wUpdateNum,
+                    false, true,
+                    _v.rows(), _v.cols() - p, _h.rows(),
+                    0, p, 0, 0, 0, 0);
+                for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
+                    if (!_wColConstant[j]) {
+                        for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
+                            double denom = wUpdateDenom(i, j);
+                            if (denom <= 0.0) denom = DIVISOR_FLOOR;
+                            _w[p]->at(i, j) *= (wUpdateNum(i, j) / denom);
+                        }
                     }
+                }
+                if (_t > 1) {
+                    computeWpH(p, *wpH);
+                    _approx.add(*wpH);
+                    delete wpH;
+                    ensureNonnegativity(_approx);
                 }
             }
         }
 
-        computeApprox();
-        _approx.pow(-1);
-        w.transposedMultWithMatrix(_approx, &hUpdateDenom);
-        _approx.elementWiseMultiplication(_approx, &_approx);
-        _approx.elementWiseMultiplication(_v, &_approx);
-        w.transposedMultWithMatrix(_approx, &hUpdateNum);
+        if (_t == 1) {
+            computeApprox();
+        }
+
+        // H Update
+        hUpdate.zero();
+        for (unsigned int p = 0; p < _t; ++p) {
+            // TODO: precompute and store this ...
+            computeApprox();
+            _approx.pow(-1);
+            _w[p]->multWithMatrix(_approx, &hUpdateDenom,
+                // transpose W[p]
+                true, false, 
+                // target dimension: R x (N-p)
+                _w[p]->cols(), _w[p]->rows(), _v.cols() - p,
+                0, 0, 0, p, 0, 0);
+            
+            _approx.elementWiseMultiplication(_approx, &_approx);
+            _approx.elementWiseMultiplication(_v, &_approx);
+            _w[p]->multWithMatrix(_approx, &hUpdateNum,
+                // transpose W[p]
+                true, false, 
+                // target dimension: R x (N-p)
+                _w[p]->cols(), _w[p]->rows(), _v.cols() - p,
+                0, 0, 0, p, 0, 0);
+            ensureNonnegativity(hUpdateDenom, DIVISOR_FLOOR);
+            for (unsigned int j = 0; j < _h.cols() - p; ++j) {
+                for (unsigned int i = 0; i < _h.rows(); ++i) {
+                    hUpdate(i, j) += (hUpdateNum(i, j) / hUpdateDenom(i, j));
+                }
+            }
+        }
+        // Apply average update to H
         for (unsigned int j = 0; j < _h.cols(); ++j) {
             for (unsigned int i = 0; i < _h.rows(); ++i) {
-                double denom = hUpdateDenom(i, j);
-                if (denom <= 0.0) denom = DIVISOR_FLOOR;
-                _h(i, j) *= (hUpdateNum(i, j) / denom);
+                _h(i, j) *= hUpdate(i, j) / (double) _t;
             }
         }
         
