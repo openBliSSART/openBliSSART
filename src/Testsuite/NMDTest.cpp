@@ -46,7 +46,7 @@ bool NMDTest::performTest()
     cout << x;
     cout << "---" << endl;
 
-    const unsigned int t = 3;
+    unsigned int t = 3;
 
     {
         cout << "Performing NMD using KL divergence" << endl;
@@ -140,6 +140,33 @@ bool NMDTest::performTest()
         }
     }
 
+    {
+        cout << "Performing NMD using Itakura-Saito divergence" << endl;
+
+        nmf::Deconvolver d(x, 10, t);
+        d.decompose(nmf::Deconvolver::ISDivergence, 5000, 1e-5);
+        cout << "# steps: " << d.numSteps() << endl;
+        cout << "absolute error: " << d.absoluteError() << endl;
+        cout << "relative error: " << d.relativeError() << endl;
+        cout << endl;
+        for (unsigned int i = 0; i < t; ++i) {
+            cout << "W[" << i << "] = " << endl;
+            cout << d.getW(i) << endl;
+        }
+        cout << "H = " << endl;
+        cout << d.getH() << endl;
+        cout << "Approx = " << endl;
+        d.computeApprox();
+        Matrix l(d.getApprox());
+        cout << l << endl;
+        
+        for (unsigned int i = 0; i < x.rows(); i++) {
+            for (unsigned int j = 0; j < x.cols(); j++) {
+                if (!epsilonCheck(x(i,j), l(i,j), 1e-2))
+                    return false;
+            }
+        }
+    }
     return true;
 }
 
