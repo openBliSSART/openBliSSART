@@ -48,6 +48,12 @@ using namespace blissart::linalg;
 namespace Testing {
 
 
+static double mult(double a, double b) 
+{
+    return a * b;
+}
+
+
 static double matrixGenerator(unsigned int i, unsigned int j)
 {
     return i * j;
@@ -100,6 +106,35 @@ bool MatrixTest::performTest()
          << "Random matrix:" << endl;
     Matrix d(4, 4, generators::random);
     cout << d;
+
+    {
+        Matrix e(d);
+        d.apply(std::pow, 2.0, &e);
+        cout << "---" << endl
+             << "squared:" << endl;
+        cout << e;
+        for (unsigned int j = 0; j < d.cols(); ++j) {
+            for (unsigned int i = 0; i < d.rows(); ++i) {
+                if (!epsilonCheck(e(i, j), d(i, j) * d(i, j))) 
+                    return false;
+            }
+        }
+
+        Matrix f(d);
+        Matrix i(4, 4, generators::identity);
+        d.apply(mult, i, &f);
+        cout << "---" << endl
+             << "elementwise multiplied with I:" << endl;
+        cout << f;
+        for (unsigned int j = 0; j < d.cols(); ++j) {
+            for (unsigned int i = 0; i < d.rows(); ++i) {
+                if (i != j && f(i, j) != 0)
+                    return false;
+                else if (i == j && !epsilonCheck(f(i, j), d(i, j))) 
+                    return false;
+            }
+        }
+    }
 
     // Shifts
     {

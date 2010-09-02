@@ -467,6 +467,58 @@ Matrix Matrix::multWithTransposedMatrix(const Matrix& other) const
 }
 
 
+void Matrix::apply(double (*func) (double, double), const Matrix& other)
+{
+    debug_assert(_rows == other._rows &&
+                 _cols == other._cols &&
+                 target->_rows == _rows &&
+                 target->_cols == _cols);
+    double *p1 = _data;
+    double *p1Max  = _data + _rows * _cols;
+    double *p2 = other._data;
+    while (p1 < p1Max) {
+        *p1 = func(*p1, *(p2++));
+        ++p1;
+    }
+}
+
+
+void Matrix::apply(double (*func) (double, double), const Matrix& other, Matrix* target) const
+{
+    debug_assert(_rows == other._rows &&
+                 _cols == other._cols &&
+                 target->_rows == _rows &&
+                 target->_cols == _cols);
+    double *p1 = _data;
+    double *p1Max  = _data + _rows * _cols;
+    double *p2 = other._data;
+    double *p3 = target->_data;
+    while (p1 < p1Max)
+        *(p3++) = func(*(p1++), *(p2++));
+}
+
+
+void Matrix::apply(double (*func) (double, double), double other)
+{
+    double *p1 = _data;
+    double *p1Max  = _data + _rows * _cols;
+    while (p1 < p1Max) {
+        *p1 = func(*p1, other);
+        ++p1;
+    }
+}
+
+
+void Matrix::apply(double (*func) (double, double), double other, Matrix* target) const
+{
+    double *p1 = _data;
+    double *p1Max  = _data + _rows * _cols;
+    double *p2 = target->_data;
+    while (p1 < p1Max)
+        *(p2++) = func(*(p1++), other);
+}
+
+
 void Matrix::elementWiseDivision(const Matrix& other, Matrix* target) const
 {
     debug_assert(_rows == other._rows &&

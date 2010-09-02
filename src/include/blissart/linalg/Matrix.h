@@ -383,6 +383,15 @@ public:
 
 
     /**
+     * TODO
+     */
+    void apply(double (*func) (double, double), const Matrix& other);
+    void apply(double (*func) (double, double), const Matrix& other, Matrix* target) const;
+    void apply(double (*func) (double, double), double other);
+    void apply(double (*func) (double, double), double other, Matrix* target) const;
+
+
+    /**
      * Performs element-wise division of this matrix elements by another given
      * matrix elements and stores the result in the given target matrix.
      * @param   other       a Matrix

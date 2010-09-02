@@ -227,6 +227,10 @@ void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
 void Deconvolver::factorizeNMDIS(unsigned int maxSteps, double eps,
                                  ProgressObserver *observer)
 {
+    const double beta = 0;
+    Matrix approx1(_v.rows(), _v.cols());
+    //Matrix approx2(_v.rows(), _v.cols());
+    Matrix approxTmp(_v.rows(), _v.cols()); // "V Over Approx" from NMD-KL
     Matrix hUpdate(_h.rows(), _h.cols());
     Matrix hUpdateNum(_h.rows(), _h.cols());
     Matrix hUpdateDenom(_h.rows(), _h.cols());
@@ -236,6 +240,14 @@ void Deconvolver::factorizeNMDIS(unsigned int maxSteps, double eps,
     _numSteps = 0;
     while (_numSteps < maxSteps) {
         computeApprox();
+        // precomputation needs more space, but faster
+        _approx.apply(std::pow, beta-2, &approx1);
+        approx1.elementWiseMultiplication(_v, &approxTmp); 
+        // approxTmp now contains Approx^{Beta - 2} .* V
+        approx1.elementWiseMultiplication(_approx, &approx1);
+        // approx1 now contains Approx^{Beta - 1};
+
+        // for NMF (T=1) we could also overwrite _approx ... but makes not much sense since we need 1 buffer matrix anyway...
 
         if (checkConvergence(eps, false))
             break;
@@ -249,27 +261,38 @@ void Deconvolver::factorizeNMDIS(unsigned int maxSteps, double eps,
                     computeWpH(p, *wpH);
                     _approx.sub(*wpH);
                 }
-                computeApprox();
-                _approx.pow(-1);
-                _approx.multWithMatrix(_h, &wUpdateDenom,
+
+                // W Update, Numerator
+                approxTmp.multWithMatrix(_h, &wUpdateNum,
                     false, true,
                     _v.rows(), _v.cols() - p, _h.rows(),
                     0, p, 0, 0, 0, 0);
-                _approx.elementWiseMultiplication(_approx, &_approx);
-                _approx.elementWiseMultiplication(_v, &_approx);
-                _approx.multWithMatrix(_h, &wUpdateNum,
+
+                // W Update, Denominator (for KL this is a all-one matrix)
+                // for ED the original approximation can be used
+                // --> neither for ED nor KL we need approx1
+                approx1.multWithMatrix(_h, &wUpdateDenom,
                     false, true,
                     _v.rows(), _v.cols() - p, _h.rows(),
                     0, p, 0, 0, 0, 0);
+                ensureNonnegativity(wUpdateDenom);
+
+                // for KL divergence: more efficient to use V over Approx (element wise division)
+                // use row sum for denominator
+                // for Euclidean Distance: nothing (pow with 1)
+                // Finished calculation of approxTmp / vOverApprox etc.
+                // need this below, too, but maybe to complicated to get into separate function
+
+                // W multiplicative update
                 for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
                     if (!_wColConstant[j]) {
                         for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
-                            double denom = wUpdateDenom(i, j);
-                            if (denom <= 0.0) denom = DIVISOR_FLOOR;
-                            _w[p]->at(i, j) *= (wUpdateNum(i, j) / denom);
+                            _w[p]->at(i, j) *= (wUpdateNum(i, j) / wUpdateDenom(i, j));
                         }
                     }
                 }
+
+                // Difference-based calculation of new approximation
                 if (_t > 1) {
                     computeWpH(p, *wpH);
                     _approx.add(*wpH);
@@ -279,26 +302,30 @@ void Deconvolver::factorizeNMDIS(unsigned int maxSteps, double eps,
             }
         }
 
+        // For T > 1, approximation has been calculated above.
+        // For T = 1, this is more efficient for T = 1.
         if (_t == 1) {
             computeApprox();
         }
 
+        // Now the approximation is up-to-date in any case.
+        // see above
+        _approx.apply(std::pow, beta-2, &approx1);
+        approx1.elementWiseMultiplication(_v, &approxTmp); 
+        approx1.elementWiseMultiplication(_approx, &approx1);
+
         // H Update
         hUpdate.zero();
         for (unsigned int p = 0; p < _t; ++p) {
-            // TODO: precompute and store this ...
-            computeApprox();
-            _approx.pow(-1);
-            _w[p]->multWithMatrix(_approx, &hUpdateDenom,
+            // Numerator
+            _w[p]->multWithMatrix(approxTmp, &hUpdateNum,
                 // transpose W[p]
                 true, false, 
                 // target dimension: R x (N-p)
                 _w[p]->cols(), _w[p]->rows(), _v.cols() - p,
                 0, 0, 0, p, 0, 0);
-            
-            _approx.elementWiseMultiplication(_approx, &_approx);
-            _approx.elementWiseMultiplication(_v, &_approx);
-            _w[p]->multWithMatrix(_approx, &hUpdateNum,
+            // Denominator
+            _w[p]->multWithMatrix(approx1, &hUpdateDenom,
                 // transpose W[p]
                 true, false, 
                 // target dimension: R x (N-p)
@@ -311,7 +338,9 @@ void Deconvolver::factorizeNMDIS(unsigned int maxSteps, double eps,
                 }
             }
         }
+
         // Apply average update to H
+        // TODO: Weighting with _t reduced for last cols --> option?!
         for (unsigned int j = 0; j < _h.cols(); ++j) {
             for (unsigned int i = 0; i < _h.rows(); ++i) {
                 _h(i, j) *= hUpdate(i, j) / (double) _t;
