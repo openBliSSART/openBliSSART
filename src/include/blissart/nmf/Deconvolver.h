@@ -264,16 +264,6 @@ public:
     inline void setProgressNotificationDelay(unsigned int nSteps);
 
 
-protected:
-    /**
-     * Performs NMD using a generalized Kulback-Leibler divergence,
-     * using Smaragdis' algorithm (2004).
-     * Setting eps > 0 significantly slows down the NMD and should therefore 
-     * not be used in production code.
-     */
-    void factorizeNMDKL(unsigned int maxSteps, double eps,
-                        ProgressObserver *observer = 0);
-
     /**
      * TODO
      */
@@ -289,6 +279,15 @@ protected:
     void factorizeNMDED(unsigned int maxSteps, double eps,
                         ProgressObserver *observer = 0);
 
+protected:
+    /**
+     * Performs NMD using a generalized Kulback-Leibler divergence,
+     * using Smaragdis' algorithm (2004).
+     * Setting eps > 0 significantly slows down the NMD and should therefore 
+     * not be used in production code.
+     */
+    void factorizeNMDKL(unsigned int maxSteps, double eps,
+                        ProgressObserver *observer = 0);
     // A more efficient implementation of NMD-ED for 1 spectrum (NMF case).
     void factorizeNMFED(unsigned int maxSteps, double eps,
                         ProgressObserver *observer = 0);

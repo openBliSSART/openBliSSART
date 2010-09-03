@@ -34,7 +34,15 @@
 #include <cmath>
 #include <vector>
 
-#define NMD_PT
+
+
+#include <iostream>
+using namespace std;
+
+
+
+
+//#define NMD_PT
 #define NMD_PLOT_ERROR
 
 #ifdef NMD_PLOT_ERROR
@@ -175,6 +183,7 @@ void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
         }
         else {
             factorizeNMDED(maxSteps, eps, observer);
+            //factorizeNMDBreg(maxSteps, eps, observer, 2);
         }
     }
     else if (cf == KLDivergence) {
@@ -228,6 +237,7 @@ void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
 void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
                                    ProgressObserver *observer, double beta)
 {
+    // TODO: define these as pointers
     Matrix approxInv(_v.rows(), _v.cols());
     Matrix vOverApprox(_v.rows(), _v.cols()); // "V Over Approx" from NMD-KL
     Matrix hUpdate(_h.rows(), _h.cols());
@@ -240,23 +250,6 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
     _numSteps = 0;
     while (_numSteps < maxSteps) {
         computeApprox();
-        // Euclidean distance
-        /*if (beta == 2) {
-            // TODO: use pointer!
-            vOverApprox = _v;
-        }*/
-        // KL divergence
-        if (beta == 1) {
-            _v.apply(Matrix::div, _approx, &vOverApprox);
-        }
-        else {
-            // precomputation needs more space, but faster
-            _approx.apply(std::pow, beta-2, &approxInv);
-            approxInv.apply(Matrix::mul, _v, &vOverApprox);
-            // vOverApprox now contains Approx^{Beta - 2} .* V
-            approxInv.apply(Matrix::mul, _approx, &approxInv);
-            // approxInv now contains Approx^{Beta - 1};
-        }
 
         // for NMF (T=1) we could also overwrite _approx ... but makes not much sense since we need 1 buffer matrix anyway...
 
@@ -266,13 +259,25 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
         if (!_wConstant) {
             Matrix* wpH = 0;
             for (unsigned int p = 0; p < _t; ++p) {
-                if (_t > 1) {
-                    wpH = new Matrix(_v.rows(), _v.cols());
-                    // Difference-based calculation of new approximation
-                    computeWpH(p, *wpH);
-                    _approx.sub(*wpH);
+                // Euclidean distance
+                if (beta == 2) {
+                    // TODO: use pointer!
+                    vOverApprox = _v;
+                    approxInv = _approx;
                 }
-
+                // KL divergence
+                else if (beta == 1) {
+                    _v.apply(Matrix::div, _approx, &vOverApprox);
+                    // we explicitly compute row sums instead of using 
+                    // approxInv which would be an all-one matrix
+                }
+                else {
+                    _approx.apply(std::pow, beta-2, &approxInv);
+                    approxInv.apply(Matrix::mul, _v, &vOverApprox);
+                    // vOverApprox now contains Approx^{Beta - 2} .* V
+                    approxInv.apply(Matrix::mul, _approx, &approxInv);
+                    // approxInv now contains Approx^{Beta - 1};
+                }
                 // W Update, Numerator
                 vOverApprox.multWithMatrix(_h, &wUpdateNum,
                     false, true,
@@ -280,14 +285,21 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
                     0, p, 0, 0, 0, 0);
 
                 // W Update, Denominator (for KL this is a all-one matrix)
-                // for ED the original approximation can be used
-                // --> neither for ED nor KL we need approxInv
+                // for ED (beta = 2) the original approximation is used
                 if (beta != 1) {
+                    //cout << "p = " << p << "; approxInv = " << approxInv << endl;
                     approxInv.multWithMatrix(_h, &wUpdateDenom,
                         false, true,
                         _v.rows(), _v.cols() - p, _h.rows(),
                         0, p, 0, 0, 0, 0);
                     ensureNonnegativity(wUpdateDenom);
+                }
+
+                if (_t > 1) {
+                    wpH = new Matrix(_v.rows(), _v.cols());
+                    // Difference-based calculation of new approximation
+                    computeWpH(p, *wpH);
+                    _approx.sub(*wpH);
                 }
 
                 // for KL divergence: more efficient to use V over Approx (element wise division)
@@ -312,6 +324,8 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
                     for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
                         if (!_wColConstant[j]) {
                             for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
+                                //cout << "update factor for w[" << p << "](" << i << "," << j << ") : " <<
+                                //     wUpdateNum(i, j) << "/" << wUpdateDenom(i, j) << endl;
                                 _w[p]->at(i, j) *= (wUpdateNum(i, j) / wUpdateDenom(i, j));
                             }
                         }
@@ -336,7 +350,11 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
 
         // Now the approximation is up-to-date in any case.
         // see above
-        if (beta == 1) {
+        if (beta == 2) {
+            vOverApprox = _v;
+            approxInv = _approx;
+        }
+        else if (beta == 1) {
             _v.apply(Matrix::div, _approx, &vOverApprox);
         }
         else {
@@ -700,6 +718,7 @@ void Deconvolver::factorizeNMDED(unsigned int maxSteps, double eps,
                 // Calculate Approx * (H shifted t spots to the right)^T 
                 // (denominator of the update matrix)
                 // The same as above.
+                //cout << "p = " << p << "; approx = " << _approx << endl;
                 _approx.multWithMatrix(_h, &wUpdateMatrixDenom,
                     false, true,
                     _v.rows(), _v.cols() - p, _h.rows(), 
@@ -722,6 +741,8 @@ void Deconvolver::factorizeNMDED(unsigned int maxSteps, double eps,
                             denom = wUpdateMatrixDenom(i, j);
                             if (denom <= 0.0) denom = DIVISOR_FLOOR;
                             _w[p]->at(i, j) *= wUpdateMatrixNum(i, j) / denom;
+                            //cout << "update factor for w[" << p << "](" << i << "," << j << ") : " <<
+                            //     wUpdateMatrixNum(i, j) << "/" << denom << endl;
                         }
                     }
                 }
