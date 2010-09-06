@@ -238,14 +238,31 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
                                    ProgressObserver *observer, double beta)
 {
     // TODO: define these as pointers
-    Matrix approxInv(_v.rows(), _v.cols());
-    Matrix vOverApprox(_v.rows(), _v.cols()); // "V Over Approx" from NMD-KL
+    Matrix* approxInv = 0;
+    Matrix* vOverApprox = 0; // "V Over Approx" from NMD-KL
     Matrix hUpdate(_h.rows(), _h.cols());
     Matrix hUpdateNum(_h.rows(), _h.cols());
     Matrix hUpdateDenom(_h.rows(), _h.cols());
     Matrix wUpdateNum(_v.rows(), _h.rows());
     Matrix wUpdateDenom(_v.rows(), _h.rows());
-    RowVector wpColSums(_h.rows());
+    RowVector* wpColSums = 0;
+
+    if (beta == 2) {
+        // for ED, exploit equalities by redirecting these pointers
+        vOverApprox = (Matrix*) &_v;
+        approxInv = &_approx;
+    }
+    else {
+        vOverApprox = new Matrix(_v.rows(), _v.cols());
+        // KL uses row sums instead of approxInv, which would be an all-1 
+        // matrix
+        if (beta != 1) {
+            approxInv = new Matrix(_v.rows(), _v.cols());
+        }
+        else {
+            wpColSums = new RowVector(_h.rows());
+        }
+    }
 
     _numSteps = 0;
     while (_numSteps < maxSteps) {
@@ -259,27 +276,22 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
         if (!_wConstant) {
             Matrix* wpH = 0;
             for (unsigned int p = 0; p < _t; ++p) {
-                // Euclidean distance
-                if (beta == 2) {
-                    // TODO: use pointer!
-                    vOverApprox = _v;
-                    approxInv = _approx;
-                }
                 // KL divergence
-                else if (beta == 1) {
-                    _v.apply(Matrix::div, _approx, &vOverApprox);
+                if (beta == 1) {
+                    _v.apply(Matrix::div, _approx, vOverApprox);
                     // we explicitly compute row sums instead of using 
                     // approxInv which would be an all-one matrix
                 }
-                else {
-                    _approx.apply(std::pow, beta-2, &approxInv);
-                    approxInv.apply(Matrix::mul, _v, &vOverApprox);
+                // General Bregman alg. (for ED, no computation needed)
+                else if (beta != 2) {
+                    _approx.apply(std::pow, beta-2, approxInv);
+                    approxInv->apply(Matrix::mul, _v, vOverApprox);
                     // vOverApprox now contains Approx^{Beta - 2} .* V
-                    approxInv.apply(Matrix::mul, _approx, &approxInv);
+                    approxInv->apply(Matrix::mul, _approx, approxInv);
                     // approxInv now contains Approx^{Beta - 1};
                 }
                 // W Update, Numerator
-                vOverApprox.multWithMatrix(_h, &wUpdateNum,
+                vOverApprox->multWithMatrix(_h, &wUpdateNum,
                     false, true,
                     _v.rows(), _v.cols() - p, _h.rows(),
                     0, p, 0, 0, 0, 0);
@@ -288,7 +300,7 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
                 // for ED (beta = 2) the original approximation is used
                 if (beta != 1) {
                     //cout << "p = " << p << "; approxInv = " << approxInv << endl;
-                    approxInv.multWithMatrix(_h, &wUpdateDenom,
+                    approxInv->multWithMatrix(_h, &wUpdateDenom,
                         false, true,
                         _v.rows(), _v.cols() - p, _h.rows(),
                         0, p, 0, 0, 0, 0);
@@ -350,17 +362,13 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
 
         // Now the approximation is up-to-date in any case.
         // see above
-        if (beta == 2) {
-            vOverApprox = _v;
-            approxInv = _approx;
+        if (beta == 1) {
+            _v.apply(Matrix::div, _approx, vOverApprox);
         }
-        else if (beta == 1) {
-            _v.apply(Matrix::div, _approx, &vOverApprox);
-        }
-        else {
-            _approx.apply(std::pow, beta-2, &approxInv);
-            approxInv.apply(Matrix::mul, _v, &vOverApprox);
-            approxInv.apply(Matrix::mul, _approx, &approxInv);
+        else if (beta != 2) {
+            _approx.apply(std::pow, beta-2, approxInv);
+            approxInv->apply(Matrix::mul, _v, vOverApprox);
+            approxInv->apply(Matrix::mul, _approx, approxInv);
         }
 
         // H Update
@@ -369,14 +377,14 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
             if (beta == 1) {
                 // Precalculation of column-sums of W_t
                 for (unsigned int i = 0; i < _h.rows(); ++i) {
-                    wpColSums(i) = _w[p]->colSum(i);
-                    if (wpColSums(i) == 0.0)
-                        wpColSums(i) = DIVISOR_FLOOR;
+                    (*wpColSums)(i) = _w[p]->colSum(i);
+                    if ((*wpColSums)(i) == 0.0)
+                        (*wpColSums)(i) = DIVISOR_FLOOR;
                 }
             }
 
             // Numerator
-            _w[p]->multWithMatrix(vOverApprox, &hUpdateNum,
+            _w[p]->multWithMatrix(*vOverApprox, &hUpdateNum,
                 // transpose W[p]
                 true, false, 
                 // target dimension: R x (N-p)
@@ -384,7 +392,7 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
                 0, 0, 0, p, 0, 0);
             // Denominator
             if (beta != 1) {
-                _w[p]->multWithMatrix(approxInv, &hUpdateDenom,
+                _w[p]->multWithMatrix(*approxInv, &hUpdateDenom,
                     // transpose W[p]
                     true, false, 
                     // target dimension: R x (N-p)
@@ -395,7 +403,7 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
             if (beta == 1) {
                 for (unsigned int j = 0; j < _h.cols() - p; ++j) {
                     for (unsigned int i = 0; i < _h.rows(); ++i) {
-                        hUpdate(i, j) += (hUpdateNum(i, j) / wpColSums(i));
+                        hUpdate(i, j) += (hUpdateNum(i, j) / (*wpColSums)(i));
                     }
                 }
             }
@@ -418,6 +426,13 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
         
         nextItStep(observer, maxSteps);
     }
+
+    if (wpColSums)
+        delete wpColSums;
+    if (vOverApprox && vOverApprox != &_v)
+        delete vOverApprox;
+    if (approxInv && approxInv != &_approx)
+        delete approxInv;
 }
 
 
