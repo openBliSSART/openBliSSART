@@ -27,8 +27,11 @@
 
 #include <blissart/nmf/Deconvolver.h>
 #include <blissart/nmf/randomGenerator.h>
+#include <Poco/Util/Application.h>
+#include <Poco/NumberParser.h>
 
 #include <iomanip>
+#include <sstream>
 
 
 using blissart::nmf::Deconvolver;
@@ -39,18 +42,85 @@ using namespace std;
 namespace benchmark {
 
 
+NMDBenchmark::NMDBenchmark() : _cf("all"), _nComp(100)
+{
+}
+
+
+void NMDBenchmark::addOptions(Poco::Util::OptionSet& options)
+{
+    options.addOption(
+        Poco::Util::Option("nmf-comp", "c", "Number of rows in V matrix", 
+        false, "<n>", true)
+    );
+    options.addOption(
+        Poco::Util::Option("cf", "f", "NMF cost function (or \"all\")",
+        false, "<func>", true)
+    );
+}
+
+
+void NMDBenchmark::setOptions(const Benchmark::OptionsMap& options)
+{
+    OptionsMap::const_iterator tmp = options.find("nmf-comp");
+    if (tmp != options.end())
+        _nComp = Poco::NumberParser::parse(tmp->second);
+
+    tmp = options.find("cf");
+    if (tmp != options.end())
+        _cf = tmp->second;
+}
+
+
 void NMDBenchmark::run()
 {
-	Matrix v(100, 500, blissart::nmf::gaussianRandomGenerator);
+	Matrix v(_nComp, 500, blissart::nmf::gaussianRandomGenerator);
+
+    unsigned int t = 5;
+    unsigned int r = 20;
 
 	// NMD, Euclidean distance, 
 	// 500x1000 Gaussian random matrix, 20 components, 5 spectra
 	// fixed number of iterations (100)
 	{
-		Deconvolver d(v, 10, 5);
+		Deconvolver d(v, 10, t);
+        stringstream bnStr;
+        bnStr << "NMD-ED " << v.rows() << "x" << v.cols() 
+              << " r=" << r << " t=" << t;
+        logger().information(bnStr.str());
         {
-            ScopedStopwatch s(*this, "NMD-ED 500x1000 r=20 t=5");
-            d.decompose(Deconvolver::KLDivergence, 100, 0.0, this);
+            ScopedStopwatch s(*this, bnStr.str());
+            d.factorizeNMDBreg(100, 0.0, this, 2);
+        }
+	}
+
+	// NMD, KL divergence
+	// 500x1000 Gaussian random matrix, 20 components, 5 spectra
+	// fixed number of iterations (100)
+	{
+		Deconvolver d(v, 10, t);
+        stringstream bnStr;
+        bnStr << "NMD-KL " << v.rows() << "x" << v.cols() 
+              << " r=" << r << " t=" << t;
+        logger().information(bnStr.str());
+        {
+            ScopedStopwatch s(*this, bnStr.str());
+            d.factorizeNMDBreg(100, 0.0, this, 1);
+        }
+	}
+
+	// NMD, IS divergence
+	// 500x1000 Gaussian random matrix, 20 components, 5 spectra
+	// fixed number of iterations (100)
+	{
+		Deconvolver d(v, 10, t);
+        stringstream bnStr;
+        bnStr << "NMD-IS " << v.rows() << "x" << v.cols() 
+              << " r=" << r << " t=" << t;
+        logger().information(bnStr.str());
+        {
+            ScopedStopwatch s(*this, bnStr.str());
+            d.factorizeNMDBreg(100, 0.0, this, 0);
         }
 	}
 }

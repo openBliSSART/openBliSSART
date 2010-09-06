@@ -31,6 +31,9 @@
 #include <blissart/ProgressObserver.h>
 
 
+namespace Poco { namespace Util { class OptionSet; } }
+
+
 namespace benchmark {
 
 
@@ -41,16 +44,48 @@ namespace benchmark {
 class NMDBenchmark : public Benchmark, blissart::ProgressObserver
 {
 public:
+    /**
+     * Constructor, sets default options.
+     */
+    NMDBenchmark();
+
+
+    /**
+     * Implementation of Benchmark interface.
+     */
 	void run();
 
 
+    /**
+     * Implementation of ProgressObserver interface.
+     */
 	virtual void progressChanged(float progress);
 
 
+    /**
+     * Implementation of Benchmark interface.
+     */
     inline const char *name() const 
 	{ 
 		return "NMDBenchmark"; 
 	}
+
+
+    /**
+     * Overrides Benchmark method.
+     */
+    virtual void setOptions(const Benchmark::OptionsMap& optionsMap);
+
+
+    /**
+     * Overrides Benchmark method.
+     */
+    static void addOptions(Poco::Util::OptionSet& options);
+
+
+private:
+    unsigned int _nComp;
+    std::string  _cf;
 };
 
 
