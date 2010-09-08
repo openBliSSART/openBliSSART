@@ -77,7 +77,7 @@ bool NMDTest::performTest()
         }
     }
 
-    /*{
+    {
         cout << "Performing NMD using KL divergence, with normalization" 
              << endl;
 
@@ -111,11 +111,12 @@ bool NMDTest::performTest()
             cout << "Error: Expected normalized H, norm is " << hfn << endl;
             return false;
         }
-    }*/
+    }
 
     {
         srand (1);
-        cout << "Performing NMD using Euclidean distance" << endl;
+        cout << "Performing NMD using Euclidean distance (default algorithm)" 
+             << endl;
 
         nmf::Deconvolver d(x, 10, t);
         d.factorizeNMDED(5000, 1e-5, 0);
@@ -134,16 +135,17 @@ bool NMDTest::performTest()
         Matrix l(d.getApprox());
         cout << l << endl;
         
-        /*for (unsigned int i = 0; i < x.rows(); i++) {
+        for (unsigned int i = 0; i < x.rows(); i++) {
             for (unsigned int j = 0; j < x.cols(); j++) {
                 if (!epsilonCheck(x(i,j), l(i,j), 5e-2))
                     return false;
             }
-        }*/
+        }
     }
     {
         srand (1);
-        cout << "Performing NMD using Euclidean distance" << endl;
+        cout << "Performing NMD using Euclidean distance (Bregman algorithm)" 
+             << endl;
 
         nmf::Deconvolver d(x, 10, t);
         d.factorizeNMDBreg(5000, 1e-5, 0, 2);
@@ -162,12 +164,12 @@ bool NMDTest::performTest()
         Matrix l(d.getApprox());
         cout << l << endl;
         
-        /*for (unsigned int i = 0; i < x.rows(); i++) {
+        for (unsigned int i = 0; i < x.rows(); i++) {
             for (unsigned int j = 0; j < x.cols(); j++) {
                 if (!epsilonCheck(x(i,j), l(i,j), 5e-2))
                     return false;
             }
-        }*/
+        }
     }
 
     {
@@ -197,6 +199,37 @@ bool NMDTest::performTest()
             }
         }
     }
+
+    {
+        const double beta = 0.5;
+        cout << "Performing NMD using generalized Bregman divergence "
+             << "(beta = " << beta << ")" << endl;
+
+        nmf::Deconvolver d(x, 10, t);
+        d.factorizeNMDBreg(5000, 1e-5, 0, beta);
+        cout << "# steps: " << d.numSteps() << endl;
+        cout << "absolute error: " << d.absoluteError() << endl;
+        cout << "relative error: " << d.relativeError() << endl;
+        cout << endl;
+        for (unsigned int i = 0; i < t; ++i) {
+            cout << "W[" << i << "] = " << endl;
+            cout << d.getW(i) << endl;
+        }
+        cout << "H = " << endl;
+        cout << d.getH() << endl;
+        cout << "Approx = " << endl;
+        d.computeApprox();
+        Matrix l(d.getApprox());
+        cout << l << endl;
+        
+        for (unsigned int i = 0; i < x.rows(); i++) {
+            for (unsigned int j = 0; j < x.cols(); j++) {
+                if (!epsilonCheck(x(i,j), l(i,j), 1e-2))
+                    return false;
+            }
+        }
+    }
+
     return true;
 }
 
