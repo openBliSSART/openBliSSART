@@ -173,6 +173,7 @@ bool NMDTest::performTest()
     }
 
     {
+        srand(1);
         cout << "Performing NMD using Itakura-Saito divergence" << endl;
 
         nmf::Deconvolver d(x, 10, t);
@@ -201,6 +202,7 @@ bool NMDTest::performTest()
     }
 
     {
+        srand(1);
         const double beta = 0.5;
         cout << "Performing NMD using generalized Bregman divergence "
              << "(beta = " << beta << ")" << endl;
@@ -228,6 +230,76 @@ bool NMDTest::performTest()
                     return false;
             }
         }
+    }
+
+    {
+        srand(1);
+        const double sparsity = 0.25;
+
+        cout << "Performing sparse NMD using KL divergence" << endl;
+
+        nmf::Deconvolver d(x, 10, t);
+        //d.decompose(nmf::Deconvolver::KLDivergence, 5000, 1e-5);
+        Matrix s(10, x.cols(), generators::unity);
+        s.apply(Matrix::mul, sparsity);
+        d.setSparsity(s);
+        d.factorizeNMDBreg(5000, 1e-5, 1, true, false);
+        cout << "# steps: " << d.numSteps() << endl;
+        cout << "absolute error: " << d.absoluteError() << endl;
+        cout << "relative error: " << d.relativeError() << endl;
+        cout << endl;
+        for (unsigned int i = 0; i < t; ++i) {
+            cout << "W[" << i << "] = " << endl;
+            cout << d.getW(i) << endl;
+        }
+        cout << "H = " << endl;
+        cout << d.getH() << endl;
+        cout << "Approx = " << endl;
+        d.computeApprox();
+        Matrix l(d.getApprox());
+        cout << l << endl;
+        
+        for (unsigned int i = 0; i < x.rows(); i++) {
+            for (unsigned int j = 0; j < x.cols(); j++) {
+                if (!epsilonCheck(x(i,j), l(i,j), 1e-2))
+                    return false;
+            }
+        }
+    }
+
+    {
+        srand(1);
+        const double continuity = 0.1;
+
+        cout << "Performing continuous NMD using KL divergence" << endl;
+
+        nmf::Deconvolver d(x, 10, t);
+        //d.decompose(nmf::Deconvolver::KLDivergence, 5000, 1e-5);
+        Matrix s(10, x.cols(), generators::unity);
+        s.apply(Matrix::mul, continuity);
+        d.setContinuity(s);
+        d.factorizeNMDBreg(100, 0.0, 1.0, false, true);
+        cout << "# steps: " << d.numSteps() << endl;
+        cout << "absolute error: " << d.absoluteError() << endl;
+        cout << "relative error: " << d.relativeError() << endl;
+        cout << endl;
+        for (unsigned int i = 0; i < t; ++i) {
+            cout << "W[" << i << "] = " << endl;
+            cout << d.getW(i) << endl;
+        }
+        cout << "H = " << endl;
+        cout << d.getH() << endl;
+        cout << "Approx = " << endl;
+        d.computeApprox();
+        Matrix l(d.getApprox());
+        cout << l << endl;
+        
+        /*for (unsigned int i = 0; i < x.rows(); i++) {
+            for (unsigned int j = 0; j < x.cols(); j++) {
+                if (!epsilonCheck(x(i,j), l(i,j), 1e-2))
+                    return false;
+            }
+        }*/
     }
 
     return true;

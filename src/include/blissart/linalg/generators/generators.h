@@ -107,6 +107,15 @@ inline double zero(unsigned int, unsigned int)
 
 
 /**
+ * Generates an all-one matrix.
+ */
+inline double unity(unsigned int, unsigned int)
+{
+    return 1.0;
+}
+
+
+/**
  * @}
  */
 
