@@ -59,7 +59,7 @@ public:
      * @param  isVolatile       store the resulting components iff true
      */
     NMDTask(const std::string &fileName,
-            nmf::Deconvolver::NMFCostFunction costFunction, 
+            nmf::Deconvolver::NMDCostFunction costFunction, 
             int nrOfComponents, int nrOfSpectra,
             int maxIterations, double epsilon, bool isVolatile);
 
@@ -169,7 +169,7 @@ private:
 
 
     nmf::Deconvolver*                      _deconvolver;
-    nmf::Deconvolver::NMFCostFunction      _cf;
+    nmf::Deconvolver::NMDCostFunction      _cf;
     double                                 _sparsity;
     double                                 _continuity;
     nmf::Deconvolver::MatrixNormalization  _normalizeMatrices;

@@ -226,8 +226,8 @@ protected:
         options.addOption(
             Option("cost-function", "f",
                    "NMF cost function. Must be one of the following: "
-                   "\"ed\", \"kl\", \"eds\", \"kls\", \"klc\", \"is\", "
-                   "or \"edsn\". "
+                   "\"ed\", \"kl\", \"is\", "
+                   "or \"edn\". "
                    "Default is \"kl\".",
                    false, "<name>", true)
             .validator(new RegExpValidator("eds?|kl(c|s)?|edsn|is")));
@@ -392,17 +392,8 @@ protected:
             else if (value == "kl") {
                 _nmfCostFunction = nmf::Deconvolver::KLDivergence;
             }
-            else if (value == "eds") {
-                _nmfCostFunction = nmf::Deconvolver::EuclideanDistanceSparse;
-            }
-            else if (value == "kls") {
-                _nmfCostFunction = nmf::Deconvolver::KLDivergenceSparse;
-            }
-            else if (value == "klc") {
-                _nmfCostFunction = nmf::Deconvolver::KLDivergenceContinuous;
-            }
-            else if (value == "edsn") {
-                _nmfCostFunction = nmf::Deconvolver::EuclideanDistanceSparseNormalized;
+            else if (value == "edn") {
+                _nmfCostFunction = nmf::Deconvolver::NormalizedEuclideanDistance;
             }
             else if (value == "is") {
                 _nmfCostFunction = nmf::Deconvolver::ISDivergence;
@@ -600,13 +591,10 @@ protected:
 
             if (_separationMethod == SeparationTask::NMD) {
                 cout << setw(20) << "# of spectra: " << _nrSpectra << endl;
-                if (_nmfCostFunction == nmf::Deconvolver::EuclideanDistanceSparse ||
-                    _nmfCostFunction == nmf::Deconvolver::KLDivergenceSparse ||
-                    _nmfCostFunction == nmf::Deconvolver::EuclideanDistanceSparseNormalized)
-                {
+                if (_nmdSparsity > 0) {
                     cout << setw(20) << "sparsity: " << _nmdSparsity << endl;
                 }
-                if (_nmfCostFunction == nmf::Deconvolver::KLDivergenceContinuous) {
+                if (_nmdContinuity > 0) {
                     cout << setw(20) << "continuity: " << _nmdContinuity << endl;
                 }
                 cout << setw(20) << "normalize matrices: "
@@ -802,7 +790,7 @@ private:
     double             _nmdSparsity;
     double             _nmdContinuity;
     nmf::Deconvolver::MatrixNormalization _nmdNormalize;
-    nmf::Deconvolver::NMFCostFunction _nmfCostFunction;
+    nmf::Deconvolver::NMDCostFunction _nmfCostFunction;
     int                _nrComponents;
     int                _nrSpectra;
     vector<int>        _initObjectIDs;

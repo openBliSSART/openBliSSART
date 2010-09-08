@@ -46,7 +46,7 @@ namespace blissart {
 
 
 NMDTask::NMDTask(const std::string &fileName,
-                 nmf::Deconvolver::NMFCostFunction cf,
+                 nmf::Deconvolver::NMDCostFunction cf,
                  int nrOfComponents, int nrOfSpectra,
                  int maxIterations, double epsilon, bool isVolatile) :
     SeparationTask(
@@ -140,7 +140,8 @@ void NMDTask::performSeparation()
 
     logger().debug(nameAndTaskID() + " factorizing.");
     _deconvolver->normalizeMatrices(_normalizeMatrices);
-    _deconvolver->decompose(_cf, maxIterations(), epsilon(), this);
+    _deconvolver->decompose(_cf, maxIterations(), epsilon(), 
+                            getSparsity() > 0.0, getContinuity() > 0.0, this);
     _deconvolver->normalizeMatrices(_normalizeMatrices);
 }
 

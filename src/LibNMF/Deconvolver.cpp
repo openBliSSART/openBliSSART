@@ -65,7 +65,7 @@ namespace nmf {
 #define DIVISOR_FLOOR 1e-9
 
 
-const char* Deconvolver::costFunctionName(Deconvolver::NMFCostFunction cf)
+const char* Deconvolver::costFunctionName(Deconvolver::NMDCostFunction cf)
 {
     if (cf == Deconvolver::EuclideanDistance) 
         return "Squared Euclidean distance";
@@ -73,14 +73,10 @@ const char* Deconvolver::costFunctionName(Deconvolver::NMFCostFunction cf)
         return "Extended KL divergence";
     if (cf == Deconvolver::ISDivergence)
         return "Itakura-Saito divergence";
-    if (cf == Deconvolver::EuclideanDistanceSparse)
-        return "Squared Euclidean distance + sparseness constraint";
-    if (cf == Deconvolver::KLDivergenceSparse)
-        return "Extended KL divergence + sparseness constraint";
-    if (cf == Deconvolver::EuclideanDistanceSparseNormalized)
-        return "Squared ED (normalized basis) + sparseness";
-    if (cf == Deconvolver::KLDivergenceContinuous)
-        return "Extended KL divergence + continuity constraint";
+    if (cf == Deconvolver::NormalizedEuclideanDistance)
+        return "Squared ED (normalized basis)";
+    if (cf == Deconvolver::BetaDivergence)
+        return "Bregman (beta) divergence";
     // should not occur ...
     return "Unknown";
 }
@@ -173,37 +169,35 @@ void Deconvolver::setH(const Matrix& h)
 }
 
 
-void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
+void Deconvolver::decompose(Deconvolver::NMDCostFunction cf,
                             unsigned int maxSteps, double eps,
+                            bool sparse, bool continuous,
                             ProgressObserver *observer)
 {
     // Select an optimal algorithm according to the given parameters.
     if (cf == EuclideanDistance) {
-        if (_t == 1 && !isOvercomplete()) {
+        if (_t == 1 && 
+            (!isOvercomplete() || _alg == NMFEDIncomplete) &&
+            !sparse && !continuous) 
+        {
             factorizeNMFEDIncomplete(maxSteps, eps, observer);
         }
         else {
-            factorizeNMDBreg(maxSteps, eps, 2, false, false, observer);
+            factorizeNMDBreg(maxSteps, eps, 2, sparse, continuous, observer);
         }
     }
     else if (cf == KLDivergence) {
-        factorizeNMDBreg(maxSteps, eps, 1, false, false, observer);
+        factorizeNMDBreg(maxSteps, eps, 1, sparse, continuous, observer);
     }
     else if (cf == ISDivergence) {
-        factorizeNMDBreg(maxSteps, eps, 0, false, false, observer);
+        factorizeNMDBreg(maxSteps, eps, 0, sparse, continuous, observer);
     }
-    else if (cf == EuclideanDistanceSparse) {
-        factorizeNMDBreg(maxSteps, eps, 2, true, false, observer);
-    }
-    else if (cf == KLDivergenceSparse) {
-        factorizeNMDBreg(maxSteps, eps, 1, true, false, observer);
-    }
-    else if (cf == KLDivergenceContinuous) {
-        factorizeNMDBreg(maxSteps, eps, 1, false, true, observer);
-    }
-    else if (cf == EuclideanDistanceSparseNormalized) {
+    else if (cf == NormalizedEuclideanDistance) {
         if (_t > 1) {
             throw std::runtime_error("NMD with normalized basis not implemented");
+        }
+        if (continuous) {
+            throw std::runtime_error("Continuous NMF with normalized basis not implemented");
         }
         factorizeNMFEDSparseNorm(maxSteps, eps, observer);
     }
@@ -747,6 +741,8 @@ void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
 void Deconvolver::factorizeNMFEDIncomplete(unsigned int maxSteps, double eps,
                                            ProgressObserver *observer)
 {
+    // TODO: sparsity & continuity here
+
     assert(_t == 1);
 
     // helper variables

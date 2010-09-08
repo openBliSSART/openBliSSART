@@ -58,29 +58,27 @@ public:
         EuclideanDistance,
         KLDivergence,
         ISDivergence,
-        EuclideanDistanceSparse,
-        KLDivergenceSparse,
-        KLDivergenceContinuous,
-        EuclideanDistanceSparseNormalized
-    } NMFCostFunction;
+        BetaDivergence,
+        NormalizedEuclideanDistance
+    } NMDCostFunction;
 
 
     /**
-     * Type of algorithm to use for NMF (not necessarily used).
+     * The algorithm to use.
      */
     typedef enum
     {
         Auto,
-        Incomplete,
+        NMFEDIncomplete,
         Overcomplete
-    } NMFAlgorithm;
+    } NMDAlgorithm;
 
 
     /**
      * Returns a textual description for the given element of the 
-     * NMFCostFunction enumeration.
+     * NMDCostFunction enumeration.
      */
-    static const char* costFunctionName(NMFCostFunction cf);
+    static const char* costFunctionName(NMDCostFunction cf);
 
 
     /**
@@ -112,12 +110,12 @@ public:
     /**
      * TODO
      */
-    inline void setAlgorithm(NMFAlgorithm a);
+    inline void setAlgorithm(NMDAlgorithm a);
 
     /**
      * TODO
      */
-    inline NMFAlgorithm getAlgorithm() const;
+    inline NMDAlgorithm getAlgorithm() const;
 
     /**
      * TODO
@@ -224,7 +222,7 @@ public:
     /**
      * Performs decomposition according to the given cost function.
      * The appropriate algorithm is chosen automatically.
-     * @param cf                the NMFCostFunction to minimize
+     * @param cf                the NMDCostFunction to minimize
      * @param maxSteps          maximum number of iteration steps
      * @param eps               if eps > 0.0, convergence of the approximation
      *                          is checked and once it is reached, iteration 
@@ -234,7 +232,8 @@ public:
      * @param observer          a ProgressObserver that is notified every 25
      *                          iteration steps
      */
-    void decompose(NMFCostFunction cf, unsigned int maxSteps, double eps,
+    void decompose(NMDCostFunction cf, unsigned int maxSteps, double eps,
+                   bool sparse = false, bool continuous = false,
                    ProgressObserver *observer = 0);
 
     /**
@@ -359,7 +358,7 @@ protected:
 
     inline bool useOvercompleteAlg() const;
 
-    NMFAlgorithm                    _alg;
+    NMDAlgorithm                    _alg;
     const blissart::linalg::Matrix& _v;
     blissart::linalg::Matrix        _approx;
     blissart::linalg::Matrix*       _oldApprox;
@@ -402,13 +401,13 @@ unsigned int Deconvolver::nrOfComponents() const
 }
 
 
-inline void Deconvolver::setAlgorithm(Deconvolver::NMFAlgorithm a)
+inline void Deconvolver::setAlgorithm(Deconvolver::NMDAlgorithm a)
 {
     _alg = a;
 }
 
 
-inline Deconvolver::NMFAlgorithm Deconvolver::getAlgorithm() const
+inline Deconvolver::NMDAlgorithm Deconvolver::getAlgorithm() const
 {
     return _alg;
 }
