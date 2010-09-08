@@ -448,20 +448,7 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
                     0, 0, 0, p, 0, 0);
                 ensureNonnegativity(hUpdateDenom, DIVISOR_FLOOR);
             }
-            /*if (beta == 1) {
-                for (unsigned int j = 0; j < _h.cols() - p; ++j) {
-                    for (unsigned int i = 0; i < _h.rows(); ++i) {
-                        hUpdate(i, j) += (hUpdateNum(i, j) / (*wpColSums)(i));
-                    }
-                }
-            }
-            else {
-                for (unsigned int j = 0; j < _h.cols() - p; ++j) {
-                    for (unsigned int i = 0; i < _h.rows(); ++i) {
-                        hUpdate(i, j) += (hUpdateNum(i, j) / hUpdateDenom(i, j));
-                    }
-                }
-            }*/
+
             for (unsigned int j = 0; j < _h.cols() - p; ++j) {
                 for (unsigned int i = 0; i < _h.rows(); ++i) {
                     double num   = hUpdateNum(i, j);
@@ -470,6 +457,7 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
                                    hUpdateDenom(i, j);
                     // add sparsity and continuity terms to numerator
                     // and denominator of multiplicative update
+                    // XXX: we might precompute the additive terms...
                     if (sparse) {
                         num   += _s(i, j) * _h(i, j) * csminus->at(i);
                         denom += _s(i, j) * csplus->at(i);
@@ -487,7 +475,7 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
         }
 
         // Apply average update to H
-        // TODO: Weighting with _t reduced for last cols --> option?!
+        // XXX: Weighting with _t reduced for last cols --> option instead of #define?
         double updateNorm = _t;
         for (unsigned int j = 0; j <= _h.cols() - _t; ++j) {
             for (unsigned int i = 0; i < _h.rows(); ++i) {

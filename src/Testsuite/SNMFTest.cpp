@@ -41,7 +41,8 @@ namespace Testing {
 
 bool SNMFTest::performTest()
 {
-    srand((unsigned int) time(NULL));
+    srand(1);
+    //srand((unsigned int) time(NULL));
 
     cout << "Creating 10x5 random matrix:" << endl;
     Matrix x(10, 5, nmf::gaussianRandomGenerator);
@@ -125,7 +126,8 @@ bool SNMFTest::performTest()
             }
             d.setSparsity(s);
 
-            d.decompose(nmf::Deconvolver::KLDivergenceSparse, 100, 0.0);
+            d.factorizeNMDBreg(100, 0.0, 1, true, false);
+            //d.decompose(nmf::Deconvolver::KLDivergenceSparse, 100, 0.0);
             d.computeApprox();
             cout << "absolute error: " << d.absoluteError() << endl;
             cout << "relative error: " << d.relativeError() << endl;
@@ -166,7 +168,8 @@ bool SNMFTest::performTest()
             }
             d.setSparsity(s);
 
-            d.decompose(nmf::Deconvolver::EuclideanDistanceSparse, 1000, 1e-5);
+            d.factorizeNMDBreg(1000, 1e-5, 2, true, false);
+            //d.decompose(nmf::Deconvolver::EuclideanDistanceSparse, 1000, 1e-5);
             d.computeApprox();
             cout << "absolute error: " << d.absoluteError() << endl;
             cout << "relative error: " << d.relativeError() << endl;

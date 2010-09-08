@@ -118,7 +118,7 @@ bool CNMFTest::performTest()
     };
     Matrix hIter(10, 5, h100Data);
 
-    // This sanity check tests whether a sparse NMF with the sparseness
+    // This sanity check tests whether a continuous NMF with the continuity
     // weight set to zero equals normal NMF. This test is necessary since
     // implementation might select different algorithms for both tasks.
     // In this test, of course, the same initialization has to be chosen
@@ -199,6 +199,7 @@ bool CNMFTest::performTest()
     }
 
     {
+        srand(1);
         double continuity = 1;
 
         cout << endl << "---" << endl;
@@ -243,46 +244,42 @@ bool CNMFTest::performTest()
         }
     }
 
-    /*{
-        const double sparsity[] = { 0, 0.1, 0.25 };
+    {
+        double continuity = 0.01;
 
-        for (unsigned int si = 0; si < 3; ++si) {
+        cout << endl << "---" << endl;
+        cout << "Performing Sparse Continuous NMF using ED" << endl;
+        cout << "Sparsity and continuity parameter set to " << continuity << endl;
 
-            cout << "Performing Sparse NMF using Euclidean distance" << endl;
-            cout << "Sparsity parameter set to " << sparsity[si] << endl;
-
-            nmf::Deconvolver d(x, 10, 1);
-            Matrix s(10, 5);
-            for (unsigned int j = 0; j < s.cols(); ++j) {
-                for (unsigned int i = 0; i < s.rows(); ++i) {
-                    s(i, j) = sparsity[si];
-                }
+        nmf::Deconvolver d(x, 10, 1);
+        d.setW(0, wInit);
+        d.setH(hInit);
+        Matrix c(10, 5);
+        for (unsigned int j = 0; j < c.cols(); ++j) {
+            for (unsigned int i = 0; i < c.rows(); ++i) {
+                c(i, j) = continuity;
             }
-            d.setS(s);
+        }
+        d.setContinuity(c);
+        d.setSparsity(c);
 
-            d.decompose(nmf::Deconvolver::EuclideanDistanceSparse, 1000, 1e-5);
-            d.computeApprox();
-            cout << "absolute error: " << d.absoluteError() << endl;
-            cout << "relative error: " << d.relativeError() << endl;
-            cout << endl;
+        d.factorizeNMDBreg(1000, 1e-5, 2, true, true);
+        d.computeApprox();
+        cout << "absolute error: " << d.absoluteError() << endl;
+        cout << "relative error: " << d.relativeError() << endl;
+        cout << endl;
 
-            cout << "W = " << endl;
-            cout << d.getW(0) << endl;
-            cout << "H = " << endl;
-            cout << d.getH() << endl;
-            cout << "Approx = " << endl;
-            Matrix l(d.getApprox());
-            cout << l << endl;
-            
-            for (unsigned int i = 0; i < x.rows(); i++) {
-                for (unsigned int j = 0; j < x.cols(); j++) {
-                    if (!epsilonCheck(x(i,j), l(i,j), 5e-2))
-                        return false;
-                }
-            }
-
-        } // for (sparsity param)
-    }*/
+        cout << "W = " << endl;
+        cout << d.getW(0) << endl;
+        cout << "H = " << endl;
+        cout << d.getH() << endl;
+        cout << "WH = " << endl;
+        Matrix l(d.getApprox());
+        cout << l << endl;
+        
+        // Reconstruction seems not to be feasible for these matrix
+        // dimensions, don't check anything here.
+    }
 
     return true;
 }
