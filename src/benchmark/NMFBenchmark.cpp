@@ -96,6 +96,18 @@ void NMFBenchmark::run()
             }
         }
 
+        for (int i = 0; i < nnc; ++i) {
+            Deconvolver d(v, nc[i], 1);
+            stringstream bnStr;
+            bnStr << "NMF-ED(Breg) " << v.rows() << "x" << v.cols() 
+                  << " r=" << nc[i];
+            logger().information(bnStr.str());
+            {
+                ScopedStopwatch s(*this, bnStr.str());
+                // fixed number of iterations (100)
+                d.factorizeNMDBreg(100, 0.0, 2, false, false, this);
+            }
+        }
         // NMF, Euclidean distance, optimized for incomplete fact.
         for (int i = 0; i < nnc; ++i) {
             Deconvolver d(v, nc[i], 1);

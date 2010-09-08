@@ -138,6 +138,7 @@ bool CNMFTest::performTest()
         Matrix wh1(d.getApprox());
         d.setW(0, w);
         d.setH(h);
+        //d.factorizeNMDKL(1, 0.0);
         d.decompose(Deconvolver::KLDivergence, 1, 0.0);
         d.computeApprox();
         Matrix wh2(d.getApprox());
@@ -171,6 +172,51 @@ bool CNMFTest::performTest()
         d.setContinuity(c);
 
         d.decompose(nmf::Deconvolver::KLDivergenceContinuous, 1, 0.0);
+        d.computeApprox();
+        cout << "absolute error: " << d.absoluteError() << endl;
+        cout << "relative error: " << d.relativeError() << endl;
+        cout << endl;
+
+        cout << "W = " << endl;
+        cout << d.getW(0) << endl;
+        cout << "H = " << endl;
+        cout << d.getH() << endl;
+        cout << "WH = " << endl;
+        Matrix l(d.getApprox());
+        cout << l << endl;
+        
+        // Reconstruction seems not to be feasible for these matrix
+        // dimensions, hence just check numerical soundness.
+        if (!epsilonCheck(d.getW(0), wIter, 1e-3)) {
+            cout << "Error in W" << endl;
+            return false;
+        }
+
+        if (!epsilonCheck(d.getH(), hIter, 1e-3)) {
+            cout << "Error in H" << endl;
+            return false;
+        }
+    }
+
+    {
+        double continuity = 1;
+
+        cout << endl << "---" << endl;
+        cout << "Performing Continuous NMF using KL divergence (Bregman algo)" << endl;
+        cout << "Continuity parameter set to " << continuity << endl;
+
+        nmf::Deconvolver d(x, 10, 1);
+        d.setW(0, wInit);
+        d.setH(hInit);
+        Matrix c(10, 5);
+        for (unsigned int j = 0; j < c.cols(); ++j) {
+            for (unsigned int i = 0; i < c.rows(); ++i) {
+                c(i, j) = continuity;
+            }
+        }
+        d.setContinuity(c);
+
+        d.factorizeNMDBreg(1, 0.0, 1, false, true);
         d.computeApprox();
         cout << "absolute error: " << d.absoluteError() << endl;
         cout << "relative error: " << d.relativeError() << endl;

@@ -117,11 +117,21 @@ public:
 
 
     /**
-     * Returns the Vector entry at the specified position.
+     * Returns a reference to the Vector entry at the specified position.
+     * The entry cannot be modified by the caller.
      * @param   i           the position
      * @return              the vector element at position i.
      */
-    inline double at(unsigned int i) const;
+    inline const double& at(unsigned int i) const;
+
+
+    /**
+     * Returns a reference to the Vector entry at the specified position.
+     * The entry can be modified by the caller.
+     * @param   i           the position
+     * @return              the vector element at position i.
+     */
+    inline double& at(unsigned int i);
 
 
     /**
@@ -393,7 +403,14 @@ inline std::ostream& operator << (std::ostream& os, const Vector& v)
 // Inlines
 
 
-double Vector::at(unsigned int i) const
+const double& Vector::at(unsigned int i) const
+{
+    debug_assert(i < _dim);
+    return _data[i];
+}
+
+
+double& Vector::at(unsigned int i)
 {
     debug_assert(i < _dim);
     return _data[i];

@@ -267,8 +267,9 @@ public:
     /**
      * TODO
      */
-    void factorizeNMDBreg(unsigned int maxSteps, double eps,
-                          ProgressObserver *observer = 0, double beta = 1);
+    void factorizeNMDBreg(unsigned int maxSteps, double eps, double beta,
+                          bool sparse = false, bool continuous = false,
+                          ProgressObserver *observer = 0);
 
     /** 
      * Performs NMD minimizing squared Euclidean distance,
@@ -279,7 +280,6 @@ public:
     void factorizeNMDED(unsigned int maxSteps, double eps,
                         ProgressObserver *observer = 0);
 
-protected:
     /**
      * Performs NMD using a generalized Kulback-Leibler divergence,
      * using Smaragdis' algorithm (2004).
@@ -297,16 +297,6 @@ protected:
     void factorizeNMFEDSparse(unsigned int maxSteps, double eps,
                               ProgressObserver *observer = 0);
 
-    // The W update (common for factorizeNMFED and factorizeEDSparse).
-    void factorizeNMFEDWUpdate(blissart::linalg::Matrix& w);
-
-    // Calculate the update matrices (numerator/denominator) for the H update
-    // (common for factorizeNMFED and factorizeNMFEDSparse).
-    // Note that the actual update differs between sparse and non-sparse
-    // versions.
-    void calculateNMFEDHUpdate(blissart::linalg::Matrix& num,
-                               blissart::linalg::Matrix& denom);
-
     // Sparse NMF according to Virtanen 2007, measuring reconstruction error
     // using extended KL divergence.
     void factorizeNMFKLSparse(unsigned int maxSteps, double eps,
@@ -321,6 +311,17 @@ protected:
     // basis vectors (Eggert and Körner 2004).
     void factorizeNMFEDSparseNorm(unsigned int maxSteps, double eps,
                                   ProgressObserver *observer = 0);
+
+protected:
+    // The W update (common for factorizeNMFED and factorizeEDSparse).
+    void factorizeNMFEDWUpdate(blissart::linalg::Matrix& w);
+
+    // Calculate the update matrices (numerator/denominator) for the H update
+    // (common for factorizeNMFED and factorizeNMFEDSparse).
+    // Note that the actual update differs between sparse and non-sparse
+    // versions.
+    void calculateNMFEDHUpdate(blissart::linalg::Matrix& num,
+                               blissart::linalg::Matrix& denom);
 
     // Checks convergence of the approximation. If recomputeApprox is set,
     // the new approximation is computed first (maybe in the iteration itself

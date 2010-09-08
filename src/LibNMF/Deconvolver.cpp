@@ -28,6 +28,7 @@
 #include <blissart/linalg/generators/generators.h>
 #include <blissart/ProgressObserver.h>
 #include <blissart/linalg/RowVector.h>
+#include <blissart/linalg/ColVector.h>
 
 #include <stdexcept>
 #include <sstream>
@@ -182,16 +183,14 @@ void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
             factorizeNMFED(maxSteps, eps, observer);
         }
         else {
-            factorizeNMDED(maxSteps, eps, observer);
-            //factorizeNMDBreg(maxSteps, eps, observer, 2);
+            factorizeNMDBreg(maxSteps, eps, 2, false, false, observer);
         }
     }
     else if (cf == KLDivergence) {
-        //factorizeNMDKL(maxSteps, eps, observer);
-        factorizeNMDBreg(maxSteps, eps, observer, 1);
+        factorizeNMDBreg(maxSteps, eps, 1, false, false, observer);
     }
     else if (cf == ISDivergence) {
-        factorizeNMDBreg(maxSteps, eps, observer, 0);
+        factorizeNMDBreg(maxSteps, eps, 0, false, false, observer);
     }
     else if (cf == EuclideanDistanceSparse) {
         if (_t > 1) {
@@ -234,8 +233,9 @@ void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
 }
 
 
-void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
-                                   ProgressObserver *observer, double beta)
+void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps, 
+                                   double beta, bool sparse, bool continuous,
+                                   ProgressObserver *observer)
 {
     Matrix* approxInv = 0;
     Matrix* vOverApprox = 0; // "V Over Approx" from NMD-KL
@@ -245,6 +245,21 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
     Matrix hUpdateDenom(_h.rows(), _h.cols());
     Matrix wUpdateNum(_v.rows(), _h.rows());
     Matrix wUpdateDenom(_v.rows(), _h.rows());
+
+    // for sparsity / continuity
+    ColVector *csplus = 0, *csminus  = 0;
+    ColVector *ctplus = 0, *ctminus1 = 0, *ctminus2 = 0;
+    Matrix    *oldH   = 0;
+    if (sparse) {
+        csplus  = new ColVector(_h.rows());
+        csminus = new ColVector(_h.rows());
+    }
+    if (continuous) {
+        ctplus   = new ColVector(_h.rows());
+        ctminus1 = new ColVector(_h.rows());
+        ctminus2 = new ColVector(_h.rows());
+        oldH     = new Matrix   (_h.rows(), _h.cols());
+    }
 
     if (beta == 2) {
         // for ED, exploit equalities by redirecting these pointers
@@ -298,7 +313,6 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
                 // W Update, Denominator (for KL this is a all-one matrix)
                 // for ED (beta = 2) the original approximation is used
                 if (beta != 1) {
-                    //cout << "p = " << p << "; approxInv = " << approxInv << endl;
                     approxInv->multWithMatrix(_h, &wUpdateDenom,
                         false, true,
                         _v.rows(), _v.cols() - p, _h.rows(),
@@ -335,8 +349,6 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
                     for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
                         if (!_wColConstant[j]) {
                             for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
-                                //cout << "update factor for w[" << p << "](" << i << "," << j << ") : " <<
-                                //     wUpdateNum(i, j) << "/" << wUpdateDenom(i, j) << endl;
                                 _w[p]->at(i, j) *= (wUpdateNum(i, j) / wUpdateDenom(i, j));
                             }
                         }
@@ -372,6 +384,43 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
 
         // H Update
         hUpdate.zero();
+        if (continuous) {
+            *oldH = _h;
+        }
+
+        // Compute sparsity term
+        // XXX: depends on H shifted, not H???!
+        if (sparse) {
+            double sqrtT = sqrt(_h.cols());
+            double hRowSumSq, hRowLength;
+            for (unsigned int i = 0; i < _h.rows(); ++i) {
+                hRowSumSq = Matrix::dotRowRow(_h, i, _h, i);
+                hRowLength = sqrt(hRowSumSq);
+                csplus->at(i)   = sqrtT / hRowLength;
+                csminus->at(i)  = sqrtT * _h.rowSum(i) / (hRowSumSq * hRowLength);
+                //wColSums->at(i) = w.colSum(i);
+            }
+        }
+
+        // Compute continuity term
+        if (continuous) {
+            double hRowSumSq, hDeltaSumSq;
+            for (unsigned int i = 0; i < _h.rows(); ++i) {
+                hRowSumSq = Matrix::dotRowRow(_h, i, _h, i);
+                hDeltaSumSq = 0.0;
+                for (unsigned int j = 1; j < _h.cols(); ++j) {
+                    double hDelta = _h(i, j) - _h(i, j-1);
+                    hDeltaSumSq += hDelta * hDelta;
+                }
+
+                (*ctplus)(i) = 4 * (double) _h.cols() / hRowSumSq;
+                (*ctminus1)(i) = 2 * (double) _h.cols() / hRowSumSq;
+                (*ctminus2)(i) = 2 * (double) _h.cols() * hDeltaSumSq / 
+                                              (hRowSumSq * hRowSumSq);
+            }
+        }
+
+        // Compute H update for each W[p] and average later
         for (unsigned int p = 0; p < _t; ++p) {
             if (beta == 1) {
                 // Precalculation of column-sums of W_t
@@ -399,7 +448,7 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
                     0, 0, 0, p, 0, 0);
                 ensureNonnegativity(hUpdateDenom, DIVISOR_FLOOR);
             }
-            if (beta == 1) {
+            /*if (beta == 1) {
                 for (unsigned int j = 0; j < _h.cols() - p; ++j) {
                     for (unsigned int i = 0; i < _h.rows(); ++i) {
                         hUpdate(i, j) += (hUpdateNum(i, j) / (*wpColSums)(i));
@@ -412,25 +461,33 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
                         hUpdate(i, j) += (hUpdateNum(i, j) / hUpdateDenom(i, j));
                     }
                 }
+            }*/
+            for (unsigned int j = 0; j < _h.cols() - p; ++j) {
+                for (unsigned int i = 0; i < _h.rows(); ++i) {
+                    double num   = hUpdateNum(i, j);
+                    double denom = beta == 1 ? 
+                                   wpColSums->at(i) : 
+                                   hUpdateDenom(i, j);
+                    // add sparsity and continuity terms to numerator
+                    // and denominator of multiplicative update
+                    if (sparse) {
+                        num   += _s(i, j) * _h(i, j) * csminus->at(i);
+                        denom += _s(i, j) * csplus->at(i);
+                    }
+                    if (continuous) {
+                        double l = j == 0 ? 0.0 : oldH->at(i, j - 1);
+                        double r = j == _h.cols() - 1 ? 0.0 : _h(i, j + 1);
+                        num   += _c(i,j) * ((l + r)  * ctminus1->at(i) + 
+                                            _h(i, j) * ctminus2->at(i));
+                        denom += _c(i, j) * _h(i, j) * ctplus->at(i);
+                    }
+                    hUpdate(i, j) += num / denom;
+                }
             }
         }
 
         // Apply average update to H
         // TODO: Weighting with _t reduced for last cols --> option?!
-        /*double updateNorm = _t;
-        for (unsigned int j = 0; j < _h.cols() - _t; ++j) {
-            for (unsigned int i = 0; i < _h.rows(); ++i) {
-                _h(i, j) *= hUpdate(i, j) / updateNorm;
-            }
-        }
-        for (unsigned int j = _h.cols() - _t + 1; j < _h.cols(); ++j) {
-#ifdef NMD_PT
-            --updateNorm;
-#endif
-            for (unsigned int i = 0; i < _h.rows(); ++i) {
-                _h(i, j) *= hUpdate(i, j) / updateNorm;
-            }
-        }*/
         double updateNorm = _t;
         for (unsigned int j = 0; j <= _h.cols() - _t; ++j) {
             for (unsigned int i = 0; i < _h.rows(); ++i) {
@@ -455,6 +512,18 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
         delete vOverApprox;
     if (approxInv && approxInv != &_approx)
         delete approxInv;
+    if (oldH)
+        delete oldH;
+    if (ctminus2)
+        delete ctminus2;
+    if (ctminus1)
+        delete ctminus1;
+    if (ctplus)
+        delete ctplus;
+    if (csminus)
+        delete csminus;
+    if (csplus)
+        delete csplus;
 }
 
 
@@ -755,7 +824,6 @@ void Deconvolver::factorizeNMDED(unsigned int maxSteps, double eps,
                 // Calculate Approx * (H shifted t spots to the right)^T 
                 // (denominator of the update matrix)
                 // The same as above.
-                //cout << "p = " << p << "; approx = " << _approx << endl;
                 _approx.multWithMatrix(_h, &wUpdateMatrixDenom,
                     false, true,
                     _v.rows(), _v.cols() - p, _h.rows(), 
@@ -778,8 +846,6 @@ void Deconvolver::factorizeNMDED(unsigned int maxSteps, double eps,
                             denom = wUpdateMatrixDenom(i, j);
                             if (denom <= 0.0) denom = DIVISOR_FLOOR;
                             _w[p]->at(i, j) *= wUpdateMatrixNum(i, j) / denom;
-                            //cout << "update factor for w[" << p << "](" << i << "," << j << ") : " <<
-                            //     wUpdateMatrixNum(i, j) << "/" << denom << endl;
                         }
                     }
                 }
