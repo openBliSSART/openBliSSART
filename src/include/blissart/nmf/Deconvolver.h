@@ -288,9 +288,15 @@ public:
      */
     void factorizeNMDKL(unsigned int maxSteps, double eps,
                         ProgressObserver *observer = 0);
+
     // A more efficient implementation of NMD-ED for 1 spectrum (NMF case).
     void factorizeNMFED(unsigned int maxSteps, double eps,
                         ProgressObserver *observer = 0);
+
+    // A more efficient implementation of NMD-ED for 1 spectrum (NMF case)
+    // for incomplete factorization.
+    void factorizeNMFEDIncomplete(unsigned int maxSteps, double eps,
+                                  ProgressObserver *observer = 0);
 
     // Sparse NMF according to Virtanen 2007, modified to use Euclidean
     // distance for measurement of reconstruction error.

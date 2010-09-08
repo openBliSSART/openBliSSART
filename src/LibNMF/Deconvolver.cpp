@@ -179,8 +179,8 @@ void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
 {
     // Select an optimal algorithm according to the given parameters.
     if (cf == EuclideanDistance) {
-        if (_t == 1) {
-            factorizeNMFED(maxSteps, eps, observer);
+        if (_t == 1 && !isOvercomplete()) {
+            factorizeNMFEDIncomplete(maxSteps, eps, observer);
         }
         else {
             factorizeNMDBreg(maxSteps, eps, 2, false, false, observer);
@@ -193,26 +193,17 @@ void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
         factorizeNMDBreg(maxSteps, eps, 0, false, false, observer);
     }
     else if (cf == EuclideanDistanceSparse) {
-        if (_t > 1) {
-            throw std::runtime_error("Sparse NMD not implemented");
-        }
-        factorizeNMFEDSparse(maxSteps, eps, observer);
+        factorizeNMDBreg(maxSteps, eps, 2, true, false, observer);
     }
     else if (cf == KLDivergenceSparse) {
-        if (_t > 1) {
-            throw std::runtime_error("Sparse NMD not implemented");
-        }
-        factorizeNMFKLSparse(maxSteps, eps, observer);
+        factorizeNMDBreg(maxSteps, eps, 1, true, false, observer);
     }
     else if (cf == KLDivergenceContinuous) {
-        if (_t > 1) {
-            throw std::runtime_error("Continuous NMD not implemented");
-        }
-        factorizeNMFKLTempCont(maxSteps, eps, observer);
+        factorizeNMDBreg(maxSteps, eps, 1, false, true, observer);
     }
     else if (cf == EuclideanDistanceSparseNormalized) {
         if (_t > 1) {
-            throw std::runtime_error("Sparse NMD not implemented");
+            throw std::runtime_error("NMD with normalized basis not implemented");
         }
         factorizeNMFEDSparseNorm(maxSteps, eps, observer);
     }
@@ -750,6 +741,55 @@ void Deconvolver::factorizeNMFED(unsigned int maxSteps, double eps,
     }
 
     factorizeNMFEDUninitialize();
+}
+
+
+void Deconvolver::factorizeNMFEDIncomplete(unsigned int maxSteps, double eps,
+                                           ProgressObserver *observer)
+{
+    assert(_t == 1);
+
+    // helper variables
+    double denom;
+    Matrix& w = *(_w[0]); // for convenience
+
+    Matrix hUpdateNum  (_h.rows(), _h.cols());
+    Matrix hUpdateDenom(_h.rows(), _h.cols());
+    Matrix wUpdateNum  ( w.rows(),  w.cols());
+    Matrix wUpdateDenom( w.rows(),  w.cols());
+
+    Matrix hhT(_h.rows(), _h.rows());
+    Matrix wTw(_h.rows(), _h.rows());
+
+    _numSteps = 0;
+    while (_numSteps < maxSteps && !checkConvergence(eps, true)) {
+
+        // W Update
+        _v.multWithTransposedMatrix(_h, &wUpdateNum);
+        _h.multWithTransposedMatrix(_h, &hhT);
+        w.multWithMatrix(hhT, &wUpdateDenom);
+        ensureNonnegativity(wUpdateDenom);
+
+        for (unsigned int j = 0; j < w.cols(); ++j) {
+            for (unsigned int i = 0; i < w.rows(); ++i) {
+                w(i, j) *= (wUpdateNum(i, j) / wUpdateDenom(i, j));
+            }
+        }
+
+        // H Update
+        w.transposedMultWithMatrix(_v, &hUpdateNum);
+        w.transposedMultWithMatrix(w, &wTw);
+        wTw.multWithMatrix(_h, &hUpdateDenom);
+        ensureNonnegativity(hUpdateDenom);
+
+        for (unsigned int j = 0; j < _h.cols(); ++j) {
+            for (unsigned int i = 0; i < _h.rows(); ++i) {
+                _h(i, j) *= (hUpdateNum(i, j) / hUpdateDenom(i, j));
+            }
+        }
+
+        nextItStep(observer, maxSteps);
+    }
 }
 
 

@@ -118,25 +118,30 @@ bool NMFTest::performTest()
             srand(2);
             cout << endl << "--- Overcomplete" << endl;
             nmf::Deconvolver d(x, 10, 1);
-            d.setAlgorithm(nmf::Deconvolver::Overcomplete);
+            //d.setAlgorithm(nmf::Deconvolver::Overcomplete);
             d.decompose(nmf::Deconvolver::EuclideanDistance, 5000, 1e-5);
             cout << "# steps: " << d.numSteps() << endl;
             cout << "absolute error: " << d.absoluteError() << endl;
             cout << "relative error: " << d.relativeError() << endl;
             cout << endl;
 
+            /*cout << d.getW(0) << endl;
+            cout << d.getH() << endl;*/
             if (!outputAndCheck(x, d)) return false;
         }
         {
             srand(2);
             cout << endl << "--- Incomplete" << endl;
             nmf::Deconvolver d(x, 10, 1);
-            d.setAlgorithm(nmf::Deconvolver::Incomplete);
-            d.decompose(nmf::Deconvolver::EuclideanDistance, 5000, 1e-5);
+            //d.setAlgorithm(nmf::Deconvolver::Incomplete);
+            d.factorizeNMFEDIncomplete(5000, 1e-5);
+            //d.decompose(nmf::Deconvolver::EuclideanDistance, 5000, 1e-5);
             cout << "# steps: " << d.numSteps() << endl;
             cout << "absolute error: " << d.absoluteError() << endl;
             cout << "relative error: " << d.relativeError() << endl;
             cout << endl;
+            /*cout << d.getW(0) << endl;
+            cout << d.getH() << endl;*/
 
             if (!outputAndCheck(x, d)) return false;
         }
