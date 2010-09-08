@@ -42,8 +42,8 @@ using namespace std;
 
 
 
-//#define NMD_PT
-#define NMD_PLOT_ERROR
+#define NMD_PT
+//#define NMD_PLOT_ERROR
 
 #ifdef NMD_PLOT_ERROR
 #include <fstream>
@@ -237,15 +237,14 @@ void Deconvolver::decompose(Deconvolver::NMFCostFunction cf,
 void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
                                    ProgressObserver *observer, double beta)
 {
-    // TODO: define these as pointers
     Matrix* approxInv = 0;
     Matrix* vOverApprox = 0; // "V Over Approx" from NMD-KL
+    RowVector* wpColSums = 0;
     Matrix hUpdate(_h.rows(), _h.cols());
     Matrix hUpdateNum(_h.rows(), _h.cols());
     Matrix hUpdateDenom(_h.rows(), _h.cols());
     Matrix wUpdateNum(_v.rows(), _h.rows());
     Matrix wUpdateDenom(_v.rows(), _h.rows());
-    RowVector* wpColSums = 0;
 
     if (beta == 2) {
         // for ED, exploit equalities by redirecting these pointers
@@ -418,9 +417,32 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
 
         // Apply average update to H
         // TODO: Weighting with _t reduced for last cols --> option?!
-        for (unsigned int j = 0; j < _h.cols(); ++j) {
+        /*double updateNorm = _t;
+        for (unsigned int j = 0; j < _h.cols() - _t; ++j) {
             for (unsigned int i = 0; i < _h.rows(); ++i) {
-                _h(i, j) *= hUpdate(i, j) / (double) _t;
+                _h(i, j) *= hUpdate(i, j) / updateNorm;
+            }
+        }
+        for (unsigned int j = _h.cols() - _t + 1; j < _h.cols(); ++j) {
+#ifdef NMD_PT
+            --updateNorm;
+#endif
+            for (unsigned int i = 0; i < _h.rows(); ++i) {
+                _h(i, j) *= hUpdate(i, j) / updateNorm;
+            }
+        }*/
+        double updateNorm = _t;
+        for (unsigned int j = 0; j <= _h.cols() - _t; ++j) {
+            for (unsigned int i = 0; i < _h.rows(); ++i) {
+                _h(i, j) *= hUpdate(i, j) / updateNorm;
+            }
+        }
+        for (unsigned int j = _h.cols() - _t + 1; j < _h.cols(); ++j) {
+#ifdef NMD_PT
+            --updateNorm;
+#endif
+            for (unsigned int i = 0; i < _h.rows(); ++i) {
+                _h(i, j) *= hUpdate(i, j) / updateNorm;
             }
         }
         
@@ -1301,7 +1323,7 @@ void Deconvolver::normalizeHFrob()
     for (unsigned int p = 0; p < _t; ++p) {
         for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
             for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
-                _w[p]->at(i, j) *= (hNorm - hNormRight[p]);
+                _w[p]->at(i, j) *= sqrt(hNorm * hNorm - hNormRight[p]);
             }
         }
     }
