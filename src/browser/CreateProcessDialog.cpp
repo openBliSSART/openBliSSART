@@ -132,7 +132,7 @@ void CreateProcessDialog::accept()
     }
 
     // Determine the desired cost function.
-    nmf::Deconvolver::NMFCostFunction cf;
+    nmf::Deconvolver::NMDCostFunction cf;
     switch (_ui.cbCostFunction->currentIndex()) {
     case 0: 
         cf = nmf::Deconvolver::KLDivergence; 
