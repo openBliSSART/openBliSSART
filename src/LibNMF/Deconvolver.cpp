@@ -37,20 +37,14 @@
 
 
 
+// for debugging ...
 #include <iostream>
 using namespace std;
 
 
 
 
-#define NMD_PT
-//#define NMD_PLOT_ERROR
-
-#ifdef NMD_PLOT_ERROR
-#include <fstream>
-using namespace std;
-#endif
-
+//#define NMD_PT
 
 using namespace blissart::linalg;
 
@@ -100,7 +94,8 @@ Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t,
     _absoluteError(-1),
     _relativeError(-1),
     _vFrob(_v.frobeniusNorm()),
-    _notificationDelay(25)
+    _notificationDelay(25),
+    _nmdModifiedHUpdate(true)
 {
     if (t > v.cols()) {
         std::ostringstream errStr;
@@ -218,6 +213,63 @@ void Deconvolver::decompose(Deconvolver::NMDCostFunction cf,
 }
 
 
+double 
+Deconvolver::getCfValue(Deconvolver::NMDCostFunction cf, double beta) const
+{
+    // TODO : sparsity, continuity
+    double res = 0.0;
+    if (cf == Deconvolver::KLDivergence || 
+       (cf == Deconvolver::BetaDivergence && beta == 1.0)) 
+    {
+        for (unsigned int j = 0; j < _v.cols(); ++j) {
+            for (unsigned int i = 0; i < _v.rows(); ++i) {
+                res += _v(i, j) * log(_v(i, j) / _approx(i, j)) 
+                     - (_v(i, j) - _approx(i, j));
+            }
+        }
+    }
+    else if (cf == Deconvolver::EuclideanDistance ||
+            (cf == Deconvolver::BetaDivergence && beta == 2.0))
+    {
+        // less operations than beta div. below...
+        for (unsigned int j = 0; j < _v.cols(); ++j) {
+            for (unsigned int i = 0; i < _v.rows(); ++i) {
+                double tmp = _v(i, j) - _approx(i, j);
+                res += tmp * tmp;
+            }
+        }
+    }
+    else if (cf == Deconvolver::ISDivergence || 
+            (cf == Deconvolver::BetaDivergence && beta == 0.0))
+    {
+        for (unsigned int j = 0; j < _v.cols(); ++j) {
+            for (unsigned int i = 0; i < _v.rows(); ++i) {
+                double tmp = _v(i, j) / _approx(i, j);
+                res += tmp - log(tmp);
+            }
+        }
+        // summarize the -1 in element-wise cost function
+        res -= _v.cols() * _v.rows(); 
+    }
+    else if (cf == Deconvolver::BetaDivergence) {
+        double fac = 1.0 / (beta * (beta - 1.0));
+        for (unsigned int j = 0; j < _v.cols(); ++j) {
+            for (unsigned int i = 0; i < _v.rows(); ++i) {
+                res += std::pow(_v(i, j), beta)
+                     + (beta - 1.0) * std::pow(_approx(i, j), beta)
+                     - beta * _v(i, j) * std::pow(_approx(i, j), beta - 1.0);
+            }
+        }
+        res *= fac;
+    }
+    else if (cf == Deconvolver::NormalizedEuclideanDistance) {
+        // FIXME: Implement this!
+        throw std::runtime_error("Not implemented");
+    }
+    return res;
+}
+
+
 void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps, 
                                    double beta, bool sparse, bool continuous,
                                    ProgressObserver *observer)
@@ -264,8 +316,11 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
     }
 
     _numSteps = 0;
-    while (_numSteps < maxSteps) {
+    while (1) {
         computeApprox();
+
+        if (_numSteps >= maxSteps)
+            break;
 
         // for NMF (T=1) we could also overwrite _approx ... but makes not much sense since we need 1 buffer matrix anyway...
 
@@ -468,9 +523,8 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
             }
         }
         for (unsigned int j = _h.cols() - _t + 1; j < _h.cols(); ++j) {
-#ifdef NMD_PT
-            --updateNorm;
-#endif
+            if (_nmdModifiedHUpdate) 
+                --updateNorm;
             for (unsigned int i = 0; i < _h.rows(); ++i) {
                 _h(i, j) *= hUpdate(i, j) / updateNorm;
             }
@@ -509,26 +563,12 @@ void Deconvolver::factorizeNMDKL(unsigned int maxSteps, double eps,
     Matrix hUpdateMatrixNum(_h.rows(), _h.cols());
     double *wpColSums = new double[_h.rows()];
 
-#ifdef NMD_PLOT_ERROR
-    ofstream plotfile("nmdkl.plt");
-#endif
-
     _numSteps = 0;
     while (_numSteps < maxSteps) {
 
         // Compute approximation at the beginning and after the H update
         computeApprox();
 
-#ifdef NMD_PLOT_ERROR
-        double ckl = 0.0;
-        for (unsigned int j = 0; j < _v.cols(); ++j) {
-            for (unsigned int i = 0; i < _v.rows(); ++i) {
-                ckl += _v(i, j) * log(_v(i, j) / _approx(i, j)) 
-                     - (_v(i, j) - _approx(i, j));
-            }
-        }
-        plotfile << _numSteps << "\t" << ckl << endl;
-#endif
         // Check convergence criterion.
         if (checkConvergence(eps, false))
             break;
@@ -786,6 +826,9 @@ void Deconvolver::factorizeNMFEDIncomplete(unsigned int maxSteps, double eps,
 
         nextItStep(observer, maxSteps);
     }
+
+    // Update value of approximation (only once...)
+    computeApprox();
 }
 
 
@@ -799,31 +842,12 @@ void Deconvolver::factorizeNMDED(unsigned int maxSteps, double eps,
     Matrix hUpdateMatrixDenom(_h.rows(), _h.cols());
     double denom;
 
-#ifdef NMD_PLOT_ERROR
-    ofstream plotfile(
-#ifdef NMD_PT
-    "nmdedpt.plt"
-#else
-    "nmded.plt"
-#endif
-    );
-#endif
-
     _numSteps = 0;
     while (_numSteps < maxSteps) {
 
         // Compute approximation at the beginning and after the H update
         computeApprox();
         
-#ifdef NMD_PLOT_ERROR
-        double ced = 0.0;
-        for (unsigned int j = 0; j < _v.cols(); ++j) {
-            for (unsigned int i = 0; i < _v.rows(); ++i) {
-                ced += (_v(i, j) - _approx(i, j)) * (_v(i, j) - _approx(i, j));
-            }
-        }
-        plotfile << _numSteps << "\t" << ced << endl;
-#endif
         // Check convergence criterion.
         if (checkConvergence(eps, false))
             break;

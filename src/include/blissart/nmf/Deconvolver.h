@@ -132,6 +132,13 @@ public:
      */
     inline const blissart::linalg::Matrix& getW(unsigned int i) const;
 
+
+    /** 
+     * TODO
+     */
+    inline void setNMDModifiedHUpdate(bool flag);
+
+
     /**
      * Sets the W matrix with the given index.
      */
@@ -235,6 +242,13 @@ public:
     void decompose(NMDCostFunction cf, unsigned int maxSteps, double eps,
                    bool sparse = false, bool continuous = false,
                    ProgressObserver *observer = 0);
+
+
+    /**
+     * Returns the value of the cost function after the last iteration.
+     */
+    double getCfValue(NMDCostFunction cf, double beta = 0.0) const;
+
 
     /**
      * Returns the absolute error achieved in the last iteration,
@@ -374,6 +388,7 @@ protected:
     double                      _relativeError;
     const double                _vFrob;
     unsigned int                _notificationDelay;
+    bool                        _nmdModifiedHUpdate;
 
 
 private:
@@ -515,6 +530,12 @@ unsigned int Deconvolver::numSteps() const
 void Deconvolver::setProgressNotificationDelay(unsigned int numSteps)
 {
     _notificationDelay = numSteps;
+}
+
+
+void Deconvolver::setNMDModifiedHUpdate(bool flag)
+{
+    _nmdModifiedHUpdate = flag;
 }
 
 

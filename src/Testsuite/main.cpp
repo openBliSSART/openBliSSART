@@ -41,6 +41,7 @@
 #include "MelFilterTest.h"
 #include "MTrTest.h"
 #include "NMDTest.h"
+#include "NMDConvTest.h"
 #include "NMFTest.h"
 #include "PCATest.h"
 #include "ScalingTest.h"
@@ -117,7 +118,8 @@ protected:
         options.addOption(Option("mel", "", "Test Mel filter and synth"));
         options.addOption(Option("mh", "", "Test Minimum Heap implementation"));
         options.addOption(Option("mt", "", "Test (spectrogram) matrix transformations"));
-        options.addOption(Option("nmd", "", "Test NMD routines"));
+        options.addOption(Option("nmd", "", "Test NMD routines (correctness)"));
+        options.addOption(Option("nmd-conv", "", "Test NMD routines (convergence speed)"));
         options.addOption(Option("nmf", "", "Test NMF routines"));
         options.addOption(Option("pca", "", "Test PCA routine"));
         options.addOption(Option("snmf", "", "Test sparse NMF routines"));
@@ -169,6 +171,8 @@ protected:
             pushTest(new MTrTest());
         if (name == "all" || name == "nmd")
             pushTest(new NMDTest());
+        if (name == "all" || name == "nmd-conv")
+            pushTest(new NMDConvTest());
         if (name == "all" || name == "nmf")
             pushTest(new NMFTest());
         if (name == "all" || name == "snmf") 
