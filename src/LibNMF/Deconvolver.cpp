@@ -512,10 +512,35 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
                     hUpdate(i, j) += num / denom;
                 }
             }
+            // FIXME: duplicate code
+            if (!_nmdModifiedHUpdate) {
+                for (unsigned int j = _h.cols() - p; j < _h.cols(); ++j) {
+                    for (unsigned int i = 0; i < _h.rows(); ++i) {
+                        double num = 0.0, denom = 0.0;
+                        if (sparse) {
+                            num   += _s(i, j) * _h(i, j) * csminus->at(i);
+                            denom += _s(i, j) * csplus->at(i);
+                        }
+                        if (continuous) {
+                            double l = j == 0 ? 0.0 : oldH->at(i, j - 1);
+                            double r = j == _h.cols() - 1 ? 0.0 : _h(i, j + 1);
+                            num   += _c(i,j) * ((l + r)  * ctminus1->at(i) + 
+                                                _h(i, j) * ctminus2->at(i));
+                            denom += _c(i, j) * _h(i, j) * ctplus->at(i);
+                        }
+                        if (!sparse && !continuous) {
+                            hUpdate(i, j) += 1.0;
+                        }
+                        else {
+                            if (denom == 0.0) denom = DIVISOR_FLOOR;
+                            hUpdate(i, j) += num / denom;
+                        }
+                    }
+                }
+            }
         }
 
         // Apply average update to H
-        // XXX: Weighting with _t reduced for last cols --> option instead of #define?
         double updateNorm = _t;
         for (unsigned int j = 0; j <= _h.cols() - _t; ++j) {
             for (unsigned int i = 0; i < _h.rows(); ++i) {

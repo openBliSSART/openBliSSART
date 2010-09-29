@@ -78,6 +78,38 @@ bool NMDTest::performTest()
     }
 
     {
+        cout << "Performing NMD using KL divergence, with modified H update" << endl;
+
+        nmf::Deconvolver d(x, 10, t);
+        d.setNMDModifiedHUpdate(true);
+        d.decompose(nmf::Deconvolver::KLDivergence, 5000, 1e-5);
+        //d.factorizeNMDBreg(5000, 1e-5, 0, 1);
+        cout << "# steps: " << d.numSteps() << endl;
+        cout << "absolute error: " << d.absoluteError() << endl;
+        cout << "relative error: " << d.relativeError() << endl;
+        cout << endl;
+        for (unsigned int i = 0; i < t; ++i) {
+            cout << "W[" << i << "] = " << endl;
+            cout << d.getW(i) << endl;
+        }
+        cout << "H = " << endl;
+        cout << d.getH() << endl;
+        cout << "Approx = " << endl;
+        d.computeApprox();
+        Matrix l(d.getApprox());
+        cout << l << endl;
+        
+        for (unsigned int i = 0; i < x.rows(); i++) {
+            for (unsigned int j = 0; j < x.cols(); j++) {
+                if (!epsilonCheck(x(i,j), l(i,j), 1e-2))
+                    return false;
+            }
+        }
+    }
+
+    return true;
+
+    {
         cout << "Performing NMD using KL divergence, with normalization" 
              << endl;
 
