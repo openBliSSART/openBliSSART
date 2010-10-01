@@ -73,9 +73,11 @@ bool NMDConvTest::convTest(bool modifiedHUpdate)
     filelistIS.close();
 
     for (unsigned int b = 0; b < nBeta; ++b) {
+        vector<vector<double> > cf(nIt, vector<double>(files.size()));
         vector<double>  minCf(nIt, -1);
         vector<double>  maxCf(nIt, -1);
         vector<double> meanCf(nIt, 0);
+        vector<double>   norm(files.size());
         //for (unsigned int k = 0; k < nTrials; ++k) {
         for (unsigned int k = 0; k < files.size(); ++k) {
             cout << "file: " << files[k] << endl;
@@ -87,6 +89,7 @@ bool NMDConvTest::convTest(bool modifiedHUpdate)
             unsigned int seed = k * 20;
             cout << "Random seed: " << seed << endl;
             //cout << "Creating " << m << "x" << n << " random matrix" << endl;
+            //pAmpM->apply(Matrix::mul, 1.0 / pAmpM->frobeniusNorm());
             nmf::Deconvolver d(*pAmpM, r, t);
             srand(seed);
             for (unsigned int s = 0; s < t; ++s) {
@@ -98,14 +101,16 @@ bool NMDConvTest::convTest(bool modifiedHUpdate)
             d.setNMDModifiedHUpdate(modifiedHUpdate);
 
             cout << "Deconvolving (t = " << t << ", r = "<< r << ")" << endl;
-            double norm = pAmpM->frobeniusNorm(); //pAmpM->rows() * pAmpM->cols();
+            norm[k] = pAmpM->frobeniusNorm(); //pAmpM->rows() * pAmpM->cols();
+            //cout << "norm = " << norm << endl;
             for (unsigned int i = 0; i < nIt; ++i) {
                 cout << i + 1 << " " << flush;
                 d.factorizeNMDBreg(1, 0.0, beta[b]);
                 double c = d.getCfValue(Deconvolver::BetaDivergence, beta[b]);
                 //if (i == 0)
                 //    norm = c;
-                c /= norm;
+                //c /= norm;
+                cf[i][k] = c;
                 cout << "c = " << c << " " << flush;
                 meanCf[i] += c;
                 if (k == 0 || maxCf[i] < c)
@@ -122,10 +127,25 @@ bool NMDConvTest::convTest(bool modifiedHUpdate)
         string tmp = lss.str();
         ofstream logStream(tmp.c_str());
         //cout << "--- beta = " << beta[b] << endl << endl;
+        logStream << "name";
+        for (unsigned int k = 0; k < files.size(); ++k) {
+            logStream << '\t' << files[k];
+        }
+        logStream << endl;
+        logStream << "norm";
+        for (unsigned int k = 0; k < files.size(); ++k) {
+            logStream << '\t' << norm[k];
+        }
+        logStream << endl;
         for (unsigned int i = 0; i < nIt; ++i) {
             meanCf[i] /= (double)files.size();
-            logStream << i + 1 << '\t' << minCf[i] << '\t' << meanCf[i] 
-                      << '\t' << maxCf[i] << endl;
+            logStream << i + 1;
+            for (unsigned int k = 0; k < files.size(); ++k) {
+                logStream << '\t' << cf[i][k];
+            }
+            /*logStream << '\t' << minCf[i] << '\t' << meanCf[i] 
+                      << '\t' << maxCf[i] << endl;*/
+            logStream << endl;
         }
         logStream.close();
     }
