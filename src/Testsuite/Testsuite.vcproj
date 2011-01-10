@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="Testsuite"
 	ProjectGUID="{C52FBEEC-4FCD-4A08-8BCB-E75E166194FF}"
 	RootNamespace="Testsuite"
@@ -241,6 +241,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\NMDConvTest.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\NMDTest.cpp"
 				>
 			</File>
@@ -336,6 +340,10 @@
 			</File>
 			<File
 				RelativePath=".\MTrTest.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NMDConvTest.h"
 				>
 			</File>
 			<File

@@ -431,7 +431,7 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
         // Compute sparsity term
         // XXX: depends on H shifted, not H???!
         if (sparse) {
-            double sqrtT = sqrt(_h.cols());
+            double sqrtT = sqrt((double) _h.cols());
             double hRowSumSq, hRowLength;
             for (unsigned int i = 0; i < _h.rows(); ++i) {
                 hRowSumSq = Matrix::dotRowRow(_h, i, _h, i);
