@@ -49,6 +49,7 @@
 
 #include <cmath>
 #include <fstream>
+#include <ctime>
 
 
 using namespace blissart::audio;
@@ -131,6 +132,7 @@ void SeparationTask::runTask()
 
         // Raise hell ;-)
         initialize();
+        clock_t start = clock();
         performSeparation();
         if (_computeRelativeError) {
             computeRelativeError();
@@ -161,6 +163,10 @@ void SeparationTask::runTask()
             exportComponents();
             incTotalProgress(0.1f);
         }
+
+        clock_t end = clock();
+        double elapsed = (double) (end - start) / CLOCKS_PER_SEC;
+        logger().debug(nameAndTaskID() + ": separation and reconstruction took " + Poco::NumberFormatter::format(elapsed, 2) + " seconds");
 
         // Export reconstructed spectrogram, if desired.
         if (_exportSpectrogram) {
