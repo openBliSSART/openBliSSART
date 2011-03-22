@@ -28,6 +28,7 @@
 #include <Poco/File.h>
 #include <Poco/Mutex.h>
 #include <Poco/Exception.h>
+#include <Poco/NumberParser.h>
 #include <fstream>
 #include <iostream>
 
@@ -219,6 +220,40 @@ void BasicApplication::defineOptions(OptionSet& options)
         "Specifies a database file to use for component storage, instead "
         "of blissart-dir/db/openBliSSART.db",
         false, "<filename>", true));
+}
+
+
+void BasicApplication::rangesToIntVec(const string& str, vector<int>* vec)
+{
+    vector<string> ranges;
+    string::size_type pos = 0, pos2;
+    while (pos < str.length()) {
+        pos2 = str.find_first_of(',', pos);
+        if (pos2 == string::npos) {
+            ranges.push_back(str.substr(pos));
+            break;
+        }
+        else {
+            ranges.push_back(str.substr(pos, pos2 - pos));
+        }
+        pos = pos2 + 1;
+    }
+    for (vector<string>::const_iterator itr = ranges.begin();
+        itr != ranges.end(); ++itr)
+    {
+        int start, end;
+        pos = itr->find("..");
+        if (pos != string::npos) {
+            start = Poco::NumberParser::parse(itr->substr(0, pos));
+            end = Poco::NumberParser::parse(itr->substr(pos + 2));
+        }
+        else {
+            start = end = Poco::NumberParser::parse(*itr);
+        }
+        for (int id = start; id <= end; ++id) {
+            vec->push_back(id);
+        }
+    }
 }
 
 

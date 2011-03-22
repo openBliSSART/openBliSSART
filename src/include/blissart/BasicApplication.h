@@ -120,6 +120,15 @@ protected:
     void defineOptions(Poco::Util::OptionSet& options);
 
 
+    /**
+     * An utility method to parse a string of the form min[..max](,min[..max])*
+     * giving ranges of integers, e.g. 1..5,8,17..20.
+     * The integer numbers contained in the ranges are appended to the given
+     * vector.
+     */
+    void rangesToIntVec(const std::string& str, std::vector<int>* vec);
+
+
 private:
     std::string _optionsString;
     std::string _userConfigFile;

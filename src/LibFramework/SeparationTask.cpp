@@ -100,8 +100,6 @@ void SeparationTask::runTask()
     // Take into account export of components / matrices.
     if (_exportComponents)
         incMaxProgress(0.1f);
-    if (_exportSpectrogram)
-        incMaxProgress(0.1f);
     if (_exportSpectra || _exportGains)
         incMaxProgress(0.1f);
 
@@ -167,12 +165,6 @@ void SeparationTask::runTask()
         clock_t end = clock();
         double elapsed = (double) (end - start) / CLOCKS_PER_SEC;
         logger().debug(nameAndTaskID() + ": separation and reconstruction took " + Poco::NumberFormatter::format(elapsed, 2) + " seconds");
-
-        // Export reconstructed spectrogram, if desired.
-        if (_exportSpectrogram) {
-            exportSpectrogram();
-            incTotalProgress(0.1f);
-        }
 
         // Check again.
         if (isCancelled())
@@ -351,11 +343,13 @@ void SeparationTask::exportComponents() const
 
     logger().debug(nameAndTaskID() + " exporting the components.");
 
+    // Determine whether to use wiener reconstruction.
     Poco::Util::LayeredConfiguration& cfg =
         BasicApplication::instance().config();
     bool wienerRec = cfg.getBool("blissart.separation.export.wienerrec", 
                                     false);
 
+    // Compute the reconstructed matrix (WH) in case of wiener reconstruction.
     Poco::SharedPtr<Matrix> reconst;
     if (wienerRec) {
         reconst = new Matrix(phaseMatrix().rows(), phaseMatrix().cols());
@@ -372,8 +366,34 @@ void SeparationTask::exportComponents() const
         }
     }
 
-    // Store the components.
-    for (unsigned int i = 0; i < _nrOfComponents; i++) {
+    // Holds the mixed spectrogram if mixing is desired.
+    Poco::SharedPtr<Matrix> mixedSpectrogram;
+    if (_mixExportedComponents) {
+        mixedSpectrogram = new Matrix(magnitudeSpectraMatrix(0).rows(),
+            gainsMatrix().cols());
+        mixedSpectrogram->zero();
+    }
+
+    // Retrieve desired component indices.
+    vector<int> compIndices = _exportComponentIndices;
+    if (compIndices.empty()) {
+        for (int i = 0; i < _nrOfComponents; i++) {
+            compIndices.push_back(i);
+        }
+    }
+
+    // Reconstruct components and mix, if desired.
+    for (vector<int>::const_iterator it = compIndices.begin();
+         it != compIndices.end(); ++it)
+    {
+        if (*it < 1 || *it > _nrOfComponents) {
+            logger().error(nameAndTaskID() + ": invalid component index: " +
+                Poco::NumberFormatter::format(*it));
+            continue;
+        }
+        int i = *it - 1;
+        logger().debug(nameAndTaskID() + " exporting component #" +
+            Poco::NumberFormatter::format(i));
         // Compute the component's magnitude spectrum.
         Poco::SharedPtr<Matrix> magnitudeSpectrum = new Matrix(
             magnitudeSpectraMatrix(0).rows(),
@@ -395,13 +415,6 @@ void SeparationTask::exportComponents() const
             *magnitudeSpectrum = componentSpectrum * componentGains;
         }
 
-        // Construct the filename.
-        string prefix = getExportPrefix();
-        const int numDigits = (int)(1 + log10f((float)_nrOfComponents));
-        stringstream ss;
-        ss << prefix /* << '_' << taskID() */ << '_'
-           << setfill('0') << setw(numDigits) << i << ".wav";
-
         if (wienerRec) {
             // (Component/Whole) reconstruction
             magnitudeSpectrum->elementWiseDivision(*reconst, magnitudeSpectrum);
@@ -410,36 +423,36 @@ void SeparationTask::exportComponents() const
                                                    magnitudeSpectrum);
         }
 
-        // Convert component spectrogram to time signal and save it as WAV.
-        spectrogramToAudioFile(magnitudeSpectrum, ss.str());
-    }
-}
+        // Mix the components to a single spectrogram that is exported after
+        // the loop.
+        if (_mixExportedComponents) {
+            mixedSpectrogram->add(*magnitudeSpectrum);
+        }
+        // Export components individually.
+        else {
+            // Construct the filename.
+            string prefix = getExportPrefix();
+            const int numDigits = (int)(1 + log10f((float)_nrOfComponents));
+            stringstream ss;
+            ss << prefix /* << '_' << taskID() */ << '_'
+               << setfill('0') << setw(numDigits) << *it << ".wav";
 
-
-void SeparationTask::exportSpectrogram() const
-{
-    debug_assert(&phaseMatrix() &&
-                 &magnitudeSpectraMatrix(0) &&
-                 &gainsMatrix());
-
-    logger().debug(nameAndTaskID() + 
-                   " exporting the reconstructed spectrogram.");
-
-    Poco::SharedPtr<Matrix> spectrogram = 
-        new Matrix(phaseMatrix().rows(), phaseMatrix().cols(),
-                   generators::zero);
-    if (_nrOfSpectra > 1) {
-        Matrix hShifted = gainsMatrix();
-        for (unsigned int t = 0; t < _nrOfSpectra; ++t) {
-            spectrogram->add(magnitudeSpectraMatrix(t) * hShifted);
-            hShifted.shiftColumnsRight();
+            // Convert component spectrogram to time signal and save it as WAV.
+            spectrogramToAudioFile(magnitudeSpectrum, ss.str());
         }
     }
-    else {
-        *spectrogram = magnitudeSpectraMatrix(0) * gainsMatrix();
-    }
 
-    spectrogramToAudioFile(spectrogram, getExportPrefix() + "_WH.wav");
+    // Export the mixed spectrogram to a single audio file.
+    if (_mixExportedComponents) {
+        // Construct the filename.
+        string filename = getExportPrefix();
+        filename += "_mixed.wav"; // TODO: include component indices here to 
+                                  // avoid possible ambiguities...
+        // Convert component spectrogram to time signal and save it as WAV.
+        logger().debug(nameAndTaskID() + ": creating mixed audio file " +
+            filename);
+        spectrogramToAudioFile(mixedSpectrogram, filename);
+    }
 }
 
 

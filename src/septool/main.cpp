@@ -86,7 +86,7 @@ public:
         _zeroPadding(false),
         _removeDC(false),
         _exportComponents(false),
-        _exportSpectrogram(false),
+        _mixExportedComponents(false),
         _exportSpectra(false),
         _exportGains(false),
         _doSeparation(true),
@@ -332,12 +332,16 @@ protected:
 
         options.addOption(
             Option("export-components", "p",
-                   "Export the separated components to WAV files.",
-                   false));
-
+                   "Export the separated components to WAV files. "
+                   "If range is given, only use the given component indices "
+                   "(starting from 1).",
+                   false, "<range>", false)
+            .validator(new RegExpValidator(
+                       "(\\d+(\\.\\.\\d+)?,)*\\d+(\\.\\.\\d+)?")));
+        
         options.addOption(
-            Option("export-spectrogram", "",
-                   "Export the reconstructed spectrogram as a WAV file.",
+            Option("mix", "M",
+                   "Mix the exported components into a single WAV file.",
                    false));
 
         options.addOption(
@@ -468,9 +472,17 @@ protected:
         }
         else if (name == "export-components") {
             _exportComponents = true;
+            if (!value.empty()) {
+                rangesToIntVec(value, &_exportComponentIndices);
+                /*for (vector<int>::const_iterator it = _exportSpectrogramComps.begin();
+                     it != _exportSpectrogramComps.end(); ++it) 
+                {
+                    cout << "Export component spectrogram: " << *it << endl;
+                }*/
+            }
         }
-        else if (name == "export-spectrogram") {
-            _exportSpectrogram = true;
+        else if (name == "mix") {
+            _mixExportedComponents = true;
         }
         else if (name == "export-matrices") {
             if (value.find('W') != string::npos) 
@@ -623,8 +635,6 @@ protected:
             cout << setw(20) << "Export: ";
             if (_exportComponents)
                 cout << "Components ";
-            if (_exportSpectrogram)
-                cout << "Spectrogram ";
             if (_exportSpectra)
                 cout << "Spectra ";
             if (_exportGains)
@@ -687,7 +697,8 @@ protected:
 
             newSepTask->setComputeRelativeError(_displayRelativeError);
             newSepTask->setExportComponents(_exportComponents);
-            newSepTask->setExportSpectrogram(_exportSpectrogram);
+            newSepTask->setExportComponentIndices(_exportComponentIndices);
+            newSepTask->setMixExportedComponents(_mixExportedComponents);
             newSepTask->setExportSpectra(_exportSpectra);
             newSepTask->setExportGains(_exportGains);
 
@@ -804,7 +815,8 @@ private:
     bool               _zeroPadding;
     bool               _removeDC;
     bool               _exportComponents;
-    bool               _exportSpectrogram;
+    vector<int>        _exportComponentIndices;
+    bool               _mixExportedComponents;
     bool               _exportSpectra;
     bool               _exportGains;
     string             _exportPrefix;

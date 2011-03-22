@@ -147,10 +147,17 @@ public:
 
 
     /**
-     * Controls whether the reconstructed spectrogram (product of spectra and 
-     * gains) should be exported as an audio file.
+     * Sets the indices of separated components that should be exported to 
+     * audio files.
      */
-    inline void setExportSpectrogram(bool flag);
+    inline void setExportComponentIndices(const std::vector<int> &indices);
+
+
+    /**
+     * Sets whether separated components should be mixed together to a single
+     * audio file (true), or exported as individual audio files (false).
+     */
+    inline void setMixExportedComponents(bool flag);
 
 
     /**
@@ -287,12 +294,6 @@ protected:
 
 
     /**
-     *
-     */
-    void exportSpectrogram() const;
-
-
-    /**
      * Converts a magnitude spectrogram to a time signal, using the original
      * phase matrix, and save the result as a WAV file.
      */
@@ -342,7 +343,8 @@ private:
 
     bool                    _computeRelativeError;
     bool                    _exportComponents;
-    bool                    _exportSpectrogram;
+    std::vector<int>        _exportComponentIndices;
+    bool                    _mixExportedComponents;
     bool                    _exportSpectra;
     bool                    _exportGains;
     std::string             _exportPrefix;
@@ -410,9 +412,15 @@ inline void SeparationTask::setExportComponents(bool flag)
 }
 
 
-inline void SeparationTask::setExportSpectrogram(bool flag)
+inline void SeparationTask::setExportComponentIndices(const std::vector<int> &indices)
 {
-    _exportSpectrogram = flag;
+    _exportComponentIndices = indices;
+}
+
+
+inline void SeparationTask::setMixExportedComponents(bool flag)
+{
+    _mixExportedComponents = flag;
 }
 
 
