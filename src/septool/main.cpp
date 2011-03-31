@@ -271,9 +271,10 @@ protected:
             Option("init", "I",
                    "A range of classification objects for initialization "
                    "of the spectra.",
-                   false, "<min>..<max>", true)
+                   false, "<range>", true)
             .repeatable(true)
-            .validator(new RegExpValidator("\\d+\\.\\.\\d+")));
+            .validator(new RegExpValidator(
+                       "(\\d+(\\.\\.\\d+)?,)*\\d+(\\.\\.\\d+)?")));
 
         options.addOption(
             Option("preserve", "P",
@@ -425,12 +426,8 @@ protected:
             _nrSpectra = NumberParser::parse(value);
         }
         else if (name == "init") {
-            int min = NumberParser::parse(
-                value.substr(0, value.find_first_of('.')));
-            int max = NumberParser::parse(
-                value.substr(value.find_last_of('.') + 1));
-            for (int id = min; id <= max; ++id) {
-                _initObjectIDs.push_back(id);
+            if (!value.empty()) {
+                rangesToIntVec(value, &_initObjectIDs);
             }
         }
         else if (name == "preserve") {
