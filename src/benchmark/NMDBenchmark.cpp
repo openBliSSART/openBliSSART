@@ -90,7 +90,7 @@ void NMDBenchmark::run()
         logger().information(bnStr.str());
         {
             ScopedStopwatch s(*this, bnStr.str());
-            d.factorizeNMDBreg(100, 0.0, 2, false, false, this);
+            d.factorizeNMDBeta(100, 0.0, 2, false, false, this);
         }
 	}
 
@@ -105,7 +105,7 @@ void NMDBenchmark::run()
         logger().information(bnStr.str());
         {
             ScopedStopwatch s(*this, bnStr.str());
-            d.factorizeNMDBreg(100, 0.0, 1, false, false, this);
+            d.factorizeNMDBeta(100, 0.0, 1, false, false, this);
         }
 	}
 
@@ -120,7 +120,7 @@ void NMDBenchmark::run()
         logger().information(bnStr.str());
         {
             ScopedStopwatch s(*this, bnStr.str());
-            d.factorizeNMDBreg(100, 0.0, 0, false, false, this);
+            d.factorizeNMDBeta(100, 0.0, 0, false, false, this);
         }
 	}
 }

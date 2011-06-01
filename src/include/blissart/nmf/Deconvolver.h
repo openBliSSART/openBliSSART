@@ -272,53 +272,25 @@ public:
 
 
     /**
-     * TODO
+     * Performs NMD minimizing the beta divergence.
+     * @param  maxSteps   maximum number of iteration steps
+     * @param  eps        epsilon for the convergence criterion;
+     *                    if (eps == 0), perform maxSteps iterations
+     * @param  beta       the beta parameter for the divergence
+     * @param  sparse     whether to enforce H sparsity
+     * @param  continuous whether to enforce H continuity
+     * @param  observer   a ProgressObserver that should be notified
+     * Setting eps > 0 significantly slows down the NMD and should therefore 
+     * not be used in production code.
      */
-    void factorizeNMDBreg(unsigned int maxSteps, double eps, double beta,
+    void factorizeNMDBeta(unsigned int maxSteps, double eps, double beta,
                           bool sparse = false, bool continuous = false,
                           ProgressObserver *observer = 0);
-
-    /** 
-     * Performs NMD minimizing squared Euclidean distance,
-     * according to Wang 2009.
-     * Setting eps > 0 significantly slows down the NMD and should therefore 
-     * not be used in production code.
-     */
-    void factorizeNMDED(unsigned int maxSteps, double eps,
-                        ProgressObserver *observer = 0);
-
-    /**
-     * Performs NMD using a generalized Kulback-Leibler divergence,
-     * using Smaragdis' algorithm (2004).
-     * Setting eps > 0 significantly slows down the NMD and should therefore 
-     * not be used in production code.
-     */
-    void factorizeNMDKL(unsigned int maxSteps, double eps,
-                        ProgressObserver *observer = 0);
-
-    // A more efficient implementation of NMD-ED for 1 spectrum (NMF case).
-    void factorizeNMFED(unsigned int maxSteps, double eps,
-                        ProgressObserver *observer = 0);
 
     // A more efficient implementation of NMD-ED for 1 spectrum (NMF case)
     // for incomplete factorization.
     void factorizeNMFEDIncomplete(unsigned int maxSteps, double eps,
                                   ProgressObserver *observer = 0);
-
-    // Sparse NMF according to Virtanen 2007, modified to use Euclidean
-    // distance for measurement of reconstruction error.
-    void factorizeNMFEDSparse(unsigned int maxSteps, double eps,
-                              ProgressObserver *observer = 0);
-
-    // Sparse NMF according to Virtanen 2007, measuring reconstruction error
-    // using extended KL divergence.
-    void factorizeNMFKLSparse(unsigned int maxSteps, double eps,
-                              ProgressObserver *observer = 0);
-
-	// Temporal continuity NMF according to Virtanen 2007, measuring reconstruction error
-    // using extended KL divergence.
-    void factorizeNMFKLTempCont(unsigned int maxSteps, double eps,
-                              ProgressObserver *observer = 0);
 
     // Sparse NMF minimizing Euclidean distance, measured using normalized
     // basis vectors (Eggert and Körner 2004).

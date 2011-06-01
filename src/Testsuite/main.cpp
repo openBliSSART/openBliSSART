@@ -41,7 +41,6 @@
 #include "MelFilterTest.h"
 #include "MTrTest.h"
 #include "NMDTest.h"
-#include "NMDConvTest.h"
 #include "NMFTest.h"
 #include "PCATest.h"
 #include "ScalingTest.h"
@@ -171,8 +170,6 @@ protected:
             pushTest(new MTrTest());
         if (name == "all" || name == "nmd")
             pushTest(new NMDTest());
-        if (name == "all" || name == "nmd-conv")
-            pushTest(new NMDConvTest());
         if (name == "all" || name == "nmf")
             pushTest(new NMFTest());
         if (name == "all" || name == "snmf") 

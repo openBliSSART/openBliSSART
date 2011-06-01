@@ -77,37 +77,7 @@ bool NMDTest::performTest()
         }
     }
 
-    {
-        cout << "Performing NMD using KL divergence, with modified H update" << endl;
-
-        nmf::Deconvolver d(x, 10, t);
-        d.setNMDModifiedHUpdate(true);
-        d.decompose(nmf::Deconvolver::KLDivergence, 5000, 1e-5);
-        //d.factorizeNMDBreg(5000, 1e-5, 0, 1);
-        cout << "# steps: " << d.numSteps() << endl;
-        cout << "absolute error: " << d.absoluteError() << endl;
-        cout << "relative error: " << d.relativeError() << endl;
-        cout << endl;
-        for (unsigned int i = 0; i < t; ++i) {
-            cout << "W[" << i << "] = " << endl;
-            cout << d.getW(i) << endl;
-        }
-        cout << "H = " << endl;
-        cout << d.getH() << endl;
-        cout << "Approx = " << endl;
-        d.computeApprox();
-        Matrix l(d.getApprox());
-        cout << l << endl;
-        
-        for (unsigned int i = 0; i < x.rows(); i++) {
-            for (unsigned int j = 0; j < x.cols(); j++) {
-                if (!epsilonCheck(x(i,j), l(i,j), 1e-2))
-                    return false;
-            }
-        }
-    }
-
-    return true;
+    //return true;
 
     {
         cout << "Performing NMD using KL divergence, with normalization" 
@@ -146,65 +116,6 @@ bool NMDTest::performTest()
     }
 
     {
-        srand (1);
-        cout << "Performing NMD using Euclidean distance (default algorithm)" 
-             << endl;
-
-        nmf::Deconvolver d(x, 10, t);
-        d.factorizeNMDED(5000, 1e-5, 0);
-        cout << "# steps: " << d.numSteps() << endl;
-        cout << "absolute error: " << d.absoluteError() << endl;
-        cout << "relative error: " << d.relativeError() << endl;
-        cout << endl;
-        for (unsigned int i = 0; i < t; ++i) {
-            cout << "W[" << i << "] = " << endl;
-            cout << d.getW(i) << endl;
-        }
-        cout << "H = " << endl;
-        cout << d.getH() << endl;
-        cout << "Approx = " << endl;
-        d.computeApprox();
-        Matrix l(d.getApprox());
-        cout << l << endl;
-        
-        for (unsigned int i = 0; i < x.rows(); i++) {
-            for (unsigned int j = 0; j < x.cols(); j++) {
-                if (!epsilonCheck(x(i,j), l(i,j), 5e-2))
-                    return false;
-            }
-        }
-    }
-    {
-        srand (1);
-        cout << "Performing NMD using Euclidean distance (Bregman algorithm)" 
-             << endl;
-
-        nmf::Deconvolver d(x, 10, t);
-        d.factorizeNMDBreg(5000, 1e-5, 0, 2);
-        cout << "# steps: " << d.numSteps() << endl;
-        cout << "absolute error: " << d.absoluteError() << endl;
-        cout << "relative error: " << d.relativeError() << endl;
-        cout << endl;
-        for (unsigned int i = 0; i < t; ++i) {
-            cout << "W[" << i << "] = " << endl;
-            cout << d.getW(i) << endl;
-        }
-        cout << "H = " << endl;
-        cout << d.getH() << endl;
-        cout << "Approx = " << endl;
-        d.computeApprox();
-        Matrix l(d.getApprox());
-        cout << l << endl;
-        
-        for (unsigned int i = 0; i < x.rows(); i++) {
-            for (unsigned int j = 0; j < x.cols(); j++) {
-                if (!epsilonCheck(x(i,j), l(i,j), 5e-2))
-                    return false;
-            }
-        }
-    }
-
-    {
         srand(1);
         cout << "Performing NMD using Itakura-Saito divergence" << endl;
 
@@ -236,11 +147,11 @@ bool NMDTest::performTest()
     {
         srand(1);
         const double beta = 0.5;
-        cout << "Performing NMD using generalized Bregman divergence "
+        cout << "Performing NMD using generalized Beta divergence "
              << "(beta = " << beta << ")" << endl;
 
         nmf::Deconvolver d(x, 10, t);
-        d.factorizeNMDBreg(5000, 1e-5, 0, beta);
+        d.factorizeNMDBeta(5000, 1e-5, 0, beta);
         cout << "# steps: " << d.numSteps() << endl;
         cout << "absolute error: " << d.absoluteError() << endl;
         cout << "relative error: " << d.relativeError() << endl;
@@ -275,7 +186,7 @@ bool NMDTest::performTest()
         Matrix s(10, x.cols(), generators::unity);
         s.apply(Matrix::mul, sparsity);
         d.setSparsity(s);
-        d.factorizeNMDBreg(5000, 1e-5, 1, true, false);
+        d.factorizeNMDBeta(5000, 1e-5, 1, true, false);
         cout << "# steps: " << d.numSteps() << endl;
         cout << "absolute error: " << d.absoluteError() << endl;
         cout << "relative error: " << d.relativeError() << endl;
@@ -310,7 +221,7 @@ bool NMDTest::performTest()
         Matrix s(10, x.cols(), generators::unity);
         s.apply(Matrix::mul, continuity);
         d.setContinuity(s);
-        d.factorizeNMDBreg(100, 0.0, 1.0, false, true);
+        d.factorizeNMDBeta(100, 0.0, 1.0, false, true);
         cout << "# steps: " << d.numSteps() << endl;
         cout << "absolute error: " << d.absoluteError() << endl;
         cout << "relative error: " << d.relativeError() << endl;

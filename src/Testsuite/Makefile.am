@@ -60,8 +60,6 @@ testsuite_SOURCES = BinaryReaderWriterTest.cpp \
                     MTrTest.h \
 					NMDTest.cpp \
 					NMDTest.h \
-                    NMDConvTest.cpp \
-                    NMDConvTest.h \
 					NMFTest.cpp \
 					NMFTest.h \
 					PCATest.cpp \

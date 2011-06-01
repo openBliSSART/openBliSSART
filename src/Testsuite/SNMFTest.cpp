@@ -69,7 +69,7 @@ bool SNMFTest::performTest()
         Matrix wh1(d.getApprox());
         d.setW(0, w);
         d.setH(h);
-        d.factorizeNMDED(1, 0.0);
+        d.decompose(Deconvolver::EuclideanDistance, 1, 0.0, false);
         d.computeApprox();
         Matrix wh2(d.getApprox());
         cout << "1 iteration of sparse NMF (lambda = 0)" << endl;
@@ -93,7 +93,7 @@ bool SNMFTest::performTest()
         Matrix wh1(d.getApprox());
         d.setW(0, w);
         d.setH(h);
-        d.factorizeNMDKL(1, 0.0);
+        d.decompose(Deconvolver::KLDivergence, 1, 0.0, false);
         d.computeApprox();
         Matrix wh2(d.getApprox());
         cout << "1 iteration of sparse NMF (lambda = 0)" << endl;
@@ -126,7 +126,7 @@ bool SNMFTest::performTest()
             }
             d.setSparsity(s);
 
-            d.factorizeNMDBreg(100, 0.0, 1, true, false);
+            d.factorizeNMDBeta(100, 0.0, 1, true, false);
             //d.decompose(nmf::Deconvolver::KLDivergenceSparse, 100, 0.0);
             d.computeApprox();
             cout << "absolute error: " << d.absoluteError() << endl;
@@ -168,7 +168,7 @@ bool SNMFTest::performTest()
             }
             d.setSparsity(s);
 
-            d.factorizeNMDBreg(1000, 1e-5, 2, true, false);
+            d.factorizeNMDBeta(1000, 1e-5, 2, true, false);
             //d.decompose(nmf::Deconvolver::EuclideanDistanceSparse, 1000, 1e-5);
             d.computeApprox();
             cout << "absolute error: " << d.absoluteError() << endl;
