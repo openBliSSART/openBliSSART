@@ -94,8 +94,7 @@ Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t,
     _absoluteError(-1),
     _relativeError(-1),
     _vFrob(_v.frobeniusNorm()),
-    _notificationDelay(25),
-    _nmdModifiedHUpdate(true)
+    _notificationDelay(25)
 {
     if (t > v.cols()) {
         std::ostringstream errStr;
@@ -512,32 +511,6 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
                     hUpdate(i, j) += num / denom;
                 }
             }
-            // FIXME: duplicate code
-            if (!_nmdModifiedHUpdate) {
-                for (unsigned int j = _h.cols() - p; j < _h.cols(); ++j) {
-                    for (unsigned int i = 0; i < _h.rows(); ++i) {
-                        double num = 0.0, denom = 0.0;
-                        if (sparse) {
-                            num   += _s(i, j) * _h(i, j) * csminus->at(i);
-                            denom += _s(i, j) * csplus->at(i);
-                        }
-                        if (continuous) {
-                            double l = j == 0 ? 0.0 : oldH->at(i, j - 1);
-                            double r = j == _h.cols() - 1 ? 0.0 : _h(i, j + 1);
-                            num   += _c(i,j) * ((l + r)  * ctminus1->at(i) + 
-                                                _h(i, j) * ctminus2->at(i));
-                            denom += _c(i, j) * _h(i, j) * ctplus->at(i);
-                        }
-                        if (!sparse && !continuous) {
-                            hUpdate(i, j) += 1.0;
-                        }
-                        else {
-                            if (denom == 0.0) denom = DIVISOR_FLOOR;
-                            hUpdate(i, j) += num / denom;
-                        }
-                    }
-                }
-            }
         }
 
         // Apply average update to H
@@ -548,8 +521,7 @@ void Deconvolver::factorizeNMDBreg(unsigned int maxSteps, double eps,
             }
         }
         for (unsigned int j = _h.cols() - _t + 1; j < _h.cols(); ++j) {
-            if (_nmdModifiedHUpdate) 
-                --updateNorm;
+            --updateNorm;
             for (unsigned int i = 0; i < _h.rows(); ++i) {
                 _h(i, j) *= hUpdate(i, j) / updateNorm;
             }

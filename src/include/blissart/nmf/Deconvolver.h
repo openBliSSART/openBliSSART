@@ -133,12 +133,6 @@ public:
     inline const blissart::linalg::Matrix& getW(unsigned int i) const;
 
 
-    /** 
-     * TODO
-     */
-    inline void setNMDModifiedHUpdate(bool flag);
-
-
     /**
      * Sets the W matrix with the given index.
      */
@@ -388,7 +382,6 @@ protected:
     double                      _relativeError;
     const double                _vFrob;
     unsigned int                _notificationDelay;
-    bool                        _nmdModifiedHUpdate;
 
 
 private:
@@ -530,12 +523,6 @@ unsigned int Deconvolver::numSteps() const
 void Deconvolver::setProgressNotificationDelay(unsigned int numSteps)
 {
     _notificationDelay = numSteps;
-}
-
-
-void Deconvolver::setNMDModifiedHUpdate(bool flag)
-{
-    _nmdModifiedHUpdate = flag;
 }
 
 
