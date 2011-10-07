@@ -24,7 +24,7 @@
 
 bin_PROGRAMS = testsuite
 
-testsuite_CPPFLAGS = -I../include @POCO_CPPFLAGS@
+testsuite_CPPFLAGS = -I../include @POCO_CPPFLAGS@ @CUDA_CPPFLAGS@
 
 testsuite_LDADD = $(top_srcdir)/src/LibAudio/libAudio.la \
                   $(top_srcdir)/src/LibLinAlg/libLinAlg.la \
@@ -32,7 +32,7 @@ testsuite_LDADD = $(top_srcdir)/src/LibAudio/libAudio.la \
                   $(top_srcdir)/src/LibFeature/libFeature.la \
                   $(top_srcdir)/src/LibICA/libICA.la \
                   $(top_srcdir)/src/LibNMF/libNMF.la \
-                  @POCO_LDFLAGS@ -lPocoFoundation -lPocoUtil -lPocoXML 
+                  @POCO_LDFLAGS@ -lPocoFoundation -lPocoUtil -lPocoXML -lcublas
 
 testsuite_SOURCES = BinaryReaderWriterTest.cpp \
 					BinaryReaderWriterTest.h \
@@ -44,6 +44,8 @@ testsuite_SOURCES = BinaryReaderWriterTest.cpp \
 					FeatureExtractionTest.h \
 					FeatureSelectionTest.cpp \
 					FeatureSelectionTest.h \
+                    GPUMatrixTest.cpp \
+                    GPUMatrixTest.h \
 					HTKWriterTest.cpp \
 					HTKWriterTest.h \
 					ICATest.cpp \

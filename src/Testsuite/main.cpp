@@ -33,6 +33,7 @@
 #include "DatabaseSubsystemTest.h"
 #include "FeatureExtractionTest.h"
 #include "FeatureSelectionTest.h"
+#include "GPUMatrixTest.h"
 #include "ICATest.h"
 #include "HTKWriterTest.h"
 #include "MFCCTest.h"
@@ -110,6 +111,7 @@ protected:
         options.addOption(Option("keep-data", "", "Do not delete data in database file after database test"));
         options.addOption(Option("fex", "", "Test feature extraction (except MFCCs)"));
         options.addOption(Option("fs", "", "Test feature selection"));
+        options.addOption(Option("gpu", "", "Test GPU matrix functions"));
         options.addOption(Option("htk", "", "Test HTK export"));
         options.addOption(Option("ica", "", "Test ICA functions"));
         options.addOption(Option("matrix", "", "Test matrix functions"));
@@ -142,6 +144,8 @@ protected:
 
         if (name == "all" || name == "matrix")
             pushTest(new MatrixTest());
+        if (name == "all" || name == "gpu")
+            pushTest(new GPUMatrixTest());
         if (name == "all" || name == "spec")
             pushTest(new SpectralAnalysisTest());
         if (name == "all" || name == "vector")

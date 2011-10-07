@@ -34,8 +34,8 @@ AC_DEFUN([AX_CHECK_CUDA],
     dnl Provide --with-cuda-lib=<dir> and --with-cuda-include=<dir>.
     AC_ARG_WITH([cuda-lib],
         [AS_HELP_STRING([--with-cuda-lib=<dir>],
-                        [Path where CUDA BLAS libraries are installed (default: /usr/local/cuda/lib)])],
-        [CUDA_LIB="$withval"], [CUDA_LIB="/usr/local/cuda/lib"]
+                        [Path where CUDA BLAS libraries are installed (default: /usr/local/cuda/lib64)])],
+        [CUDA_LIB="$withval"], [CUDA_LIB="/usr/local/cuda/lib64"]
     ) dnl AC_ARG_WITH
     AC_ARG_WITH([cuda-include],
         [AS_HELP_STRING([--with-cuda-include=<dir>],
@@ -52,16 +52,10 @@ AC_DEFUN([AX_CHECK_CUDA],
 
     if test "$CUDA" == "yes"; then
         AC_MSG_CHECKING([for CUDA])
-        dnl if test -n "$CUDA_INCLUDE"; then
-        dnl     CUDA_INCLUDE=/usr/local/cuda/include
-        dnl fi
-        dnl if test -n "$CUDA_LIB"; then
-        dnl     CUDA_LIB=/usr/local/cuda/lib
-        dnl fi
         save_LIBS="$LIBS"
         save_LDFLAGS="$LDFLAGS"
         save_CPPFLAGS="$CPPFLAGS"
-        LIBS="$LIBS -lcuda"
+        LIBS="$LIBS -lcuda -lcublas"
         CPPFLAGS="$CPPFLAGS -I$CUDA_INCLUDE"
         LDFLAGS="$LDFLAGS -L$CUDA_LIB -Wl,-rpath,$CUDA_LIB"
         dnl LDFLAGS="$LDFLAGS -L$CUDA_LIB"
@@ -89,7 +83,7 @@ AC_DEFUN([AX_CHECK_CUDA],
         dnl Probably hack, but works for me (fw).
         AC_DEFINE([HAVE_CUDA], [1], [Define to 1 if you have CUDA installed and want to use it for extra-fast NMF.])
         LDFLAGS="$LDFLAGS -L$CUDA_LIB -Wl,-rpath,$CUDA_LIB"
-        LIBS="$LIBS -lmwblas"
+        LIBS="$LIBS -lcuda -lcublas"
         CUDA_CPPFLAGS="-I$CUDA_INCLUDE"
         ifelse([$1], [], :, [$1])     
     else

@@ -27,6 +27,11 @@
 #define __BLISSART_LINALG_GPUMATRIX_H__
 
 
+#ifdef ISEP_ROW_MAJOR
+# error CUDA does not support row-major layout
+#endif
+
+
 #include <blissart/linalg/Matrix.h>
 #include <cublas_v2.h>
 
@@ -43,6 +48,7 @@ public:
     GPUMatrix(Matrix& hostMatrix);
     virtual ~GPUMatrix();
 
+    void multWithMatrix(const GPUMatrix& other, GPUMatrix* target) const;
     void multWithMatrix(const GPUMatrix& other, GPUMatrix* target,
         bool transpose, bool transposeOther,
         unsigned int m, unsigned int k, unsigned int n,
@@ -53,11 +59,29 @@ public:
     static void GPUStart();
     static void GPUStop();
 
+    void getMatrix(Matrix* target);
+
+protected:
+    const double* dataPtr() const;
+    double* dataPtr();
+
 private:
     double* _dataDev;
     static bool    _cublasInitialized;
     static cublasHandle_t _cublasHandle;
 };
+
+
+inline double* GPUMatrix::dataPtr()
+{
+    return _dataDev;
+}
+
+
+inline const double* GPUMatrix::dataPtr() const
+{
+    return _dataDev;
+}
 
 
 } // namespace linalg

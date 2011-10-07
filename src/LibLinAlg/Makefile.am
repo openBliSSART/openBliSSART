@@ -24,9 +24,9 @@
 
 lib_LTLIBRARIES = libLinAlg.la
 
-libLinAlg_la_CPPFLAGS = -I../include -I/usr/local/cuda/include @MATLAB_CPPFLAGS@
+libLinAlg_la_CPPFLAGS = -I../include @CUDA_CPPFLAGS@ @MATLAB_CPPFLAGS@
 
-libLinAlg_la_LIBADD = @CBLAS_LIBS@ -L/usr/local/cuda/lib -lcuda
+libLinAlg_la_LIBADD = @CBLAS_LIBS@ 
 
 libLinAlg_la_CXXFLAGS = -fPIC
 

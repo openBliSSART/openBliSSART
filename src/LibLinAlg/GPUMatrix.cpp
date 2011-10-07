@@ -25,6 +25,7 @@
 
 #include <blissart/linalg/GPUMatrix.h>
 #include <cuda_runtime.h>
+#include <cassert>
 #include <stdexcept>
 
 
@@ -34,10 +35,12 @@ namespace blissart {
 namespace linalg {
 
 
-bool GPUMatrix::_cublasInitialized = false;
+bool            GPUMatrix::_cublasInitialized = false;
+cublasHandle_t  GPUMatrix::_cublasHandle;
 
 
-GPUMatrix::GPUMatrix(Matrix& hostMatrix) : Matrix(hostMatrix)
+GPUMatrix::GPUMatrix(Matrix& hostMatrix) : // Matrix(hostMatrix)
+    Matrix(hostMatrix.rows(), hostMatrix.cols())
 {
     cudaError_t cudaStat;
     cublasStatus_t cublasStat;
@@ -67,6 +70,13 @@ GPUMatrix::GPUMatrix(Matrix& hostMatrix) : Matrix(hostMatrix)
 }
 
 
+void GPUMatrix::multWithMatrix(const GPUMatrix& other, GPUMatrix* target) const
+{
+    multWithMatrix(other, target, false, false, this->rows(), this->cols(), 
+        other.cols(), 0, 0, 0, 0, 0, 0);
+}
+
+
 void GPUMatrix::multWithMatrix(const GPUMatrix& other, GPUMatrix* target,
     bool transpose, bool transposeOther,
     unsigned int m, unsigned int k, unsigned int n,
@@ -85,13 +95,13 @@ void GPUMatrix::multWithMatrix(const GPUMatrix& other, GPUMatrix* target,
         n,
         k,
         &alpha,
-        this->dataPtr() + rowOffset * this->cols() + colOffset,
-        this->cols(),    // lda
-        other.dataPtr() + rowOffsetOther * other.cols() + colOffsetOther,
-        other.cols(),    // ldb
+        _dataDev + colOffset * this->rows() + rowOffset,
+        this->rows(),    // lda
+        other._dataDev + colOffsetOther * other.rows() + rowOffsetOther,
+        other.rows(),    // ldb
         &beta,
-        target->dataPtr() + rowOffsetTarget * target->cols() + colOffsetTarget,
-        target->cols()   // ldc
+        target->_dataDev + colOffsetTarget * target->rows() + rowOffsetTarget,
+        target->rows()   // ldc
     );
     if (rv != CUBLAS_STATUS_SUCCESS) 
         // TODO: define exception class with cublas return codes?
@@ -119,6 +129,18 @@ void GPUMatrix::GPUStop()
 {
     if (_cublasInitialized)
         cublasDestroy(_cublasHandle);
+}
+
+
+void GPUMatrix::getMatrix(Matrix* target)
+{
+    assert(target->rows() == rows() && target->cols() == cols());
+    cublasStatus_t cublasStat = cublasGetMatrix(
+        rows(), cols(),
+        sizeof(*target->dataPtr()),
+        _dataDev, rows(),
+        target->dataPtr(), target->rows()
+    );
 }
 
 
