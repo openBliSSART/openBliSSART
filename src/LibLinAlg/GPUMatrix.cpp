@@ -95,12 +95,12 @@ void GPUMatrix::multWithMatrix(const GPUMatrix& other, GPUMatrix* target,
         n,
         k,
         &alpha,
-        _dataDev + colOffset * this->rows() + rowOffset,
+        this->dataPtr() + colOffset * this->rows() + rowOffset,
         this->rows(),    // lda
-        other._dataDev + colOffsetOther * other.rows() + rowOffsetOther,
+        other.dataPtr() + colOffsetOther * other.rows() + rowOffsetOther,
         other.rows(),    // ldb
         &beta,
-        target->_dataDev + colOffsetTarget * target->rows() + rowOffsetTarget,
+        target->dataPtr() + colOffsetTarget * target->rows() + rowOffsetTarget,
         target->rows()   // ldc
     );
     if (rv != CUBLAS_STATUS_SUCCESS) 
