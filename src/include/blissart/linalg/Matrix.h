@@ -66,6 +66,9 @@ class RowVector;
  */
 class LibLinAlg_API Matrix
 {
+    friend class GPUMatrix;
+
+
 public:
     /**
      * List of eigenpairs, i.e. a list of pairs of which the first item
@@ -753,6 +756,10 @@ public:
 #endif
 
 
+protected:
+    const double *dataPtr() const;
+    double *dataPtr();
+
 private:
     unsigned int _rows;
     unsigned int _cols;
@@ -780,6 +787,18 @@ T Matrix::expectedValue(const T& iv, void* info,
 //
 // Inlines
 //
+
+
+inline double *Matrix::dataPtr()
+{
+    return _data;
+}
+
+
+inline const double *Matrix::dataPtr() const
+{
+    return _data;
+}
 
 
 inline std::ostream& operator << (std::ostream& os, const Matrix& m)
