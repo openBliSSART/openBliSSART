@@ -40,6 +40,7 @@ sinclude([acbuild/m4/ax_check_sdl.m4])
 sinclude([acbuild/m4/ax_check_sdl_sound.m4])
 sinclude([acbuild/m4/ax_check_cblas.m4])
 sinclude([acbuild/m4/ax_check_matlab.m4])
+sinclude([acbuild/m4/ax_check_cuda.m4])
 sinclude([acbuild/m4/ax_enable_debug.m4])
 dnl sinclude([acbuild/m4/ax_get_os_and_machine_type.m4])
 
@@ -70,6 +71,7 @@ AX_CHECK_MATLAB
 if test "$NO_MATLAB" == "yes"; then
   AX_CHECK_CBLAS
 fi
+AX_CHECK_CUDA
 
 # Checks for header files.
 AC_CHECK_HEADERS([float.h stdlib.h string.h])
