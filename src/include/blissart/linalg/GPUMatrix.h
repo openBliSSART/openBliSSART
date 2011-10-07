@@ -42,9 +42,24 @@ namespace blissart {
 namespace linalg {
 
 
+namespace gpu {
+void apply_add(const double* a, const double* b, double* c, int m, int n);
+void apply_mul(const double* a, const double* b, double* c, int m, int n);
+void apply_div(const double* a, const double* b, double* c, int m, int n);
+void apply_pow(const double* a, const double b, double* c, int m, int n);
+}
+
+
+/**
+ * Represents a matrix on the GPU.
+ */
 class GPUMatrix: protected Matrix
 {
 public:
+    // Reserves space on the GPU, but does not copy any data.
+    // This is only useful if this serves as a target, e.g. for a matrix multiplication on the GPU.
+    GPUMatrix(unsigned int rows, unsigned int cols);
+    // Reserves space on the GPU and copies data from host matrix.
     GPUMatrix(Matrix& hostMatrix);
     virtual ~GPUMatrix();
 
@@ -55,6 +70,12 @@ public:
         unsigned int rowOffset, unsigned int colOffset,
         unsigned int rowOffsetOther, unsigned int colOffsetOther,
         unsigned int rowOffsetTarget, unsigned int colOffsetTarget) const;
+
+    void add(const GPUMatrix& other);
+    void add(const GPUMatrix& other, GPUMatrix* target);
+    void elementWiseMult(const GPUMatrix& other, GPUMatrix* target);
+    void elementWiseDiv(const GPUMatrix& other, GPUMatrix* target);
+    void elementWisePow(const double exp, GPUMatrix* target);
 
     static void GPUStart();
     static void GPUStop();

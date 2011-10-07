@@ -70,6 +70,12 @@ GPUMatrix::GPUMatrix(Matrix& hostMatrix) : // Matrix(hostMatrix)
 }
 
 
+GPUMatrix::~GPUMatrix()
+{
+    cudaFree(_dataDev);
+}
+
+
 void GPUMatrix::multWithMatrix(const GPUMatrix& other, GPUMatrix* target) const
 {
     multWithMatrix(other, target, false, false, this->rows(), this->cols(), 
@@ -109,9 +115,35 @@ void GPUMatrix::multWithMatrix(const GPUMatrix& other, GPUMatrix* target,
 }
 
 
-GPUMatrix::~GPUMatrix()
+void GPUMatrix::add(const GPUMatrix &other)
 {
-    cudaFree(_dataDev);
+    // TODO: check dimensions
+    gpu::apply_add(this->dataPtr(), other.dataPtr(), this->dataPtr(), this->rows(), this->cols());
+}
+
+
+void GPUMatrix::add(const GPUMatrix &other, GPUMatrix* target)
+{
+    // TODO: check dimensions
+    gpu::apply_add(this->dataPtr(), other.dataPtr(), target->dataPtr(), this->rows(), this->cols());
+}
+
+
+void GPUMatrix::elementWiseMult(const GPUMatrix &other, GPUMatrix* target)
+{
+    gpu::apply_mul(this->dataPtr(), other.dataPtr(), target->dataPtr(), this->rows(), this->cols());
+}
+
+
+void GPUMatrix::elementWiseDiv(const GPUMatrix &other, GPUMatrix* target)
+{
+    gpu::apply_div(this->dataPtr(), other.dataPtr(), target->dataPtr(), this->rows(), this->cols());
+}
+
+
+void GPUMatrix::elementWisePow(const double exp, GPUMatrix* target)
+{
+    gpu::apply_pow(this->dataPtr(), exp, target->dataPtr(), this->rows(), this->cols());
 }
 
 

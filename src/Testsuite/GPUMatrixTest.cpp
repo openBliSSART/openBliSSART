@@ -30,6 +30,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <cstdlib>
 
 //#include <Poco/TemporaryFile.h>
 
@@ -95,10 +96,36 @@ bool GPUMatrixTest::performTest()
     c_d.getMatrix(&cgpu);
     cout << "Product on GPU:" << endl << cgpu;
 
+    // Matrix + Matrix on GPU
+    srand(1);
+    Matrix d(9, 10, generators::random);
+    Matrix e(9, 10, generators::random);
+    cout << "D = " << endl << d;
+    cout << "E = " << endl << e;
+    GPUMatrix d_d(d);
+    GPUMatrix e_d(e);
+    // TODO we need simpler constructor
+    Matrix tmp(9, 10, generators::zero);
+    GPUMatrix f_d(tmp);
+    d_d.add(e_d, &f_d);
+    Matrix fgpu(9, 10, generators::zero);
+    f_d.getMatrix(&fgpu);
+    cout << "Result D+E: " << endl << fgpu << endl;
+    
+    d_d.elementWiseMult(e_d, &f_d);
+    f_d.getMatrix(&fgpu);
+    cout << "Result D.*E: " << endl << fgpu << endl;
+
+    d_d.elementWiseDiv(e_d, &f_d);
+    f_d.getMatrix(&fgpu);
+    cout << "Result D./E: " << endl << fgpu << endl;
+
+    d_d.elementWisePow(2.5, &f_d);
+    f_d.getMatrix(&fgpu);
+    cout << "Result D.^2.5: " << endl << fgpu << endl;
+
     GPUMatrix::GPUStop();
 
-    /*if (!(Matrix(2, 3, correctResultMult) == c))
-        return false;*/
     return true;
 }
 
