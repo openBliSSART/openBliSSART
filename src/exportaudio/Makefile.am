@@ -25,6 +25,7 @@
 bin_PROGRAMS = exportaudio
 
 exportaudio_LDADD = $(top_srcdir)/src/LibFramework/libFramework.la \
+               $(top_srcdir)/src/LibLinAlg/libLinAlg.la \
                $(top_srcdir)/src/LibAudio/libAudio.la \
                 @POCO_LDFLAGS@ -lPocoFoundation -lPocoUtil -lPocoXML
 

@@ -469,8 +469,8 @@ public:
      * Resets all matrix entries to zero.
      */
     void zero();
-
-
+    
+    
     /**
      * Transforms the matrix into row echelon form by using Gauss elimination.
      * @param   reducedRowEchelonForm

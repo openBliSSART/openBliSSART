@@ -23,6 +23,8 @@
 //
 
 
+#include <config.h>
+
 #include <Poco/Util/Application.h>
 #include <Poco/Util/HelpFormatter.h>
 
@@ -33,7 +35,9 @@
 #include "DatabaseSubsystemTest.h"
 #include "FeatureExtractionTest.h"
 #include "FeatureSelectionTest.h"
+#ifdef HAVE_CUDA
 #include "GPUMatrixTest.h"
+#endif
 #include "ICATest.h"
 #include "HTKWriterTest.h"
 #include "MFCCTest.h"
@@ -111,7 +115,9 @@ protected:
         options.addOption(Option("keep-data", "", "Do not delete data in database file after database test"));
         options.addOption(Option("fex", "", "Test feature extraction (except MFCCs)"));
         options.addOption(Option("fs", "", "Test feature selection"));
+#ifdef HAVE_CUDA
         options.addOption(Option("gpu", "", "Test GPU matrix functions"));
+#endif
         options.addOption(Option("htk", "", "Test HTK export"));
         options.addOption(Option("ica", "", "Test ICA functions"));
         options.addOption(Option("matrix", "", "Test matrix functions"));
@@ -144,8 +150,10 @@ protected:
 
         if (name == "all" || name == "matrix")
             pushTest(new MatrixTest());
+#ifdef HAVE_CUDA
         if (name == "all" || name == "gpu")
             pushTest(new GPUMatrixTest());
+#endif
         if (name == "all" || name == "spec")
             pushTest(new SpectralAnalysisTest());
         if (name == "all" || name == "vector")

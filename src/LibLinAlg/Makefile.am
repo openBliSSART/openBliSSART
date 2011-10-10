@@ -39,11 +39,13 @@ libLinAlg_la_LIBADD = @CBLAS_LIBS@
 libLinAlg_la_CXXFLAGS = -fPIC
 
 libLinAlg_la_SOURCES = ColVector.cpp \
-                       GPUMatrix.cpp \
-                       GPUMatrixKernels.cu \
                        Matrix.cpp \
                        RowVector.cpp \
                        Vector.cpp
+
+if HAVE_CUDA
+libLinAlg_la_SOURCES += GPUMatrixKernels.cu GPUMatrix.cpp
+endif
 
 EXTRA_DIST = LibLinAlg.vcproj
 

@@ -72,6 +72,8 @@ if test "$NO_MATLAB" == "yes"; then
   AX_CHECK_CBLAS
 fi
 AX_CHECK_CUDA
+#AM_CONDITIONAL([AM_HAVE_CUDA], [test -z "$NO_CUDA"])
+AM_CONDITIONAL([HAVE_CUDA], [test -z "$NO_CUDA"])
 
 # Checks for header files.
 AC_CHECK_HEADERS([float.h stdlib.h string.h])

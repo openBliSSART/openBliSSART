@@ -32,7 +32,7 @@ testsuite_LDADD = $(top_srcdir)/src/LibAudio/libAudio.la \
                   $(top_srcdir)/src/LibFeature/libFeature.la \
                   $(top_srcdir)/src/LibICA/libICA.la \
                   $(top_srcdir)/src/LibNMF/libNMF.la \
-                  @POCO_LDFLAGS@ -lPocoFoundation -lPocoUtil -lPocoXML -lcublas
+                  @POCO_LDFLAGS@ -lPocoFoundation -lPocoUtil -lPocoXML
 
 testsuite_SOURCES = BinaryReaderWriterTest.cpp \
 					BinaryReaderWriterTest.h \
@@ -44,8 +44,6 @@ testsuite_SOURCES = BinaryReaderWriterTest.cpp \
 					FeatureExtractionTest.h \
 					FeatureSelectionTest.cpp \
 					FeatureSelectionTest.h \
-                    GPUMatrixTest.cpp \
-                    GPUMatrixTest.h \
 					HTKWriterTest.cpp \
 					HTKWriterTest.h \
 					ICATest.cpp \
@@ -85,5 +83,9 @@ testsuite_SOURCES = BinaryReaderWriterTest.cpp \
 					WaveTest.cpp \
 					WaveTest.h \
 					main.cpp
+
+if HAVE_CUDA
+testsuite_SOURCES += GPUMatrixTest.cpp GPUMatrixTest.h
+endif
 
 EXTRA_DIST = Testsuite.vcproj

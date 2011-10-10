@@ -39,6 +39,7 @@
 
 
 
+
 // for debugging ...
 #include <iostream>
 using namespace std;
@@ -83,7 +84,7 @@ Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t,
                          Matrix::GeneratorFunction hGenerator) :
     _alg(Deconvolver::Auto),
     _v(v),
-    _approx(v.rows(), v.cols(), generators::zero),
+    _approx(v.rows(), v.cols()), //, generators::zero),
     _oldApprox(0),
     _w(new Matrix*[t]),
     _wConstant(false),
@@ -303,12 +304,179 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
         vLambdaInv = &vgpu;
         approxInv = &approxgpu;
     }
+    else {
+        vLambdaInv = new GPUMatrix(_v.rows(), _v.cols());
+        // TODO: row sum stuff for KL
+        approxInv = new GPUMatrix(_v.rows(), _v.cols());
+    }
+
+    //
+    // Main iteration loop
+    //
+    
+    _numSteps = 0;
+    while (1) {
+        computeApprox(wgpu, hgpu, &approxgpu);
+        /*Matrix tmp(_v.rows(), _v.cols());
+        approxgpu.getMatrix(&tmp);
+        cout << "Iteration #" << _numSteps << ": Approx =" << endl << tmp << endl;*/
+        //break;
+
+        if (_numSteps >= maxSteps)
+            break;
+
+        if (!_wConstant) {
+            GPUMatrix* wpH = 0;
+            for (unsigned int p = 0; p < _t; ++p) {
+                // General Beta div. alg. (for ED, no computation needed)
+                if (beta != 2) {
+                    // TODO: KL as special case
+                    // TODO: this might be done in a single kernel in the future...
+                    approxgpu.elementWisePow(beta - 2, approxInv);
+                    approxInv->elementWiseMult(vgpu, vLambdaInv);
+                    // vOverApprox now contains Approx^{Beta - 2} .* V
+                    approxInv->elementWiseMult(approxgpu, approxInv);
+                    // approxInv now contains Approx^{Beta - 1};
+                }
+                /*approxInv->getMatrix(&tmp);
+                cout << "Inverse of Approx = " << endl << tmp << endl;*/
+                // W Update, Numerator
+                vLambdaInv->multWithMatrix(hgpu, &wUpdateNum,
+                    false, true,
+                    _v.rows(), _v.cols() - p, _h.rows(),
+                    0, p, 0, 0, 0, 0);
+
+                // W Update, Denominator (for KL this is a all-one matrix)
+                // for ED (beta = 2) the original approximation is used
+                approxInv->multWithMatrix(hgpu, &wUpdateDenom,
+                    false, true,
+                    _v.rows(), _v.cols() - p, _h.rows(),
+                    0, p, 0, 0, 0, 0);
+                // TODO: implement this on GPU
+                // ensureNonnegativity(wUpdateDenom);
+
+                if (_t > 1) {
+                    wpH = new GPUMatrix(_v.rows(), _v.cols());
+                    // Difference-based calculation of new approximation
+                    multWithShifted(*wgpu[p], hgpu, wpH, p);
+                    approxgpu.sub(*wpH);
+                }
+
+                // W multiplicative update
+                /*cout << "W before update: " << endl;
+                Matrix tmp2(wgpu[p]->rows(), wgpu[p]->cols());
+                wgpu[p]->getMatrix(&tmp2);
+                cout << tmp2 << endl;*/
+
+                /*Matrix tmp2(wgpu[p]->rows(), wgpu[p]->cols());
+
+                cout << "W update num: " << endl;
+                wUpdateNum.getMatrix(&tmp2);
+                cout << tmp2 << endl;
+                cout << "W update denom: " << endl;
+                wUpdateDenom.getMatrix(&tmp2);
+                cout << tmp2 << endl;*/
+
+                wgpu[p]->elementWiseMult(wUpdateNum,   wgpu[p]);
+                wgpu[p]->elementWiseDiv (wUpdateDenom, wgpu[p]);
+                
+                /*cout << "W after update: " << endl;
+                wgpu[p]->getMatrix(&tmp2);
+                cout << tmp2 << endl;*/
+                
+                // Difference-based calculation of new approximation
+                if (_t > 1) {
+                    multWithShifted(*wgpu[p], hgpu, wpH, p);
+                    approxgpu.add(*wpH);
+                    delete wpH;
+                    // TODO implement this
+                    // ensureNonnegativity(approxgpu);
+                }
+            }
+        }
+
+        // For T > 1, approximation has been calculated above.
+        // For T = 1, this is more efficient for T = 1.
+        if (_t == 1) {
+            computeApprox(wgpu, hgpu, &approxgpu);
+        }
+
+        // Now the approximation is up-to-date in any case.
+        // see above
+        if (beta != 2) {
+            approxgpu.elementWisePow(beta - 2, approxInv);
+            approxInv->elementWiseMult(vgpu, vLambdaInv);
+            approxInv->elementWiseMult(approxgpu, approxInv);
+        }
+
+        // H Update
+        hUpdate.zero();
+        
+        // Compute H update for each W[p] and average later
+        for (unsigned int p = 0; p < _t; ++p) {
+            // TODO col sum stuff for KL
+
+            // Numerator
+            wgpu[p]->multWithMatrix(*vLambdaInv, &hUpdateNum,
+                // transpose W[p]
+                true, false, 
+                // target dimension: R x (N-p)
+                wgpu[p]->cols(), wgpu[p]->rows(), _v.cols() - p,
+                0, 0, 0, p, 0, 0);
+            // Denominator
+            wgpu[p]->multWithMatrix(*approxInv, &hUpdateDenom,
+                // transpose W[p]
+                true, false, 
+                // target dimension: R x (N-p)
+                wgpu[p]->cols(), wgpu[p]->rows(), _v.cols() - p,
+                0, 0, 0, p, 0, 0);
+            /*Matrix tmp3(_h.rows(), _h.cols());
+            hUpdateNum.getMatrix(&tmp3);
+            cout << "H update numerator: " << endl << tmp3 << endl;
+            hUpdateDenom.getMatrix(&tmp3);
+            cout << "H update denominator: " << endl << tmp3 << endl;*/
+            // TODO implement this
+            // ensureNonnegativity(hUpdateDenom, DIVISOR_FLOOR);
+
+            // FIXME: Average update! NMD does not work like this
+            hgpu.elementWiseMult(hUpdateNum,   &hgpu);
+            hgpu.elementWiseDiv (hUpdateDenom, &hgpu);
+        }
+
+        // TODO
+        // Apply average update to H
+        /*double updateNorm = _t;
+        for (unsigned int j = 0; j <= _h.cols() - _t; ++j) {
+            for (unsigned int i = 0; i < _h.rows(); ++i) {
+                _h(i, j) *= hUpdate(i, j) / updateNorm;
+            }
+        }
+        for (unsigned int j = _h.cols() - _t + 1; j < _h.cols(); ++j) {
+            --updateNorm;
+            for (unsigned int i = 0; i < _h.rows(); ++i) {
+                _h(i, j) *= hUpdate(i, j) / updateNorm;
+            }
+        }*/
+        
+        /*Matrix tmp3(_h.rows(), _h.cols());
+        hgpu.getMatrix(&tmp3);
+        cout << "H after update: " << endl << tmp3 << endl;*/
+        
+        nextItStep(observer, maxSteps);
+    }
 
     // synchronize W and H to host
     hgpu.getMatrix(&_h);
     for (unsigned int t = 0; t < _t; ++t) {
         wgpu[t]->getMatrix(_w[t]);
     }
+    
+    // re-compute and synchronize approx
+    computeApprox(wgpu, hgpu, &approxgpu);
+    approxgpu.getMatrix(&_approx);
+    
+    // delete GPU resources
+    // TODO
 }
 
 
@@ -371,6 +539,8 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
     _numSteps = 0;
     while (1) {
         computeApprox();
+        
+        //cout << "Entering iteration " << _numSteps << ". Approx = " << endl << _approx << endl;
 
         if (_numSteps >= maxSteps)
             break;
@@ -396,12 +566,14 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
                     // vOverApprox now contains Approx^{Beta - 2} .* V
                     approxInv->apply(Matrix::mul, _approx, approxInv);
                     // approxInv now contains Approx^{Beta - 1};
+                    //cout << "Inverse of approx: " << endl << *approxInv << endl;
                 }
                 // W Update, Numerator
                 vOverApprox->multWithMatrix(_h, &wUpdateNum,
                     false, true,
                     _v.rows(), _v.cols() - p, _h.rows(),
                     0, p, 0, 0, 0, 0);
+                //cout << "W update numerator: " << endl << wUpdateNum << endl;
 
                 // W Update, Denominator (for KL this is a all-one matrix)
                 // for ED (beta = 2) the original approximation is used
@@ -410,7 +582,9 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
                         false, true,
                         _v.rows(), _v.cols() - p, _h.rows(),
                         0, p, 0, 0, 0, 0);
+                    //cout << "W update denominator (before): " << endl << wUpdateDenom << endl;
                     ensureNonnegativity(wUpdateDenom);
+                    //cout << "W update denominator (after): " << endl << wUpdateDenom << endl;
                 }
 
                 if (_t > 1) {
@@ -447,6 +621,8 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
                         }
                     }
                 }
+                
+                //cout << "W after update: " << endl << *_w[p] << endl;
 
                 // Difference-based calculation of new approximation
                 if (_t > 1) {
@@ -562,6 +738,8 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
                                             _h(i, j) * ctminus2->at(i));
                         denom += _c(i, j) * _h(i, j) * ctplus->at(i);
                     }
+                    //cout << "num(" << i << "," << j << "): " << num << endl;
+                    //cout << "denom(" << i << "," << j << "): " << denom << endl;
                     hUpdate(i, j) += num / denom;
                 }
             }
@@ -580,6 +758,8 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
                 _h(i, j) *= hUpdate(i, j) / updateNorm;
             }
         }
+        
+        //cout << "H after update: " << endl << _h << endl;
         
         nextItStep(observer, maxSteps);
     }
@@ -783,6 +963,25 @@ void Deconvolver::computeApprox()
 }
 
 
+#ifdef HAVE_CUDA
+void Deconvolver::computeApprox(GPUMatrix **w, const GPUMatrix &h, GPUMatrix *target)
+{
+    if (_t == 1) {
+        // this is much faster
+        w[0]->multWithMatrix(h, target);
+    }
+    else {
+        GPUMatrix wpH(_v.rows(), _v.cols());
+        target->zero();
+        for (unsigned int p = 0; p < _t; ++p) {
+            multWithShifted(*w[p], h, &wpH, p);
+            target->add(wpH);
+        }
+    }
+}
+#endif
+
+
 void Deconvolver::computeWpH(unsigned int p, Matrix& wpH)
 {
     // Fill W[p]*H with zeros in the first p columns
@@ -800,6 +999,22 @@ void Deconvolver::computeWpH(unsigned int p, Matrix& wpH)
         _w[p]->rows(), _w[p]->cols(), _h.cols() - p,
         0, 0, 0, 0, 0, p);
 }
+
+
+#ifdef HAVE_CUDA
+void Deconvolver::multWithShifted(const GPUMatrix &left, const GPUMatrix &right, 
+    GPUMatrix *target, unsigned int shift) const
+{
+    if (shift > 0) {
+        target->zero(0, 0, target->rows() - 1, shift - 1);
+    }
+    // See above.
+    left.multWithMatrix(right, target,
+        false, false,
+        left.rows(), left.cols(), right.cols() - shift,
+        0, 0, 0, 0, 0, shift);
+}
+#endif
 
 
 void Deconvolver::computeError()

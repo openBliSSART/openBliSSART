@@ -43,10 +43,13 @@ namespace linalg {
 
 
 namespace gpu {
+// TODO document
 void apply_add(const double* a, const double* b, double* c, int m, int n);
+void apply_sub(const double* a, const double* b, double* c, int m, int n);
 void apply_mul(const double* a, const double* b, double* c, int m, int n);
 void apply_div(const double* a, const double* b, double* c, int m, int n);
 void apply_pow(const double* a, const double b, double* c, int m, int n);
+void set_to_zero(double* a, int m, int n, int startRow, int startCol, int endRow, int endCol);
 }
 
 
@@ -73,6 +76,8 @@ public:
 
     void add(const GPUMatrix& other);
     void add(const GPUMatrix& other, GPUMatrix* target);
+    void sub(const GPUMatrix& other);
+    void sub(const GPUMatrix& other, GPUMatrix* target);
     void elementWiseMult(const GPUMatrix& other, GPUMatrix* target);
     void elementWiseDiv(const GPUMatrix& other, GPUMatrix* target);
     void elementWisePow(const double exp, GPUMatrix* target);
@@ -81,6 +86,23 @@ public:
     static void GPUStop();
 
     void getMatrix(Matrix* target);
+    
+    inline unsigned int rows() const { return _rows; }
+    inline unsigned int cols() const { return _cols; }
+
+    /**
+     * Resets all matrix entries to zero.
+     */
+    void zero();
+    
+    
+    /**
+     * Sets the specified submatrix to zero.
+     */
+    void zero(unsigned int startRow, unsigned int startCol,
+              unsigned int endRow,   unsigned int endCol);
+              
+
 
 /*protected:
     const double* dataPtr() const;

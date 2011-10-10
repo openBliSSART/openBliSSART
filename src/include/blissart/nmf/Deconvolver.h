@@ -32,6 +32,9 @@
 #include <config.h>
 #ifdef HAVE_CUDA
 #include <blissart/linalg/GPUMatrix.h>
+typedef blissart::linalg::GPUMatrix Matrix_t;
+#else
+typedef blissart::linalg::Matrix Matrix_t;
 #endif
 #include <blissart/nmf/randomGenerator.h>
 #include <cassert>
@@ -223,6 +226,7 @@ public:
      * The value can be retrieved using getApprox().
      */
     void computeApprox();
+    
 
     /**
      * Performs decomposition according to the given cost function.
@@ -302,6 +306,14 @@ public:
                                   ProgressObserver *observer = 0);
 
 protected:
+    // GPU version of computeApprox used only locally during factorization 
+    // - might be unified with computeApprox() in the future
+#ifdef HAVE_CUDA
+    void computeApprox(blissart::linalg::GPUMatrix **w, 
+        const blissart::linalg::GPUMatrix &h, 
+        blissart::linalg::GPUMatrix *target);
+#endif
+    
     // The W update (common for factorizeNMFED and factorizeEDSparse).
     void factorizeNMFEDWUpdate(blissart::linalg::Matrix& w);
 
@@ -328,6 +340,14 @@ protected:
     // Helper function that efficiently computes the product of W[p] and H,
     // where H is shifted p spots to the right.
     void computeWpH(unsigned int p, blissart::linalg::Matrix& target);
+    
+    // GPU version of the above. This might be unified with the above in the future.
+#ifdef HAVE_CUDA
+    void multWithShifted(const blissart::linalg::GPUMatrix &left, 
+        const blissart::linalg::GPUMatrix &right,
+        blissart::linalg::GPUMatrix *target,
+        unsigned int shift) const;
+#endif
 
     // Helper function that sets the negative elements of a matrix
     // to a small positive value.
@@ -344,7 +364,7 @@ protected:
 
     NMDAlgorithm                    _alg;
     const blissart::linalg::Matrix& _v;
-    blissart::linalg::Matrix        _approx;
+    blissart::linalg::Matrix _approx;
     blissart::linalg::Matrix*       _oldApprox;
     blissart::linalg::Matrix**      _w;
     bool                        _wConstant;

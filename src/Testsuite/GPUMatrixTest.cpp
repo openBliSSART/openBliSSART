@@ -104,14 +104,17 @@ bool GPUMatrixTest::performTest()
     cout << "E = " << endl << e;
     GPUMatrix d_d(d);
     GPUMatrix e_d(e);
-    // TODO we need simpler constructor
-    Matrix tmp(9, 10, generators::zero);
-    GPUMatrix f_d(tmp);
-    d_d.add(e_d, &f_d);
+    GPUMatrix f_d(9, 10);
     Matrix fgpu(9, 10, generators::zero);
+    
+    d_d.add(e_d, &f_d);
     f_d.getMatrix(&fgpu);
     cout << "Result D+E: " << endl << fgpu << endl;
     
+    d_d.sub(e_d, &f_d);
+    f_d.getMatrix(&fgpu);
+    cout << "Result D-E: " << endl << fgpu << endl;
+
     d_d.elementWiseMult(e_d, &f_d);
     f_d.getMatrix(&fgpu);
     cout << "Result D.*E: " << endl << fgpu << endl;
@@ -123,6 +126,16 @@ bool GPUMatrixTest::performTest()
     d_d.elementWisePow(2.5, &f_d);
     f_d.getMatrix(&fgpu);
     cout << "Result D.^2.5: " << endl << fgpu << endl;
+    
+    // Zero of submatrix
+    f_d.zero(2, 3, 7, 8);
+    f_d.getMatrix(&fgpu);
+    cout << "Set [2,3]->[7,8] to zero:" << endl << fgpu << endl;
+    
+    // Zero whole matrix
+    f_d.zero();
+    f_d.getMatrix(&fgpu);
+    cout << "Zero matrix:" << endl << fgpu << endl;
 
     GPUMatrix::GPUStop();
 
@@ -131,3 +144,4 @@ bool GPUMatrixTest::performTest()
 
 
 } // namespace Testing
+

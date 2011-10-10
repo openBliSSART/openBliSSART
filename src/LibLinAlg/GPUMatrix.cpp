@@ -130,15 +130,28 @@ void GPUMatrix::multWithMatrix(const GPUMatrix& other, GPUMatrix* target,
 
 void GPUMatrix::add(const GPUMatrix &other)
 {
-    // TODO: check dimensions
-    gpu::apply_add(this->_data, other._data, this->_data, this->_rows, this->_cols);
+    this->add(other, this);
 }
 
 
 void GPUMatrix::add(const GPUMatrix &other, GPUMatrix* target)
 {
-    // TODO: check dimensions
+    assert(this->_rows == other._rows && other._rows == target->_rows &&
+           this->_cols == other._cols && other._cols == target->_cols);
     gpu::apply_add(this->_data, other._data, target->_data, this->_rows, this->_cols);
+}
+
+
+void GPUMatrix::sub(const GPUMatrix &other)
+{
+    this->sub(other, this);
+}
+
+
+void GPUMatrix::sub(const GPUMatrix &other, GPUMatrix* target)
+{
+    // TODO: check dimensions
+    gpu::apply_sub(this->_data, other._data, target->_data, this->_rows, this->_cols);
 }
 
 
@@ -157,6 +170,21 @@ void GPUMatrix::elementWiseDiv(const GPUMatrix &other, GPUMatrix* target)
 void GPUMatrix::elementWisePow(const double exp, GPUMatrix* target)
 {
     gpu::apply_pow(this->_data, exp, target->_data, this->_rows, this->_cols);
+}
+
+
+void GPUMatrix::zero()
+{
+    gpu::set_to_zero(this->_data, this->_rows, this->_cols, 
+        0, 0, this->_rows - 1, this->_cols - 1);
+}
+
+
+void GPUMatrix::zero(unsigned int startRow, unsigned int startCol,
+                     unsigned int endRow,   unsigned int endCol)
+{
+    gpu::set_to_zero(this->_data, this->_rows, this->_cols, 
+        startRow, startCol, endRow, endCol);
 }
 
 
@@ -193,3 +221,4 @@ void GPUMatrix::getMatrix(Matrix* target)
 
 
 } // namespace blissart
+

@@ -25,6 +25,7 @@
 bin_PROGRAMS = cleanup
 
 cleanup_LDADD = $(top_srcdir)/src/LibFramework/libFramework.la \
+                $(top_srcdir)/src/LibLinAlg/libLinAlg.la \
                 @POCO_LDFLAGS@ -lPocoFoundation -lPocoUtil -lPocoXML
 
 cleanup_CPPFLAGS = -I../include @POCO_CPPFLAGS@
