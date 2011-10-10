@@ -31,12 +31,12 @@ SUBDIRS = LibLinAlg \
           Testsuite \
           benchmark \
 		  septool \
-          browser \
           cvtool \
           fextool \
           icatool \
           cleanup \
           export \
           exportaudio \
+          browser \
           include 
 

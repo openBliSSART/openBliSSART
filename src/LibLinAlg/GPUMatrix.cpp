@@ -27,6 +27,7 @@
 #include <cuda_runtime.h>
 #include <cassert>
 #include <stdexcept>
+#include <cublas_v2.h>
 
 
 namespace blissart {
@@ -35,34 +36,22 @@ namespace blissart {
 namespace linalg {
 
 
-bool            GPUMatrix::_cublasInitialized = false;
-cublasHandle_t  GPUMatrix::_cublasHandle;
+static bool            _cublasInitialized = false;
+static cublasHandle_t  _cublasHandle;
 
 
-GPUMatrix::GPUMatrix(Matrix& hostMatrix) : // Matrix(hostMatrix)
-    Matrix(hostMatrix.rows(), hostMatrix.cols())
+GPUMatrix::GPUMatrix(const Matrix& hostMatrix) :
+    _rows(hostMatrix.rows()),
+    _cols(hostMatrix.cols())
 {
-    cudaError_t cudaStat;
-    cublasStatus_t cublasStat;
-
-    // Initialize CUBLAS if necessary.
-    if (!_cublasInitialized) {
-        GPUStart();
-    }
-
-    // Allocate device memory to fit the host matrix.
-    cudaStat = cudaMalloc((void**) &_dataDev, 
-        hostMatrix.rows() * hostMatrix.cols() * sizeof(*_dataDev));
-    if (cudaStat != cudaSuccess) {
-        throw std::runtime_error("Failed to allocate device memory!");
-    }
+    initDeviceMemory();
 
     // Copy data to the device.
-    cublasStat = cublasSetMatrix(
+    cublasStatus_t cublasStat = cublasSetMatrix(
         hostMatrix.rows(), hostMatrix.cols(), 
-        sizeof(*hostMatrix.dataPtr()), 
-        hostMatrix.dataPtr(), hostMatrix.rows(), 
-        _dataDev, rows()
+        sizeof(*hostMatrix._data), 
+        hostMatrix._data, hostMatrix.rows(), 
+        _data, _rows
     );
     if (cublasStat != CUBLAS_STATUS_SUCCESS) {
         throw std::runtime_error("Data transfer to GPU failed!");
@@ -70,16 +59,40 @@ GPUMatrix::GPUMatrix(Matrix& hostMatrix) : // Matrix(hostMatrix)
 }
 
 
+GPUMatrix::GPUMatrix(unsigned int rows, unsigned int cols) :
+    _rows(rows),
+    _cols(cols)
+{
+    initDeviceMemory();
+}
+
+
 GPUMatrix::~GPUMatrix()
 {
-    cudaFree(_dataDev);
+    cudaFree(_data);
+}
+
+
+void GPUMatrix::initDeviceMemory()
+{
+    // Initialize CUBLAS if necessary.
+    if (!_cublasInitialized) {
+        GPUStart();
+    }
+
+    // Allocate device memory to fit the host matrix.
+    cudaError_t cudaStat = cudaMalloc((void**) &_data, 
+        _rows * _cols * sizeof(*_data));
+    if (cudaStat != cudaSuccess) {
+        throw std::runtime_error("Failed to allocate device memory!");
+    }
 }
 
 
 void GPUMatrix::multWithMatrix(const GPUMatrix& other, GPUMatrix* target) const
 {
-    multWithMatrix(other, target, false, false, this->rows(), this->cols(), 
-        other.cols(), 0, 0, 0, 0, 0, 0);
+    multWithMatrix(other, target, false, false, this->_rows, this->_cols, 
+        other._cols, 0, 0, 0, 0, 0, 0);
 }
 
 
@@ -101,13 +114,13 @@ void GPUMatrix::multWithMatrix(const GPUMatrix& other, GPUMatrix* target,
         n,
         k,
         &alpha,
-        this->dataPtr() + colOffset * this->rows() + rowOffset,
-        this->rows(),    // lda
-        other.dataPtr() + colOffsetOther * other.rows() + rowOffsetOther,
-        other.rows(),    // ldb
+        _data + colOffset * _rows + rowOffset,
+        this->_rows,    // lda
+        other._data + colOffsetOther * other._rows + rowOffsetOther,
+        other._rows,    // ldb
         &beta,
-        target->dataPtr() + colOffsetTarget * target->rows() + rowOffsetTarget,
-        target->rows()   // ldc
+        target->_data + colOffsetTarget * target->_rows + rowOffsetTarget,
+        target->_rows   // ldc
     );
     if (rv != CUBLAS_STATUS_SUCCESS) 
         // TODO: define exception class with cublas return codes?
@@ -118,32 +131,32 @@ void GPUMatrix::multWithMatrix(const GPUMatrix& other, GPUMatrix* target,
 void GPUMatrix::add(const GPUMatrix &other)
 {
     // TODO: check dimensions
-    gpu::apply_add(this->dataPtr(), other.dataPtr(), this->dataPtr(), this->rows(), this->cols());
+    gpu::apply_add(this->_data, other._data, this->_data, this->_rows, this->_cols);
 }
 
 
 void GPUMatrix::add(const GPUMatrix &other, GPUMatrix* target)
 {
     // TODO: check dimensions
-    gpu::apply_add(this->dataPtr(), other.dataPtr(), target->dataPtr(), this->rows(), this->cols());
+    gpu::apply_add(this->_data, other._data, target->_data, this->_rows, this->_cols);
 }
 
 
 void GPUMatrix::elementWiseMult(const GPUMatrix &other, GPUMatrix* target)
 {
-    gpu::apply_mul(this->dataPtr(), other.dataPtr(), target->dataPtr(), this->rows(), this->cols());
+    gpu::apply_mul(this->_data, other._data, target->_data, this->_rows, this->_cols);
 }
 
 
 void GPUMatrix::elementWiseDiv(const GPUMatrix &other, GPUMatrix* target)
 {
-    gpu::apply_div(this->dataPtr(), other.dataPtr(), target->dataPtr(), this->rows(), this->cols());
+    gpu::apply_div(this->_data, other._data, target->_data, this->_rows, this->_cols);
 }
 
 
 void GPUMatrix::elementWisePow(const double exp, GPUMatrix* target)
 {
-    gpu::apply_pow(this->dataPtr(), exp, target->dataPtr(), this->rows(), this->cols());
+    gpu::apply_pow(this->_data, exp, target->_data, this->_rows, this->_cols);
 }
 
 
@@ -166,12 +179,12 @@ void GPUMatrix::GPUStop()
 
 void GPUMatrix::getMatrix(Matrix* target)
 {
-    assert(target->rows() == rows() && target->cols() == cols());
+    assert(target->_rows == _rows && target->_cols == _cols);
     cublasStatus_t cublasStat = cublasGetMatrix(
-        rows(), cols(),
-        sizeof(*target->dataPtr()),
-        _dataDev, rows(),
-        target->dataPtr(), target->rows()
+        _rows, _cols,
+        sizeof(*target->_data),
+        _data, _rows,
+        target->_data, target->_rows
     );
 }
 

@@ -33,7 +33,7 @@
 
 
 #include <blissart/linalg/Matrix.h>
-#include <cublas_v2.h>
+//#include <cublas_v2.h>
 
 
 namespace blissart {
@@ -53,14 +53,14 @@ void apply_pow(const double* a, const double b, double* c, int m, int n);
 /**
  * Represents a matrix on the GPU.
  */
-class GPUMatrix: protected Matrix
+class GPUMatrix //: protected Matrix
 {
 public:
     // Reserves space on the GPU, but does not copy any data.
     // This is only useful if this serves as a target, e.g. for a matrix multiplication on the GPU.
     GPUMatrix(unsigned int rows, unsigned int cols);
     // Reserves space on the GPU and copies data from host matrix.
-    GPUMatrix(Matrix& hostMatrix);
+    GPUMatrix(const Matrix& hostMatrix);
     virtual ~GPUMatrix();
 
     void multWithMatrix(const GPUMatrix& other, GPUMatrix* target) const;
@@ -82,18 +82,21 @@ public:
 
     void getMatrix(Matrix* target);
 
-protected:
+/*protected:
     const double* dataPtr() const;
-    double* dataPtr();
+    double* dataPtr();*/
 
 private:
-    double* _dataDev;
-    static bool    _cublasInitialized;
-    static cublasHandle_t _cublasHandle;
+    void initDeviceMemory();
+    unsigned int _rows;
+    unsigned int _cols;
+    double *     _data;
+//    static bool    _cublasInitialized;
+//    static cublasHandle_t _cublasHandle;
 };
 
 
-inline double* GPUMatrix::dataPtr()
+/*inline double* GPUMatrix::dataPtr()
 {
     return _dataDev;
 }
@@ -102,7 +105,7 @@ inline double* GPUMatrix::dataPtr()
 inline const double* GPUMatrix::dataPtr() const
 {
     return _dataDev;
-}
+}*/
 
 
 } // namespace linalg

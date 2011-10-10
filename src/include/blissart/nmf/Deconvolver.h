@@ -29,6 +29,10 @@
 
 #include <common.h>
 #include <blissart/linalg/Matrix.h>
+#include <config.h>
+#ifdef HAVE_CUDA
+#include <blissart/linalg/GPUMatrix.h>
+#endif
 #include <blissart/nmf/randomGenerator.h>
 #include <cassert>
 

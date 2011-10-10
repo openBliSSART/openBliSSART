@@ -35,6 +35,8 @@
 #include <cmath>
 #include <vector>
 
+#include <config.h>
+
 
 
 // for debugging ...
@@ -269,10 +271,62 @@ Deconvolver::getCfValue(Deconvolver::NMDCostFunction cf, double beta) const
 }
 
 
+#ifdef HAVE_CUDA
+
+
+// Currently only general beta-algorithm ...
 void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps, 
                                    double beta, bool sparse, bool continuous,
                                    ProgressObserver *observer)
 {
+    GPUMatrix*  approxInv  = 0;
+    GPUMatrix*  vLambdaInv = 0; // better name than vOverApprox
+    GPUMatrix   hUpdate(_h.rows(), _h.cols());
+    GPUMatrix   hUpdateNum(_h.rows(), _h.cols());
+    GPUMatrix   hUpdateDenom(_h.rows(), _h.cols());
+    GPUMatrix   wUpdateNum(_v.rows(), _h.rows());
+    GPUMatrix   wUpdateDenom(_v.rows(), _h.rows());
+
+    // GPU versions of V, W and H; transfer data to GPU
+    GPUMatrix   vgpu(_v);
+    GPUMatrix   hgpu(_h);
+    GPUMatrix** wgpu = new GPUMatrix*[_t];
+    for (unsigned int t = 0; t < _t; ++t) {
+        wgpu[t] = new GPUMatrix(*_w[t]);
+    }
+    
+    // GPU version of Lambda (Approximation)
+    GPUMatrix   approxgpu(_v.rows(), _v.cols());
+    
+    if (beta == 2) {
+        // for ED, exploit equalities by redirecting these pointers
+        vLambdaInv = &vgpu;
+        approxInv = &approxgpu;
+    }
+
+    // synchronize W and H to host
+    hgpu.getMatrix(&_h);
+    for (unsigned int t = 0; t < _t; ++t) {
+        wgpu[t]->getMatrix(_w[t]);
+    }
+}
+
+
+void Deconvolver::factorizeNMFEDIncomplete(unsigned int maxSteps, double eps,
+                                           ProgressObserver *observer)
+{
+}
+
+
+#else
+
+
+void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps, 
+                                   double beta, bool sparse, bool continuous,
+                                   ProgressObserver *observer)
+{
+    // TODO: remove oldH (not needed)
+    // TODO: semi-supervised NMF with partial computation of W update matrix
     Matrix* approxInv = 0;
     Matrix* vOverApprox = 0; // "V Over Approx" from NMD-KL
     RowVector* wpColSums = 0;
@@ -603,6 +657,9 @@ void Deconvolver::factorizeNMFEDIncomplete(unsigned int maxSteps, double eps,
     // Update value of approximation (only once...)
     computeApprox();
 }
+
+
+#endif
 
 
 void Deconvolver::factorizeNMFEDSparseNorm(unsigned int maxSteps, double eps,

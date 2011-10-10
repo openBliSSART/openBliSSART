@@ -38,7 +38,7 @@ install-exec-local: all
 
 Makefile.qt: browser.pro
 if DEBUG_BUILD
-	$(QMAKE) -config debug 'POCOLDFLAGS=@POCO_LDFLAGS@' 'POCOCPPFLAGS=@POCO_CPPFLAGS@' 'CPPFLAGS=$(CPPFLAGS)' 'LDFLAGS=$(LDFLAGS)' -o Makefile.qt
+	$(QMAKE) -config debug 'POCOLDFLAGS=@POCO_LDFLAGS@' 'POCOCPPFLAGS=@POCO_CPPFLAGS@' 'CPPFLAGS=-I../.. $(CPPFLAGS)' 'LDFLAGS=$(LDFLAGS)' -o Makefile.qt
 else
-	$(QMAKE) -config release 'POCOLDFLAGS=@POCO_LDFLAGS@' 'POCOCPPFLAGS=@POCO_CPPFLAGS@' 'CPPFLAGS=$(CPPFLAGS)' 'LDFLAGS=$(LDFLAGS)' -o Makefile.qt
+	$(QMAKE) -config release 'POCOLDFLAGS=@POCO_LDFLAGS@' 'POCOCPPFLAGS=@POCO_CPPFLAGS@' 'CPPFLAGS=-I../.. $(CPPFLAGS)' 'LDFLAGS=$(LDFLAGS)' -o Makefile.qt
 endif

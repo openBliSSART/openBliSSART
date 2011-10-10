@@ -26,7 +26,10 @@ lib_LTLIBRARIES = libNMF.la
 
 libNMF_la_LIBADD = $(top_srcdir)/src/LibLinAlg/libLinAlg.la
 
-libNMF_la_CPPFLAGS = -I../include
+## right now the CUDA_CPPFLAGS are only needed because of the way CUBLAS is
+## initialized (with a static member for the handle in GPUMatrix), remove
+## if this changes!
+libNMF_la_CPPFLAGS = -I../include @CUDA_CPPFLAGS@ 
 
 libNMF_la_CXXFLAGS = -fPIC
 

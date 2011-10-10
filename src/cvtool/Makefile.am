@@ -27,7 +27,6 @@ bin_PROGRAMS = cvtool
 cvtool_LDADD = $(top_srcdir)/src/LibAudio/libAudio.la \
                $(top_srcdir)/src/LibFeature/libFeature.la \
                $(top_srcdir)/src/LibFramework/libFramework.la \
-               $(top_srcdir)/src/LibNMF/libNMF.la \
                @POCO_LDFLAGS@ -lPocoFoundation -lPocoUtil -lPocoXML
 
 cvtool_CPPFLAGS = -I../include @POCO_CPPFLAGS@
