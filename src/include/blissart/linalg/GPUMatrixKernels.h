@@ -75,6 +75,9 @@ void apply_pow(const double* a, const double b, double* c, int m, int n);
 void set_to_zero(double* a, int m, int n, int startRow, int startCol, int endRow, int endCol);
 
 
+void apply_floor(double* a, const double floor, int m, int n);
+
+
 } // namespace gpu
 
 

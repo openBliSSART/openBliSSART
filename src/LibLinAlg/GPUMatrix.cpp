@@ -206,6 +206,12 @@ void GPUMatrix::zero(unsigned int startRow, unsigned int startCol,
 }
 
 
+void GPUMatrix::floor(double value)
+{
+    gpu::apply_floor(this->_data, value, this->_rows, this->_cols);
+}
+
+
 void GPUMatrix::getMatrix(Matrix* target)
 {
     assert(target->_rows == _rows && target->_cols == _cols);

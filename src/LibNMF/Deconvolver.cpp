@@ -356,8 +356,7 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
                     false, true,
                     _v.rows(), _v.cols() - p, _h.rows(),
                     0, p, 0, 0, 0, 0);
-                // TODO: implement this on GPU
-                // ensureNonnegativity(wUpdateDenom);
+                wUpdateDenom.floor(DIVISOR_FLOOR);
 
                 if (_t > 1) {
                     wpH = new GPUMatrix(_v.rows(), _v.cols());
@@ -393,8 +392,7 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
                     multWithShifted(*wgpu[p], hgpu, wpH, p);
                     approxgpu.add(*wpH);
                     delete wpH;
-                    // TODO implement this
-                    // ensureNonnegativity(approxgpu);
+                    approxgpu.floor(DIVISOR_FLOOR);
                 }
             }
         }
@@ -440,7 +438,7 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
             hUpdateDenom.getMatrix(&tmp3);
             cout << "H update denominator: " << endl << tmp3 << endl;*/
             // TODO implement this
-            // ensureNonnegativity(hUpdateDenom, DIVISOR_FLOOR);
+            hUpdateDenom.floor(DIVISOR_FLOOR);
 
             // FIXME: Average update! NMD does not work like this
             hgpu.elementWiseMult(hUpdateNum,   &hgpu);
@@ -519,8 +517,7 @@ void Deconvolver::factorizeNMFEDIncomplete(unsigned int maxSteps, double eps,
         vgpu.multWithTransposedMatrix(hgpu, &wUpdateNum);
         hgpu.multWithTransposedMatrix(hgpu, &hhT);
         wgpu.multWithMatrix(hhT, &wUpdateDenom);
-        // TODO implement this
-        // ensureNonnegativity(wUpdateDenom);
+        wUpdateDenom.floor(DIVISOR_FLOOR);
         wgpu.elementWiseMult(wUpdateNum,   &wgpu);
         wgpu.elementWiseDiv (wUpdateDenom, &wgpu);
 
@@ -528,7 +525,7 @@ void Deconvolver::factorizeNMFEDIncomplete(unsigned int maxSteps, double eps,
         wgpu.transposedMultWithMatrix(vgpu, &hUpdateNum);
         wgpu.transposedMultWithMatrix(wgpu, &wTw);
         wTw.multWithMatrix(hgpu, &hUpdateDenom);
-        // ensureNonnegativity(hUpdateDenom);
+        hUpdateDenom.floor(DIVISOR_FLOOR);
         hgpu.elementWiseMult(hUpdateNum,   &hgpu);
         hgpu.elementWiseDiv (hUpdateDenom, &hgpu);
 

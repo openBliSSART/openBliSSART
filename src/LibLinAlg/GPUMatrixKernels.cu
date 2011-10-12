@@ -150,6 +150,25 @@ void set_to_zero(double* a, int rows, int cols,
 }
 
 
+__global__ void Floor_d(double* a, const double floor, int rows, int cols)
+{
+    int col = blockIdx.x * blockDim.x + threadIdx.x;
+    int row = blockIdx.y * blockDim.y + threadIdx.y;
+    int index = col * rows + row;
+    if(col < cols && row < rows && a[index] < floor) 
+        a[index] = floor;
+}
+
+
+void apply_floor(double* a, const double floor, int rows, int cols)
+{
+    dim3 dimBlock(blocksize, blocksize);
+    dim3 dimGrid(cols / dimBlock.x + 1, rows / dimBlock.y + 1);
+    Floor_d<<<dimGrid, dimBlock>>>(a, floor, rows, cols);
+    cudaThreadSynchronize();
+}
+
+
 } // namespace gpu
 
 

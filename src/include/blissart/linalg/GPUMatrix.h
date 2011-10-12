@@ -90,7 +90,11 @@ public:
     void zero(unsigned int startRow, unsigned int startCol,
               unsigned int endRow,   unsigned int endCol);
               
-
+    /**
+     * Floors the matrix entries to the given value.
+     */
+    void floor(double value);
+    
 
 private:
     void initDeviceMemory();
