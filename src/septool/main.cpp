@@ -651,7 +651,7 @@ protected:
         if (!_haveRandomSeed) {
             _randomSeed = (unsigned int) time(NULL);
         }
-        srand((unsigned int) time(NULL));
+        srand(_randomSeed);
 
         if (_doSeparation) {
             cout << setw(20) << "Seed: " << _randomSeed << endl;

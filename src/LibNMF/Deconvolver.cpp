@@ -313,13 +313,17 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
     //
     // Main iteration loop
     //
+
+    cout << "W before iteration: " << endl << *_w[0] << endl;
+    cout << "H before iteration: " << endl << _h << endl;    
+
     
     _numSteps = 0;
     while (1) {
         computeApprox(wgpu, hgpu, &approxgpu);
-        /*Matrix tmp(_v.rows(), _v.cols());
+        Matrix tmp(_v.rows(), _v.cols());
         approxgpu.getMatrix(&tmp);
-        cout << "Iteration #" << _numSteps << ": Approx =" << endl << tmp << endl;*/
+        //cout << "Iteration #" << _numSteps << ": Approx =" << endl << tmp << endl;
         //break;
 
         if (_numSteps >= maxSteps)
@@ -474,11 +478,22 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
     // re-compute and synchronize approx
     computeApprox(wgpu, hgpu, &approxgpu);
     approxgpu.getMatrix(&_approx);
+
+    cout << "Final approx: " << endl << _approx << endl;
+    cout << "W after iteration: " << endl << *_w[0] << endl;
+    cout << "H after iteration: " << endl << _h << endl;    
     
     // delete GPU resources
-    // TODO
-}
-
+    if (vLambdaInv && vLambdaInv != &vgpu)
+        delete vLambdaInv;
+    if (approxInv && approxInv != &approxgpu)
+        delete approxInv;
+    for (unsigned int t = 0; t < _t; ++t) {
+        delete wgpu[t];
+    }
+    delete[] wgpu;
+}        
+        
 
 void Deconvolver::factorizeNMFEDIncomplete(unsigned int maxSteps, double eps,
                                            ProgressObserver *observer)
@@ -535,6 +550,9 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
             wpColSums = new RowVector(_h.rows());
         }
     }
+
+    cout << "W before iteration: " << endl << *_w[0] << endl;
+    cout << "H before iteration: " << endl << _h << endl;    
 
     _numSteps = 0;
     while (1) {
@@ -759,8 +777,6 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
             }
         }
         
-        //cout << "H after update: " << endl << _h << endl;
-        
         nextItStep(observer, maxSteps);
     }
 
@@ -782,6 +798,8 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
         delete csminus;
     if (csplus)
         delete csplus;
+
+    cout << "H after iteration: " << endl << _h << endl;
 }
 
 

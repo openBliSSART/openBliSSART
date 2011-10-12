@@ -42,7 +42,8 @@ static cublasHandle_t  _cublasHandle;
 
 GPUMatrix::GPUMatrix(const Matrix& hostMatrix) :
     _rows(hostMatrix.rows()),
-    _cols(hostMatrix.cols())
+    _cols(hostMatrix.cols()),
+    _data(0)
 {
     initDeviceMemory();
 
@@ -69,7 +70,8 @@ GPUMatrix::GPUMatrix(unsigned int rows, unsigned int cols) :
 
 GPUMatrix::~GPUMatrix()
 {
-    cudaFree(_data);
+    if (_data != 0)
+        cudaFree(_data);
 }
 
 

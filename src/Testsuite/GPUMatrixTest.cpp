@@ -137,6 +137,60 @@ bool GPUMatrixTest::performTest()
     f_d.getMatrix(&fgpu);
     cout << "Zero matrix:" << endl << fgpu << endl;
 
+    //
+    // Large matrix multiplication and verification against CPU gold standard
+    //
+    
+    cout << "Matrix multiplication on CPU ... " << endl;
+    /*int m = 999;
+    int k = 1999;
+    int n = 3001;*/
+    int m = 999;
+    int k = 199;
+    int n = 301;
+    Matrix left(m, k, generators::random);
+    Matrix right(k, n, generators::random);
+    Matrix resultCPU(m, n);
+    left.multWithMatrix(right, &resultCPU);
+    
+    cout << "Matrix multiplication on GPU ... " << endl;
+    GPUMatrix leftGPU(left);
+    GPUMatrix rightGPU(right);
+    GPUMatrix resultGPU(resultCPU.rows(), resultCPU.cols());
+    Matrix    resultGPUtransfer(resultCPU.rows(), resultCPU.cols());
+    leftGPU.multWithMatrix(rightGPU, &resultGPU);
+    resultGPU.getMatrix(&resultGPUtransfer);
+    
+    //resultCPU.sub(resultGPUtransfer);
+    /*for (unsigned int i = 0; i < 5; ++i) {
+        for (unsigned int j = 0; j < 5; ++j) {
+            cout << resultCPU(i, j) << " ";
+        }
+        cout << endl;
+    }
+    for (unsigned int i = 0; i < 5; ++i) {
+        for (unsigned int j = 0; j < 5; ++j) {
+            cout << resultGPUtransfer(i, j) << " ";
+        }
+        cout << endl;
+    }*/
+    int nwarn = 0;
+    for (unsigned int i = 0; i < resultCPU.rows(); ++i) {
+        for (unsigned int j = 0; j < resultCPU.cols(); ++j) {
+            //cout << resultCPU(i, j) - resultGPUtransfer(i, j) << " ";
+            if (abs(resultCPU(i, j) - resultGPUtransfer(i, j)) > 1e-3) {
+                cout << "WARN " << i << " " << j << ": CPU = " << resultCPU(i, j) << "; GPU = " << resultGPUtransfer(i, j) << endl;
+                nwarn++;
+                if (nwarn > 50)
+                    return false;
+            }
+        }
+        //cout << endl;
+    }
+    
+    /*if (!epsilonCheck(resultGPUtransfer, resultCPU, 1e-3))
+        return false;*/
+
     GPUMatrix::GPUStop();
 
     return true;
