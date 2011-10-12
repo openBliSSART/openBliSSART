@@ -63,10 +63,12 @@ public:
     // This is only useful if this serves as a target, e.g. for a matrix multiplication on the GPU.
     GPUMatrix(unsigned int rows, unsigned int cols);
     // Reserves space on the GPU and copies data from host matrix.
-    GPUMatrix(const Matrix& hostMatrix);
+    explicit GPUMatrix(const Matrix& hostMatrix);
     virtual ~GPUMatrix();
 
     void multWithMatrix(const GPUMatrix& other, GPUMatrix* target) const;
+    void multWithTransposedMatrix(const GPUMatrix& other, GPUMatrix* target) const;
+    void transposedMultWithMatrix(const GPUMatrix& other, GPUMatrix* target) const;
     void multWithMatrix(const GPUMatrix& other, GPUMatrix* target,
         bool transpose, bool transposeOther,
         unsigned int m, unsigned int k, unsigned int n,

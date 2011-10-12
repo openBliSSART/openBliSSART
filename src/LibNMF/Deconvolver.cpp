@@ -498,6 +498,49 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
 void Deconvolver::factorizeNMFEDIncomplete(unsigned int maxSteps, double eps,
                                            ProgressObserver *observer)
 {
+    assert(_t == 1);
+
+    // transfer V, W and H to GPU
+    GPUMatrix vgpu( _v   );
+    GPUMatrix hgpu( _h   );
+    GPUMatrix wgpu(*_w[0]);
+
+    GPUMatrix hUpdateNum  (_h.rows(), _h.cols());
+    GPUMatrix hUpdateDenom(_h.rows(), _h.cols());
+    GPUMatrix wUpdateNum  (_w[0]->rows(), _w[0]->cols());
+    GPUMatrix wUpdateDenom(_w[0]->rows(), _w[0]->cols());
+
+    GPUMatrix hhT(_h.rows(), _h.rows());
+    GPUMatrix wTw(_h.rows(), _h.rows());
+
+    _numSteps = 0;
+    while (_numSteps < maxSteps) {
+        // W Update
+        vgpu.multWithTransposedMatrix(hgpu, &wUpdateNum);
+        hgpu.multWithTransposedMatrix(hgpu, &hhT);
+        wgpu.multWithMatrix(hhT, &wUpdateDenom);
+        // TODO implement this
+        // ensureNonnegativity(wUpdateDenom);
+        wgpu.elementWiseMult(wUpdateNum,   &wgpu);
+        wgpu.elementWiseDiv (wUpdateDenom, &wgpu);
+
+        // H Update
+        wgpu.transposedMultWithMatrix(vgpu, &hUpdateNum);
+        wgpu.transposedMultWithMatrix(wgpu, &wTw);
+        wTw.multWithMatrix(hgpu, &hUpdateDenom);
+        // ensureNonnegativity(hUpdateDenom);
+        hgpu.elementWiseMult(hUpdateNum,   &hgpu);
+        hgpu.elementWiseDiv (hUpdateDenom, &hgpu);
+
+        nextItStep(observer, maxSteps);
+    }
+    
+    // Sychronize GPU matrices to host.
+    wgpu.getMatrix( _w[0]);
+    hgpu.getMatrix(&_h   );
+
+    // Update value of approximation (only once...)
+    computeApprox();
 }
 
 

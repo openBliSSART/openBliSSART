@@ -88,8 +88,28 @@ void GPUMatrix::initDeviceMemory()
 
 void GPUMatrix::multWithMatrix(const GPUMatrix& other, GPUMatrix* target) const
 {
-    multWithMatrix(other, target, false, false, this->_rows, this->_cols, 
-        other._cols, 0, 0, 0, 0, 0, 0);
+    multWithMatrix(other, target, 
+        false, false, 
+        this->_rows, this->_cols, other._cols, 
+        0, 0, 0, 0, 0, 0);
+}
+
+
+void GPUMatrix::multWithTransposedMatrix(const GPUMatrix& other, GPUMatrix* target) const
+{
+    multWithMatrix(other, target, 
+        false, true, 
+        this->_rows, this->_cols, other._rows, 
+        0, 0, 0, 0, 0, 0);
+}
+
+
+void GPUMatrix::transposedMultWithMatrix(const GPUMatrix& other, GPUMatrix* target) const
+{
+    multWithMatrix(other, target, 
+        true, false, 
+        this->_cols, this->_rows, other._cols, 
+        0, 0, 0, 0, 0, 0);
 }
 
 
