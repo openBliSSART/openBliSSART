@@ -39,11 +39,13 @@ cublasHandle_t  _cublasHandle;
 
 void GPUStart()
 {
-    cublasStatus_t cublasStat;
-    cublasStat = cublasCreate(&_cublasHandle);
-    if (cublasStat != CUBLAS_STATUS_SUCCESS)
-        throw std::runtime_error("Could not initialize CUBLAS!");
-    _cublasInitialized = true;
+    if (!_cublasInitialized) {
+        cublasStatus_t cublasStat;
+        cublasStat = cublasCreate(&_cublasHandle);
+        if (cublasStat != CUBLAS_STATUS_SUCCESS)
+            throw std::runtime_error("Could not initialize CUBLAS!");
+        _cublasInitialized = true;
+    }
 }
 
 

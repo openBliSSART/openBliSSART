@@ -325,8 +325,8 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
     _numSteps = 0;
     while (1) {
         computeApprox(wgpu, hgpu, &approxgpu);
-        Matrix tmp(_v.rows(), _v.cols());
-        approxgpu.getMatrix(&tmp);
+        /*Matrix tmp(_v.rows(), _v.cols());
+        approxgpu.getMatrix(&tmp);*/
         //cout << "Iteration #" << _numSteps << ": Approx =" << endl << tmp << endl;
         //break;
 
@@ -425,18 +425,18 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
             hUpdateDenom.floor(DIVISOR_FLOOR);
 
             hUpdateNum.elementWiseDiv(hUpdateDenom, &hUpdate);
-            Matrix tmp2(_h.rows(), _h.cols());
+            /*Matrix tmp2(_h.rows(), _h.cols());
             hUpdateNum.getMatrix(&tmp2);
             //cout << "H update matrix at p = " << p << ": num = " << endl << tmp2 << endl;
             hUpdateDenom.getMatrix(&tmp2);
-            //cout << "H update matrix at p = " << p << ": denom = " << endl << tmp2 << endl;
+            //cout << "H update matrix at p = " << p << ": denom = " << endl << tmp2 << endl;*/
             hUpdateAcc.add(hUpdate);
         }
 
         const double alpha = 1.0f / (double) _t;
         hUpdateAcc.scale(alpha, 0, hgpu.cols() - _t);
-        Matrix tmp3(_h.rows(), _h.cols());
-        hUpdateAcc.getMatrix(&tmp3);
+        /*Matrix tmp3(_h.rows(), _h.cols());
+        hUpdateAcc.getMatrix(&tmp3);*/
         //cout << "H update matrix: " << endl << tmp3 << endl;
         for (unsigned int j = hgpu.cols() - _t + 1; j < hgpu.cols(); ++j) {
             // we need to convert to const double for CUBLAS routine ...

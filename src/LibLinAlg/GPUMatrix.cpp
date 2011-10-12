@@ -78,7 +78,7 @@ void GPUMatrix::initDeviceMemory()
     // Initialize CUBLAS if necessary.
     GPUStart();
 
-    // Allocate device memory to fit the host matrix.
+    // Allocate device memory to fit the given matrix dimensions.
     cudaError_t cudaStat = cudaMalloc((void**) &_data, 
         _rows * _cols * sizeof(*_data));
     if (cudaStat != cudaSuccess) {
