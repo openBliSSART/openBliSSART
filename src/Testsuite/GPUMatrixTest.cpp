@@ -82,13 +82,40 @@ bool GPUMatrixTest::performTest()
     c_d.getMatrix(&cgpu);
     cout << "Product on GPU:" << endl << cgpu;
 
-    // Matrix + Matrix on GPU
     srand(1);
     Matrix d(9, 10, generators::random);
-    Matrix e(9, 10, generators::random);
     cout << "D = " << endl << d;
-    cout << "E = " << endl << e;
     GPUMatrix d_d(d);
+    
+    // Row sum
+    GPUMatrix rsums_d(d.rows(), 1); // "col vector"
+    d_d.rowSums(&rsums_d);
+    Matrix rsums(d.rows(), 1);
+    rsums_d.getMatrix(&rsums);
+    cout << "Row sums of D: " << endl;
+    cout << rsums << endl;
+    for (unsigned int i = 0; i < d.rows(); ++i) {
+        //cout << sums(i, 0) << " ";
+        if (!epsilonCheck(rsums(i, 0), d.rowSum(i), 1e-6))
+            return false;
+    }
+    
+    // Col sum
+    GPUMatrix csums_d(1, d.cols()); // "row vector"
+    d_d.colSums(&csums_d);
+    Matrix csums(1, d.cols());
+    csums_d.getMatrix(&csums);
+    cout << "Column sums of D: " << endl;
+    cout << csums << endl;
+    for (unsigned int i = 0; i < d.cols(); ++i) {
+        //cout << sums(i, 0) << " ";
+        if (!epsilonCheck(csums(0, i), d.colSum(i), 1e-6))
+            return false;
+    }
+    
+    // Matrix + Matrix on GPU
+    Matrix e(9, 10, generators::random);
+    cout << "E = " << endl << e;
     GPUMatrix e_d(e);
     GPUMatrix f_d(9, 10);
     Matrix fgpu(9, 10, generators::zero);
@@ -136,9 +163,9 @@ bool GPUMatrixTest::performTest()
     cout << "Matrix multiplication on CPU ... " << endl;
     int m = 999;
     int k = 199;
-    int n = 301;
+    int n = 1;
     Matrix left(m, k, generators::random);
-    Matrix right(k, n, generators::random);
+    Matrix right(k, n, generators::unity);
     Matrix resultCPU(m, n);
     left.multWithMatrix(right, &resultCPU);
     
@@ -149,6 +176,8 @@ bool GPUMatrixTest::performTest()
     Matrix    resultGPUtransfer(resultCPU.rows(), resultCPU.cols());
     leftGPU.multWithMatrix(rightGPU, &resultGPU);
     resultGPU.getMatrix(&resultGPUtransfer);
+    
+    //cout << resultGPUtransfer << endl;
     
     int nwarn = 0;
     for (unsigned int i = 0; i < resultCPU.rows(); ++i) {

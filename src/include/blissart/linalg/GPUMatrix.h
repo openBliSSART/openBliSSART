@@ -75,6 +75,9 @@ public:
     
     void scale(const double alpha);
     void scale(const double alpha, unsigned int startCol, unsigned int endCol);
+    
+    void rowSums(GPUMatrix* sums);
+    void colSums(GPUMatrix* sums);
 
     void getMatrix(Matrix* target);
     
@@ -98,6 +101,8 @@ public:
      */
     void floor(double value);
     
+    inline const double* dataPtr() const { return _data; }
+    inline double* dataPtr() { return _data; }
 
 private:
     void initDeviceMemory();

@@ -56,6 +56,24 @@ void apply_KLWUpdate(const double* w, const double *wUpdateNum, const double *hR
 }
 
 
+__global__ void KLHUpdateKernel(const double *hUpdateNum, const double *wColSums, double* hUpdate, int rows, int cols)
+{
+    int col = blockIdx.x * blockDim.x + threadIdx.x;
+    int row = blockIdx.y * blockDim.y + threadIdx.y;
+    int hIndex = col * rows + row;
+    if(col < cols && row < rows) 
+        hUpdate[hIndex] = hUpdateNum[hIndex] / wColSums[row];
+}
+
+
+void compute_KLHUpdate(const double *hUpdateNum, const double *wColSums, double* hUpdate, int rows, int cols) {
+    dim3 dimBlock(blocksize, blocksize);
+    dim3 dimGrid(cols / dimBlock.x + 1, rows / dimBlock.y + 1);
+    KLHUpdateKernel<<<dimGrid, dimBlock>>>(hUpdateNum, wColSums, hUpdate, rows, cols);
+    cudaThreadSynchronize();
+}
+
+
 }
 
 

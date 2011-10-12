@@ -31,12 +31,38 @@
 // (pure C code, no CUDA extensions).
 
 
+namespace blissart {
+
+
+namespace nmf {
+
+
+namespace gpu {
+
+
 /**
  * Applies the multiplicative update for the W matrix in minimization
  * of the KL divergence.
  */
 void apply_KLWUpdate(const double* w, const double *wUpdateNum, 
     const double *hRowSums, double* updatedW, int rows, int cols);
+    
+    
+/**
+ * Computes the multiplicative update for the H matrix in minimization
+ * of the KL divergence.
+ */
+void compute_KLHUpdate(const double *hUpdateNum, 
+    const double *wColSums, double* hUpdate, int rows, int cols);
+    
+    
+}
+
+
+}
+
+
+}
 
 
 #endif // __BLISSART_NMF_DECONVOLVERKERNELS_H__

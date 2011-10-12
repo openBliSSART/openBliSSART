@@ -26,6 +26,7 @@
 #include <blissart/linalg/GPUMatrix.h>
 #include <blissart/linalg/GPUUtil.h>
 #include <blissart/linalg/GPUMatrixKernels.h>
+#include <blissart/linalg/generators/generators.h>
 #include <cuda_runtime.h>
 #include <cassert>
 #include <stdexcept>
@@ -244,6 +245,22 @@ void GPUMatrix::scale(const double alpha, unsigned int startCol,
 void GPUMatrix::scale(const double alpha)
 {
     scale(alpha, 0, this->_cols - 1);
+}
+
+
+void GPUMatrix::rowSums(GPUMatrix* sums)
+{
+    Matrix x(_cols, 1, generators::unity);
+    GPUMatrix xgpu(x);
+    this->multWithMatrix(xgpu, sums);
+}
+
+
+void GPUMatrix::colSums(GPUMatrix* sums)
+{
+    Matrix x(1, _rows, generators::unity);
+    GPUMatrix xgpu(x);
+    xgpu.multWithMatrix(*this, sums);
 }
 
 
