@@ -22,6 +22,12 @@
 ## openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
+.cu.o:
+	/usr/local/cuda/bin/nvcc -o $@ -c $<
+
+.cu.lo:
+	$(LIBTOOL) --tag=CXX --mode=compile /usr2/home/wen/bin/nvccf --compile -o $@ $^ -shared "--compiler-options -fPIC -DPIC" -I../include
+
 lib_LTLIBRARIES = libNMF.la
 
 libNMF_la_LIBADD = $(top_srcdir)/src/LibLinAlg/libLinAlg.la
@@ -34,5 +40,9 @@ libNMF_la_CPPFLAGS = -I../include @CUDA_CPPFLAGS@
 libNMF_la_CXXFLAGS = -fPIC
 
 libNMF_la_SOURCES = Deconvolver.cpp randomGenerator.cpp
+
+if HAVE_CUDA
+libNMF_la_SOURCES += DeconvolverKernels.cu
+endif
 
 EXTRA_DIST = LibNMF.vcproj

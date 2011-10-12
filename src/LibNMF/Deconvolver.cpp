@@ -36,8 +36,9 @@
 #include <vector>
 
 #include <config.h>
-
-
+#ifdef HAVE_CUDA
+# include <blissart/nmf/DeconvolverKernels.h>
+#endif
 
 
 // for debugging ...
@@ -339,7 +340,7 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
                 // General Beta div. alg. (for ED, no computation needed)
                 if (beta != 2) {
                     // TODO: KL as special case
-                    // TODO: this might be done in a single kernel in the future...
+                    // XXX: this might be done in a single kernel in the future...
                     approxgpu.elementWisePow(beta - 2, approxInv);
                     approxInv->elementWiseMult(vgpu, vLambdaInv);
                     // vOverApprox now contains Approx^{Beta - 2} .* V
