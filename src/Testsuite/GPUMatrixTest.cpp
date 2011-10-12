@@ -43,18 +43,6 @@ using namespace blissart::linalg;
 namespace Testing {
 
 
-/*static double mult(double a, double b) 
-{
-    return a * b;
-}
-
-
-static double matrixGenerator(unsigned int i, unsigned int j)
-{
-    return i * j;
-}*/
-
-
 bool GPUMatrixTest::performTest()
 {
     cout << "Creating 2x2 matrix" << endl;
@@ -81,8 +69,6 @@ bool GPUMatrixTest::performTest()
 
 
     // Matrix * Matrix on GPU
-    GPUMatrix::GPUStart();
-
     GPUMatrix a_d(a);
     Matrix agpu(2,2, generators::zero);
     a_d.getMatrix(&agpu);
@@ -142,9 +128,6 @@ bool GPUMatrixTest::performTest()
     //
     
     cout << "Matrix multiplication on CPU ... " << endl;
-    /*int m = 999;
-    int k = 1999;
-    int n = 3001;*/
     int m = 999;
     int k = 199;
     int n = 301;
@@ -161,23 +144,9 @@ bool GPUMatrixTest::performTest()
     leftGPU.multWithMatrix(rightGPU, &resultGPU);
     resultGPU.getMatrix(&resultGPUtransfer);
     
-    //resultCPU.sub(resultGPUtransfer);
-    /*for (unsigned int i = 0; i < 5; ++i) {
-        for (unsigned int j = 0; j < 5; ++j) {
-            cout << resultCPU(i, j) << " ";
-        }
-        cout << endl;
-    }
-    for (unsigned int i = 0; i < 5; ++i) {
-        for (unsigned int j = 0; j < 5; ++j) {
-            cout << resultGPUtransfer(i, j) << " ";
-        }
-        cout << endl;
-    }*/
     int nwarn = 0;
     for (unsigned int i = 0; i < resultCPU.rows(); ++i) {
         for (unsigned int j = 0; j < resultCPU.cols(); ++j) {
-            //cout << resultCPU(i, j) - resultGPUtransfer(i, j) << " ";
             if (abs(resultCPU(i, j) - resultGPUtransfer(i, j)) > 1e-3) {
                 cout << "WARN " << i << " " << j << ": CPU = " << resultCPU(i, j) << "; GPU = " << resultGPUtransfer(i, j) << endl;
                 nwarn++;
@@ -185,14 +154,8 @@ bool GPUMatrixTest::performTest()
                     return false;
             }
         }
-        //cout << endl;
     }
     
-    /*if (!epsilonCheck(resultGPUtransfer, resultCPU, 1e-3))
-        return false;*/
-
-    GPUMatrix::GPUStop();
-
     return true;
 }
 

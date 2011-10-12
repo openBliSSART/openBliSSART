@@ -24,6 +24,7 @@
 
 
 #include <blissart/linalg/GPUMatrix.h>
+#include <blissart/linalg/GPUUtil.h>
 #include <cuda_runtime.h>
 #include <cassert>
 #include <stdexcept>
@@ -34,10 +35,6 @@ namespace blissart {
 
 
 namespace linalg {
-
-
-static bool            _cublasInitialized = false;
-static cublasHandle_t  _cublasHandle;
 
 
 GPUMatrix::GPUMatrix(const Matrix& hostMatrix) :
@@ -78,9 +75,7 @@ GPUMatrix::~GPUMatrix()
 void GPUMatrix::initDeviceMemory()
 {
     // Initialize CUBLAS if necessary.
-    if (!_cublasInitialized) {
-        GPUStart();
-    }
+    GPUStart();
 
     // Allocate device memory to fit the host matrix.
     cudaError_t cudaStat = cudaMalloc((void**) &_data, 
@@ -187,23 +182,6 @@ void GPUMatrix::zero(unsigned int startRow, unsigned int startCol,
 {
     gpu::set_to_zero(this->_data, this->_rows, this->_cols, 
         startRow, startCol, endRow, endCol);
-}
-
-
-void GPUMatrix::GPUStart()
-{
-    cublasStatus_t cublasStat;
-    cublasStat = cublasCreate(&_cublasHandle);
-    if (cublasStat != CUBLAS_STATUS_SUCCESS)
-        throw std::runtime_error("Could not initialize CUBLAS!");
-    _cublasInitialized = true;
-}
-
-
-void GPUMatrix::GPUStop()
-{
-    if (_cublasInitialized)
-        cublasDestroy(_cublasHandle);
 }
 
 

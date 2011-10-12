@@ -23,7 +23,11 @@
 //
 
 
+#include <config.h>
 #include <blissart/BasicApplication.h>
+#ifdef HAVE_CUDA
+# include <blissart/linalg/GPUUtil.h>
+#endif
 #include <Poco/Path.h>
 #include <Poco/File.h>
 #include <Poco/Mutex.h>
@@ -89,6 +93,11 @@ BasicApplication::parseScriptFiles(const vector<string>& fileNames)
 
 void BasicApplication::initialize(Application& self)
 {
+#ifdef HAVE_CUDA
+    cout << "Initializing CUBLAS." << endl;
+    blissart::linalg::GPUStart();
+#endif
+
     // Don't use logger here because it is not configured yet.
     if (_echoCommand) {
         cout << "Executing: " << commandName() << _optionsString << endl;
@@ -177,6 +186,13 @@ void BasicApplication::initializeConfiguration()
             File(configFileName).createFile();
         loadConfiguration(configFileName.toString());
     }
+}
+
+
+void BasicApplication::uninitialize()
+{
+    blissart::linalg::GPUStop();
+    logger().information("Stopping CUBLAS.");
 }
 
 

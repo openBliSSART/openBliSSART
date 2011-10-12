@@ -37,6 +37,7 @@
 #include "FeatureSelectionTest.h"
 #ifdef HAVE_CUDA
 #include "GPUMatrixTest.h"
+#include <blissart/linalg/GPUUtil.h>
 #endif
 #include "ICATest.h"
 #include "HTKWriterTest.h"
@@ -95,6 +96,11 @@ protected:
 
         // Initialize LibAudio.
         blissart::audio::initialize();
+
+#ifdef HAVE_CUDA
+        // Initialize CUBLAS.
+        blissart::linalg::GPUStart();
+#endif
     }
 
 
@@ -103,6 +109,11 @@ protected:
         Application::uninitialize();
         // Shut down LibAudio.
         blissart::audio::shutdown();
+
+#ifdef HAVE_CUDA
+        // Shut down CUBLAS.
+        blissart::linalg::GPUStop();
+#endif
     }
 
 

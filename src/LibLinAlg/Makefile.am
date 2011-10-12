@@ -44,7 +44,7 @@ libLinAlg_la_SOURCES = ColVector.cpp \
                        Vector.cpp
 
 if HAVE_CUDA
-libLinAlg_la_SOURCES += GPUMatrixKernels.cu GPUMatrix.cpp
+libLinAlg_la_SOURCES += GPUMatrixKernels.cu GPUMatrix.cpp GPUUtil.cpp
 endif
 
 EXTRA_DIST = LibLinAlg.vcproj

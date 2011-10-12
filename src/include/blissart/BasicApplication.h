@@ -85,6 +85,7 @@ protected:
     /**
      * Overrides the corresponding Poco::Util::Application method.
      * Calls initializeDirectories() and initializeConfiguration() methods.
+     * Initializes CUBLAS library if CUDA support is enabled.
      */
     virtual void initialize(Poco::Util::Application& self);
     
@@ -104,6 +105,13 @@ protected:
      * implementation at first!
      */
     virtual void initializeConfiguration();
+
+
+    /**
+     * Overrides the corresponding Poco::Util::Application method.
+     * Uninitializes CUBLAS library if CUDA support is enabled.
+     */
+    virtual void uninitialize();
 
 
     /**

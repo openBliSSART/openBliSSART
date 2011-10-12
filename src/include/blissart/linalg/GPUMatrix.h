@@ -82,9 +82,6 @@ public:
     void elementWiseDiv(const GPUMatrix& other, GPUMatrix* target);
     void elementWisePow(const double exp, GPUMatrix* target);
 
-    static void GPUStart();
-    static void GPUStop();
-
     void getMatrix(Matrix* target);
     
     inline unsigned int rows() const { return _rows; }
@@ -104,30 +101,12 @@ public:
               
 
 
-/*protected:
-    const double* dataPtr() const;
-    double* dataPtr();*/
-
 private:
     void initDeviceMemory();
     unsigned int _rows;
     unsigned int _cols;
     double *     _data;
-//    static bool    _cublasInitialized;
-//    static cublasHandle_t _cublasHandle;
 };
-
-
-/*inline double* GPUMatrix::dataPtr()
-{
-    return _dataDev;
-}
-
-
-inline const double* GPUMatrix::dataPtr() const
-{
-    return _dataDev;
-}*/
 
 
 } // namespace linalg
