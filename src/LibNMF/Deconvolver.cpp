@@ -314,8 +314,8 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
     // Main iteration loop
     //
 
-    cout << "W before iteration: " << endl << *_w[0] << endl;
-    cout << "H before iteration: " << endl << _h << endl;    
+    /*cout << "W before iteration: " << endl << *_w[0] << endl;
+    cout << "H before iteration: " << endl << _h << endl;    */
 
     
     _numSteps = 0;
@@ -479,9 +479,9 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
     computeApprox(wgpu, hgpu, &approxgpu);
     approxgpu.getMatrix(&_approx);
 
-    cout << "Final approx: " << endl << _approx << endl;
+    /*cout << "Final approx: " << endl << _approx << endl;
     cout << "W after iteration: " << endl << *_w[0] << endl;
-    cout << "H after iteration: " << endl << _h << endl;    
+    cout << "H after iteration: " << endl << _h << endl;    */
     
     // delete GPU resources
     if (vLambdaInv && vLambdaInv != &vgpu)
@@ -594,8 +594,8 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
         }
     }
 
-    cout << "W before iteration: " << endl << *_w[0] << endl;
-    cout << "H before iteration: " << endl << _h << endl;    
+    /*cout << "W before iteration: " << endl << *_w[0] << endl;
+    cout << "H before iteration: " << endl << _h << endl;    */
 
     _numSteps = 0;
     while (1) {
@@ -842,7 +842,7 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
     if (csplus)
         delete csplus;
 
-    cout << "H after iteration: " << endl << _h << endl;
+    //cout << "H after iteration: " << endl << _h << endl;
 }
 
 

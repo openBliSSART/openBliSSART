@@ -25,6 +25,7 @@
 
 #include <blissart/linalg/GPUMatrix.h>
 #include <blissart/linalg/GPUUtil.h>
+#include <blissart/linalg/GPUMatrixKernels.h>
 #include <cuda_runtime.h>
 #include <cassert>
 #include <stdexcept>

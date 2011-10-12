@@ -42,17 +42,6 @@ namespace blissart {
 namespace linalg {
 
 
-namespace gpu {
-// TODO document
-void apply_add(const double* a, const double* b, double* c, int m, int n);
-void apply_sub(const double* a, const double* b, double* c, int m, int n);
-void apply_mul(const double* a, const double* b, double* c, int m, int n);
-void apply_div(const double* a, const double* b, double* c, int m, int n);
-void apply_pow(const double* a, const double b, double* c, int m, int n);
-void set_to_zero(double* a, int m, int n, int startRow, int startCol, int endRow, int endCol);
-}
-
-
 /**
  * Represents a matrix on the GPU.
  */
