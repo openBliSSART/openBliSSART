@@ -221,6 +221,29 @@ void GPUMatrix::getMatrix(Matrix* target)
         _data, _rows,
         target->_data, target->_rows
     );
+    if (cublasStat != CUBLAS_STATUS_SUCCESS) 
+        // TODO: define exception class with cublas return codes?
+        throw std::runtime_error("CUBLAS error in GetMatrix");
+}
+
+
+void GPUMatrix::scale(const double alpha, unsigned int startCol, 
+                      unsigned int endCol)
+{
+    assert(endCol >= startCol && startCol < _cols && endCol < _cols);
+    cublasStatus_t cublasStat = cublasDscal(
+        _cublasHandle, 
+        (endCol - startCol + 1) * _rows,   // number of elements to scale
+        &alpha,
+        _data + startCol * _rows,          // include col offset
+        1            // increment of 1 for column-wise scaling
+    );
+}
+
+
+void GPUMatrix::scale(const double alpha)
+{
+    scale(alpha, 0, this->_cols - 1);
 }
 
 

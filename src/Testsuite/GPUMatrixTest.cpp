@@ -113,6 +113,12 @@ bool GPUMatrixTest::performTest()
     f_d.getMatrix(&fgpu);
     cout << "Result D.^2.5: " << endl << fgpu << endl;
     
+    // Scaling
+    const double alpha = .5f;
+    f_d.scale(alpha, 2, 4);
+    f_d.getMatrix(&fgpu);
+    cout << "Scale columns 2 to 4 by " << alpha << ":" << endl << fgpu << endl;
+    
     // Zero of submatrix
     f_d.zero(2, 3, 7, 8);
     f_d.getMatrix(&fgpu);

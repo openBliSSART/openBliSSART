@@ -191,8 +191,10 @@ void BasicApplication::initializeConfiguration()
 
 void BasicApplication::uninitialize()
 {
+#ifdef HAVE_CUDA
     blissart::linalg::GPUStop();
     logger().information("Stopping CUBLAS.");
+#endif
 }
 
 

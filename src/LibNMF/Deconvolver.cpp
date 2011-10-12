@@ -275,16 +275,20 @@ Deconvolver::getCfValue(Deconvolver::NMDCostFunction cf, double beta) const
 #ifdef HAVE_CUDA
 
 
-// Currently only general beta-algorithm ...
 void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps, 
                                    double beta, bool sparse, bool continuous,
                                    ProgressObserver *observer)
 {
     GPUMatrix*  approxInv  = 0;
     GPUMatrix*  vLambdaInv = 0; // better name than vOverApprox
+    // Holds a single H update. This might be made obsolete by using a 
+    // specialized kernel in the future.
     GPUMatrix   hUpdate(_h.rows(), _h.cols());
+    // Accumulates H updates.
+    GPUMatrix   hUpdateAcc(_h.rows(), _h.cols());
     GPUMatrix   hUpdateNum(_h.rows(), _h.cols());
     GPUMatrix   hUpdateDenom(_h.rows(), _h.cols());
+    
     GPUMatrix   wUpdateNum(_v.rows(), _h.rows());
     GPUMatrix   wUpdateDenom(_v.rows(), _h.rows());
 
@@ -366,26 +370,8 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
                 }
 
                 // W multiplicative update
-                /*cout << "W before update: " << endl;
-                Matrix tmp2(wgpu[p]->rows(), wgpu[p]->cols());
-                wgpu[p]->getMatrix(&tmp2);
-                cout << tmp2 << endl;*/
-
-                /*Matrix tmp2(wgpu[p]->rows(), wgpu[p]->cols());
-
-                cout << "W update num: " << endl;
-                wUpdateNum.getMatrix(&tmp2);
-                cout << tmp2 << endl;
-                cout << "W update denom: " << endl;
-                wUpdateDenom.getMatrix(&tmp2);
-                cout << tmp2 << endl;*/
-
                 wgpu[p]->elementWiseMult(wUpdateNum,   wgpu[p]);
                 wgpu[p]->elementWiseDiv (wUpdateDenom, wgpu[p]);
-                
-                /*cout << "W after update: " << endl;
-                wgpu[p]->getMatrix(&tmp2);
-                cout << tmp2 << endl;*/
                 
                 // Difference-based calculation of new approximation
                 if (_t > 1) {
@@ -412,54 +398,54 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
         }
 
         // H Update
-        hUpdate.zero();
+        hUpdateAcc.zero();
         
         // Compute H update for each W[p] and average later
         for (unsigned int p = 0; p < _t; ++p) {
             // TODO col sum stuff for KL
 
+            // the last p columns will be zero but not computed
+            hUpdateNum.zero();
+            hUpdateDenom.zero();
+            
             // Numerator
             wgpu[p]->multWithMatrix(*vLambdaInv, &hUpdateNum,
                 // transpose W[p]
                 true, false, 
                 // target dimension: R x (N-p)
-                wgpu[p]->cols(), wgpu[p]->rows(), _v.cols() - p,
+                wgpu[p]->cols(), wgpu[p]->rows(), vgpu.cols() - p,
                 0, 0, 0, p, 0, 0);
             // Denominator
             wgpu[p]->multWithMatrix(*approxInv, &hUpdateDenom,
                 // transpose W[p]
                 true, false, 
                 // target dimension: R x (N-p)
-                wgpu[p]->cols(), wgpu[p]->rows(), _v.cols() - p,
+                wgpu[p]->cols(), wgpu[p]->rows(), vgpu.cols() - p,
                 0, 0, 0, p, 0, 0);
-            /*Matrix tmp3(_h.rows(), _h.cols());
-            hUpdateNum.getMatrix(&tmp3);
-            cout << "H update numerator: " << endl << tmp3 << endl;
-            hUpdateDenom.getMatrix(&tmp3);
-            cout << "H update denominator: " << endl << tmp3 << endl;*/
-            // TODO implement this
             hUpdateDenom.floor(DIVISOR_FLOOR);
 
-            // FIXME: Average update! NMD does not work like this
-            hgpu.elementWiseMult(hUpdateNum,   &hgpu);
-            hgpu.elementWiseDiv (hUpdateDenom, &hgpu);
+            hUpdateNum.elementWiseDiv(hUpdateDenom, &hUpdate);
+            Matrix tmp2(_h.rows(), _h.cols());
+            hUpdateNum.getMatrix(&tmp2);
+            //cout << "H update matrix at p = " << p << ": num = " << endl << tmp2 << endl;
+            hUpdateDenom.getMatrix(&tmp2);
+            //cout << "H update matrix at p = " << p << ": denom = " << endl << tmp2 << endl;
+            hUpdateAcc.add(hUpdate);
         }
 
-        // TODO
-        // Apply average update to H
-        /*double updateNorm = _t;
-        for (unsigned int j = 0; j <= _h.cols() - _t; ++j) {
-            for (unsigned int i = 0; i < _h.rows(); ++i) {
-                _h(i, j) *= hUpdate(i, j) / updateNorm;
-            }
+        const double alpha = 1.0f / (double) _t;
+        hUpdateAcc.scale(alpha, 0, hgpu.cols() - _t);
+        Matrix tmp3(_h.rows(), _h.cols());
+        hUpdateAcc.getMatrix(&tmp3);
+        //cout << "H update matrix: " << endl << tmp3 << endl;
+        for (unsigned int j = hgpu.cols() - _t + 1; j < hgpu.cols(); ++j) {
+            // we need to convert to const double for CUBLAS routine ...
+            const double myalpha = 1.0f / (double) (hgpu.cols() - j);
+            hUpdateAcc.scale(myalpha, j, j);
+            //cout << "scale column " << j << " by " << myalpha << endl;
         }
-        for (unsigned int j = _h.cols() - _t + 1; j < _h.cols(); ++j) {
-            --updateNorm;
-            for (unsigned int i = 0; i < _h.rows(); ++i) {
-                _h(i, j) *= hUpdate(i, j) / updateNorm;
-            }
-        }*/
-        
+        hgpu.elementWiseMult(hUpdateAcc, &hgpu);
+
         /*Matrix tmp3(_h.rows(), _h.cols());
         hgpu.getMatrix(&tmp3);
         cout << "H after update: " << endl << tmp3 << endl;*/
@@ -796,8 +782,8 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
                                             _h(i, j) * ctminus2->at(i));
                         denom += _c(i, j) * _h(i, j) * ctplus->at(i);
                     }
-                    //cout << "num(" << i << "," << j << "): " << num << endl;
-                    //cout << "denom(" << i << "," << j << "): " << denom << endl;
+                    //cout << "p = " << p << "; num(" << i << "," << j << "): " << num << endl;
+                    //cout << "p = " << p << "; denom(" << i << "," << j << "): " << denom << endl;
                     hUpdate(i, j) += num / denom;
                 }
             }
@@ -807,14 +793,17 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
         double updateNorm = _t;
         for (unsigned int j = 0; j <= _h.cols() - _t; ++j) {
             for (unsigned int i = 0; i < _h.rows(); ++i) {
+                //cout << "H update (" << i << "," << j << "): " << hUpdate(i, j) << endl;
                 _h(i, j) *= hUpdate(i, j) / updateNorm;
             }
         }
         for (unsigned int j = _h.cols() - _t + 1; j < _h.cols(); ++j) {
             --updateNorm;
             for (unsigned int i = 0; i < _h.rows(); ++i) {
+                //cout << "H update (" << i << "," << j << "): " << hUpdate(i, j) << endl;
                 _h(i, j) *= hUpdate(i, j) / updateNorm;
             }
+            //cout << "scale column " << j << " by " << (1.0f / (double) updateNorm) << endl;
         }
         
         nextItStep(observer, maxSteps);

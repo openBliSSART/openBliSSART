@@ -72,6 +72,9 @@ public:
     void elementWiseMult(const GPUMatrix& other, GPUMatrix* target);
     void elementWiseDiv(const GPUMatrix& other, GPUMatrix* target);
     void elementWisePow(const double exp, GPUMatrix* target);
+    
+    void scale(const double alpha);
+    void scale(const double alpha, unsigned int startCol, unsigned int endCol);
 
     void getMatrix(Matrix* target);
     
