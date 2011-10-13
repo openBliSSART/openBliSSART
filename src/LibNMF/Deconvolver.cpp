@@ -283,7 +283,7 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
     GPUMatrix*  approxInv  = 0;
     // used for row / col sums
     GPUMatrix*  unityRcols = 0;
-    GPUMatrix*  unityRrows = 0;
+    GPUMatrix*  unityNrows = 0;
     GPUMatrix*  wpColSums  = 0;
     GPUMatrix*  hRowSums   = 0;
     GPUMatrix*  vLambdaInv = 0; // better name than vOverApprox
@@ -324,8 +324,8 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
             // TODO constructor like this for GPUMatrix?
             Matrix tmp1R(1, _h.rows(), linalg::generators::unity);
             unityRcols = new GPUMatrix(tmp1R);
-            Matrix tmpR1(_h.rows(), 1, linalg::generators::unity);
-            unityRrows = new GPUMatrix(tmpR1);
+            Matrix tmpR1(_h.cols(), 1, linalg::generators::unity);
+            unityNrows = new GPUMatrix(tmpR1);
         }
         vLambdaInv = new GPUMatrix(_v.rows(), _v.cols());
     }
@@ -357,11 +357,14 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
                     // we explicitly compute row sums instead of using 
                     // approxInv which would be an all-one matrix
                     // compute row sum including columns 1 to N - p
-                    hgpu.multWithMatrix(*unityRrows, hRowSums,
+                    /*cout << "computing H row sums" << endl;
+                    cout << "m = " << hgpu.rows() << endl;
+                    cout << "k = " << hgpu.cols() - p << endl;*/
+                    hgpu.multWithMatrix(*unityNrows, hRowSums,
                         false, false,
-                        _h.rows(), _h.cols() - p, 1,
+                        hgpu.rows(), hgpu.cols() - p, 1,
                         0, 0, 0, 0, 0, 0);
-                    //hgpu.multWithMatrix(*unityRrows, hRowSums);
+                    //cout << "finished computing H row sums" << endl;
                     hRowSums->floor(DIVISOR_FLOOR);
                     /*Matrix tmp4(_h.rows(), 1);
                     hRowSums->getMatrix(&tmp4);
@@ -542,8 +545,8 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
         delete approxInv;
     if (unityRcols)
         delete unityRcols;
-    if (unityRrows)
-        delete unityRrows;
+    if (unityNrows)
+        delete unityNrows;
     if (wpColSums)
         delete wpColSums;
     if (hRowSums)
