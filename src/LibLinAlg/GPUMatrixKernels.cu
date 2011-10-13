@@ -24,7 +24,6 @@
 
 
 #include <cuda.h>
-#include <common.h>
 #include <blissart/linalg/common.h>
 
 
