@@ -27,6 +27,9 @@
 #define __BLISSART_LINALG_GPUMATRIXKERNELS_H__
 
 
+#include <blissart/linalg/common.h>
+
+
 // Declare functions that apply CUDA kernels (pure C code, no CUDA extensions).
 
 
@@ -42,40 +45,43 @@ namespace gpu {
 /**
  * Used by GPUMatrix::add().
  */
-void apply_add(const double* a, const double* b, double* c, int m, int n);
+void apply_add(const Elem* a, const Elem* b, Elem* c, int m, int n);
 
 
 /**
  * Used by GPUMatrix::sub().
  */
-void apply_sub(const double* a, const double* b, double* c, int m, int n);
+void apply_sub(const Elem* a, const Elem* b, Elem* c, int m, int n);
 
 
 /**
  * Used by GPUMatrix::elementWiseMult().
  */
-void apply_mul(const double* a, const double* b, double* c, int m, int n);
+void apply_mul(const Elem* a, const Elem* b, Elem* c, int m, int n);
 
 
 /**
  * Used by GPUMatrix::elementWiseDiv().
  */
-void apply_div(const double* a, const double* b, double* c, int m, int n);
+void apply_div(const Elem* a, const Elem* b, Elem* c, int m, int n);
 
 
 /**
  * Used by GPUMatrix::elementWisePow().
  */
-void apply_pow(const double* a, const double b, double* c, int m, int n);
+void apply_pow(const Elem* a, const Elem b, Elem* c, int m, int n);
 
 
 /**
  * Used by GPUMatrix::zero().
  */
-void set_to_zero(double* a, int m, int n, int startRow, int startCol, int endRow, int endCol);
+void set_to_zero(Elem* a, int m, int n, int startRow, int startCol, int endRow, int endCol);
 
 
-void apply_floor(double* a, const double floor, int m, int n);
+/**
+ * Used by GPUMatrix::floor().
+ */
+void apply_floor(Elem* a, const Elem floor, int m, int n);
 
 
 } // namespace gpu

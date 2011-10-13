@@ -24,6 +24,8 @@
 
 
 #include <cuda.h>
+#include <common.h>
+#include <blissart/linalg/common.h>
 
 
 namespace blissart {
@@ -38,7 +40,7 @@ namespace gpu {
 int blocksize = 4;
 
 
-__global__ void MatrixAdd_d(const double *a, const double *b, double *c, int rows, int cols)
+__global__ void MatrixAdd_d(const Elem *a, const Elem *b, Elem *c, int rows, int cols)
 {
     int col = blockIdx.x * blockDim.x + threadIdx.x;
     int row = blockIdx.y * blockDim.y + threadIdx.y;
@@ -48,7 +50,7 @@ __global__ void MatrixAdd_d(const double *a, const double *b, double *c, int row
 }
 
 
-void apply_add(const double* a, const double* b, double* c, int m, int n) {
+void apply_add(const Elem* a, const Elem* b, Elem* c, int m, int n) {
     dim3 dimBlock(blocksize, blocksize);
     dim3 dimGrid(n / dimBlock.x + 1, m / dimBlock.y + 1);
     MatrixAdd_d<<<dimGrid, dimBlock>>>(a, b, c, m, n);
@@ -56,7 +58,7 @@ void apply_add(const double* a, const double* b, double* c, int m, int n) {
 }
 
 
-__global__ void MatrixSub_d(const double *a, const double *b, double *c, int rows, int cols)
+__global__ void MatrixSub_d(const Elem *a, const Elem *b, Elem *c, int rows, int cols)
 {
     int col = blockIdx.x * blockDim.x + threadIdx.x;
     int row = blockIdx.y * blockDim.y + threadIdx.y;
@@ -66,7 +68,7 @@ __global__ void MatrixSub_d(const double *a, const double *b, double *c, int row
 }
 
 
-void apply_sub(const double* a, const double* b, double* c, int m, int n) {
+void apply_sub(const Elem* a, const Elem* b, Elem* c, int m, int n) {
     dim3 dimBlock(blocksize, blocksize);
     dim3 dimGrid(n / dimBlock.x + 1, m / dimBlock.y + 1);
     MatrixSub_d<<<dimGrid, dimBlock>>>(a, b, c, m, n);
@@ -74,7 +76,7 @@ void apply_sub(const double* a, const double* b, double* c, int m, int n) {
 }
 
 
-__global__ void MatrixMul_d(const double *a, const double *b, double *c, int rows, int cols)
+__global__ void MatrixMul_d(const Elem *a, const Elem *b, Elem *c, int rows, int cols)
 {
     int col = blockIdx.x * blockDim.x + threadIdx.x;
     int row = blockIdx.y * blockDim.y + threadIdx.y;
@@ -84,7 +86,7 @@ __global__ void MatrixMul_d(const double *a, const double *b, double *c, int row
 }
 
 
-void apply_mul(const double* a, const double* b, double* c, int m, int n) {
+void apply_mul(const Elem* a, const Elem* b, Elem* c, int m, int n) {
     dim3 dimBlock(blocksize, blocksize);
     dim3 dimGrid(n / dimBlock.x + 1, m / dimBlock.y + 1);
     MatrixMul_d<<<dimGrid, dimBlock>>>(a, b, c, m, n);
@@ -92,7 +94,7 @@ void apply_mul(const double* a, const double* b, double* c, int m, int n) {
 }
 
 
-__global__ void MatrixDiv_d(const double *a, const double *b, double *c, int rows, int cols)
+__global__ void MatrixDiv_d(const Elem *a, const Elem *b, Elem *c, int rows, int cols)
 {
     int col = blockIdx.x * blockDim.x + threadIdx.x;
     int row = blockIdx.y * blockDim.y + threadIdx.y;
@@ -102,7 +104,7 @@ __global__ void MatrixDiv_d(const double *a, const double *b, double *c, int row
 }
 
 
-void apply_div(const double* a, const double* b, double* c, int m, int n) {
+void apply_div(const Elem* a, const Elem* b, Elem* c, int m, int n) {
     dim3 dimBlock(blocksize, blocksize);
     dim3 dimGrid(n / dimBlock.x + 1, m / dimBlock.y + 1);
     MatrixDiv_d<<<dimGrid, dimBlock>>>(a, b, c, m, n);
@@ -110,7 +112,7 @@ void apply_div(const double* a, const double* b, double* c, int m, int n) {
 }
 
 
-__global__ void MatrixPow_d(const double *a, const double b, double *c, int rows, int cols)
+__global__ void MatrixPow_d(const Elem *a, const Elem b, Elem *c, int rows, int cols)
 {
     int col = blockIdx.x * blockDim.x + threadIdx.x;
     int row = blockIdx.y * blockDim.y + threadIdx.y;
@@ -120,7 +122,7 @@ __global__ void MatrixPow_d(const double *a, const double b, double *c, int rows
 }
 
 
-void apply_pow(const double* a, const double b, double* c, int m, int n) {
+void apply_pow(const Elem* a, const Elem b, Elem* c, int m, int n) {
     dim3 dimBlock(blocksize, blocksize);
     dim3 dimGrid(n / dimBlock.x + 1, m / dimBlock.y + 1);
     MatrixPow_d<<<dimGrid, dimBlock>>>(a, b, c, m, n);
@@ -128,7 +130,7 @@ void apply_pow(const double* a, const double b, double* c, int m, int n) {
 }
 
 
-__global__ void SetZero_d(double* a, int rows, int cols, 
+__global__ void SetZero_d(Elem* a, int rows, int cols, 
                           int startRow, int startCol, int endRow, int endCol)
 {
     int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -139,7 +141,7 @@ __global__ void SetZero_d(double* a, int rows, int cols,
 }
 
 
-void set_to_zero(double* a, int rows, int cols, 
+void set_to_zero(Elem* a, int rows, int cols, 
                  int startRow, int startCol, int endRow, int endCol)
 {
     dim3 dimBlock(blocksize, blocksize);
@@ -150,7 +152,7 @@ void set_to_zero(double* a, int rows, int cols,
 }
 
 
-__global__ void Floor_d(double* a, const double floor, int rows, int cols)
+__global__ void Floor_d(Elem* a, const Elem floor, int rows, int cols)
 {
     int col = blockIdx.x * blockDim.x + threadIdx.x;
     int row = blockIdx.y * blockDim.y + threadIdx.y;
@@ -160,7 +162,7 @@ __global__ void Floor_d(double* a, const double floor, int rows, int cols)
 }
 
 
-void apply_floor(double* a, const double floor, int rows, int cols)
+void apply_floor(Elem* a, const Elem floor, int rows, int cols)
 {
     dim3 dimBlock(blocksize, blocksize);
     dim3 dimGrid(cols / dimBlock.x + 1, rows / dimBlock.y + 1);

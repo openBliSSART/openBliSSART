@@ -28,7 +28,7 @@
 	/usr/local/cuda/bin/nvcc -o $@ -c $<
 
 .cu.lo:
-	$(LIBTOOL) --tag=CXX --mode=compile /usr2/home/wen/bin/nvccf --compile -o $@ $^ -shared "--compiler-options -fPIC -DPIC" -I../include
+	$(LIBTOOL) --tag=CXX --mode=compile /usr2/home/wen/bin/nvccf -DHAVE_CONFIG_H --compile -o $@ $^ -shared "--compiler-options -fPIC -DPIC" -I../include -I../..
 
 lib_LTLIBRARIES = libLinAlg.la
 

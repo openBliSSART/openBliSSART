@@ -71,10 +71,10 @@ public:
     void sub(const GPUMatrix& other, GPUMatrix* target);
     void elementWiseMult(const GPUMatrix& other, GPUMatrix* target);
     void elementWiseDiv(const GPUMatrix& other, GPUMatrix* target);
-    void elementWisePow(const double exp, GPUMatrix* target);
+    void elementWisePow(const Elem exp, GPUMatrix* target);
     
-    void scale(const double alpha);
-    void scale(const double alpha, unsigned int startCol, unsigned int endCol);
+    void scale(const Elem alpha);
+    void scale(const Elem alpha, unsigned int startCol, unsigned int endCol);
     
     void rowSums(GPUMatrix* sums);
     void colSums(GPUMatrix* sums);
@@ -99,16 +99,16 @@ public:
     /**
      * Floors the matrix entries to the given value.
      */
-    void floor(double value);
+    void floor(Elem value);
     
-    inline const double* dataPtr() const { return _data; }
-    inline double* dataPtr() { return _data; }
+    inline const Elem* dataPtr() const { return _data; }
+    inline Elem* dataPtr() { return _data; }
 
 private:
     void initDeviceMemory();
     unsigned int _rows;
     unsigned int _cols;
-    double *     _data;
+    Elem *     _data;
 };
 
 

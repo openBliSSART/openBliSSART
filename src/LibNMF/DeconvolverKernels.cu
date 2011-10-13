@@ -24,6 +24,7 @@
 
 
 #include <cuda.h>
+#include <blissart/linalg/common.h>
 
 
 namespace blissart {
@@ -38,7 +39,7 @@ namespace gpu {
 int blocksize = 16;
 
 
-__global__ void KLWUpdateKernel(const double *w, const double *wUpdateNum, const double *hRowSums, double* updatedW, int rows, int cols)
+__global__ void KLWUpdateKernel(const Elem *w, const Elem *wUpdateNum, const Elem *hRowSums, Elem* updatedW, int rows, int cols)
 {
     int col = blockIdx.x * blockDim.x + threadIdx.x;
     int row = blockIdx.y * blockDim.y + threadIdx.y;
@@ -48,7 +49,7 @@ __global__ void KLWUpdateKernel(const double *w, const double *wUpdateNum, const
 }
 
 
-void apply_KLWUpdate(const double* w, const double *wUpdateNum, const double *hRowSums, double* updatedW, int rows, int cols) {
+void apply_KLWUpdate(const Elem* w, const Elem *wUpdateNum, const Elem *hRowSums, Elem* updatedW, int rows, int cols) {
     dim3 dimBlock(blocksize, blocksize);
     dim3 dimGrid(cols / dimBlock.x + 1, rows / dimBlock.y + 1);
     KLWUpdateKernel<<<dimGrid, dimBlock>>>(w, wUpdateNum, hRowSums, updatedW, rows, cols);
@@ -56,7 +57,7 @@ void apply_KLWUpdate(const double* w, const double *wUpdateNum, const double *hR
 }
 
 
-__global__ void KLHUpdateKernel(const double *hUpdateNum, const double *wColSums, double* hUpdate, int p, int rows, int cols)
+__global__ void KLHUpdateKernel(const Elem *hUpdateNum, const Elem *wColSums, Elem* hUpdate, int p, int rows, int cols)
 {
     int col = blockIdx.x * blockDim.x + threadIdx.x;
     int row = blockIdx.y * blockDim.y + threadIdx.y;
@@ -66,7 +67,7 @@ __global__ void KLHUpdateKernel(const double *hUpdateNum, const double *wColSums
 }
 
 
-void compute_KLHUpdate(const double *hUpdateNum, const double *wColSums, double* hUpdate, int p, int rows, int cols) {
+void compute_KLHUpdate(const Elem *hUpdateNum, const Elem *wColSums, Elem* hUpdate, int p, int rows, int cols) {
     dim3 dimBlock(blocksize, blocksize);
     dim3 dimGrid(cols / dimBlock.x + 1, rows / dimBlock.y + 1);
     KLHUpdateKernel<<<dimGrid, dimBlock>>>(hUpdateNum, wColSums, hUpdate, p, rows, cols);
@@ -74,11 +75,11 @@ void compute_KLHUpdate(const double *hUpdateNum, const double *wColSums, double*
 }
 
 
-}
+} // namespace gpu
 
 
-}
+} // namespace nmf
 
 
-}
+} // namespace blissart
 

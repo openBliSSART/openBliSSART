@@ -33,6 +33,15 @@
 #include <cublas_v2.h>
 
 
+#ifdef BLISSART_SINGLE_PREC
+#   define CUBLAS_GEMM cublasSgemm
+#   define CUBLAS_SCAL cublasSscal
+#else
+#   define CUBLAS_GEMM cublasDgemm
+#   define CUBLAS_SCAL cublasDscal
+#endif
+
+
 namespace blissart {
 
 
@@ -123,9 +132,9 @@ void GPUMatrix::multWithMatrix(const GPUMatrix& other, GPUMatrix* target,
     unsigned int rowOffsetTarget, unsigned int colOffsetTarget) const
 {
     // We might allocate these on the device later, to get the last bit of performance.
-    const double alpha = 1.0;
-    const double beta  = 0.0;
-    cublasStatus_t rv = cublasDgemm(
+    const Elem alpha = 1.0;
+    const Elem beta  = 0.0;
+    cublasStatus_t rv = CUBLAS_GEMM(
         _cublasHandle,
         transpose      ? CUBLAS_OP_T : CUBLAS_OP_N,
         transposeOther ? CUBLAS_OP_T : CUBLAS_OP_N,
@@ -186,7 +195,7 @@ void GPUMatrix::elementWiseDiv(const GPUMatrix &other, GPUMatrix* target)
 }
 
 
-void GPUMatrix::elementWisePow(const double exp, GPUMatrix* target)
+void GPUMatrix::elementWisePow(const Elem exp, GPUMatrix* target)
 {
     gpu::apply_pow(this->_data, exp, target->_data, this->_rows, this->_cols);
 }
@@ -207,7 +216,7 @@ void GPUMatrix::zero(unsigned int startRow, unsigned int startCol,
 }
 
 
-void GPUMatrix::floor(double value)
+void GPUMatrix::floor(Elem value)
 {
     gpu::apply_floor(this->_data, value, this->_rows, this->_cols);
 }
@@ -228,11 +237,11 @@ void GPUMatrix::getMatrix(Matrix* target)
 }
 
 
-void GPUMatrix::scale(const double alpha, unsigned int startCol, 
+void GPUMatrix::scale(const Elem alpha, unsigned int startCol, 
                       unsigned int endCol)
 {
     assert(endCol >= startCol && startCol < _cols && endCol < _cols);
-    cublasStatus_t cublasStat = cublasDscal(
+    cublasStatus_t cublasStat = CUBLAS_SCAL(
         _cublasHandle, 
         (endCol - startCol + 1) * _rows,   // number of elements to scale
         &alpha,
@@ -242,7 +251,7 @@ void GPUMatrix::scale(const double alpha, unsigned int startCol,
 }
 
 
-void GPUMatrix::scale(const double alpha)
+void GPUMatrix::scale(const Elem alpha)
 {
     scale(alpha, 0, this->_cols - 1);
 }
