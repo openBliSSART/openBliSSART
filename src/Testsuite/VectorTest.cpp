@@ -47,8 +47,8 @@ bool VectorTest::performTest()
 {
     srand((unsigned)time(NULL));
 
-    const double cv_data[] = {  1, 2, 3 };
-    const double rv_data[] = { -4, 0, 8 };
+    const Elem cv_data[] = {  1, 2, 3 };
+    const Elem rv_data[] = { -4, 0, 8 };
     ColVector cv(3, cv_data);
     RowVector rv(3, rv_data);
     cout << "Vector cv: " << cv << endl
@@ -56,8 +56,8 @@ bool VectorTest::performTest()
 
     // Shift
     {
-        const double cv_left[] = { 2, 3, 0 };
-        const double cv_right[] = { 0, 1, 2 };
+        const Elem cv_left[] = { 2, 3, 0 };
+        const Elem cv_right[] = { 0, 1, 2 };
         ColVector cvl(cv);
         cvl.shiftLeft();
         cout << "Vector rv shifted left: " << cvl << endl;
@@ -160,7 +160,7 @@ bool VectorTest::performTest()
 
     // rv * cv
     {
-        const double inner_prod = rv * cv;
+        const Elem inner_prod = rv * cv;
         cout << "rv * cv = " << inner_prod << endl;
         if (!epsilonCheck(inner_prod, 20))
             return false;
@@ -170,7 +170,7 @@ bool VectorTest::performTest()
     {
         const Matrix cvrv(cv * rv);
         cout << "cv * rv = " << endl << cvrv;
-        const double correct_cvrv_data[] = {  -4, 0,  8,
+        const Elem correct_cvrv_data[] = {  -4, 0,  8,
                                               -8, 0, 16,
                                              -12, 0, 24 };
         const Matrix correct_cvrv(3, 3, correct_cvrv_data);
@@ -219,11 +219,11 @@ bool VectorTest::performTest()
     }
 
     // Maximum, minimum
-    const double mv_data[] = { -16, -1, 4, 8 };
+    const Elem mv_data[] = { -16, -1, 4, 8 };
     RowVector mv(4, mv_data);
     cout << "mv = " << mv << endl;
 
-    double m = mv.minimum();
+    Elem m = mv.minimum();
     cout << "Minimum of mv:            " << m << endl;
     if (m != -16)
         return false;
@@ -267,7 +267,7 @@ bool VectorTest::performTest()
     
     // Dump and read
     {
-        const double v_data[] = {   3, 2.5, 1.5,   -1, -2.5, -1.5 };
+        const Elem v_data[] = {   3, 2.5, 1.5,   -1, -2.5, -1.5 };
         RowVector rv(6, v_data);
         ColVector cv(6, v_data);
         Poco::TemporaryFile rvTmpFile, cvTmpFile;

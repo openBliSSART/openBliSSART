@@ -88,8 +88,8 @@ bool ICATest::performTest()
     Matrix S(3, 5000);
     cout << "Generating random data...";
     for (unsigned int i = 0; i < 5000; i++) {
-        S(0,i) = (double)rand() / (double)RAND_MAX;
-        S(1,i) = (double)rand() / (double)RAND_MAX;
+        S(0,i) = (Elem)rand() / (Elem)RAND_MAX;
+        S(1,i) = (Elem)rand() / (Elem)RAND_MAX;
         S(2,i) = i / 5000.0;
     }
     cout << "done." << endl;
@@ -99,7 +99,7 @@ bool ICATest::performTest()
         return false;
 
     // "Mix" the random data (here: rotate and scale)
-    const double mix_data[] = { cos(0.7853)/1.3,    -sin(0.7853), 0,
+    const Elem mix_data[] = { cos(0.7853)/1.3,    -sin(0.7853), 0,
                                 sin(0.7853)    , cos(0.7853)/0.5, 0,
                                               0,               0, 1 };
     cout << "Mixing...";

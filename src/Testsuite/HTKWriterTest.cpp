@@ -50,7 +50,7 @@ bool HTKWriterTest::performTest()
     bool ok = false;
 
     {
-        const double data[] = { 1, 2, 3, 4,
+        const Elem data[] = { 1, 2, 3, 4,
                                 2, 3, 4, 5,
                                 3, 4, 5, 6 };
         Matrix m(3, 4, data);

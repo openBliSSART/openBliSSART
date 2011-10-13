@@ -48,9 +48,9 @@ namespace nmf {
  * of matrices.
  * @return              a real value within [0.01, 0.02[
  */
-inline double uniformRandomGenerator(unsigned int, unsigned int)
+inline Elem uniformRandomGenerator(unsigned int, unsigned int)
 {
-    return (1.0 + (double)rand() / (double)RAND_MAX) * 1e-2;
+    return (1.0 + (Elem)rand() / (Elem)RAND_MAX) * 1e-2;
 }
 
 
@@ -59,14 +59,14 @@ inline double uniformRandomGenerator(unsigned int, unsigned int)
  * of matrices.
  * @return              a real value drawn from a Gaussian distribution
  */
-double LibNMF_API gaussianRandomGenerator(unsigned int, unsigned int);
+Elem LibNMF_API gaussianRandomGenerator(unsigned int, unsigned int);
 
 
 /**
  * Initializes a matrix, setting all elements to unity (1.0).
  * @return              always 1.0
  */
-inline double unityGenerator(unsigned int, unsigned int)
+inline Elem unityGenerator(unsigned int, unsigned int)
 {
     return 1.0;
 }

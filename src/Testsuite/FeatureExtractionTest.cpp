@@ -62,10 +62,10 @@ bool FeatureExtractionTest::performTest()
     if (fdMap[fd] != 5)
         return false;
 
-    const double data[] = { 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1 };
+    const Elem data[] = { 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1 };
     RowVector v(16, data);
 
-    const double data2[] = { 0.3, 0.5, 0.2, 0.7 };
+    const Elem data2[] = { 0.3, 0.5, 0.2, 0.7 };
     RowVector w(4, data2);
 
     cout << "v = " << v << endl;
@@ -116,7 +116,7 @@ bool FeatureExtractionTest::performTest()
     if (!epsilonCheck(c, 44.12, 1e-2))
         return false;
 
-    double freq[] = { 0.0, 25.0, 50.0, 75.0 };
+    Elem freq[] = { 0.0, 25.0, 50.0, 75.0 };
     c = centroid(w, RowVector(4, freq));
     cout << "Spectral centroid of w (given frequencies): " << c << endl;
     if (!epsilonCheck(c, 44.12, 1e-2))
@@ -137,8 +137,8 @@ bool FeatureExtractionTest::performTest()
     if (!epsilonCheck(0.666, sfm, 1e-3))
         return false;
 
-    const double data3[] =     { 2, 3, 4, 5, 3, 2, 0, 1, 2, -1, -5, -3, -2, -3, 0, 1 };
-    const double data3_max[] = { 2, 0, 0, 5, 0, 0, 0, 0, 2,  0,  0,  0, -2,  0, 0, 1 };
+    const Elem data3[] =     { 2, 3, 4, 5, 3, 2, 0, 1, 2, -1, -5, -3, -2, -3, 0, 1 };
+    const Elem data3_max[] = { 2, 0, 0, 5, 0, 0, 0, 0, 2,  0,  0,  0, -2,  0, 0, 1 };
     RowVector u(16, data3);
     RowVector umax(16, data3_max);
     cout << "u = " << u << endl;
@@ -147,7 +147,7 @@ bool FeatureExtractionTest::performTest()
     if (maxima != umax)
         return false;
 
-    const double data4[] = { 0, 1, 2, 3, 4, 5, 4, 3, 2, 3, 4, 5, 4, 3, 2, 1, 0 };
+    const Elem data4[] = { 0, 1, 2, 3, 4, 5, 4, 3, 2, 3, 4, 5, 4, 3, 2, 1, 0 };
     RowVector x(17, data4);
     double nl = noiseLikeness(x);
     cout << "x = " << x << endl;

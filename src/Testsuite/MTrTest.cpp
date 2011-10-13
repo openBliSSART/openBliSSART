@@ -48,7 +48,7 @@ bool MTrTest::performTest()
     {
         // Test PowerTransform and SlidingWindowTransform for some small 
         // matrices.
-        const double s_data[] = { 2, 1.5, 0.5, 0.2, 1,
+        const Elem s_data[] = { 2, 1.5, 0.5, 0.2, 1,
                                   4.5, 2.5, 0.3, 0.7, 1.2,
                                   0.6, 0.4, 3, 5, 6 };
         Matrix s(3, 5, s_data);
@@ -56,7 +56,7 @@ bool MTrTest::performTest()
         cout << "S = " << endl;
         cout << s << endl;
 
-        const double s_data_Sq[] = { 4, 2.25, 0.25, 0.04, 1,
+        const Elem s_data_Sq[] = { 4, 2.25, 0.25, 0.04, 1,
                                      20.25, 6.25, 0.09, 0.49, 1.44,
                                      0.36, 0.16, 9, 25, 36 };
         Matrix sSq(3, 5, s_data_Sq);
@@ -65,7 +65,7 @@ bool MTrTest::performTest()
             = Poco::Util::Application::instance().config();
         cfg.setInt("blissart.fft.transformations.slidingWindow.frameSize", 2);
 
-        const double s_data_sliding[] = { 4,     2.25, 0.25, 0.04,
+        const Elem s_data_sliding[] = { 4,     2.25, 0.25, 0.04,
                                           20.25, 6.25, 0.09, 0.49,
                                           0.36,  0.16,   9,  25,
                                           2.25,  0.25, 0.04, 1,

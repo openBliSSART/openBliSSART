@@ -43,7 +43,7 @@ bool CNMFTest::performTest()
 {
     //srand((unsigned int) time(NULL));
 
-    const double xData[] = {
+    const Elem xData[] = {
         0.5377, 1.3499, 0.6715, 0.8884, 0.1022,
         1.8339, 3.0349, 1.2075, 1.1471, 0.2414,
         2.2588, 0.7254, 0.7172, 1.0689, 0.3192,
@@ -60,7 +60,7 @@ bool CNMFTest::performTest()
     cout << x;
     cout << "---" << endl;
 
-    const double wData[] = {
+    const Elem wData[] = {
         0.8637, 1.0891, 0.6156, 1.4193, 1.1480, 0.8404, 2.1384, 2.9080, 0.3538, 0.0229,
         0.0774, 0.0326, 0.7481, 0.2916, 0.1049, 0.8880, 0.8396, 0.8252, 0.8236, 0.2620,
         1.2141, 0.5525, 0.1924, 0.1978, 0.7223, 0.1001, 1.3546, 1.3790, 1.5771, 1.7502,
@@ -75,7 +75,7 @@ bool CNMFTest::performTest()
     Matrix wInit(10, 10, wData);
 
     // Matrix W after 1 iteration with continuity parameter 1
-    const double w100Data[] = {
+    const Elem w100Data[] = {
         0.0729, 0.1012, 0.0554, 0.1331, 0.1014, 0.0569, 0.1398, 0.2178, 0.0281, 0.0017,
         0.0325, 0.0153, 0.3456, 0.1914, 0.0642, 0.2769, 0.3348, 0.4074, 0.3262, 0.1292,
         0.1983, 0.0631, 0.0225, 0.0322, 0.1367, 0.0126, 0.1977, 0.2868, 0.2476, 0.2745,
@@ -89,7 +89,7 @@ bool CNMFTest::performTest()
     };
     Matrix wIter(10, 10, w100Data);
 
-    const double hData[] = {
+    const Elem hData[] = {
         0.5201, 0.2938, 1.3320, 1.3617, 0.1952,
         0.0200, 0.8479, 2.3299, 0.4550, 0.2176,
         0.0348, 1.1201, 1.4491, 0.8487, 0.3031,
@@ -104,7 +104,7 @@ bool CNMFTest::performTest()
     Matrix hInit(10, 5, hData);
 
     // Matrix H after 1 iteration with continuity parameter 1
-    const double h100Data[] = {
+    const Elem h100Data[] = {
         0.5277, 0.6290, 1.2392, 1.2358, 0.3941,
         0.0492, 1.2702, 1.8233, 1.1065, 0.2485,
         0.1197, 0.9846, 1.3278, 1.0720, 0.3484,

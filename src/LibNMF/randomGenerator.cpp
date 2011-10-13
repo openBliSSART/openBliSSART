@@ -34,24 +34,24 @@ namespace blissart {
 namespace nmf {
 
 
-double gaussianRandomGenerator(unsigned int, unsigned int)
+Elem gaussianRandomGenerator(unsigned int, unsigned int)
 {
     static bool haveNumber = false;
-    static double number;
+    static Elem number;
     if (haveNumber) {
         haveNumber = false;
         return number;
     }
     else {
-        double q = 2.0;
-        double x, y;
+        Elem q = 2.0;
+        Elem x, y;
         // Use Polar Method to obtain normally distributed random numbers.
         while (q > 1.0) {
-            x = ((double)rand() / RAND_MAX) * 2.0 - 1.0;
-            y = ((double)rand() / RAND_MAX) * 2.0 - 1.0;
+            x = ((Elem)rand() / RAND_MAX) * 2.0 - 1.0;
+            y = ((Elem)rand() / RAND_MAX) * 2.0 - 1.0;
             q = x * x + y * y;
         }
-        double z = -2.0 * log(q) / q;
+        Elem z = -2.0 * log(q) / q;
         // The std:: here is absolutely necessary to use the C++ (overloaded)
         // version of this function!!!
         number = std::abs(y * sqrt(z));

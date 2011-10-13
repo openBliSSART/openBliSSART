@@ -33,10 +33,8 @@ SUBDIRS = LibLinAlg \
 		  septool \
           cvtool \
           fextool \
-          icatool \
           cleanup \
           export \
           exportaudio \
-          browser \
           include 
 

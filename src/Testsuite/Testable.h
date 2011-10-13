@@ -83,7 +83,7 @@ protected:
      * @return          true if and only if the absolute value of a-b is less than
      *                  prec
      */
-    inline static bool epsilonCheck(double a, double b, const double prec = 1e-10)
+    inline static bool epsilonCheck(double a, double b, const double prec = 1e-6)
     {
         debug_assert(prec >= 0);
         return (fabs(a-b) <= prec);

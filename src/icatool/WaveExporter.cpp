@@ -52,7 +52,7 @@ bool WaveExporter::doExport(const Matrix& matrix)
     // Calculate the neccessary number of digits
     const unsigned int numDigits = 1 + (unsigned int)log10f((float)matrix.rows());
 
-    double* row = new double[matrix.cols()];
+    Elem* row = new Elem[matrix.cols()];
     try {
         for (unsigned int i = 0; i < matrix.rows(); i++) {
             // Assemble the name of the output file.

@@ -48,13 +48,13 @@ using namespace blissart::linalg;
 namespace Testing {
 
 
-static double mult(double a, double b) 
+static Elem mult(Elem a, Elem b) 
 {
     return a * b;
 }
 
 
-static double matrixGenerator(unsigned int i, unsigned int j)
+static Elem matrixGenerator(unsigned int i, unsigned int j)
 {
     return i * j;
 }
@@ -76,13 +76,13 @@ bool MatrixTest::performTest()
     b(1,2) = 6;
     cout << b;
 
-    double fn = b.frobeniusNorm();
+    Elem fn = b.frobeniusNorm();
     cout << "Frobenius norm: " << fn << endl;
     if (!epsilonCheck(fn, 10.9, 1e-2))
         return false;
 
     // Matrix * Matrix
-    const double correctResultMult[] = {10, 0, 12, 12, 28, 0};
+    const Elem correctResultMult[] = {10, 0, 12, 12, 28, 0};
     Matrix c(2, 3);
     cout << "---" << endl
          << "Product:" << endl;
@@ -92,7 +92,7 @@ bool MatrixTest::performTest()
         return false;
 
     // Transpose
-    const double correctResultTranspose[] = {10, 12, 0, 28, 12, 0};
+    const Elem correctResultTranspose[] = {10, 12, 0, 28, 12, 0};
     Matrix cT(3, 2);
     cout << "---" << endl
          << "Transpose of product:" << endl;
@@ -138,9 +138,9 @@ bool MatrixTest::performTest()
 
     // Shifts
     {
-        const double data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-        const double datar[] = {0, 1, 2, 3, 0, 5, 6, 7, 0, 9, 10, 11};
-        const double datal[] = {2, 3, 4, 0, 6, 7, 8, 0, 10, 11, 12, 0};
+        const Elem data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+        const Elem datar[] = {0, 1, 2, 3, 0, 5, 6, 7, 0, 9, 10, 11};
+        const Elem datal[] = {2, 3, 4, 0, 6, 7, 8, 0, 10, 11, 12, 0};
         Matrix e(3, 4, data);
         Matrix er(e);
         er.shiftColumnsRight();
@@ -176,7 +176,7 @@ bool MatrixTest::performTest()
     {
         cout << "---" << endl
              << "Matrix A before Gaussian Elimination:" << endl;
-        const double A_data[] = {  3, -1,  7,
+        const Elem A_data[] = {  3, -1,  7,
                                    6,  7,  8,
                                  -23,  4, -5 };
         Matrix A(3, 3, A_data);
@@ -190,12 +190,12 @@ bool MatrixTest::performTest()
     {
         cout << "---" << endl
              << "Matrix A:" << endl;
-        const double A_data[] = {  3, -1,  7,
+        const Elem A_data[] = {  3, -1,  7,
                                    6,  7,  8,
                                  -23,  4, -5 };
         Matrix A(3, 3, A_data);
         cout << A << endl;
-        const double v_data[] = {42,72,-86};
+        const Elem v_data[] = {42,72,-86};
         const ColVector v(3, v_data);
         ColVector target(3);
         cout << "v := " << v << "^T. Solve Ax = v:" << endl;
@@ -212,12 +212,12 @@ bool MatrixTest::performTest()
     {
         cout << "---" << endl
              << "Matrix A:" << endl;
-        const double A_data[] = {  3, -1,  7,
+        const Elem A_data[] = {  3, -1,  7,
                                    6,  7,  8,
                                  -23,  4, -5 };
         Matrix A(3, 3, A_data);
         cout << A << endl;
-        const double det = A.determinant();
+        const Elem det = A.determinant();
         cout << "Determinant of A: " << det << endl;
         if (!epsilonCheck(det, 1248))
             return false;
@@ -227,25 +227,25 @@ bool MatrixTest::performTest()
     {
         cout << "---" << endl
              << "Matrix A:" << endl;
-        double A_data[] = {  1,  4,   7, 2,
+        Elem A_data[] = {  1,  4,   7, 2,
                              5,  8,   3, 6,
                            -23, -2,   0, 8,
                              7,  1, -14, 3 };
         Matrix A(4,4,A_data);
         cout << A << endl;
-        const double det = A.determinant();
+        const Elem det = A.determinant();
         cout << "Determinant of A: " << det << endl;
-        if (!epsilonCheck(det, 696))
+        if (!epsilonCheck(det, 696, 1e-3))
             return false;
     }
 
     // Trace
     {
-        const double A_data[] = {  3, -1,  7,
+        const Elem A_data[] = {  3, -1,  7,
                                    6,  7,  8,
                                  -23,  4, -5 };
         Matrix A(3, 3, A_data);
-        const double trace = A.trace();
+        const Elem trace = A.trace();
         cout << "---" << endl
              << "Matrix A:" << endl << A
              << "Trace(A) = " << trace << endl;
@@ -255,11 +255,11 @@ bool MatrixTest::performTest()
 
     // Multiplication with a column vector
     {
-        const double tm_data[] = {10, 0, 12, 12, 28, 0};
+        const Elem tm_data[] = {10, 0, 12, 12, 28, 0};
         Matrix tm(2, 3, tm_data);
         cout << "---" << endl
              << "Matrix tm:" << endl << tm;
-        const double vec_data[] = {1, -7, 5};
+        const Elem vec_data[] = {1, -7, 5};
         ColVector v(3, vec_data);
         cout << "Vector v:" << endl << v << endl;
         v = tm * v;
@@ -271,7 +271,7 @@ bool MatrixTest::performTest()
 
     // nthColumn
     {
-        const double m_data[] = { 1, 2, 3,
+        const Elem m_data[] = { 1, 2, 3,
                                   2, 1, 4,
                                   3, 4, 1 };
         Matrix m(3, 3, m_data);
@@ -287,7 +287,7 @@ bool MatrixTest::performTest()
 
     // nthRow
     {
-        const double m_data[] = { 1, 2, 3,
+        const Elem m_data[] = { 1, 2, 3,
                                   7, 8, 9,
                                   3, 4, 1 };
         Matrix m(3, 3, m_data);
@@ -303,7 +303,7 @@ bool MatrixTest::performTest()
 
     // Eigenpairs
     {
-        const double m_data[] = { 1, 2, 3,
+        const Elem m_data[] = { 1, 2, 3,
                                   2, 1, 4,
                                   3, 4, 1 };
         Matrix m(3, 3, m_data);
@@ -326,7 +326,7 @@ bool MatrixTest::performTest()
 
     // Multiplication with a transposed matrix
     {
-        const double A_data[] = {   1, 2.5, 1.5,   -1, -2.5, -1.5,
+        const Elem A_data[] = {   1, 2.5, 1.5,   -1, -2.5, -1.5,
                                   0.5,   0,   2, -0.5,    0,   -2 };
         Matrix A(2, 6, A_data);
         cout << "---" << endl
@@ -360,18 +360,18 @@ bool MatrixTest::performTest()
     // Submatrix multiplication
     {
         cout << "---" << endl << "Submatrix and transposed multiplication" << endl;
-        const double A_data[] = { 1, 4, 7, 1,
+        const Elem A_data[] = { 1, 4, 7, 1,
                                   2, 5, 8, 4,
                                   3, 6, 9, 7 };
-        const double B_data[] = { 1, 1, 1,
+        const Elem B_data[] = { 1, 1, 1,
                                   1, 2, 3,
                                   3, 4, 1,
                                   5, 6, 7 };
-        const double X_data[] = { 1, 0, 3, 4,
+        const Elem X_data[] = { 1, 0, 3, 4,
                                   0, 2, 3, 4 };
-        const double H_data[] = { 1, 0, 2, 5,
+        const Elem H_data[] = { 1, 0, 2, 5,
                                   0, 1, 0, 5 };
-        const double W_data[] = { 1, 2,
+        const Elem W_data[] = { 1, 2,
                                   3, 4 };
 
         Matrix A(3, 4, A_data);
@@ -412,13 +412,13 @@ bool MatrixTest::performTest()
         cout << "W^T*X(<-1) = " << endl << WTX;
         //return false;
 
-        const double C_corr_data[] = { 26, 37, 20,
+        const Elem C_corr_data[] = { 26, 37, 20,
                                        31, 44, 25,
                                        36, 51, 30 };
-        const double D_corr_data[] = { 20, 32, 30, 46};
-        const double E_corr_data[] = { 4, 28, 7, 49 };
-        const double XHT_corr_data[] = { 8, 3, 10, 3 };
-        const double WTX_corr_data[] = { 0, 6, 12, 16, 
+        const Elem D_corr_data[] = { 20, 32, 30, 46};
+        const Elem E_corr_data[] = { 4, 28, 7, 49 };
+        const Elem XHT_corr_data[] = { 8, 3, 10, 3 };
+        const Elem WTX_corr_data[] = { 0, 6, 12, 16, 
                                          0, 8, 18, 24 };
         Matrix C_corr(3, 3, C_corr_data);
         Matrix D_corr(2, 2, D_corr_data);
@@ -434,7 +434,7 @@ bool MatrixTest::performTest()
 
     // Mean column vector
     {
-        const double A_data[] = {   3, 2.5, 1.5,   -1, -2.5, -1.5,
+        const Elem A_data[] = {   3, 2.5, 1.5,   -1, -2.5, -1.5,
                                   0.5,   -4,   2, -0.5,    0,   -2 };
         Matrix A(2, 6, A_data);
         cout << "---" << endl
@@ -448,7 +448,7 @@ bool MatrixTest::performTest()
 
     // Mean row vector
     {
-        const double A_data[] = {   3, 2.5, 1.5,   -1, -2.5, -1.5,
+        const Elem A_data[] = {   3, 2.5, 1.5,   -1, -2.5, -1.5,
                                   0.5,   -4,   2, -0.5,    0,   -2 };
         Matrix A(2, 6, A_data);
         cout << "---" << endl
@@ -466,7 +466,7 @@ bool MatrixTest::performTest()
 
     // Variances
     {
-        const double A_data[] = {  3, -1,  7,
+        const Elem A_data[] = {  3, -1,  7,
                                    6,  7,  8,
                                  -23,  4, -5 };
         Matrix A(3, 3, A_data);
@@ -487,7 +487,7 @@ bool MatrixTest::performTest()
 
     // upToAndIncludingRow
     {
-        const double A_data[] = {  3, -1,  7,
+        const Elem A_data[] = {  3, -1,  7,
                                    6,  7,  8,
                                  -23,  4, -5 };
         Matrix A(3, 3, A_data);
@@ -507,7 +507,7 @@ bool MatrixTest::performTest()
 
     // elementWiseDivision
     {
-        const double A_data[] = {  3, -1,  7,
+        const Elem A_data[] = {  3, -1,  7,
                                    6,  7,  8,
                                  -23,  4, -5 };
         Matrix A(3, 3, A_data);
@@ -526,14 +526,14 @@ bool MatrixTest::performTest()
 
     // rowSum and colSum
     {
-        const double A_data[] = {  3, -1,  7,  4,
+        const Elem A_data[] = {  3, -1,  7,  4,
                                    6,  7,  8,  -2,
                                  -23,  4, -5,  2 };
         Matrix A(3, 4, A_data);
         cout << "---" << endl
              << "Matrix A:" << endl << A;
-        double cs = A.colSum(1);
-        double rs = A.rowSum(1);
+        Elem cs = A.colSum(1);
+        Elem rs = A.rowSum(1);
         cout << "Sum of column 1: " << cs << endl;
         cout << "Sum of row 1: " << rs << endl;
         if (cs != 10 || rs != 19)
@@ -547,14 +547,14 @@ bool MatrixTest::performTest()
 
     // dotColCol and dotRowRow
     {
-        const double A_data[] = {  3, -1,  7,
+        const Elem A_data[] = {  3, -1,  7,
                                    6,  7,  8,
                                  -23,  4, -5 };
         Matrix A(3, 3, A_data);
         cout << "---" << endl
              << "Matrix A:" << endl << A;
-        double dcc = Matrix::dotColCol(A, 1, A, 2);
-        double drr = Matrix::dotRowRow(A, 1, A, 2);
+        Elem dcc = Matrix::dotColCol(A, 1, A, 2);
+        Elem drr = Matrix::dotRowRow(A, 1, A, 2);
         cout << "Dot-product of columns 1 and 2: " << dcc << endl;
         cout << "Dot-product of rows 1 and 2: " << drr << endl;
         if (dcc != 29 || drr != -150)
@@ -571,7 +571,7 @@ bool MatrixTest::performTest()
 
     // Dump and read
     {
-        const double A_data[] = {   3, 2.5, 1.5,   -1, -2.5, -1.5,
+        const Elem A_data[] = {   3, 2.5, 1.5,   -1, -2.5, -1.5,
                                   0.5,   -4,   2, -0.5,    0,   -2 };
         Matrix A(3, 4, A_data);
         Poco::TemporaryFile tmpFile;
@@ -587,7 +587,7 @@ bool MatrixTest::performTest()
 
     // Inverse
     {
-        const double A_data[] = {  1,    2, 3,
+        const Elem A_data[] = {  1,    2, 3,
                                   -4,   -5, 6,
                                   -7, -0.5, 3 };
         Matrix A(3, 3, A_data);
@@ -611,7 +611,7 @@ bool MatrixTest::performTest()
 
     // Moore-Penrose Pseudo-Inverse
     {
-        const double A_data[] = { 22,  60,  76,
+        const Elem A_data[] = { 22,  60,  76,
                                   14, -95, -44,
                                   16, -20,  24,
                                    9, -25,  65,
@@ -643,7 +643,7 @@ bool MatrixTest::performTest()
 
     // Covariance
     {
-        const double A_data[] = {   3, 2.5, 1.5,   -1, -2.5, -1.5,
+        const Elem A_data[] = {   3, 2.5, 1.5,   -1, -2.5, -1.5,
                                   0.5,   -4,   2, -0.5,    0,   -2 };
         Matrix A(2, 6, A_data);
         cout << "---" << endl

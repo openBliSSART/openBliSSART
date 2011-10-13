@@ -43,7 +43,7 @@ namespace Testing {
 
 bool PCATest::performTest()
 {
-    const double small_data[] = {   2, 3.5, 2.5,    0, -1.5, -0.5,
+    const Elem small_data[] = {   2, 3.5, 2.5,    0, -1.5, -0.5,
                                   0.5,   0,   2, -0.5,    0,   -2,
                                     3,   3,   3,    3,    3,    3};
     Matrix M(3, 6, small_data);
@@ -57,7 +57,7 @@ bool PCATest::performTest()
     cout << "Mean vector: " << p->expectedValue() << endl;
 
     // Covariance matrix
-    const double correct_cov[] = { 3.8, 1.4, 0,
+    const Elem correct_cov[] = { 3.8, 1.4, 0,
                                    1.4, 1.7, 0,
                                      0,   0, 0 };
     cout << "Covariance matrix:" << endl
@@ -90,9 +90,9 @@ bool PCATest::performTest()
     // number generation during PCA) that this test result shows false although
     // it is correct. If it does show false one has to check manually if the
     // result makes sense (sorry).
-    const double correct_result1[] = { 1.12,  2.24, 2.24, -1.12, -2.24, -2.24,
+    const Elem correct_result1[] = { 1.12,  2.24, 2.24, -1.12, -2.24, -2.24,
                                           0, -1.12, 1.12,     0,  1.12, -1.12 };
-    const double correct_result2[] = { 1.12, 2.24,  2.24, -1.12, -2.24, -2.24,
+    const Elem correct_result2[] = { 1.12, 2.24,  2.24, -1.12, -2.24, -2.24,
                                           0, 1.12, -1.12,     0, -1.12,  1.12 };
     bool correct1 = true;
     bool correct2 = true;
