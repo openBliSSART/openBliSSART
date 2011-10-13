@@ -53,7 +53,7 @@ void apply_KLWUpdate(const double* w, const double *wUpdateNum,
  * of the KL divergence.
  */
 void compute_KLHUpdate(const double *hUpdateNum, 
-    const double *wColSums, double* hUpdate, int rows, int cols);
+    const double *wColSums, double* hUpdate, int p, int rows, int cols);
     
     
 }

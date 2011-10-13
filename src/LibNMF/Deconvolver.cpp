@@ -282,7 +282,7 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
 {
     GPUMatrix*  approxInv  = 0;
     // used for row / col sums
-    GPUMatrix*  unityRcols = 0;
+    GPUMatrix*  unityMcols = 0;
     GPUMatrix*  unityNrows = 0;
     GPUMatrix*  wpColSums  = 0;
     GPUMatrix*  hRowSums   = 0;
@@ -322,10 +322,10 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
             wpColSums = new GPUMatrix(1, _h.rows()); // 1xR
             hRowSums = new GPUMatrix(_h.rows(), 1);  // Rx1
             // TODO constructor like this for GPUMatrix?
-            Matrix tmp1R(1, _h.rows(), linalg::generators::unity);
-            unityRcols = new GPUMatrix(tmp1R);
-            Matrix tmpR1(_h.cols(), 1, linalg::generators::unity);
-            unityNrows = new GPUMatrix(tmpR1);
+            Matrix tmp1M(1, _v.rows(), linalg::generators::unity);
+            unityMcols = new GPUMatrix(tmp1M);
+            Matrix tmpN1(_h.cols(), 1, linalg::generators::unity);
+            unityNrows = new GPUMatrix(tmpN1);
         }
         vLambdaInv = new GPUMatrix(_v.rows(), _v.cols());
     }
@@ -486,14 +486,15 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
                 hUpdateNum.elementWiseDiv(hUpdateDenom, &hUpdate);
             }
             else {
+                hUpdate.zero();
                 // compute W[p] col sums
-                unityRcols->multWithMatrix(*wgpu[p], wpColSums);
+                unityMcols->multWithMatrix(*wgpu[p], wpColSums);
                 wpColSums->floor(DIVISOR_FLOOR);
                 /*Matrix tmp2(1, wgpu[p]->cols());
                 wpColSums->getMatrix(&tmp2);
                 cout << "Col sums: " << endl << tmp2 << endl;*/
                 gpu::compute_KLHUpdate(hUpdateNum.dataPtr(), wpColSums->dataPtr(),
-                    hUpdate.dataPtr(), hUpdate.rows(), hUpdate.cols());
+                    hUpdate.dataPtr(), p, hUpdate.rows(), hUpdate.cols());
             }
 
             /*Matrix tmp2(_h.rows(), _h.cols());
@@ -501,14 +502,17 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
             cout << "H update matrix at p = " << p << ": num = " << endl << tmp2 << endl;
             hUpdateDenom.getMatrix(&tmp2);
             cout << "H update matrix at p = " << p << ": denom = " << endl << tmp2 << endl;*/
+            /*Matrix tmp2(_h.rows(), _h.cols());
+            hUpdate.getMatrix(&tmp2);
+            cout << "H update matrix at p = " << p << " = " << endl << tmp2 << endl;*/
             hUpdateAcc.add(hUpdate);
         }
 
+        /*Matrix tmp3(_h.rows(), _h.cols());
+        hUpdateAcc.getMatrix(&tmp3);
+        cout << "H update matrix: " << endl << tmp3 << endl;*/
         const double alpha = 1.0f / (double) _t;
         hUpdateAcc.scale(alpha, 0, hgpu.cols() - _t);
-        /*Matrix tmp3(_h.rows(), _h.cols());
-        hUpdateAcc.getMatrix(&tmp3);*/
-        //cout << "H update matrix: " << endl << tmp3 << endl;
         for (unsigned int j = hgpu.cols() - _t + 1; j < hgpu.cols(); ++j) {
             // we need to convert to const double for CUBLAS routine ...
             const double myalpha = 1.0f / (double) (hgpu.cols() - j);
@@ -543,8 +547,8 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
         delete vLambdaInv;
     if (approxInv && approxInv != &approxgpu)
         delete approxInv;
-    if (unityRcols)
-        delete unityRcols;
+    if (unityMcols)
+        delete unityMcols;
     if (unityNrows)
         delete unityNrows;
     if (wpColSums)
@@ -864,11 +868,13 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
                     //cout << "p = " << p << "; num(" << i << "," << j << "): " << num << endl;
                     //cout << "p = " << p << "; denom(" << i << "," << j << "): " << denom << endl;
                     hUpdate(i, j) += num / denom;
+                    //cout << "p = " << p << "; hUpdate(" << i << "," << j << ") += " << num / denom << endl;
                 }
             }
         }
 
         // Apply average update to H
+        //cout << "H update matrix: " << hUpdate << endl;
         double updateNorm = _t;
         for (unsigned int j = 0; j <= _h.cols() - _t; ++j) {
             for (unsigned int i = 0; i < _h.rows(); ++i) {
