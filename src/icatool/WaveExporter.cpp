@@ -52,7 +52,7 @@ bool WaveExporter::doExport(const Matrix& matrix)
     // Calculate the neccessary number of digits
     const unsigned int numDigits = 1 + (unsigned int)log10f((float)matrix.rows());
 
-    Elem* row = new Elem[matrix.cols()];
+    double* row = 0;
     try {
         for (unsigned int i = 0; i < matrix.rows(); i++) {
             // Assemble the name of the output file.
@@ -61,16 +61,24 @@ bool WaveExporter::doExport(const Matrix& matrix)
                << right << setfill('0') << setw(numDigits)
                << (i+1) << ".wav";
             // Retrieve the audio data.
-            matrix.nthRow2DoubleArray(i, row);
+            row = new double[matrix.cols()];
+            for (unsigned int j = 0; j < matrix.cols(); ++j) {
+                row[j] = matrix(i, j);
+            }
+            // Convert to double.
             // Eventually export the data to the audio file.
             WaveEncoder::saveAsWav(row, matrix.cols(), _sampleRate, 1, ss.str());
+            delete[] row;
+            row = 0;
         }
     } catch (...) {
-        delete[] row;
+        if (row)
+            delete[] row;
         return false;
     }
 
-    delete[] row;
+    if (row)
+        delete[] row;
     return true;
 }
 

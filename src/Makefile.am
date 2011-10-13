@@ -32,6 +32,7 @@ SUBDIRS = LibLinAlg \
           benchmark \
           browser \
 		  septool \
+          icatool \
           cvtool \
           fextool \
           cleanup \
