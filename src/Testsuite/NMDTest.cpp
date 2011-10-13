@@ -52,8 +52,7 @@ bool NMDTest::performTest()
         cout << "Performing NMD using KL divergence" << endl;
 
         nmf::Deconvolver d(x, 10, t);
-        d.decompose(nmf::Deconvolver::KLDivergence, 1, 0); //, 5000, 1e-5);
-        //d.factorizeNMDBreg(5000, 1e-5, 0, 1);
+        d.decompose(nmf::Deconvolver::KLDivergence, 5000, 1e-5);
         cout << "# steps: " << d.numSteps() << endl;
         cout << "absolute error: " << d.absoluteError() << endl;
         cout << "relative error: " << d.relativeError() << endl;
@@ -76,8 +75,6 @@ bool NMDTest::performTest()
             }
         }
     }
-
-    return true;
 
     {
         cout << "Performing NMD using KL divergence, with normalization" 
