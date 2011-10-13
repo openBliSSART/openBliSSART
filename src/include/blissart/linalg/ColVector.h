@@ -26,6 +26,7 @@
 #define __BLISSART_LINALG_COLVECTOR_H__
 
 
+#include <blissart/linalg/common.h>
 #include <blissart/linalg/Vector.h>
 
 
@@ -68,9 +69,9 @@ public:
     /**
      * Constructs a ColVector with the specified dimension and initial data.
      * @param   dim         the desired dimension
-     * @param   data        a double array of the initial elements
+     * @param   data        a Elem array of the initial elements
      */
-    ColVector(unsigned int dim, const double* data) : Vector(dim, data) {}
+    ColVector(unsigned int dim, const Elem* data) : Vector(dim, data) {}
 
 
     /**
@@ -79,7 +80,7 @@ public:
      * @param   dim         the desired dimension
      * @param   generator   a function pointer to the generator
      */
-    ColVector(unsigned int dim, double (*generator)(unsigned int i))
+    ColVector(unsigned int dim, Elem (*generator)(unsigned int i))
         : Vector(dim, generator) {}
 
 
@@ -127,7 +128,7 @@ public:
      * @param   s           the scalar value
      * @return              an appropriately scaled ColVector
      */
-    ColVector operator * (double s) const;
+    ColVector operator * (Elem s) const;
 
 
     /**
@@ -166,7 +167,7 @@ public:
      * @param   cv          the ColVector
      * @return              an appropriately scaled ColVector
      */
-    friend ColVector operator * (double s, const ColVector& cv);
+    friend ColVector operator * (Elem s, const ColVector& cv);
 
 
     // We want to be friends with classes RowVector and Matrix.
@@ -183,7 +184,7 @@ public:
 // Inlines
 
 
-inline ColVector operator * (double s, const ColVector& cv)
+inline ColVector operator * (Elem s, const ColVector& cv)
 {
     return cv * s;
 }

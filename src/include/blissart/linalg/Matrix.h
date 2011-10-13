@@ -31,10 +31,7 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include <blissart/linalg/common.h>
 
 
 namespace blissart {
@@ -74,13 +71,13 @@ public:
      * List of eigenpairs, i.e. a list of pairs of which the first item
      * is the eigenvalue and the second is the associated eigenvector.
      */
-    typedef std::vector<std::pair<double, ColVector> > EigenPairs;
+    typedef std::vector<std::pair<Elem, ColVector> > EigenPairs;
 
 
     /**
      * Type of a generator function for matrices.
      */
-    typedef double (*GeneratorFunction)(unsigned int row, unsigned int column);
+    typedef Elem (*GeneratorFunction)(unsigned int row, unsigned int column);
 
 
     /**
@@ -114,7 +111,7 @@ public:
      * @param  data            data array
      * @param  useRawPointer   whether to use the given pointer or copy the data
      */
-    Matrix(unsigned int rows, unsigned int cols, const double* data,
+    Matrix(unsigned int rows, unsigned int cols, const Elem* data,
            bool useRawPointer = false);
 
 
@@ -123,7 +120,7 @@ public:
      * through the provided generator function.
      */
     Matrix(unsigned int rows, unsigned int cols,
-           double (*generator)(unsigned int i, unsigned int j));
+           Elem (*generator)(unsigned int i, unsigned int j));
 
 
     /**
@@ -157,7 +154,7 @@ public:
      * @param  j            column index
      * @return              the matrix entry at position (i,j)
      */
-    inline double& at(unsigned int i, unsigned int j);
+    inline Elem& at(unsigned int i, unsigned int j);
 
 
     /**
@@ -167,7 +164,7 @@ public:
      * @param  j            column index
      * @return              reference to the matrix entry at position (i,j)
      */
-    inline const double& at(unsigned int i, unsigned int j) const;
+    inline const Elem& at(unsigned int i, unsigned int j) const;
 
 
     /**
@@ -177,7 +174,7 @@ public:
      * @param  j            column index
      * @return              reference to the matrix entry at position (i,j)
      */
-    inline double& operator () (unsigned int i, unsigned int j);
+    inline Elem& operator () (unsigned int i, unsigned int j);
 
 
     /**
@@ -187,7 +184,7 @@ public:
      * @param  j            column index
      * @return              reference to the matrix entry at position (i,j)
      */
-    inline const double& operator () (unsigned int i, unsigned int j) const;
+    inline const Elem& operator () (unsigned int i, unsigned int j) const;
 
 
     /**
@@ -196,7 +193,7 @@ public:
      * @param   j           column index
      * @param   d           the new value
      */
-    inline void setAt(unsigned int i, unsigned int j, double d);
+    inline void setAt(unsigned int i, unsigned int j, Elem d);
 
 
     /**
@@ -218,12 +215,12 @@ public:
 
 
     /**
-     * Copies the contents of this matrix' nth row into the specified double
+     * Copies the contents of this matrix' nth row into the specified Elem
      * array.
      * @param   n           the number of the row
-     * @param   da          a double array
+     * @param   da          a Elem array
      */
-    void nthRow2DoubleArray(unsigned int n, double* da) const;
+    void nthRow2DoubleArray(unsigned int n, Elem* da) const;
 
 
     /**
@@ -302,7 +299,7 @@ public:
     /**
      * Returns the Frobenius norm of this matrix.
      */
-    double frobeniusNorm() const;
+    Elem frobeniusNorm() const;
 
 
     /* @} */
@@ -388,13 +385,13 @@ public:
     /**
      * TODO
      */
-    void apply(double (*func) (double, double), const Matrix& other);
-    void apply(double (*func) (double, double), const Matrix& other, Matrix* target) const;
-    void apply(double (*func) (double, double), double other);
-    void apply(double (*func) (double, double), double other, Matrix* target) const;
+    void apply(Elem (*func) (Elem, Elem), const Matrix& other);
+    void apply(Elem (*func) (Elem, Elem), const Matrix& other, Matrix* target) const;
+    void apply(Elem (*func) (Elem, Elem), Elem other);
+    void apply(Elem (*func) (Elem, Elem), Elem other, Matrix* target) const;
 
-    inline static double mul(double a, double b);
-    inline static double div(double a, double b);
+    inline static Elem mul(Elem a, Elem b);
+    inline static Elem div(Elem a, Elem b);
 
 
     /**
@@ -538,7 +535,7 @@ public:
      * @param   column              the number of the column
      * @return                      the sum of the column's elements
      */
-    double colSum(unsigned int column) const;
+    Elem colSum(unsigned int column) const;
 
 
     /**
@@ -546,7 +543,7 @@ public:
      * @param   row                 the number of the row
      * @return                      the sum of the row's elements
      */
-    double rowSum(unsigned int row) const;
+    Elem rowSum(unsigned int row) const;
 
     /**
      * Returns the sum of the elements of the given row in the given column 
@@ -556,7 +553,7 @@ public:
      * @param   col2                end column
      * @return                      the sum of the row's elements
      */
-    double rowSum(unsigned int row, unsigned int col1, unsigned int col2) 
+    Elem rowSum(unsigned int row, unsigned int col1, unsigned int col2) 
         const;
 
 
@@ -568,7 +565,7 @@ public:
      * @param   bCol                the column number for b
      * @return                      the dot-product of the columns
      */
-    static double dotColCol(const Matrix &a, unsigned int aCol,
+    static Elem dotColCol(const Matrix &a, unsigned int aCol,
                             const Matrix &b, unsigned int bCol);
 
 
@@ -580,7 +577,7 @@ public:
      * @param   bRow                the row number for b
      * @return                      the dot-product of the rows
      */
-    static double dotRowRow(const Matrix &a, unsigned int aRow,
+    static Elem dotRowRow(const Matrix &a, unsigned int aRow,
                             const Matrix &b, unsigned int bRow);
 
 
@@ -656,7 +653,7 @@ public:
      * @return              a matrix where all elements equal this
      *                      matrix' elements multiplied by s
      */
-    Matrix operator * (double s) const;
+    Matrix operator * (Elem s) const;
 
 
     /**
@@ -666,7 +663,7 @@ public:
      * @return              a matrix where all elements equal this
      *                      matrix' elements multiplied by s
      */
-    friend Matrix operator * (double s, const Matrix& m);
+    friend Matrix operator * (Elem s, const Matrix& m);
 
 
     /**
@@ -757,13 +754,13 @@ public:
 
 
 protected:
-    const double *dataPtr() const;
-    double *dataPtr();
+    const Elem *dataPtr() const;
+    Elem *dataPtr();
 
 private:
     unsigned int _rows;
     unsigned int _cols;
-    double *     _data;
+    Elem *     _data;
 };
 
 
@@ -789,13 +786,13 @@ T Matrix::expectedValue(const T& iv, void* info,
 //
 
 
-inline double *Matrix::dataPtr()
+inline Elem *Matrix::dataPtr()
 {
     return _data;
 }
 
 
-inline const double *Matrix::dataPtr() const
+inline const Elem *Matrix::dataPtr() const
 {
     return _data;
 }
@@ -817,13 +814,13 @@ inline std::ostream& operator << (std::ostream& os, const Matrix& m)
 }
 
 
-inline Matrix operator * (double s, const Matrix& m)
+inline Matrix operator * (Elem s, const Matrix& m)
 {
     return m * s;
 }
 
 
-const double& Matrix::at(unsigned int i, unsigned int j) const
+const Elem& Matrix::at(unsigned int i, unsigned int j) const
 {
     debug_assert(i < _rows && j < _cols);
 #ifdef ISEP_ROW_MAJOR
@@ -834,7 +831,7 @@ const double& Matrix::at(unsigned int i, unsigned int j) const
 }
 
 
-double& Matrix::at(unsigned int i, unsigned int j)
+Elem& Matrix::at(unsigned int i, unsigned int j)
 {
     debug_assert(i < _rows && j < _cols);
 #ifdef ISEP_ROW_MAJOR
@@ -845,7 +842,7 @@ double& Matrix::at(unsigned int i, unsigned int j)
 }
 
 
-double& Matrix::operator()(unsigned int i, unsigned int j)
+Elem& Matrix::operator()(unsigned int i, unsigned int j)
 {
     debug_assert(i < _rows && j < _cols);
 #ifdef ISEP_ROW_MAJOR
@@ -856,7 +853,7 @@ double& Matrix::operator()(unsigned int i, unsigned int j)
 }
 
 
-const double& Matrix::operator()(unsigned int i, unsigned int j) const
+const Elem& Matrix::operator()(unsigned int i, unsigned int j) const
 {
     debug_assert(i < _rows && j < _cols);
 #ifdef ISEP_ROW_MAJOR
@@ -867,7 +864,7 @@ const double& Matrix::operator()(unsigned int i, unsigned int j) const
 }
 
 
-void Matrix::setAt(unsigned int i, unsigned int j, double d)
+void Matrix::setAt(unsigned int i, unsigned int j, Elem d)
 {
     debug_assert(i < _rows && j < _cols);
 #ifdef ISEP_ROW_MAJOR
@@ -890,13 +887,13 @@ unsigned int Matrix::cols() const
 }
 
 
-double Matrix::mul(double a, double b)
+Elem Matrix::mul(Elem a, Elem b)
 {
     return a * b;
 }
 
 
-double Matrix::div(double a, double b)
+Elem Matrix::div(Elem a, Elem b)
 {
     return a / b;
 }

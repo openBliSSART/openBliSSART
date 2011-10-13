@@ -31,6 +31,7 @@
 #include <types.h>
 #include <iostream>
 #include <iomanip>
+#include <blissart/linalg/common.h>
 
 
 namespace blissart {
@@ -77,9 +78,9 @@ public:
     /**
      * Constructs a Vector with the given dimension and from the provided data.
      * @param   dim         the desired dimension
-     * @param   data        a double array with the initialization data
+     * @param   data        a Elem array with the initialization data
      */
-    Vector(unsigned int dim, const double* data);
+    Vector(unsigned int dim, const Elem* data);
 
 
     /**
@@ -88,7 +89,7 @@ public:
      * @param   dim         the desired dimension
      * @param   generator   a function pointer to the generator
      */
-    Vector(unsigned int dim, double (*generator)(unsigned int i));
+    Vector(unsigned int dim, Elem (*generator)(unsigned int i));
 
 
     /**
@@ -122,7 +123,7 @@ public:
      * @param   i           the position
      * @return              the vector element at position i.
      */
-    inline const double& at(unsigned int i) const;
+    inline const Elem& at(unsigned int i) const;
 
 
     /**
@@ -131,7 +132,7 @@ public:
      * @param   i           the position
      * @return              the vector element at position i.
      */
-    inline double& at(unsigned int i);
+    inline Elem& at(unsigned int i);
 
 
     /**
@@ -139,7 +140,7 @@ public:
      * @param   i           the position
      * @param   d           the new value
      */
-    inline void setAt(unsigned int i, double d);
+    inline void setAt(unsigned int i, Elem d);
 
     
     /**
@@ -148,7 +149,7 @@ public:
      * @param   i           the position
      * @return              a reference to the vector element at position i.
      */
-    inline double& operator () (unsigned int i);
+    inline Elem& operator () (unsigned int i);
 
 
     /**
@@ -157,7 +158,7 @@ public:
      * @param   i           the position
      * @return              a reference to the vector element at position i.
      */
-    inline const double& operator () (unsigned int i) const;
+    inline const Elem& operator () (unsigned int i) const;
 
 
     /* @} */
@@ -173,7 +174,7 @@ public:
      * Scales this vector according to the given scalar value.
      * @param   s           the scalar value
      */
-    void scale(double s);
+    void scale(Elem s);
 
     
     /**
@@ -211,16 +212,16 @@ public:
     /**
      * Computes the inner product of this and the given vector.
      * @param   other       a Vector.
-     * @return              a double value which holds the inner product.
+     * @return              a Elem value which holds the inner product.
      */
-    double operator * (const Vector& other) const;
+    Elem operator * (const Vector& other) const;
 
 
     /**
      * Scales this Vector according to the given scalar value.
      * @param   s           a real value
      */
-    void operator *= (double s);
+    void operator *= (Elem s);
 
 
     /**
@@ -259,14 +260,14 @@ public:
      * Returns the maximum value in this vector.
      * @param   abs       whether to use absolute value for comparison or not
      */
-    double maximum(bool abs = false) const;
+    Elem maximum(bool abs = false) const;
 
 
     /**
      * Returns the minimum value in this vector.
      * @param   abs       whether to use absolute value for comparison or not
      */
-    double minimum(bool abs = false) const;
+    Elem minimum(bool abs = false) const;
 
 
     /**
@@ -282,7 +283,7 @@ public:
      * @param   b           the second Vector
      * @return              the angle (RAD) between a and b
      */
-    static double angle(const Vector& a, const Vector& b);
+    static Elem angle(const Vector& a, const Vector& b);
 
     
     /* @} */
@@ -315,9 +316,9 @@ public:
 
     /**
      * Calculates the length of this vector.
-     * @return              a double value representing the length of this vector.
+     * @return              a Elem value representing the length of this vector.
      */
-    double length() const;
+    Elem length() const;
 
 
     /* @} */
@@ -372,11 +373,11 @@ protected:
      * @param   b           the second Vector
      * @return              the component-wise product of a and b
      */
-    static double inner_prod(const Vector& a, const Vector& b);
+    static Elem inner_prod(const Vector& a, const Vector& b);
 
 
     unsigned int _dim;
-    double *     _data;
+    Elem *     _data;
 };
 
 
@@ -403,35 +404,35 @@ inline std::ostream& operator << (std::ostream& os, const Vector& v)
 // Inlines
 
 
-const double& Vector::at(unsigned int i) const
+const Elem& Vector::at(unsigned int i) const
 {
     debug_assert(i < _dim);
     return _data[i];
 }
 
 
-double& Vector::at(unsigned int i)
+Elem& Vector::at(unsigned int i)
 {
     debug_assert(i < _dim);
     return _data[i];
 }
 
 
-void Vector::setAt(unsigned int i, double d)
+void Vector::setAt(unsigned int i, Elem d)
 {
     debug_assert(i < _dim);
     _data[i] = d;
 }
 
 
-double& Vector::operator () (unsigned int i)
+Elem& Vector::operator () (unsigned int i)
 {
     debug_assert(i < _dim);
     return _data[i];
 }
 
 
-const double& Vector::operator () (unsigned int i) const
+const Elem& Vector::operator () (unsigned int i) const
 {
     debug_assert(i < _dim);
     return _data[i];

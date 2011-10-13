@@ -27,6 +27,7 @@
 
 
 #include <cstdlib>
+#include <blissart/linalg/common.h>
 
 
 namespace blissart {
@@ -55,18 +56,18 @@ namespace generators {
  * Generates a vector filled with uniform random numbers from the interval
  * [0,1[.
  */
-inline double random(unsigned int)
+inline Elem random(unsigned int)
 {
-    return (double)rand() / (double)RAND_MAX;
+    return (Elem)rand() / (Elem)RAND_MAX;
 }
 
     
 /**
  * Generates an all-zero vector.
  */
-inline double zero(unsigned int)
+inline Elem zero(unsigned int)
 {
-    return 0.0;
+    return 0.0f;
 }
 
 
@@ -82,16 +83,16 @@ inline double zero(unsigned int)
  * Generates a matrix filled with uniform random numbers from the interval
  * [0,1[.
  */
-inline double random(unsigned int, unsigned int)
+inline Elem random(unsigned int, unsigned int)
 {
-    return (double)rand() / (double)RAND_MAX;
+    return (Elem)rand() / (Elem)RAND_MAX;
 }
 
 
 /**
  * Generates the identity matrix.
  */
-inline double identity(unsigned int i, unsigned int j)
+inline Elem identity(unsigned int i, unsigned int j)
 {
     return (i == j ? 1.0 : 0.0);
 }
@@ -100,7 +101,7 @@ inline double identity(unsigned int i, unsigned int j)
 /**
  * Generates an all-zero matrix.
  */
-inline double zero(unsigned int, unsigned int)
+inline Elem zero(unsigned int, unsigned int)
 {
     return 0.0;
 }
@@ -109,7 +110,7 @@ inline double zero(unsigned int, unsigned int)
 /**
  * Generates an all-one matrix.
  */
-inline double unity(unsigned int, unsigned int)
+inline Elem unity(unsigned int, unsigned int)
 {
     return 1.0;
 }

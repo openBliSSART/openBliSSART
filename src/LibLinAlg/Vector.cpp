@@ -45,6 +45,19 @@ extern "C" {
 #endif
 
 
+#ifdef BLISSART_SINGLE_PREC
+#    define CBLAS_DOT  cblas_sdot
+#    define CBLAS_NRM2 cblas_snrm2
+#    define CBLAS_SCAL cblas_sscal
+#    define CBLAS_AXPY cblas_saxpy
+#else
+#    define CBLAS_DOT  cblas_ddot
+#    define CBLAS_NRM2 cblas_dnrm2
+#    define CBLAS_SCAL cblas_dscal
+#    define CBLAS_AXPY cblas_daxpy
+#endif
+
+
 namespace blissart {
 
 namespace linalg {
@@ -52,7 +65,7 @@ namespace linalg {
 
 Vector::Vector(unsigned int dim) :
     _dim(dim),
-    _data(new double[dim])
+    _data(new Elem[dim])
 {
     debug_assert(dim > 0);
 }
@@ -60,24 +73,24 @@ Vector::Vector(unsigned int dim) :
 
 Vector::Vector(const Vector& other) :
     _dim(other._dim),
-    _data(new double[other._dim])
+    _data(new Elem[other._dim])
 {
-    memcpy(_data, other._data, _dim * sizeof(double));
+    memcpy(_data, other._data, _dim * sizeof(Elem));
 }
 
 
-Vector::Vector(unsigned int dim, const double* data) :
+Vector::Vector(unsigned int dim, const Elem* data) :
     _dim(dim),
-    _data(new double[dim])
+    _data(new Elem[dim])
 {
     debug_assert(dim > 0);
-    memcpy(_data, data, _dim * sizeof(double));
+    memcpy(_data, data, _dim * sizeof(Elem));
 }
 
 
-Vector::Vector(unsigned int dim, double (*generator)(unsigned int i)) :
+Vector::Vector(unsigned int dim, Elem (*generator)(unsigned int i)) :
     _dim(dim),
-    _data(new double[dim])
+    _data(new Elem[dim])
 {
     debug_assert(dim > 0);
     // Set all entries according to the provided generator
@@ -105,8 +118,12 @@ Vector::Vector(const std::string &fileName) :
         if (_dim <= 0)
             break;
 
-        _data = new double[_dim];
+        _data = new Elem[_dim];
+#ifdef BLISSART_SINGLE_PREC
+        if (br.readFloats(_data, _dim) != _dim)
+#else
         if (br.readDoubles(_data, _dim) != _dim)
+#endif
             break;
 
         // Everything's ok, so return at this point.
@@ -149,7 +166,11 @@ void Vector::dump(const std::string& fileName) const
         if (fos.fail())
             break;
 
+#ifdef BLISSART_SINGLE_PREC
+        if (bw.writeFloats(_data, _dim) != _dim)
+#else
         if (bw.writeDoubles(_data, _dim) != _dim)
+#endif
             break;
 
         // Everything's ok, so return at this point.
@@ -167,7 +188,7 @@ bool Vector::operator == (const Vector& other) const
 {
     return (
         this->isRowVector() == other.isRowVector() &&
-        (0 == memcmp(_data, other._data, _dim * sizeof(double)))
+        (0 == memcmp(_data, other._data, _dim * sizeof(Elem)))
         );
 }
 
@@ -183,21 +204,21 @@ Vector& Vector::operator = (const Vector& other)
     if (_dim != other._dim) {
         delete[] _data;
         _dim = other._dim;
-        _data = new double[_dim];
+        _data = new Elem[_dim];
     }
-    memcpy(_data, other._data, _dim * sizeof(double));
+    memcpy(_data, other._data, _dim * sizeof(Elem));
     return *this;
 }
 
 
-double Vector::inner_prod(const Vector& a, const Vector& b)
+Elem Vector::inner_prod(const Vector& a, const Vector& b)
 {
     debug_assert(a._dim == b._dim);
 
 #ifdef HAVE_CBLAS_H
-    return cblas_ddot(a._dim, a._data, 1, b._data, 1);
+    return CBLAS_DOT(a._dim, a._data, 1, b._data, 1);
 #else
-    double result = 0;
+    Elem result = 0;
     for (unsigned int i = 0; i < a._dim; i++)
         result += a._data[i] * b._data[i];
     return result;
@@ -205,26 +226,26 @@ double Vector::inner_prod(const Vector& a, const Vector& b)
 }
 
 
-double Vector::length() const
+Elem Vector::length() const
 {
 #ifdef HAVE_CBLAS_H
-    return cblas_dnrm2(_dim, _data, 1);
+    return CBLAS_NRM2(_dim, _data, 1);
 #else
     return sqrt(inner_prod(*this, *this));
 #endif
 }
 
 
-double Vector::angle(const Vector& a, const Vector& b)
+Elem Vector::angle(const Vector& a, const Vector& b)
 {
     return acos(inner_prod(a, b) / (a.length() * b.length()) );
 }
 
 
-void Vector::scale(double s)
+void Vector::scale(Elem s)
 {
 #ifdef HAVE_CBLAS_H
-    cblas_dscal(_dim, s, _data, 1);
+    CBLAS_SCAL(_dim, s, _data, 1);
 #else
     for (unsigned int i = 0; i < _dim; i++)
         _data[i] *= s;
@@ -234,7 +255,7 @@ void Vector::scale(double s)
 
 void Vector::normalize()
 {
-    double length = this->length();
+    Elem length = this->length();
     if (length != 0)
         scale(1.0 / length);
 }
@@ -263,10 +284,10 @@ void Vector::add(const Vector& other)
     debug_assert(other._dim == _dim);
 
 #ifdef HAVE_CBLAS_H
-    cblas_daxpy(_dim, 1.0, other._data, 1, _data, 1);
+    CBLAS_AXPY(_dim, 1.0, other._data, 1, _data, 1);
 #else
-    double* const maxData = _data + _dim;
-    for (double *d = _data, *dd = other._data; d < maxData; d++, dd++)
+    Elem* const maxData = _data + _dim;
+    for (Elem *d = _data, *dd = other._data; d < maxData; d++, dd++)
         *d += *dd;
 #endif
 }
@@ -277,19 +298,19 @@ void Vector::sub(const Vector& other)
     debug_assert(other._dim == _dim);
 
 #ifdef HAVE_CBLAS_H
-    cblas_daxpy(_dim, -1.0, other._data, 1, _data, 1);
+    CBLAS_AXPY(_dim, -1.0, other._data, 1, _data, 1);
 #else
-    double* const maxData = _data + _dim;
-    for (double *d = _data, *dd = other._data; d < maxData; d++, dd++)
+    Elem* const maxData = _data + _dim;
+    for (Elem *d = _data, *dd = other._data; d < maxData; d++, dd++)
         *d -= *dd;
 #endif
 }
 
 
-double Vector::maximum(bool abs) const
+Elem Vector::maximum(bool abs) const
 {
     debug_assert(_dim > 0);
-    double max = _data[0];
+    Elem max = _data[0];
     if (abs) {
         for (unsigned int i = 1; i < _dim; ++i) {
             if (fabs(_data[i]) > fabs(max))
@@ -305,10 +326,10 @@ double Vector::maximum(bool abs) const
 }
 
 
-double Vector::minimum(bool abs) const
+Elem Vector::minimum(bool abs) const
 {
     debug_assert(_dim > 0);
-    double min = _data[0];
+    Elem min = _data[0];
     if (abs) {
         for (unsigned int i = 1; i < _dim; ++i) {
             if (fabs(_data[i]) < fabs(min))
@@ -327,12 +348,12 @@ double Vector::minimum(bool abs) const
 void Vector::randomize()
 {
     for (unsigned int i = 0; i < _dim; i++)
-        _data[i] = (double)rand() / (double)RAND_MAX;
+        _data[i] = (Elem)rand() / (Elem)RAND_MAX;
     normalize();
 }
 
 
-void Vector::operator *= (double s)
+void Vector::operator *= (Elem s)
 {
     scale(s);
 }

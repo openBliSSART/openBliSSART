@@ -40,6 +40,15 @@ extern "C" {
 #endif
 
 
+#ifdef BLISSART_SINGLE_PREC
+#    define CBLAS_SCAL cblas_sscal
+#    define CBLAS_GER  cblas_sger
+#else
+#    define CBLAS_SCAL cblas_dscal
+#    define CBLAS_GER  cblas_dger
+#endif
+
+
 namespace blissart {
 
 namespace linalg {
@@ -58,14 +67,14 @@ ColVector::ColVector(const std::string& fileName) : Vector(fileName)
 Matrix ColVector::operator * (const RowVector& rv) const
 {
 #ifdef HAVE_CBLAS_H
-    double *result_data = new double[_dim * rv._dim];
-    cblas_dscal(_dim * rv._dim, 0.0, result_data, 1);
+    Elem *result_data = new Elem[_dim * rv._dim];
+    CBLAS_SCAL(_dim * rv._dim, 0.0, result_data, 1);
 
     #  ifdef ISEP_ROW_MAJOR
-    cblas_dger(CblasRowMajor, _dim, rv._dim, 1.0, _data, 1, rv._data, 1,
+    CBLAS_GER(CblasRowMajor, _dim, rv._dim, 1.0, _data, 1, rv._data, 1,
                result_data, rv._dim);
 #  else // !ISEP_ROW_MAJOR
-    cblas_dger(CblasColMajor, _dim, rv._dim, 1.0, _data, 1, rv._data, 1,
+    CBLAS_GER(CblasColMajor, _dim, rv._dim, 1.0, _data, 1, rv._data, 1,
                result_data, _dim);
 #  endif // ISEP_ROW_MAJOR
 
@@ -88,7 +97,7 @@ RowVector ColVector::transposed() const
 }
 
 
-ColVector ColVector::operator * (double s) const
+ColVector ColVector::operator * (Elem s) const
 {
     ColVector result(*this);
     for (unsigned int i = 0; i < _dim; i++)

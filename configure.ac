@@ -33,6 +33,7 @@ dnl AC_PRESERVE_HELP_ORDER
 AM_INIT_AUTOMAKE([foreign -Wall])
 
 # Include custom macros.
+sinclude([acbuild/m4/ax_float.m4])
 sinclude([acbuild/m4/ax_check_fftw3.m4])
 sinclude([acbuild/m4/ax_check_poco.m4])
 sinclude([acbuild/m4/ax_check_qt.m4])
@@ -56,6 +57,9 @@ AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
+
+# Determines float type.
+AX_DETERMINE_FLOAT_TYPE
 
 # Checks for libraries.
 AX_CHECK_FFTW3(:, AC_ERROR([Need fftw3!]))

@@ -67,9 +67,9 @@ public:
     /**
      * Constructs a RowVector with the specified dimension and initial data.
      * @param   dim         the desired dimension
-     * @param   data        a double array of the initial elements
+     * @param   data        a Elem array of the initial elements
      */
-    RowVector(unsigned int dim, const double* data) : Vector(dim, data) {}
+    RowVector(unsigned int dim, const Elem* data) : Vector(dim, data) {}
 
 
     /**
@@ -78,7 +78,7 @@ public:
      * @param   dim         the desired dimension
      * @param   generator   a function pointer to the generator
      */
-    RowVector(unsigned int dim, double (*generator)(unsigned int i))
+    RowVector(unsigned int dim, Elem (*generator)(unsigned int i))
         : Vector(dim, generator) {}
 
 
@@ -119,7 +119,7 @@ public:
      * @param   cv          a ColVector
      * @returns             the scalar result
      */
-    double operator * (const ColVector& cv) const;
+    Elem operator * (const ColVector& cv) const;
 
 
     /**
@@ -135,7 +135,7 @@ public:
      * @param   s           the scalar value
      * @return              an appropriately scaled RowVector
      */
-    RowVector operator * (double s) const;
+    RowVector operator * (Elem s) const;
 
 
     /**
@@ -174,7 +174,7 @@ public:
      * @param   rv          a RowVector
      * @return              an appropriately scaled RowVector
      */
-    friend RowVector operator * (double s, const RowVector& rv);
+    friend RowVector operator * (Elem s, const RowVector& rv);
 
 
     // We want to be friends with the ColVector class
@@ -190,7 +190,7 @@ public:
 // Inlines
 
 
-inline RowVector operator * (double s, const RowVector& rv)
+inline RowVector operator * (Elem s, const RowVector& rv)
 {
     return rv * s;
 }

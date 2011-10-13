@@ -29,7 +29,7 @@ dnl accordingly.
 AC_DEFUN([AX_CHECK_CBLAS],
 [
     dnl Check if the mandatory CBLAS header file is available.
-    AC_CHECK_HEADER([cblas.h], :, [NO_CBLAS=yes])
+    AC_CHECK_HEADERS([cblas.h], :, [NO_CBLAS=yes])
     dnl Do NOT replace this call to AC_CHECK_HEADER by AC_CHECK_HEADERS as
     dnl these functions have different semantics (the latter automatically
     dnl defines HAVE_CBLAS_H which is _not_ what we want at this time).

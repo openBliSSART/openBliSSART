@@ -39,6 +39,13 @@ extern "C" {
 #endif
 
 
+#ifdef BLISSART_SINGLE_PREC
+#    define CBLAS_DOT cblas_sdot
+#else
+#    define CBLAS_DOT cblas_ddot
+#endif
+
+
 namespace blissart {
 
 namespace linalg {
@@ -54,14 +61,14 @@ RowVector::RowVector(const std::string& fileName) : Vector(fileName)
 }
 
 
-double RowVector::operator * (const ColVector& vc) const
+Elem RowVector::operator * (const ColVector& vc) const
 {
     debug_assert(vc._dim == _dim);
 
 #ifdef HAVE_CBLAS_H
-    return cblas_ddot(_dim, _data, 1, vc._data, 1);
+    return CBLAS_DOT(_dim, _data, 1, vc._data, 1);
 #else
-    double result = 0;
+    Elem result = 0;
     for (unsigned int i = 0; i < _dim; i++)
         result += this->at(i) * vc.at(i);
 
@@ -87,7 +94,7 @@ RowVector RowVector::operator * (const Matrix& m) const
 }
 
 
-RowVector RowVector::operator * (double s) const
+RowVector RowVector::operator * (Elem s) const
 {
     RowVector result(*this);
     for (unsigned int i = 0; i < _dim; i++)

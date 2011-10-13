@@ -65,6 +65,25 @@ typedef ptrdiff_t matlab_int_t;
 #endif
 
 
+#ifdef BLISSART_SINGLE_PREC
+#   ifdef HAVE_MATLAB
+#       define MATLAB_GEMM sgemm
+#       define MATLAB_DOT  sdot
+#   endif
+#   define CBLAS_GEMM cblas_sgemm
+#   define CBLAS_GEMV cblas_sgemv
+#   define CBLAS_DOT  cblas_sdot
+#else
+#   ifdef HAVE_MATLAB
+#       define MATLAB_GEMM dgemm
+#       define MATLAB_DOT  ddot
+#   endif
+#   define CBLAS_GEMM cblas_dgemm
+#   define CBLAS_GEMV cblas_dgemv
+#   define CBLAS_DOT  cblas_ddot
+#endif
+
+
 namespace blissart {
 
 namespace linalg {
@@ -73,24 +92,24 @@ namespace linalg {
 Matrix::Matrix(const Matrix& other) :
     _rows(other._rows),
     _cols(other._cols),
-    _data(new double[other._rows * other._cols])
+    _data(new Elem[other._rows * other._cols])
 {
     debug_assert(_rows > 0 && _cols > 0);
 
-    memcpy(_data, other._data, _rows * _cols * sizeof(double));
+    memcpy(_data, other._data, _rows * _cols * sizeof(Elem));
 }
 
 
 Matrix::Matrix(unsigned int rows, unsigned int cols) :
     _rows(rows),
     _cols(cols),
-    _data(new double[rows * cols])
+    _data(new Elem[rows * cols])
 {
     debug_assert(_rows > 0 && _cols > 0);
 }
 
 
-Matrix::Matrix(unsigned int rows, unsigned int cols, const double* data,
+Matrix::Matrix(unsigned int rows, unsigned int cols, const Elem* data,
                bool useRawPointer) :
     _rows(rows),
     _cols(cols)
@@ -98,25 +117,25 @@ Matrix::Matrix(unsigned int rows, unsigned int cols, const double* data,
     debug_assert(_rows > 0 && _cols > 0);
 
     if (useRawPointer) {
-        _data = const_cast<double *>(data);
+        _data = const_cast<Elem *>(data);
     } else {
-        _data = new double[_rows * _cols];
+        _data = new Elem[_rows * _cols];
 #ifndef ISEP_ROW_MAJOR
     for (unsigned int i = 0; i < _rows; i++)
         for (unsigned int j = 0; j < _cols; j++, data++)
             (*this)(i, j) = *data;
 #else
-    memcpy(_data, data, _rows * _cols * sizeof(double));
+    memcpy(_data, data, _rows * _cols * sizeof(Elem));
 #endif
     }
 }
 
 
 Matrix::Matrix(unsigned int rows, unsigned int cols,
-               double (*generator)(unsigned int i, unsigned int j)) :
+               Elem (*generator)(unsigned int i, unsigned int j)) :
     _rows(rows),
     _cols(cols),
-    _data(new double[rows * cols])
+    _data(new Elem[rows * cols])
 {
     debug_assert(_rows > 0 && _cols > 0);
 
@@ -149,10 +168,10 @@ Matrix::Matrix(const std::string& fileName) :
         if (_rows <= 0 || _cols <= 0 || _rows * _cols <= 0)
             break;
 
-        _data = new double[_rows * _cols];
+        _data = new Elem[_rows * _cols];
 #ifdef ISEP_ROW_MAJOR
         bool ok = true;
-        double* dataPtr = _data;
+        Elem* dataPtr = _data;
         for (unsigned int j = 0; ok && j < _cols; ++j) {
             for (unsigned int i = 0; i < _rows; ++i) {
                 if (br.fail() || br.eof()) {
@@ -164,7 +183,11 @@ Matrix::Matrix(const std::string& fileName) :
         }
         if (!ok) break;
 #else
+#   ifdef BLISSART_SINGLE_PREC
+        if (br.readFloats(_data, _rows * _cols) != _rows * _cols)
+#   else
         if (br.readDoubles(_data, _rows * _cols) != _rows * _cols)
+#   endif
             break;
 #endif
 
@@ -217,7 +240,7 @@ RowVector Matrix::nthRow(unsigned int n) const
 }
 
 
-void Matrix::nthRow2DoubleArray(unsigned int n, double* da) const
+void Matrix::nthRow2DoubleArray(unsigned int n, Elem* da) const
 {
     debug_assert(n < _rows);
 
@@ -225,7 +248,7 @@ void Matrix::nthRow2DoubleArray(unsigned int n, double* da) const
     for (unsigned int i = 0; i < _cols; i++, da++)
         *da = this->at(n, i);
 #else
-    memcpy(da, _data + n * _cols, _cols * sizeof(double));
+    memcpy(da, _data + n * _cols, _cols * sizeof(Elem));
 #endif
 }
 
@@ -276,7 +299,7 @@ void Matrix::copyRow(unsigned int dstRow, unsigned int srcRow, const Matrix& oth
         setAt(dstRow, i, other.at(srcRow, i));
 #else
     memcpy(_data + dstRow * _cols, other._data + srcRow * _cols,
-           _cols * sizeof(double));
+           _cols * sizeof(Elem));
 #endif
 }
 
@@ -301,11 +324,11 @@ bool Matrix::isQuadratic() const
 }
 
 
-double Matrix::frobeniusNorm() const
+Elem Matrix::frobeniusNorm() const
 {
-    double result = 0.0;
-    double* dataPtr = _data;
-    double* dataEndPtr = _data + _rows * _cols;
+    Elem result = 0.0;
+    Elem* dataPtr = _data;
+    Elem* dataEndPtr = _data + _rows * _cols;
     for (; dataPtr < dataEndPtr; ++dataPtr) {
         result += (*dataPtr) * (*dataPtr);
     }
@@ -341,7 +364,7 @@ void Matrix::multWithMatrix(const Matrix& other, Matrix* target,
     CBLAS_TRANSPOSE tr      = transpose      ? CblasTrans : CblasNoTrans;
     CBLAS_TRANSPOSE trOther = transposeOther ? CblasTrans : CblasNoTrans;
 #  ifdef ISEP_ROW_MAJOR
-    cblas_dgemm(CblasRowMajor,
+    CBLAS_GEMM (CblasRowMajor,
                 tr,             // A (m x k)
                 trOther,        // B (k x n)
                 m,
@@ -356,7 +379,7 @@ void Matrix::multWithMatrix(const Matrix& other, Matrix* target,
                 target->_data + rowOffsetTarget * target->_cols + colOffsetTarget,
                 target->_cols); // ldc
 #  else // !ISEP_ROW_MAJOR
-    cblas_dgemm(CblasColMajor,
+    CBLAS_GEMM (CblasColMajor,
                 tr,   // A (m x k)
                 trOther,   // B (k x n)
                 m,
@@ -388,9 +411,9 @@ void Matrix::multWithMatrix(const Matrix& other, Matrix* target,
     matlab_int_t lda = (matlab_int_t) this->_rows;
     matlab_int_t ldb = (matlab_int_t) other._rows;
     matlab_int_t ldc = (matlab_int_t) target->_rows;
-    double alpha = 1.0;
-    double beta = 0.0;
-    dgemm((transpose ? trans : noTrans),
+    Elem alpha = 1.0;
+    Elem beta = 0.0;
+    MATLAB_GEMM((transpose ? trans : noTrans),
           (transposeOther ? trans : noTrans),
           &m_matlab, &n_matlab, &k_matlab,
           &alpha,
@@ -417,10 +440,10 @@ void Matrix::multWithMatrix(const Matrix& other, Matrix* target,
             unsigned int ciOther = col + colOffsetOther;
             (*target)(riTarget, ciTarget) = 0;
             for (unsigned int index = 0; index < k; index++) {
-                double x = transpose ? 
+                Elem x = transpose ? 
                     this->at(index + colOffset, ri) : 
                     this->at(ri, index + colOffset);
-                double y = transposeOther ? 
+                Elem y = transposeOther ? 
                     other.at(ciOther, index + rowOffsetOther) : 
                     other.at(index + rowOffsetOther, ciOther);
                 (*target)(riTarget, ciTarget) += x * y;
@@ -467,15 +490,15 @@ Matrix Matrix::multWithTransposedMatrix(const Matrix& other) const
 }
 
 
-void Matrix::apply(double (*func) (double, double), const Matrix& other)
+void Matrix::apply(Elem (*func) (Elem, Elem), const Matrix& other)
 {
     debug_assert(_rows == other._rows &&
                  _cols == other._cols &&
                  target->_rows == _rows &&
                  target->_cols == _cols);
-    double *p1 = _data;
-    double *p1Max  = _data + _rows * _cols;
-    double *p2 = other._data;
+    Elem *p1 = _data;
+    Elem *p1Max  = _data + _rows * _cols;
+    Elem *p2 = other._data;
     while (p1 < p1Max) {
         *p1 = func(*p1, *(p2++));
         ++p1;
@@ -483,25 +506,25 @@ void Matrix::apply(double (*func) (double, double), const Matrix& other)
 }
 
 
-void Matrix::apply(double (*func) (double, double), const Matrix& other, Matrix* target) const
+void Matrix::apply(Elem (*func) (Elem, Elem), const Matrix& other, Matrix* target) const
 {
     debug_assert(_rows == other._rows &&
                  _cols == other._cols &&
                  target->_rows == _rows &&
                  target->_cols == _cols);
-    double *p1 = _data;
-    double *p1Max  = _data + _rows * _cols;
-    double *p2 = other._data;
-    double *p3 = target->_data;
+    Elem *p1 = _data;
+    Elem *p1Max  = _data + _rows * _cols;
+    Elem *p2 = other._data;
+    Elem *p3 = target->_data;
     while (p1 < p1Max)
         *(p3++) = func(*(p1++), *(p2++));
 }
 
 
-void Matrix::apply(double (*func) (double, double), double other)
+void Matrix::apply(Elem (*func) (Elem, Elem), Elem other)
 {
-    double *p1 = _data;
-    double *p1Max  = _data + _rows * _cols;
+    Elem *p1 = _data;
+    Elem *p1Max  = _data + _rows * _cols;
     while (p1 < p1Max) {
         *p1 = func(*p1, other);
         ++p1;
@@ -509,11 +532,11 @@ void Matrix::apply(double (*func) (double, double), double other)
 }
 
 
-void Matrix::apply(double (*func) (double, double), double other, Matrix* target) const
+void Matrix::apply(Elem (*func) (Elem, Elem), Elem other, Matrix* target) const
 {
-    double *p1 = _data;
-    double *p1Max  = _data + _rows * _cols;
-    double *p2 = target->_data;
+    Elem *p1 = _data;
+    Elem *p1Max  = _data + _rows * _cols;
+    Elem *p2 = target->_data;
     while (p1 < p1Max)
         *(p2++) = func(*(p1++), other);
 }
@@ -526,9 +549,9 @@ void Matrix::elementWiseDivision(const Matrix& other, Matrix* target) const
                  target->_rows == _rows &&
                  target->_cols == _cols);
 
-    double *p1 = _data, *p1Max = _data + _rows * _cols;
-    double *p2 = other._data;
-    double *p3 = target->_data;
+    Elem *p1 = _data, *p1Max = _data + _rows * _cols;
+    Elem *p2 = other._data;
+    Elem *p3 = target->_data;
     while (p1 < p1Max)
         *(p3++) = *(p1++) / *(p2++);
 }
@@ -541,16 +564,16 @@ void Matrix::elementWiseMultiplication(const Matrix& other, Matrix* target) cons
                  target->_rows == _rows &&
                  target->_cols == _cols);
 
-    double *p1 = _data, *p1Max = _data + _rows * _cols;
-    double *p2 = other._data;
-    double *p3 = target->_data;
+    Elem *p1 = _data, *p1Max = _data + _rows * _cols;
+    Elem *p2 = other._data;
+    Elem *p3 = target->_data;
     while (p1 < p1Max)
         *(p3++) = *(p1++) * *(p2++);
 }
 
 
 void Matrix::pow(double exponent) {
-    double *p1 = _data, *p1Max = _data + _rows * _cols;
+    Elem *p1 = _data, *p1Max = _data + _rows * _cols;
     if (exponent == -1.0) {
         while (p1 < p1Max) {
             *p1 = 1.0 / *p1;
@@ -603,11 +626,11 @@ void Matrix::shiftColumnsLeft()
         (*this)(i, _cols - 1) = 0.0;
     }
 #else // !ISEP_ROW_MAJOR
-    double *pDst = _data;
-    double *pEnd = _data + _rows * _cols;
+    Elem *pDst = _data;
+    Elem *pEnd = _data + _rows * _cols;
     if (_cols > 1) {
-        double *pSrc = _data + _rows;
-        double *pLastCol = _data + _rows * (_cols - 1);
+        Elem *pSrc = _data + _rows;
+        Elem *pLastCol = _data + _rows * (_cols - 1);
         while (pDst < pLastCol) {
             *pDst = *pSrc;
             pSrc++;
@@ -632,10 +655,10 @@ void Matrix::shiftColumnsRight()
         (*this)(i, 0) = 0.0;
     }
 #else // !ISEP_ROW_MAJOR
-    double *pDst = _data + _rows * _cols - 1;
+    Elem *pDst = _data + _rows * _cols - 1;
     if (_cols > 1) {
-        double *pSrc = pDst - _rows;
-        double *pSecondCol = _data + _rows;
+        Elem *pSrc = pDst - _rows;
+        Elem *pSecondCol = _data + _rows;
         while (pDst >= pSecondCol) {
             *pDst = *pSrc;
             pSrc--;
@@ -688,8 +711,8 @@ void Matrix::sub(const Matrix& other)
 
 void Matrix::zero()
 {
-    double *pEnd = _data + _rows * _cols;
-    for (double* pData = _data; pData < pEnd; ++pData) {
+    Elem *pEnd = _data + _rows * _cols;
+    for (Elem* pData = _data; pData < pEnd; ++pData) {
         *pData = 0.0;
     }
 }
@@ -702,9 +725,9 @@ unsigned int Matrix::gaussElimination(bool reducedRowEchelonForm)
     for (unsigned int i=0; i<_rows-1; i++) {
         // Spalten-Pivot-Suche
         unsigned int maxIndex = i;
-        double max = fabs(this->at(i,i));
+        Elem max = fabs(this->at(i,i));
         for (unsigned int j=i+1; j<_rows; j++) {
-            const double temp = fabs(this->at(j,i));
+            const Elem temp = fabs(this->at(j,i));
             if (temp > max) {
                 maxIndex = j;
                 max = temp;
@@ -716,7 +739,7 @@ unsigned int Matrix::gaussElimination(bool reducedRowEchelonForm)
         // Zeilen tauschen
         if (maxIndex != i) {
             for (unsigned int j=i; j<_cols; j++) {
-                double temp = this->at(i,j);
+                Elem temp = this->at(i,j);
                 (*this)(i,j) = this->at(maxIndex,j);
                 (*this)(maxIndex,j) = temp;
             }
@@ -724,9 +747,9 @@ unsigned int Matrix::gaussElimination(bool reducedRowEchelonForm)
         }
 
         // Die unteren Eintraege der aktuellen Spalte nullieren
-        const double pivot = this->at(i,i);
+        const Elem pivot = this->at(i,i);
         for (unsigned int j=i+1; j<_rows; j++) {
-            const double f = this->at(j,i) / pivot;
+            const Elem f = this->at(j,i) / pivot;
             if (f != 0) {
                 for (unsigned int k=i; k<_cols; k++) {
                     (*this)(j,k) -= this->at(i,k) * f;
@@ -738,12 +761,12 @@ unsigned int Matrix::gaussElimination(bool reducedRowEchelonForm)
     if (reducedRowEchelonForm) {
         for (int i=_rows-1; i>=0; i--) {
             // Die aktuelle Zeile skalieren
-            const double f = 1.0 / this->at(i,i);
+            const Elem f = 1.0 / this->at(i,i);
             for (unsigned int j=i; j<_cols; j++)
                 this->at(i,j) *= f;
             // Die oberen Eintraege der aktuellen Spalte nullieren
             for (int j=i-1; j>=0; j--) {
-                const double f = this->at(j,i) / this->at(i,i);
+                const Elem f = this->at(j,i) / this->at(i,i);
                 for (unsigned int k=j; k<_cols; k++) {
                     this->at(j,k) -= this->at(i,k) * f;
                 }
@@ -861,7 +884,7 @@ Matrix::EigenPairs Matrix::eigenPairs(unsigned int maxNrOfEigenPairs,
             last_lambda = lambda;
             v = vn;
         }
-        eigenp.push_back(std::pair<double, ColVector>(lambda, v));
+        eigenp.push_back(std::pair<Elem, ColVector>(lambda, v));
         // Deflation:
         if (i < maxNrOfEigenPairs-1)
             m_prime.sub(lambda * v * v.transposed());
@@ -884,7 +907,7 @@ void Matrix::eliminateNegativeElements()
 }
 
 
-double Matrix::colSum(unsigned int column) const
+Elem Matrix::colSum(unsigned int column) const
 {
     /// XXX: CBLAS is neither faster nor slower, so I'm leaving the code here
     ///      yet commented out.
@@ -899,17 +922,17 @@ double Matrix::colSum(unsigned int column) const
 //    return cblas_ddot(_rows, _data + column * _rows, 1, &t, 0);
 //#  endif // ISEP_ROW_MAJOR
 //#else // !HAVE_CBLAS_H
-    double result = 0.0;
+    Elem result = 0.0;
 #  ifdef ISEP_ROW_MAJOR
-    double *pData = _data + column;
-    double *pDataEnd = _data + _rows * _cols;
+    Elem *pData = _data + column;
+    Elem *pDataEnd = _data + _rows * _cols;
     while (pData < pDataEnd) {
         result += *pData;
         pData += _cols;
     }
 #  else // !ISEP_ROW_MAJOR
-    double *pColumn = _data + column * _rows;
-    double *pColumnEnd = pColumn + _rows;
+    Elem *pColumn = _data + column * _rows;
+    Elem *pColumnEnd = pColumn + _rows;
     while (pColumn < pColumnEnd) {
         result += *(pColumn++);
     }
@@ -919,7 +942,7 @@ double Matrix::colSum(unsigned int column) const
 }
 
 
-double Matrix::rowSum(unsigned int row) const
+Elem Matrix::rowSum(unsigned int row) const
 {
     /// XXX: CBLAS is neither faster nor slower, so I'm leaving the code here
     ///      yet commented out.
@@ -932,16 +955,16 @@ double Matrix::rowSum(unsigned int row) const
 //    return cblas_ddot(_cols, _data + row, _rows, &t, 0);
 //#  endif // ISEP_ROW_MAJOR
 //#else // !HAVE_CBLAS_H
-    double result = 0.0;
+    Elem result = 0.0;
 #  ifdef ISEP_ROW_MAJOR
-    double *pRow = _data + row * _cols;
-    double *pRowEnd = pRow + _cols;
+    Elem *pRow = _data + row * _cols;
+    Elem *pRowEnd = pRow + _cols;
     while (pRow < pRowEnd) {
         result += *(pRow++);
     }
 #  else // !ISEP_ROW_MAJOR
-    double *pData = _data + row;
-    double *pDataEnd = _data + _rows * _cols;
+    Elem *pData = _data + row;
+    Elem *pDataEnd = _data + _rows * _cols;
     while (pData < pDataEnd) {
         result += *pData;
         pData += _rows;
@@ -952,19 +975,19 @@ double Matrix::rowSum(unsigned int row) const
 }
 
 
-double Matrix::rowSum(unsigned int row, unsigned int col1, unsigned int col2) 
+Elem Matrix::rowSum(unsigned int row, unsigned int col1, unsigned int col2) 
 const
 {
-    double result = 0.0;
+    Elem result = 0.0;
 #  ifdef ISEP_ROW_MAJOR
-    double *pRow = _data + row * _cols + col1;
-    double *pRowEnd = _data + row * _cols + col2;
+    Elem *pRow = _data + row * _cols + col1;
+    Elem *pRowEnd = _data + row * _cols + col2;
     while (pRow <= pRowEnd) {
         result += *(pRow++);
     }
 #  else // !ISEP_ROW_MAJOR
-    double *pData = _data + col1 * _rows + row;
-    double *pDataEnd = _data + col2 * _rows + row;
+    Elem *pData = _data + col1 * _rows + row;
+    Elem *pDataEnd = _data + col2 * _rows + row;
     while (pData <= pDataEnd) {
         result += *pData;
         pData += _rows;
@@ -975,7 +998,7 @@ const
 }
 
 
-double Matrix::dotColCol(const Matrix &a, unsigned int aCol,
+Elem Matrix::dotColCol(const Matrix &a, unsigned int aCol,
                          const Matrix &b, unsigned int bCol)
 {
     debug_assert(a._rows == b._rows &&
@@ -984,11 +1007,11 @@ double Matrix::dotColCol(const Matrix &a, unsigned int aCol,
 
 #ifdef HAVE_CBLAS_H
 #  ifdef ISEP_ROW_MAJOR
-    return cblas_ddot(a._rows,
+    return CBLAS_DOT (a._rows,
                       a._data + aCol, a._cols,
                       b._data + bCol, b._cols);
 #  else // !ISEP_ROW_MAJOR
-    return cblas_ddot(a._rows,
+    return CBLAS_DOT (a._rows,
                       a._data + aCol * a._rows, 1,
                       b._data + bCol * b._rows, 1);
 #  endif
@@ -999,11 +1022,11 @@ double Matrix::dotColCol(const Matrix &a, unsigned int aCol,
 #       endif
     matlab_int_t n = (ptrdiff_t) a._rows;
     matlab_int_t incx = 1, incy = 1;
-    return ddot(&n,
+    return MATLAB_DOT(&n,
                 a._data + aCol * a._rows, &incx,
                 b._data + bCol * b._rows, &incy);
 #   else
-    double result = 0.0;
+    Elem result = 0.0;
     for (unsigned int i = 0; i < a._rows; i++)
         result += a(i, aCol) * b(i, bCol);
     return result;
@@ -1012,7 +1035,7 @@ double Matrix::dotColCol(const Matrix &a, unsigned int aCol,
 }
 
 
-double Matrix::dotRowRow(const Matrix &a, unsigned int aRow,
+Elem Matrix::dotRowRow(const Matrix &a, unsigned int aRow,
                          const Matrix &b, unsigned int bRow)
 {
     debug_assert(a._cols == b._cols &&
@@ -1021,11 +1044,11 @@ double Matrix::dotRowRow(const Matrix &a, unsigned int aRow,
 
 #ifdef HAVE_CBLAS_H
 #  ifdef ISEP_ROW_MAJOR
-    return cblas_ddot(a._cols,
+    return CBLAS_DOT (a._cols,
                       a._data + aRow * a._cols, 1,
                       b._data + bRow * b._cols, 1);
 #  else // !ISEP_ROW_MAJOR
-    return cblas_ddot(a._cols,
+    return CBLAS_DOT (a._cols,
                       a._data + aRow, a._rows,
                       b._data + bRow, b._rows);
 #  endif
@@ -1037,11 +1060,11 @@ double Matrix::dotRowRow(const Matrix &a, unsigned int aRow,
     matlab_int_t n = (matlab_int_t) a._cols;
     matlab_int_t incx = (matlab_int_t) a._rows;
     matlab_int_t incy = (matlab_int_t) b._rows;
-    return ddot(&n,
+    return MATLAB_DOT(&n,
                 a._data + aRow, &incx,
                 b._data + bRow, &incy);
 #   else
-    double result = 0.0;
+    Elem result = 0.0;
     for (unsigned int i = 0; i < a._cols; i++)
         result += a(aRow, i) * b(bRow, i);
     return result;
@@ -1103,9 +1126,9 @@ const Matrix& Matrix::operator = (const Matrix& other)
         delete[] _data;
         _rows = other._rows;
         _cols = other._cols;
-        _data = new double[_rows * _cols];
+        _data = new Elem[_rows * _cols];
     }
-    memcpy(_data, other._data, _rows * _cols * sizeof(double));
+    memcpy(_data, other._data, _rows * _cols * sizeof(Elem));
     return *this;
 }
 
@@ -1115,7 +1138,7 @@ bool Matrix::operator == (const Matrix& other) const
     if (_rows != other._rows || _cols != other._cols)
         return false;
 
-    return (0 == memcmp(_data, other._data, _rows * _cols * sizeof(double)));
+    return (0 == memcmp(_data, other._data, _rows * _cols * sizeof(Elem)));
 }
 
 
@@ -1141,12 +1164,12 @@ ColVector Matrix::operator * (const ColVector& cv) const
 
 #ifdef HAVE_CBLAS_H
 #  ifdef ISEP_ROW_MAJOR
-    cblas_dgemv(CblasRowMajor, CblasNoTrans, _rows, _cols, 1.0,
+    CBLAS_GEMV (CblasRowMajor, CblasNoTrans, _rows, _cols, 1.0,
                 _data, _cols,
                 cv._data, 1,
                 0.0, result._data, 1);
 #  else // !ISEP_ROW_MAJOR
-    cblas_dgemv(CblasColMajor, CblasNoTrans, _rows, _cols, 1.0,
+    CBLAS_GEMV (CblasColMajor, CblasNoTrans, _rows, _cols, 1.0,
                 _data, _rows,
                 cv._data, 1,
                 0.0, result._data, 1);
@@ -1164,7 +1187,7 @@ ColVector Matrix::operator * (const ColVector& cv) const
 }
 
 
-Matrix Matrix::operator * (double s) const
+Matrix Matrix::operator * (Elem s) const
 {
     Matrix result(_rows, _cols);
 
@@ -1186,7 +1209,7 @@ Matrix Matrix::operator * (double s) const
 ColVector Matrix::meanColumnVector() const
 {
     ColVector mv(_rows, generators::zero);
-    const double f = 1 / (double)_cols;
+    const Elem f = 1 / (Elem)_cols;
     for (unsigned int i = 0; i < _rows; i++) {
         for (unsigned int j = 0; j < _cols; j++)
             mv(i) += f * this->at(i,j);
@@ -1198,7 +1221,7 @@ ColVector Matrix::meanColumnVector() const
 RowVector Matrix::meanRowVector() const
 {
     RowVector mv(_cols, generators::zero);
-    const double f = 1 / (double)_rows;
+    const Elem f = 1 / (Elem)_rows;
     for (unsigned int i = 0; i < _rows; i++) {
         for (unsigned int j = 0; j < _cols; j++)
             mv(j) += f * this->at(i,j);
@@ -1211,10 +1234,10 @@ ColVector Matrix::varianceRows() const
 {
     ColVector ev = meanColumnVector();
     ColVector var(ev.dim(), generators::zero);
-    const double f = 1 / (double)_cols;
+    const Elem f = 1 / (Elem)_cols;
     for (unsigned int i = 0; i < _rows; i++) {
         for (unsigned int j = 0; j < _cols; j++) {
-            double tmp = this->at(i,j) - ev(i);
+            Elem tmp = this->at(i,j) - ev(i);
             var(i) += f * tmp * tmp;
         }
     }
@@ -1226,10 +1249,10 @@ RowVector Matrix::varianceColumns() const
 {
     RowVector ev = meanRowVector();
     RowVector var(ev.dim(), generators::zero);
-    const double f = 1 / (double)_rows;
+    const Elem f = 1 / (Elem)_rows;
     for (unsigned int i = 0; i < _rows; i++) {
         for (unsigned int j = 0; j < _cols; j++) {
-            double tmp = this->at(i,j) - ev(j);
+            Elem tmp = this->at(i,j) - ev(j);
             var(j) += f * tmp * tmp;
         }
     }
@@ -1266,7 +1289,11 @@ void Matrix::dump(const std::string &fileName) const
         }
         if (!ok) break;
 #else
+#   ifdef BLISSART_SINGLE_PREC
+        if (bw.writeFloats(_data, _rows * _cols) != _rows * _cols)
+#   else
         if (bw.writeDoubles(_data, _rows * _cols) != _rows * _cols)
+#   endif
             break;
 #endif
 
