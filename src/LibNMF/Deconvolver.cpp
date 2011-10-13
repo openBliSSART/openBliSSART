@@ -298,6 +298,9 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
     GPUMatrix   wUpdateNum(_v.rows(), _h.rows());
     GPUMatrix   wUpdateDenom(_v.rows(), _h.rows());
 
+    // used for efficient Lambda calculation in NMD
+    GPUMatrix* wpH = 0;
+
     // GPU versions of V, W and H; transfer data to GPU
     GPUMatrix   vgpu(_v);
     GPUMatrix   hgpu(_h);
@@ -330,6 +333,11 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
         vLambdaInv = new GPUMatrix(_v.rows(), _v.cols());
     }
 
+    // used for efficient Lambda calculation in NMD
+    if (_t > 1) {
+        wpH = new GPUMatrix(_v.rows(), _v.cols());
+    }
+    
     //
     // Main iteration loop
     //
@@ -338,6 +346,7 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
     cout << "H before iteration: " << endl << _h << endl;    */
 
     _numSteps = 0;
+
     while (1) {
         computeApprox(wgpu, hgpu, &approxgpu);
         /*Matrix tmp(_v.rows(), _v.cols());
@@ -349,7 +358,6 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
             break;
 
         if (!_wConstant) {
-            GPUMatrix* wpH = 0;
             for (unsigned int p = 0; p < _t; ++p) {
                 // General Beta div. alg. (for ED, no computation needed)
                 if (beta == 1) {
@@ -371,7 +379,6 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
                     cout << "H row sums: " << endl << tmp4 << endl;*/
                 }
                 else if (beta != 2) {
-                    // TODO: KL as special case
                     // XXX: this might be done in a single kernel in the future...
                     approxgpu.elementWisePow(beta - 2, approxInv);
                     approxInv->elementWiseMult(vgpu, vLambdaInv);
@@ -397,9 +404,7 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
                     wUpdateDenom.floor(DIVISOR_FLOOR);
                 }
 
-                // TODO move allocation out of loop!
                 if (_t > 1) {
-                    wpH = new GPUMatrix(_v.rows(), _v.cols());
                     // Difference-based calculation of new approximation
                     multWithShifted(*wgpu[p], hgpu, wpH, p);
                     approxgpu.sub(*wpH);
@@ -425,7 +430,6 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
                 if (_t > 1) {
                     multWithShifted(*wgpu[p], hgpu, wpH, p);
                     approxgpu.add(*wpH);
-                    delete wpH;
                     approxgpu.floor(DIVISOR_FLOOR);
                 }
             }
@@ -460,8 +464,6 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
         
         // Compute H update for each W[p] and average later
         for (unsigned int p = 0; p < _t; ++p) {
-            // TODO col sum stuff for KL
-
             // the last p columns will be zero but not computed
             hUpdateNum.zero();
             hUpdateDenom.zero();
@@ -555,6 +557,8 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
         delete wpColSums;
     if (hRowSums)
         delete hRowSums;
+    if (wpH)
+        delete wpH;
     for (unsigned int t = 0; t < _t; ++t) {
         delete wgpu[t];
     }
