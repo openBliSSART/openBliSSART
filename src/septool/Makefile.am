@@ -30,7 +30,7 @@ septool_LDADD = $(top_srcdir)/src/LibAudio/libAudio.la \
 				$(top_srcdir)/src/LibFeature/libFeature.la \
                 @POCO_LDFLAGS@ -lPocoFoundation -lPocoUtil -lPocoXML
 
-septool_CPPFLAGS = -I../include @POCO_CPPFLAGS@
+septool_CPPFLAGS = -I../include @POCO_CPPFLAGS@ @CUDA_CPPFLAGS@
 
 septool_SOURCES = main.cpp
 

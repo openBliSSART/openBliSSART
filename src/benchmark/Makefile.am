@@ -24,7 +24,7 @@
 
 bin_PROGRAMS = benchmark
 
-benchmark_CPPFLAGS = -I../include @POCO_CPPFLAGS@
+benchmark_CPPFLAGS = -I../include @POCO_CPPFLAGS@ @CUDA_CPPFLAGS@
 
 benchmark_LDADD = $(top_srcdir)/src/LibLinAlg/libLinAlg.la \
                   $(top_srcdir)/src/LibNMF/libNMF.la \

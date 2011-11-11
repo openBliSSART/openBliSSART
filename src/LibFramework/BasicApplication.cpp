@@ -93,11 +93,6 @@ BasicApplication::parseScriptFiles(const vector<string>& fileNames)
 
 void BasicApplication::initialize(Application& self)
 {
-#ifdef HAVE_CUDA
-    cout << "Initializing CUBLAS." << endl;
-    blissart::linalg::GPUStart();
-#endif
-
     // Don't use logger here because it is not configured yet.
     if (_echoCommand) {
         cout << "Executing: " << commandName() << _optionsString << endl;
@@ -191,10 +186,7 @@ void BasicApplication::initializeConfiguration()
 
 void BasicApplication::uninitialize()
 {
-#ifdef HAVE_CUDA
-    blissart::linalg::GPUStop();
-    logger().information("Stopping CUBLAS.");
-#endif
+    Application::uninitialize();
 }
 
 

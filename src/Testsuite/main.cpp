@@ -27,6 +27,7 @@
 
 #include <Poco/Util/Application.h>
 #include <Poco/Util/HelpFormatter.h>
+#include <Poco/LogStream.h>
 
 #include <vector>
 #include <iostream>
@@ -38,6 +39,7 @@
 #ifdef HAVE_CUDA
 #include "GPUMatrixTest.h"
 #include <blissart/linalg/GPUUtil.h>
+#include <cuda_runtime.h>
 #endif
 #include "ICATest.h"
 #include "HTKWriterTest.h"
@@ -69,7 +71,7 @@ using namespace Testing;
 using namespace Poco::Util;
 
 
-class Testsuite : public Application
+class Testsuite : public Poco::Util::Application
 {
 public:
     Testsuite()
@@ -81,24 +83,25 @@ public:
 protected:
     virtual void initialize(Application& self)
     {
-        // Base class initialization.
-        Application::initialize(self);
-
         self.config().setString("blissart.databaseFile", "Testsuite.db");
         self.config().setString("logging.loggers.root.channel.class", "ConsoleChannel");
         self.config().setString("logging.loggers.root.level",
 #ifdef _DEBUG
             "debug"
 #else
-            "information"
+            "debug"
 #endif
         );
 
+        // Base class initialization.
+        Application::initialize(self);
+        
         // Initialize LibAudio.
         blissart::audio::initialize();
 
 #ifdef HAVE_CUDA
         // Initialize CUBLAS.
+        logger().information("Initializing CUBLAS.");
         blissart::linalg::GPUStart();
 #endif
     }
@@ -106,14 +109,14 @@ protected:
 
     virtual void uninitialize()
     {
-        Application::uninitialize();
         // Shut down LibAudio.
         blissart::audio::shutdown();
 
 #ifdef HAVE_CUDA
-        // Shut down CUBLAS.
         blissart::linalg::GPUStop();
 #endif
+
+        Application::uninitialize();
     }
 
 
@@ -235,6 +238,13 @@ protected:
 
 
     int main(const vector<string>& args) {
+#ifdef HAVE_CUDA
+        size_t free, total;
+        cudaMemGetInfo(&free, &total);
+        Poco::LogStream ls(logger());
+        ls.information() << "Free: " << free << " / total: " << total << endl;
+#endif
+
         int returnValue = EXIT_SUCCESS;
 
         if (_tests.size() == 0) {
@@ -262,6 +272,11 @@ protected:
                 delete (*it);
             _tests.clear();
         }
+
+#ifdef HAVE_CUDA
+        cudaMemGetInfo(&free, &total);
+        ls.information() << "Free: " << free << " / total: " << total << endl;
+#endif
 
         return returnValue;
     }

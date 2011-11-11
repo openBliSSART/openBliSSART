@@ -34,6 +34,10 @@
 
 #include <blissart/audio/audio.h>
 
+#ifdef HAVE_CUDA
+#include <blissart/linalg/GPUUtil.h>
+#endif
+
 #include "NMDBenchmark.h"
 #include "NMFBenchmark.h"
 
@@ -70,6 +74,10 @@ protected:
 
         // Initialize LibAudio.
         blissart::audio::initialize();
+
+#ifdef HAVE_CUDA
+        blissart::linalg::GPUStart();
+#endif
     }
 
 
@@ -78,6 +86,9 @@ protected:
         Application::uninitialize();
         // Shut down LibAudio.
         blissart::audio::shutdown();
+#ifdef HAVE_CUDA
+        blissart::linalg::GPUStop();
+#endif
     }
 
 

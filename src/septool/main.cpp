@@ -39,9 +39,15 @@
 #include <Poco/NumberFormatter.h>
 #include <Poco/DateTime.h>
 #include <Poco/Mutex.h>
+#include <Poco/LogStream.h>
 
 #include <iostream>
 #include <iomanip>
+
+#ifdef HAVE_CUDA
+#include <cuda_runtime.h>
+#include <blissart/linalg/GPUUtil.h>
+#endif
 
 
 using namespace std;
@@ -557,6 +563,19 @@ protected:
             return EXIT_USAGE;
         }
 
+#ifdef HAVE_CUDA
+        if (_doSeparation) {
+            Poco::LogStream ls(logger());
+            size_t free, total;
+            cudaMemGetInfo(&free, &total);
+            ls.information() << "Free: " << free << " / total: " << total << endl;
+            // Display GPU memory usage.
+            // Initialize CUBLAS.
+            logger().information("Initializing CUBLAS.");
+            blissart::linalg::GPUStart();
+        }
+#endif
+
         cout << "SepTool, "
              << DateTimeFormatter::format(LocalDateTime(), "%Y/%m/%d %H:%M:%S")
              << endl << endl
@@ -775,6 +794,19 @@ protected:
                 cerr << "\t" << it->first << "\t" << it->second << endl;
             }
         }
+
+#ifdef HAVE_CUDA
+        if (_doSeparation) {
+            // Uninitialize CUBLAS.
+            logger().information("Stopping CUBLAS.");
+            blissart::linalg::GPUStop();
+            // Display memory usage.
+            Poco::LogStream ls(logger());
+            size_t free, total;
+            cudaMemGetInfo(&free, &total);
+            ls.information() << "Free: " << free << " / total: " << total << endl;
+        }
+#endif
 
         return EXIT_OK;
     }

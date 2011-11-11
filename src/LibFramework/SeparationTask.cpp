@@ -132,6 +132,10 @@ void SeparationTask::runTask()
         initialize();
         clock_t start = clock();
         performSeparation();
+        clock_t end = clock();
+        double elapsed = (double) (end - start) / CLOCKS_PER_SEC;
+        logger().debug(nameAndTaskID() + ": separation and reconstruction took " + Poco::NumberFormatter::format(elapsed, 2) + " seconds");
+
         if (_computeRelativeError) {
             computeRelativeError();
         }
@@ -161,10 +165,6 @@ void SeparationTask::runTask()
             exportComponents();
             incTotalProgress(0.1f);
         }
-
-        clock_t end = clock();
-        double elapsed = (double) (end - start) / CLOCKS_PER_SEC;
-        logger().debug(nameAndTaskID() + ": separation and reconstruction took " + Poco::NumberFormatter::format(elapsed, 2) + " seconds");
 
         // Check again.
         if (isCancelled())

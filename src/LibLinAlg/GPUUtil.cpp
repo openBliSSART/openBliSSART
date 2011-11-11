@@ -53,6 +53,7 @@ void GPUStop()
 {
     if (_cublasInitialized)
         cublasDestroy(_cublasHandle);
+    _cublasInitialized = false;
 }
 
 
