@@ -31,7 +31,9 @@
 #include <Poco/NumberParser.h>
 #include <Poco/LogStream.h>
 
+#ifdef HAVE_CUDA
 #include <cuda_runtime.h>
+#endif
 
 #include <sstream>
 
