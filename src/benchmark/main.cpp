@@ -94,6 +94,7 @@ protected:
         Application::defineOptions(options);
         void (*addOptions[])(Poco::Util::OptionSet&) = {
             &NMFBenchmark::addOptions,
+            // NMD Benchmark options are identical!
             0
         };
         for (void (**fp)(Poco::Util::OptionSet&) = addOptions; *fp != 0; ++fp) {

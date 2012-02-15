@@ -98,8 +98,7 @@ void NMFBenchmark::run()
     ls.information() << "Free: " << free << " / total: " << total << endl;
 #endif
 
-
-    // Create 100x1000 Gaussian random matrix
+    // Create 1000 column Gaussian random matrix
 	Matrix v(_rows, 1000, blissart::nmf::gaussianRandomGenerator);
 
 	// NMF, Euclidean distance, optimized for overcomplete fact.
@@ -113,7 +112,7 @@ void NMFBenchmark::run()
             logger().information(bnStr.str());
             {
                 ScopedStopwatch s(*this, bnStr.str());
-                d.decompose(Deconvolver::EuclideanDistance, _iter, 0.0, this);
+                d.decompose(Deconvolver::EuclideanDistance, _iter, 0.0, false, false, this);
             }
         }
         // NMF, Euclidean distance, optimized for incomplete fact.
@@ -126,7 +125,7 @@ void NMFBenchmark::run()
             logger().information(bnStr.str());
             {
                 ScopedStopwatch s(*this, bnStr.str());
-                d.decompose(Deconvolver::EuclideanDistance, _iter, 0.0, this);
+                d.decompose(Deconvolver::EuclideanDistance, _iter, 0.0, false, false, this);
             }
         }
     } // _cf == ed
@@ -141,7 +140,7 @@ void NMFBenchmark::run()
             logger().information(bnStr.str());
             {
                 ScopedStopwatch s(*this, bnStr.str());
-                d.decompose(Deconvolver::ISDivergence, _iter, 0.0, this);
+                d.decompose(Deconvolver::ISDivergence, _iter, 0.0, false, false, this);
             }
         }
     }
@@ -156,7 +155,7 @@ void NMFBenchmark::run()
             logger().information(bnStr.str());
             {
                 ScopedStopwatch s(*this, bnStr.str());
-                d.decompose(Deconvolver::KLDivergence, _iter, 0.0, this);
+                d.decompose(Deconvolver::KLDivergence, _iter, 0.0, false, false, this);
 #ifdef HAVE_CUDA
                 // Display GPU memory usage.
                 cudaMemGetInfo(&free, &total);

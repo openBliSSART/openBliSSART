@@ -84,7 +84,8 @@ public:
 
 
 private:
-    unsigned int _nComp;
+    unsigned int _rows;
+    unsigned int _iter;
     std::string  _cf;
 };
 
