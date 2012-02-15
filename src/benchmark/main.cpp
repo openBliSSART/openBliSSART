@@ -86,9 +86,6 @@ protected:
         Application::uninitialize();
         // Shut down LibAudio.
         blissart::audio::shutdown();
-#ifdef HAVE_CUDA
-        blissart::linalg::GPUStop();
-#endif
     }
 
 
@@ -205,6 +202,10 @@ protected:
 			}
             _benchs.clear();
         }
+
+#ifdef HAVE_CUDA
+        blissart::linalg::GPUStop();
+#endif
 
         return returnValue;
     }

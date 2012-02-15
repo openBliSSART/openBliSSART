@@ -29,6 +29,9 @@
 #include <blissart/nmf/randomGenerator.h>
 #include <Poco/Util/Application.h>
 #include <Poco/NumberParser.h>
+#include <Poco/LogStream.h>
+
+#include <cuda_runtime.h>
 
 #include <sstream>
 
@@ -41,7 +44,7 @@ using namespace std;
 namespace benchmark {
 
 
-NMFBenchmark::NMFBenchmark() : _cf("all"), _nComp(100)
+NMFBenchmark::NMFBenchmark() : _cf("all"), _rows(100), _iter(100)
 {
 }
 
@@ -49,25 +52,33 @@ NMFBenchmark::NMFBenchmark() : _cf("all"), _nComp(100)
 void NMFBenchmark::addOptions(Poco::Util::OptionSet& options)
 {
     options.addOption(
-        Poco::Util::Option("nmf-comp", "c", "Number of NMF components", 
+        Poco::Util::Option("rows", "r", "Number of matrix rows to decompose", 
         false, "<n>", true)
     );
     options.addOption(
         Poco::Util::Option("cf", "f", "NMF cost function (or \"all\")",
         false, "<func>", true)
     );
+    options.addOption(
+        Poco::Util::Option("iter", "i", "Number of NMF iterations",
+        false, "<n>", true)
+    );
 }
 
 
 void NMFBenchmark::setOptions(const Benchmark::OptionsMap& options)
 {
-    OptionsMap::const_iterator tmp = options.find("nmf-comp");
+    OptionsMap::const_iterator tmp = options.find("rows");
     if (tmp != options.end())
-        _nComp = Poco::NumberParser::parse(tmp->second);
+        _rows = Poco::NumberParser::parse(tmp->second);
 
     tmp = options.find("cf");
     if (tmp != options.end())
         _cf = tmp->second;
+        
+    tmp = options.find("iter");
+    if (tmp != options.end())
+        _iter = Poco::NumberParser::parse(tmp->second);
 }
 
 
@@ -78,9 +89,18 @@ void NMFBenchmark::run()
     //const unsigned int nc[] = { 500 } ;
     const unsigned int nnc  =   11;
     //const unsigned int nnc  =   1;
+    
+#ifdef HAVE_CUDA
+    Poco::LogStream ls(logger());
+    size_t free, total;
+    // Display GPU memory usage.
+    cudaMemGetInfo(&free, &total);
+    ls.information() << "Free: " << free << " / total: " << total << endl;
+#endif
+
 
     // Create 100x1000 Gaussian random matrix
-	Matrix v(_nComp, 1000, blissart::nmf::gaussianRandomGenerator);
+	Matrix v(_rows, 1000, blissart::nmf::gaussianRandomGenerator);
 
 	// NMF, Euclidean distance, optimized for overcomplete fact.
     if (_cf == "all" || _cf == "ed") {
@@ -93,8 +113,7 @@ void NMFBenchmark::run()
             logger().information(bnStr.str());
             {
                 ScopedStopwatch s(*this, bnStr.str());
-                // fixed number of iterations (100)
-                d.decompose(Deconvolver::EuclideanDistance, 100, 0.0, this);
+                d.decompose(Deconvolver::EuclideanDistance, _iter, 0.0, this);
             }
         }
         // NMF, Euclidean distance, optimized for incomplete fact.
@@ -107,8 +126,7 @@ void NMFBenchmark::run()
             logger().information(bnStr.str());
             {
                 ScopedStopwatch s(*this, bnStr.str());
-                // fixed number of iterations (100)
-                d.decompose(Deconvolver::EuclideanDistance, 100, 0.0, this);
+                d.decompose(Deconvolver::EuclideanDistance, _iter, 0.0, this);
             }
         }
     } // _cf == ed
@@ -123,14 +141,12 @@ void NMFBenchmark::run()
             logger().information(bnStr.str());
             {
                 ScopedStopwatch s(*this, bnStr.str());
-                // fixed number of iterations (100)
-                d.decompose(Deconvolver::ISDivergence, 100, 0.0, this);
+                d.decompose(Deconvolver::ISDivergence, _iter, 0.0, this);
             }
         }
     }
 
     if (_cf == "all" || _cf == "kl") {
-        int nit = 50;
         // NMF, KL divergence
         for (int i = 0; i < nnc; ++i) {
             Deconvolver d(v, nc[i], 1);
@@ -140,11 +156,21 @@ void NMFBenchmark::run()
             logger().information(bnStr.str());
             {
                 ScopedStopwatch s(*this, bnStr.str());
-                // fixed number of iterations (100)
-                d.decompose(Deconvolver::KLDivergence, nit, 0.0, this);
+                d.decompose(Deconvolver::KLDivergence, _iter, 0.0, this);
+#ifdef HAVE_CUDA
+                // Display GPU memory usage.
+                cudaMemGetInfo(&free, &total);
+                ls.information() << "Free: " << free << " / total: " << total << endl;
+#endif
             }
         }
     }
+    
+#ifdef HAVE_CUDA
+    // Display GPU memory usage.
+    cudaMemGetInfo(&free, &total);
+    ls.information() << "Free: " << free << " / total: " << total << endl;
+#endif
 
 }
 

@@ -566,10 +566,10 @@ protected:
 #ifdef HAVE_CUDA
         if (_doSeparation) {
             Poco::LogStream ls(logger());
+            // Display GPU memory usage.
             size_t free, total;
             cudaMemGetInfo(&free, &total);
             ls.information() << "Free: " << free << " / total: " << total << endl;
-            // Display GPU memory usage.
             // Initialize CUBLAS.
             logger().information("Initializing CUBLAS.");
             blissart::linalg::GPUStart();
