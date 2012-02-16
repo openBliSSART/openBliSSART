@@ -354,10 +354,16 @@ protected:
 
         options.addOption(
             Option("export-matrices", "",
-                   "Export the separation matrices. Use \"W\" for spectra, "
+                   "Export the separation matrices. Use \"V\" for the spectrogram, "
+                   "\"W\" for spectra, "
                    "\"H\" for gains or \"WH\" for both (not the product!)",
                    false, "<name>", true)
-            .validator(new RegExpValidator("(W|H|WH)")));
+            .validator(new RegExpValidator("(V|W|H|WH)")));
+
+        options.addOption(
+            Option("phase-matrix", "X",
+                   "Binary file giving the phase matrix.",
+                   false, "<name>", true));
     }
 
 
@@ -495,6 +501,9 @@ protected:
                 _exportSpectra = true;
             if (value.find('H') != string::npos)
                 _exportGains = true;
+        }
+        else if (name == "phase-matrix") {
+            _importPhaseMatrix = value;
         }
         else if (name == "method") {
             if (value == "nmd")
@@ -726,6 +735,9 @@ protected:
             newSepTask->setExportSpectra(_exportSpectra);
             newSepTask->setExportGains(_exportGains);
 
+            if (!_importPhaseMatrix.empty())
+                newSepTask->setPhaseMatrixFile(_importPhaseMatrix);
+
             if (!_exportPrefix.empty())
                 newSepTask->setExportPrefix(_exportPrefix);
 
@@ -858,6 +870,7 @@ private:
     bool               _exportSpectra;
     bool               _exportGains;
     string             _exportPrefix;
+    string             _importPhaseMatrix;
 
     // The method to be used for component separation.
     bool               _doSeparation;

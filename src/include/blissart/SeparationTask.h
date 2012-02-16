@@ -174,6 +174,12 @@ public:
 
 
     /**
+     * TODO
+     */
+    inline void setPhaseMatrixFile(const std::string &name);
+
+
+    /**
      * Sets the objects to use for targeted initialization of the components'
      * spectral matrices and whether the initialized components' spectra should
      * remain constant.
@@ -340,6 +346,7 @@ private:
     bool                    _mixExportedComponents;
     bool                    _exportSpectra;
     bool                    _exportGains;
+    std::string             _phaseMatrixFile;
 
     int                     _myUniqueID;
 };
@@ -419,6 +426,12 @@ inline void SeparationTask::setExportSpectra(bool flag)
 inline void SeparationTask::setExportGains(bool flag)
 {
     _exportGains = flag;
+}
+
+
+inline void SeparationTask::setPhaseMatrixFile(const std::string& name)
+{
+    _phaseMatrixFile = name;
 }
 
 

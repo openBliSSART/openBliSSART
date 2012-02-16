@@ -130,7 +130,10 @@ void SeparationTask::runTask()
         if (pmf) {
             Matrix *inputMatrix = new Matrix(fileName());
             replaceAmplitudeMatrix(inputMatrix);
-            _phaseMatrix = new Matrix(inputMatrix->rows(), inputMatrix->cols(), generators::zero);
+            if (_phaseMatrixFile.empty())
+                _phaseMatrix = new Matrix(inputMatrix->rows(), inputMatrix->cols(), generators::zero);
+            else
+                _phaseMatrix = new Matrix(_phaseMatrixFile);
         }
         else {
             computeSpectrogram();
