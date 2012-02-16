@@ -30,6 +30,7 @@
 #include <blissart/ClassificationObject.h>
 #include <blissart/DataDescriptor.h>
 #include <blissart/Process.h>
+#include <blissart/BinaryReader.h>
 #include <blissart/GnuplotWriter.h>
 #include <blissart/HTKWriter.h>
 #include <blissart/transforms/MelFilterTransform.h>
@@ -108,7 +109,15 @@ void SeparationTask::runTask()
     // From now on, perform periodical checks to see if the task has been
     // cancelled.
     do {
-        readAudioFile();
+        bool pmf = processMatrixFile();
+        if (pmf) {
+            logger().debug("Processing matrix file: " + fileName());
+            _sampleRate = 44100;
+        }
+        else {
+            logger().debug("Processing audio file: " + fileName());
+            readAudioFile();
+        }
         incTotalProgress(0.1f);
 
         // Mandatory check.
@@ -116,7 +125,14 @@ void SeparationTask::runTask()
             break;
 
         // Compute the spectrogram.
-        computeSpectrogram();
+        if (pmf) {
+            Matrix *inputMatrix = new Matrix(fileName());
+            replaceAmplitudeMatrix(inputMatrix);
+            _phaseMatrix = new Matrix(inputMatrix->rows(), inputMatrix->cols(), generators::zero);
+        }
+        else {
+            computeSpectrogram();
+        }
         incTotalProgress(0.1f);
 
         // Mandatory check.
@@ -317,6 +333,7 @@ void SeparationTask::spectrogramToAudioFile(
     BasicApplication::lockFFTW();
     Poco::SharedPtr<AudioData> pAd;
     try {
+        logger().debug("Applying inverse FFT.");
         pAd = AudioData::fromSpectrogram(*magnitudeSpectrum,
                                          phaseMatrix(),
                                          windowFunction(),
@@ -348,7 +365,7 @@ void SeparationTask::exportComponents() const
     Poco::Util::LayeredConfiguration& cfg =
         BasicApplication::instance().config();
     bool wienerRec = cfg.getBool("blissart.separation.export.wienerrec", 
-                                    false);
+                                    true);
 
     // Compute the reconstructed matrix (WH) in case of wiener reconstruction.
     Poco::SharedPtr<Matrix> reconst;
@@ -535,6 +552,17 @@ setInitializationObjects(const std::vector<ClassificationObjectPtr>& objects,
 
     _initObjects = objects;
     _constantInitializedComponentsSpectra = constant;
+}
+
+
+bool SeparationTask::processMatrixFile() const
+{
+    unsigned int tmp = 0;
+    ifstream mifs(fileName().c_str());
+    BinaryReader br(mifs, BinaryReader::LittleEndian);
+    br >> tmp;
+    logger().debug("processMatrixFile: found header " + Poco::NumberFormatter::format(tmp));
+    return (tmp == 2);
 }
 
 

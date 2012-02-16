@@ -274,6 +274,12 @@ protected:
 
 
     /**
+     * TODO
+     */
+    bool processMatrixFile() const;
+
+
+    /**
      * Stores the phase-matrix and the separated components in the database.
      * Overrides FTTask method.
      */
