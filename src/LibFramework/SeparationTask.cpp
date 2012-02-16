@@ -112,7 +112,9 @@ void SeparationTask::runTask()
         bool pmf = processMatrixFile();
         if (pmf) {
             logger().debug("Processing matrix file: " + fileName());
-            _sampleRate = 44100;
+            Poco::Util::LayeredConfiguration& cfg =
+                BasicApplication::instance().config();
+            _sampleRate = cfg.getInt("blissart.audio.sampleRate", 44100);
         }
         else {
             logger().debug("Processing audio file: " + fileName());
@@ -561,7 +563,6 @@ bool SeparationTask::processMatrixFile() const
     ifstream mifs(fileName().c_str());
     BinaryReader br(mifs, BinaryReader::LittleEndian);
     br >> tmp;
-    logger().debug("processMatrixFile: found header " + Poco::NumberFormatter::format(tmp));
     return (tmp == 2);
 }
 
