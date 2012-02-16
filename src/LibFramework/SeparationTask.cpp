@@ -100,7 +100,7 @@ void SeparationTask::runTask()
     // Take into account export of components / matrices.
     if (_exportComponents)
         incMaxProgress(0.1f);
-    if (_exportSpectra || _exportGains)
+    if (_exportSpectrogram || _exportSpectra || _exportGains)
         incMaxProgress(0.1f);
 
     registerTask(_myUniqueID, 1);
@@ -171,10 +171,11 @@ void SeparationTask::runTask()
             break;
 
         // Export separation matrices, if desired.
-        if (_exportSpectra || _exportGains) {
+        if (_exportSpectrogram || _exportSpectra || _exportGains) {
             exportMatrices();
             incTotalProgress(0.1f);
         }
+
     } while (false);
 
     // The original amplitude matrix isn't needed anymore. Free some memory.
@@ -485,6 +486,9 @@ void SeparationTask::exportMatrices() const
             else
                 magnitudeSpectraMatrix(i).dump(ss.str());
         }
+    }
+    if (_exportSpectrogram) {
+        exportSpectrogram();
     }
     if (_exportGains) {
         stringstream ss;

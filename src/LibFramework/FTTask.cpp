@@ -150,6 +150,9 @@ void FTTask::runTask()
         if (isCancelled())
             break;
 
+        if (_exportSpectrogram)
+            exportSpectrogram();
+
     } while (false);
 }
 
@@ -305,6 +308,17 @@ void FTTask::storeComponents() const
         clObj->descrIDs.insert(magnitudeMatrixID);
     }
     dbs.createClassificationObject(clObj);
+}
+
+
+void FTTask::exportSpectrogram() const
+{
+    // TODO: respect export prefix
+    if (_amplitudeMatrix) {
+        string prefix = fileName().substr(0, fileName().find_last_of('.')) 
+            + "_V.dat";
+        _amplitudeMatrix->dump(prefix);
+    }
 }
 
 

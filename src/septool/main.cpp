@@ -93,6 +93,7 @@ public:
         _removeDC(false),
         _exportComponents(false),
         _mixExportedComponents(false),
+        _exportSpectrogram(false),
         _exportSpectra(false),
         _exportGains(false),
         _doSeparation(true),
@@ -488,6 +489,8 @@ protected:
             _mixExportedComponents = true;
         }
         else if (name == "export-matrices") {
+            if (value.find('V') != string::npos) 
+                _exportSpectrogram = true;
             if (value.find('W') != string::npos) 
                 _exportSpectra = true;
             if (value.find('H') != string::npos)
@@ -647,21 +650,22 @@ protected:
              << setw(20) << "Preemphasis (k): "
              << _preemphasisCoeff << endl;
 
+        cout << setw(20) << "Export: ";
+        if (_exportSpectrogram)
+            cout << "Spectrogram ";
         if (_doSeparation) {
-            cout << setw(20) << "Export: ";
             if (_exportComponents)
                 cout << "Components ";
             if (_exportSpectra)
                 cout << "Spectra ";
             if (_exportGains)
                 cout << "Gains";
-            cout << endl;
+        }
+        cout << endl;
 
-            if (_classify) {
-                cout << setw(20) << "Classification: " << "using Response #"
-                     << _clResponseID << endl;
-            }
-
+        if (_doSeparation && _classify) {
+            cout << setw(20) << "Classification: " << "using Response #"
+                 << _clResponseID << endl;
         }
 
         cout << endl;
@@ -688,6 +692,7 @@ protected:
         {
             if (!_doSeparation) {
                 FTTask* ftTask = new FTTask("FT", *it, _volatile);
+                ftTask->setExportSpectrogram(_exportSpectrogram);
                 addTask(ftTask);
                 continue;
             }
@@ -846,6 +851,7 @@ private:
     bool               _exportComponents;
     vector<int>        _exportComponentIndices;
     bool               _mixExportedComponents;
+    bool               _exportSpectrogram;
     bool               _exportSpectra;
     bool               _exportGains;
     string             _exportPrefix;

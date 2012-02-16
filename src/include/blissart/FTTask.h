@@ -54,6 +54,8 @@ namespace linalg { class Matrix; }
  */
 class LibFramework_API FTTask : public BasicTask
 {
+    friend class SeparationTask;
+
 public:
     /**
      * Constructs a new instance of FTTask for the given file.
@@ -135,6 +137,12 @@ public:
      * TODO
      */
     inline bool isVolatile() const;
+
+
+    /**
+     * TODO
+     */
+    inline void setExportSpectrogram(bool flag);
 
 
     /**
@@ -295,6 +303,12 @@ protected:
     void storeComponents() const;
 
 
+    /**
+     * Exports the amplitude spectrogram.
+     */
+    void exportSpectrogram() const;
+
+
 private:
     // Forbid copy constructor and operator=.
     FTTask(const FTTask &other);
@@ -302,6 +316,8 @@ private:
 
     const std::string       _fileName;
     const bool              _isVolatile;
+    bool                    _exportSpectrogram;
+
     WindowFunction          _windowFunction;
     unsigned int            _windowSize;
     double                  _overlap;
@@ -395,6 +411,12 @@ inline const std::string& FTTask::fileName() const
 inline bool FTTask::isVolatile() const
 {
     return _isVolatile;
+}
+
+
+inline void FTTask::setExportSpectrogram(bool flag)
+{
+    _exportSpectrogram = flag;
 }
 
 
