@@ -140,6 +140,13 @@ public:
 
 
     /**
+     * Sets the prefix to be used for the export of the separated components.
+     * The filenames will be of the form <prefix>_<nr>.wav.
+     */
+    inline void setExportPrefix(const std::string& prefix);
+
+
+    /**
      * TODO
      */
     inline void setExportSpectrogram(bool flag);
@@ -309,6 +316,12 @@ protected:
     void exportSpectrogram() const;
 
 
+    /**
+     * Helper function to determine output file name for export.
+     */
+    std::string getExportPrefix() const;
+
+
 private:
     // Forbid copy constructor and operator=.
     FTTask(const FTTask &other);
@@ -325,6 +338,7 @@ private:
     double                  _preemphasisCoeff;
     bool                    _removeDC;
     bool                    _zeroPadding;
+    std::string             _exportPrefix;
 
     std::vector<MatrixTransform*> _transforms;
 
@@ -411,6 +425,12 @@ inline const std::string& FTTask::fileName() const
 inline bool FTTask::isVolatile() const
 {
     return _isVolatile;
+}
+
+
+inline void FTTask::setExportPrefix(const std::string& prefix)
+{
+    _exportPrefix = prefix;
 }
 
 

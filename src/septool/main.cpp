@@ -693,6 +693,8 @@ protected:
             if (!_doSeparation) {
                 FTTask* ftTask = new FTTask("FT", *it, _volatile);
                 ftTask->setExportSpectrogram(_exportSpectrogram);
+                if (!_exportPrefix.empty())
+                    ftTask->setExportPrefix(_exportPrefix);
                 addTask(ftTask);
                 continue;
             }
@@ -720,6 +722,7 @@ protected:
             newSepTask->setExportComponents(_exportComponents);
             newSepTask->setExportComponentIndices(_exportComponentIndices);
             newSepTask->setMixExportedComponents(_mixExportedComponents);
+            newSepTask->setExportSpectrogram(_exportSpectrogram);
             newSepTask->setExportSpectra(_exportSpectra);
             newSepTask->setExportGains(_exportGains);
 

@@ -516,21 +516,6 @@ void SeparationTask::exportMatrixHTK(const blissart::linalg::Matrix& m,
 }
 
 
-string SeparationTask::getExportPrefix() const
-{
-    string prefix = _exportPrefix;
-    if (prefix.empty()) {
-        prefix = fileName().substr(0, fileName().find_last_of('.'));
-    }
-    else {
-        Poco::Path tmp(fileName());
-        tmp.makeFile();
-        prefix += tmp.getBaseName();
-    }
-    return prefix;
-}
-
-
 void SeparationTask::setSeparationProgress(float progress)
 {
     debug_assert(progress >= 0 && progress <= 1);

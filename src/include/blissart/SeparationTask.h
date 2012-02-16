@@ -174,13 +174,6 @@ public:
 
 
     /**
-     * Sets the prefix to be used for the export of the separated components.
-     * The filenames will be of the form <prefix>_<task_id>_<nr>.wav.
-     */
-    inline void setExportPrefix(const std::string& prefix);
-
-
-    /**
      * Sets the objects to use for targeted initialization of the components'
      * spectral matrices and whether the initialized components' spectra should
      * remain constant.
@@ -315,12 +308,6 @@ protected:
                          const std::string& filename) const;
 
 
-    /**
-     * Helper function to determine output file name for export.
-     */
-    std::string getExportPrefix() const;
-
-
     double                  _relativeError;
 
 private:
@@ -347,7 +334,6 @@ private:
     bool                    _mixExportedComponents;
     bool                    _exportSpectra;
     bool                    _exportGains;
-    std::string             _exportPrefix;
 
     int                     _myUniqueID;
 };
@@ -397,12 +383,6 @@ inline double SeparationTask::epsilon() const
 inline void SeparationTask::setComputeRelativeError(bool flag)
 {
     _computeRelativeError = flag;
-}
-
-
-inline void SeparationTask::setExportPrefix(const std::string& prefix)
-{
-    _exportPrefix = prefix;
 }
 
 

@@ -313,12 +313,26 @@ void FTTask::storeComponents() const
 
 void FTTask::exportSpectrogram() const
 {
-    // TODO: respect export prefix
     if (_amplitudeMatrix) {
-        string prefix = fileName().substr(0, fileName().find_last_of('.')) 
-            + "_V.dat";
-        _amplitudeMatrix->dump(prefix);
+        string fileName = getExportPrefix() + "_V.dat";
+        logger().debug("Writing to " + fileName);
+        _amplitudeMatrix->dump(fileName);
     }
+}
+
+
+string FTTask::getExportPrefix() const
+{
+    string prefix = _exportPrefix;
+    if (prefix.empty()) {
+        prefix = fileName().substr(0, fileName().find_last_of('.'));
+    }
+    else {
+        Poco::Path tmp(fileName());
+        tmp.makeFile();
+        prefix += tmp.getBaseName();
+    }
+    return prefix;
 }
 
 
