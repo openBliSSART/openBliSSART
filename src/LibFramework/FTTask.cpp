@@ -319,9 +319,13 @@ void FTTask::exportSpectrogram() const
         _amplitudeMatrix->dump(fileName);
     }
     if (_phaseMatrix) {
-        string fileName = getExportPrefix() + "_V_phase.dat";
-        logger().debug("Writing to " + fileName);
-        _phaseMatrix->dump(fileName);
+        Poco::Util::LayeredConfiguration& cfg =
+            BasicApplication::instance().config();
+        if (cfg.getBool("blissart.audio.export.phase", false)) {
+            string fileName = getExportPrefix() + "_V_phase.dat";
+            logger().debug("Writing to " + fileName);
+            _phaseMatrix->dump(fileName);
+        }
     }
 }
 
