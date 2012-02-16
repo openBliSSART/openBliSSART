@@ -245,7 +245,7 @@ public:
      * Returns a reference to the computed amplitude matrix.
      * @return                  a Matrix reference
      */
-    inline const linalg::Matrix& amplitudeMatrix() const;
+    inline linalg::Matrix& amplitudeMatrix() const;
 
 
     /**
@@ -403,7 +403,7 @@ inline const linalg::Matrix& FTTask::phaseMatrix() const
 }
 
 
-inline const linalg::Matrix& FTTask::amplitudeMatrix() const
+inline linalg::Matrix& FTTask::amplitudeMatrix() const
 {
     assert(_amplitudeMatrix != 0);
     return *_amplitudeMatrix;

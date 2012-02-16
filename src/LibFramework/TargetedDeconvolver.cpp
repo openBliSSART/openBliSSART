@@ -43,7 +43,7 @@ using namespace blissart::linalg;
 namespace blissart {
 
 
-TargetedDeconvolver::TargetedDeconvolver(const Matrix& v, unsigned int r,
+TargetedDeconvolver::TargetedDeconvolver(Matrix& v, unsigned int r,
     const vector<ClassificationObjectPtr>& clObjs,
     Matrix::GeneratorFunction wGenerator,
     Matrix::GeneratorFunction hGenerator) :
@@ -54,7 +54,33 @@ TargetedDeconvolver::TargetedDeconvolver(const Matrix& v, unsigned int r,
 }
 
 
-TargetedDeconvolver::TargetedDeconvolver(const Matrix& v, unsigned int r,
+TargetedDeconvolver::TargetedDeconvolver(Matrix& v, unsigned int r,
+    const vector<string>& matrices,
+    Matrix::GeneratorFunction wGenerator,
+    Matrix::GeneratorFunction hGenerator,
+    bool keepConstant) :
+    nmf::Deconvolver(v, r, 1, wGenerator, hGenerator)
+{
+    int nInitializedCols = buildW(matrices);
+    if (nInitializedCols == r) {
+        BasicApplication::instance().logger().
+            debug("Keeping all spectra constant.");
+        keepWConstant(true);
+    } 
+    else {
+        // This is a hack to get the correct number
+        // of constant columns.
+        for (unsigned int i = 0; i < nInitializedCols; ++i) {
+            BasicApplication::instance().logger().
+                debug("Keeping spectrum #" + Poco::NumberFormatter::format(i + 1) +
+                    " constant.");
+            keepWColumnConstant(i, true);
+        }
+    }
+}
+    
+
+TargetedDeconvolver::TargetedDeconvolver(Matrix& v, unsigned int r,
     const vector<int>& clObjIDs,
     Matrix::GeneratorFunction wGenerator,
     Matrix::GeneratorFunction hGenerator) :
@@ -124,6 +150,38 @@ TargetedDeconvolver::buildW(const vector<ClassificationObjectPtr>& clObjs)
             _w[t]->setColumn(compIndex, spectrum->nthColumn(t));
         }
     }
+}
+
+
+int 
+TargetedDeconvolver::buildW(const vector<string>& matrices)
+{
+    unsigned int startComp = 0;
+    for (vector<string>::const_iterator itr = matrices.begin(); 
+        itr != matrices.end(); ++itr)
+    {
+        Poco::SharedPtr<Matrix> spectrum;
+        spectrum = new Matrix(*itr);
+        BasicApplication::instance().logger().debug(
+            "Loaded matrix (" + (*itr) + ") (" + Poco::NumberFormatter::format(spectrum->rows()) + "x" + Poco::NumberFormatter::format(spectrum->cols()) + ")");
+        if (startComp + spectrum->cols() > _h.rows()) {
+            throw Poco::InvalidArgumentException(
+                "Too many columns in matrix file: " + (*itr));
+        }
+        if (_w[0]->rows() != spectrum->rows()) {
+            throw Poco::InvalidArgumentException(
+                "Wrong dimension of spectrum in matrix file: " + (*itr));
+        }
+        for (unsigned int j = 0; j < spectrum->cols(); ++j)
+        {
+            _w[0]->setColumn(startComp + j, spectrum->nthColumn(j));
+        }
+        startComp += spectrum->cols();
+    }
+    BasicApplication::instance().logger().
+        debug(Poco::NumberFormatter::format(startComp) +
+        " spectra are constant");
+    return startComp;
 }
 
 

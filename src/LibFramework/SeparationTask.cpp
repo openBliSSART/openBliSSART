@@ -389,93 +389,107 @@ void SeparationTask::exportComponents() const
         }
     }
 
-    // Holds the mixed spectrogram if mixing is desired.
-    Poco::SharedPtr<Matrix> mixedSpectrogram;
-    if (_mixExportedComponents) {
-        mixedSpectrogram = new Matrix(magnitudeSpectraMatrix(0).rows(),
-            gainsMatrix().cols());
-        mixedSpectrogram->zero();
-    }
-
     // Retrieve desired component indices.
-    vector<int> compIndices = _exportComponentIndices;
+    vector<vector<int> > compIndices = _exportComponentIndices;
     if (compIndices.empty()) {
-        for (int i = 0; i < _nrOfComponents; i++) {
-            compIndices.push_back(i);
+        for (int i = 1; i <= _nrOfComponents; i++) {
+            compIndices[0].push_back(i);
         }
     }
 
     // Reconstruct components and mix, if desired.
-    for (vector<int>::const_iterator it = compIndices.begin();
-         it != compIndices.end(); ++it)
+    int sourceIndex = 1;
+    for (vector<vector<int> >::const_iterator sourceIt = compIndices.begin();
+         sourceIt != compIndices.end(); ++sourceIt, ++sourceIndex)
     {
-        if (*it < 1 || *it > _nrOfComponents) {
-            logger().error(nameAndTaskID() + ": invalid component index: " +
-                Poco::NumberFormatter::format(*it));
-            continue;
+        // Holds the mixed spectrogram if mixing is desired.
+        Poco::SharedPtr<Matrix> mixedSpectrogram;
+        if (_mixExportedComponents) {
+            mixedSpectrogram = new Matrix(magnitudeSpectraMatrix(0).rows(),
+                gainsMatrix().cols());
+            mixedSpectrogram->zero();
         }
-        int i = *it - 1;
-        logger().debug(nameAndTaskID() + " exporting component #" +
-            Poco::NumberFormatter::format(i));
-        // Compute the component's magnitude spectrum.
-        Poco::SharedPtr<Matrix> magnitudeSpectrum = new Matrix(
-            magnitudeSpectraMatrix(0).rows(),
-            gainsMatrix().cols());
-        // NMD case
-        if (_nrOfSpectra > 1) {
-            magnitudeSpectrum->zero();
-            RowVector componentGains = gainsMatrix().nthRow(i);
-            for (unsigned int t = 0; t < _nrOfSpectra; t++) {
-                ColVector componentSpectrum = magnitudeSpectraMatrix(t).nthColumn(i);
-                magnitudeSpectrum->add(componentSpectrum * componentGains);
-                componentGains.shiftRight();
+
+        logger().debug("Exporting components for source #" +
+            Poco::NumberFormatter::format(sourceIndex));
+        for (vector<int>::const_iterator it = sourceIt->begin();
+            it != sourceIt->end(); ++it)
+        {
+            if (*it < 1 || *it > _nrOfComponents) {
+                logger().error(nameAndTaskID() + ": invalid component index: " +
+                    Poco::NumberFormatter::format(*it));
+                continue;
+            }
+            int i = *it - 1;
+            logger().debug(nameAndTaskID() + " exporting component #" +
+                Poco::NumberFormatter::format(i));
+            // Compute the component's magnitude spectrum.
+            Poco::SharedPtr<Matrix> magnitudeSpectrum = new Matrix(
+                magnitudeSpectraMatrix(0).rows(),
+                gainsMatrix().cols());
+            // NMD case
+            if (_nrOfSpectra > 1) {
+                magnitudeSpectrum->zero();
+                RowVector componentGains = gainsMatrix().nthRow(i);
+                for (unsigned int t = 0; t < _nrOfSpectra; t++) {
+                    ColVector componentSpectrum = magnitudeSpectraMatrix(t).nthColumn(i);
+                    magnitudeSpectrum->add(componentSpectrum * componentGains);
+                    componentGains.shiftRight();
+                }
+            }
+            // "NMF" case (separated for efficiency)
+            else {
+                ColVector componentSpectrum = magnitudeSpectraMatrix(0).nthColumn(i);
+                RowVector componentGains = gainsMatrix().nthRow(i);
+                *magnitudeSpectrum = componentSpectrum * componentGains;
+            }
+
+            if (wienerRec) {
+                // (Component/Whole) reconstruction
+                magnitudeSpectrum->elementWiseDivision(*reconst, magnitudeSpectrum);
+                // Use as filter for original spectrogram
+                magnitudeSpectrum->elementWiseMultiplication(amplitudeMatrix(),
+                                                       magnitudeSpectrum);
+            }
+
+            // Mix the components to a single spectrogram that is exported after
+            // the loop.
+            if (_mixExportedComponents) {
+                mixedSpectrogram->add(*magnitudeSpectrum);
+            }
+            // Export components individually.
+            else {
+                // Construct the filename.
+                string prefix = getExportPrefix();
+                const int numDigits = (int)(1 + log10f((float)_nrOfComponents));
+                stringstream ss;
+                ss << prefix;
+                if (compIndices.size() > 1) {
+                    const int numDigitsS = (int)(1 + log10f((float)compIndices.size()));
+                    ss << '_' << setfill('0') << setw(numDigitsS) << sourceIndex;
+                }
+                ss << '_' << setfill('0') << setw(numDigits) << *it << ".wav";
+
+                // Convert component spectrogram to time signal and save it as WAV.
+                spectrogramToAudioFile(magnitudeSpectrum, ss.str());
             }
         }
-        // "NMF" case (separated for efficiency)
-        else {
-            ColVector componentSpectrum = magnitudeSpectraMatrix(0).nthColumn(i);
-            RowVector componentGains = gainsMatrix().nthRow(i);
-            *magnitudeSpectrum = componentSpectrum * componentGains;
-        }
-
-        if (wienerRec) {
-            // (Component/Whole) reconstruction
-            magnitudeSpectrum->elementWiseDivision(*reconst, magnitudeSpectrum);
-            // Use as filter for original spectrogram
-            magnitudeSpectrum->elementWiseMultiplication(amplitudeMatrix(),
-                                                   magnitudeSpectrum);
-        }
-
-        // Mix the components to a single spectrogram that is exported after
-        // the loop.
+        // Export the mixed source spectrogram to a single audio file.
         if (_mixExportedComponents) {
-            mixedSpectrogram->add(*magnitudeSpectrum);
-        }
-        // Export components individually.
-        else {
             // Construct the filename.
-            string prefix = getExportPrefix();
-            const int numDigits = (int)(1 + log10f((float)_nrOfComponents));
             stringstream ss;
-            ss << prefix /* << '_' << taskID() */ << '_'
-               << setfill('0') << setw(numDigits) << *it << ".wav";
-
+            ss << getExportPrefix();
+            const int numDigitsS = (int)(1 + log10f((float)compIndices.size()));
+            ss << "_source" << setfill('0') << setw(numDigitsS) << sourceIndex 
+               << ".wav";
             // Convert component spectrogram to time signal and save it as WAV.
-            spectrogramToAudioFile(magnitudeSpectrum, ss.str());
+            string filename = ss.str();
+            logger().debug(nameAndTaskID() + ": creating mixed audio file " +
+                filename);
+            spectrogramToAudioFile(mixedSpectrogram, filename);
         }
     }
 
-    // Export the mixed spectrogram to a single audio file.
-    if (_mixExportedComponents) {
-        // Construct the filename.
-        string filename = getExportPrefix();
-        filename += "_mixed.wav"; // TODO: include component indices here to 
-                                  // avoid possible ambiguities...
-        // Convert component spectrogram to time signal and save it as WAV.
-        logger().debug(nameAndTaskID() + ": creating mixed audio file " +
-            filename);
-        spectrogramToAudioFile(mixedSpectrogram, filename);
-    }
 }
 
 
@@ -556,6 +570,21 @@ setInitializationObjects(const std::vector<ClassificationObjectPtr>& objects,
     }
 
     _initObjects = objects;
+    _constantInitializedComponentsSpectra = constant;
+}
+
+
+void SeparationTask::
+setInitializationMatrices(const std::vector<std::string>& matrices,
+                         bool constant)
+{
+    if (matrices.size() > _nrOfComponents) {
+        throw Poco::InvalidArgumentException(
+            "Too many classification objects for initialization."
+        );
+    }
+
+    _initMatrices = matrices;
     _constantInitializedComponentsSpectra = constant;
 }
 

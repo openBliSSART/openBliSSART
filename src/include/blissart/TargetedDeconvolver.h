@@ -65,7 +65,7 @@ public:
      *                  of the spectral matrix W
      * @param hGenerator  generator function for H
      */
-    TargetedDeconvolver(const linalg::Matrix& v, unsigned int r,
+    TargetedDeconvolver(linalg::Matrix& v, unsigned int r,
         const std::vector<ClassificationObjectPtr>& clObjs,
         blissart::linalg::Matrix::GeneratorFunction wGenerator 
         = nmf::gaussianRandomGenerator,
@@ -86,15 +86,38 @@ public:
      *                  of the spectral matrix W
      * @param hGenerator  generator function for H
      */
-    TargetedDeconvolver(const linalg::Matrix& v, unsigned int r,
+    TargetedDeconvolver(linalg::Matrix& v, unsigned int r,
         const std::vector<int>& clObjIDs,
         blissart::linalg::Matrix::GeneratorFunction wGenerator 
         = nmf::gaussianRandomGenerator,
         blissart::linalg::Matrix::GeneratorFunction hGenerator 
         = nmf::gaussianRandomGenerator);
 
+    /**
+     * Creates a TargetedDeconvolver using a vector of strings referring to
+     * binary matrix files to use for initialization.
+     * @param v         a Matrix to factorize
+     * @param r         number of components (must be at least the size of 
+     *                  clObjs); if it is smaller than the size of clObjs,
+     *                  the remaining columns of W are initialized randomly
+     * @param clObjs    the vector of matrix files to use for initialization
+     *                  (they will be concatenated in the given order)
+     * @param wGenerator  generator function for the uninitialized columns
+     *                  of the spectral matrix W
+     * @param hGenerator  generator function for H
+     */
+    TargetedDeconvolver(linalg::Matrix& v, unsigned int r,
+        const std::vector<std::string>& matrices,
+        blissart::linalg::Matrix::GeneratorFunction wGenerator 
+        = nmf::gaussianRandomGenerator,
+        blissart::linalg::Matrix::GeneratorFunction hGenerator 
+        = nmf::gaussianRandomGenerator,
+        bool keepConstant = true);
+
+
 private:
     void buildW(const std::vector<ClassificationObjectPtr>& clObjs);
+    int buildW(const std::vector<std::string>& matrices);
     int getNrOfSpectra(int clObjID);
     int getNrOfSpectra(ClassificationObjectPtr clObj);
 };

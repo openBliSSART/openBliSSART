@@ -148,9 +148,19 @@ public:
 
     /**
      * Sets the indices of separated components that should be exported to 
-     * audio files.
+     * audio files, by source index (multiple sources only make sense if mixing
+     * is enabled).
      */
-    inline void setExportComponentIndices(const std::vector<int> &indices);
+    inline void setExportComponentIndices(
+        const std::vector<std::vector<int> > &indices);
+
+
+    /**
+     * Sets the indices of separated components that should be exported to 
+     * audio files for a single source (only makes sense in case of mixing).
+     */
+    inline void setExportComponentIndices(const std::vector<int> &indices,
+        int sourceIndex = 0);
 
 
     /**
@@ -190,9 +200,27 @@ public:
 
 
     /**
+     * Sets the matrices to use for targeted initialization of the components'
+     * spectral matrices and whether the initialized components' spectra should
+     * remain constant.
+     * This is currently only implemented for NMF (t = 1).
+     * The columns of the matrices are assumed to correspond to NMF components.
+     */
+    void
+    setInitializationMatrices(const std::vector<std::string>& matrices,
+                              bool constant = false);
+
+
+    /**
      * Returns the objects used for targeted initialization.
      */
     inline std::vector<ClassificationObjectPtr>& initializationObjects();
+
+
+    /**
+     * Returns the objects used for targeted initialization.
+     */
+    inline std::vector<std::string>& initializationMatrices();
 
 
     /**
@@ -206,6 +234,12 @@ public:
      * Returns the number of targeted initialization objects.
      */
     inline unsigned int numInitializationObjects() const;
+
+
+    /**
+     * Returns the number of targeted initialization matrices.
+     */
+    inline unsigned int numInitializationMatrices() const;
 
 
     /**
@@ -333,6 +367,7 @@ private:
     const unsigned int      _nrOfSpectra;
 
     std::vector<ClassificationObjectPtr> _initObjects;
+    std::vector<std::string> _initMatrices;
     bool                    _constantInitializedComponentsSpectra;
 
     linalg::Matrix::GeneratorFunction _genFunc;
@@ -342,7 +377,7 @@ private:
 
     bool                    _computeRelativeError;
     bool                    _exportComponents;
-    std::vector<int>        _exportComponentIndices;
+    std::vector<std::vector<int> >  _exportComponentIndices;
     bool                    _mixExportedComponents;
     bool                    _exportSpectra;
     bool                    _exportGains;
@@ -405,9 +440,17 @@ inline void SeparationTask::setExportComponents(bool flag)
 }
 
 
-inline void SeparationTask::setExportComponentIndices(const std::vector<int> &indices)
+inline void SeparationTask::setExportComponentIndices(
+    const std::vector<std::vector<int> > &indices)
 {
     _exportComponentIndices = indices;
+}
+
+
+inline void SeparationTask::setExportComponentIndices(
+    const std::vector<int> &indices, int sourceIndex)
+{
+    _exportComponentIndices[0] = indices;
 }
 
 
@@ -456,6 +499,13 @@ std::vector<ClassificationObjectPtr>& SeparationTask::initializationObjects()
 }
 
 
+inline
+std::vector<std::string>& SeparationTask::initializationMatrices()
+{
+    return _initMatrices;
+}
+
+
 inline bool SeparationTask::constantInitializedComponentSpectra() const
 {
     return _constantInitializedComponentsSpectra;
@@ -465,6 +515,12 @@ inline bool SeparationTask::constantInitializedComponentSpectra() const
 inline unsigned int SeparationTask::numInitializationObjects() const
 {
     return (unsigned int)_initObjects.size();
+}
+
+
+inline unsigned int SeparationTask::numInitializationMatrices() const
+{
+    return (unsigned int)_initMatrices.size();
 }
 
 

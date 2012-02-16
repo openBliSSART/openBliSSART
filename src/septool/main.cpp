@@ -228,7 +228,7 @@ protected:
                    "Use \"none\" to only perform STFT. No other methods "
                    "except \"nmd\" can be used at the moment.",
                    false, "<method>", true)
-            .validator(new RegExpValidator("nmd")));
+            .validator(new RegExpValidator("nmd|none")));
 
         options.addOption(
             Option("cost-function", "f",
@@ -282,6 +282,14 @@ protected:
             .repeatable(true)
             .validator(new RegExpValidator(
                        "(\\d+(\\.\\.\\d+)?,)*\\d+(\\.\\.\\d+)?")));
+
+        options.addOption(
+            Option("init-files", "",
+                   "A list of strings referring to matrix files with which "
+                   "to initialize the spectra (only for NMF).",
+                   false, "<file[,file,...]>", true)
+                   .repeatable(true)
+                   .validator(new RegExpValidator("\\w+(,\\w+)*")));
 
         options.addOption(
             Option("preserve", "P",
@@ -443,6 +451,25 @@ protected:
                 rangesToIntVec(value, &_initObjectIDs);
             }
         }
+        else if (name == "init-files") {
+            //cout << "Init files!" << endl;
+            if (!value.empty()) {
+                string::size_type pos = 0, pos2;
+                while (pos < value.length()) {
+                    pos2 = value.find_first_of(',', pos);
+                    if (pos2 == string::npos) {
+                        _initMatrices.push_back(value.substr(pos));
+                        //cout << "Init matrix: " << _initMatrices.back() << endl;
+                        break;
+                    }
+                    else {
+                        _initMatrices.push_back(value.substr(pos, pos2 - pos));
+                        //cout << "Init matrix: " << _initMatrices.back() << endl;
+                    }
+                    pos = pos2 + 1;
+                }
+            }
+        }
         else if (name == "preserve") {
             _preserveInit = true;
         }
@@ -483,12 +510,9 @@ protected:
         else if (name == "export-components") {
             _exportComponents = true;
             if (!value.empty()) {
-                rangesToIntVec(value, &_exportComponentIndices);
-                /*for (vector<int>::const_iterator it = _exportSpectrogramComps.begin();
-                     it != _exportSpectrogramComps.end(); ++it) 
-                {
-                    cout << "Export component spectrogram: " << *it << endl;
-                }*/
+                vector<int> tmp;
+                rangesToIntVec(value, &tmp);
+                _exportComponentIndices.push_back(tmp);
             }
         }
         else if (name == "mix") {
@@ -619,9 +643,9 @@ protected:
 
             cout << setw(20) << "# of components: " << _nrComponents << endl;
 
-            if (_initObjectIDs.size() > 0) {
+            if (_initObjectIDs.size() + _initMatrices.size() > 0) {
                 cout << setw(20) << "# of initialized spectra: " 
-                     << _initObjectIDs.size() << endl;
+                     << (_initObjectIDs.size()  + _initMatrices.size()) << endl;
                 cout << setw(20) << "Preserve initialized spectra: "
                      << (_preserveInit ? "True" : "False") << endl;
             }
@@ -756,6 +780,8 @@ protected:
                 }
                 newSepTask->setInitializationObjects(objects, _preserveInit);
             }
+            if (!_initMatrices.empty())
+                newSepTask->setInitializationMatrices(_initMatrices, _preserveInit);
             // Now add the new SeparationTask.
             addTask(newSepTask);
 
@@ -854,6 +880,7 @@ private:
     int                _nrComponents;
     int                _nrSpectra;
     vector<int>        _initObjectIDs;
+    vector<string>     _initMatrices;
     bool               _preserveInit;
     linalg::Matrix::GeneratorFunction _matrixGenFunc;
     int                _windowSize;
@@ -864,7 +891,7 @@ private:
     bool               _zeroPadding;
     bool               _removeDC;
     bool               _exportComponents;
-    vector<int>        _exportComponentIndices;
+    vector<vector<int> >  _exportComponentIndices;
     bool               _mixExportedComponents;
     bool               _exportSpectrogram;
     bool               _exportSpectra;

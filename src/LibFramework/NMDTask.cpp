@@ -76,29 +76,45 @@ void NMDTask::initialize()
     debug_assert(!_deconvolver);
 
     // Targeted initialization desired?
-    if (numInitializationObjects() > 0) {
-        _deconvolver =
-            new TargetedDeconvolver(
-                    amplitudeMatrix(),
-                    nrOfComponents(),
-                    initializationObjects(),
-                    generatorFunction(), generatorFunction());
+    if (numInitializationObjects() > 0 || numInitializationMatrices() > 0) {
+        // precedence?
+        if (numInitializationMatrices() > 0) {
+            _deconvolver =
+                new TargetedDeconvolver(
+                        amplitudeMatrix(),
+                        nrOfComponents(),
+                        initializationMatrices(),
+                        generatorFunction(), generatorFunction(),
+                        constantInitializedComponentSpectra());
+        }
+        else {
+            _deconvolver =
+                new TargetedDeconvolver(
+                        amplitudeMatrix(),
+                        nrOfComponents(),
+                        initializationObjects(),
+                        generatorFunction(), generatorFunction());
+            if (constantInitializedComponentSpectra()) {
+                logger().debug("Keeping spectra constant.");
+                if (numInitializationObjects() == nrOfComponents()) {
+                    _deconvolver->keepWConstant(true);
+                } 
+                else {
+                    for (unsigned int i = 0; i < numInitializationObjects(); ++i) {
+                        logger().debug("Keeping spectrum #" + 
+                            Poco::NumberFormatter::format(i + 1) +
+                            " constant.");
+                        _deconvolver->keepWColumnConstant(i, true);
+                    }
+                }
+            }
+        }
         if (nrOfSpectra() != _deconvolver->nrOfSpectra()) {
             throw Poco::InvalidArgumentException(
                 "Wrong number of spectra in initialization.");
         }
-        if (constantInitializedComponentSpectra()) {
-            if (numInitializationObjects() == nrOfComponents()) {
-                _deconvolver->keepWConstant(
-                        constantInitializedComponentSpectra()
-                );
-            } else {
-                for (unsigned int i = 0; i < numInitializationObjects(); ++i)
-                    _deconvolver->keepWColumnConstant(i, 
-                        constantInitializedComponentSpectra());
-            }
-        }
-    } else {
+    } 
+    else {
         _deconvolver =
             new nmf::Deconvolver(
                     amplitudeMatrix(),
