@@ -318,6 +318,11 @@ void FTTask::exportSpectrogram() const
         logger().debug("Writing to " + fileName);
         _amplitudeMatrix->dump(fileName);
     }
+    if (_phaseMatrix) {
+        string fileName = getExportPrefix() + "_V_phase.dat";
+        logger().debug("Writing to " + fileName);
+        _phaseMatrix->dump(fileName);
+    }
 }
 
 
