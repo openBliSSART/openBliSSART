@@ -28,6 +28,7 @@ septool_LDADD = $(top_srcdir)/src/LibAudio/libAudio.la \
                 $(top_srcdir)/src/LibLinAlg/libLinAlg.la \
                 $(top_srcdir)/src/LibFramework/libFramework.la \
 				$(top_srcdir)/src/LibFeature/libFeature.la \
+                $(top_srcdir)/src/LibNMF/libNMF.la \
                 @POCO_LDFLAGS@ -lPocoFoundation -lPocoUtil -lPocoXML
 
 septool_CPPFLAGS = -I../include @POCO_CPPFLAGS@ @CUDA_CPPFLAGS@
