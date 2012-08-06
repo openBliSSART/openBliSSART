@@ -314,11 +314,7 @@ void SeparationTask::storeComponents() const
 }
 
 
-// XXX: maybe merge with AudioObject code?
-
-void SeparationTask::spectrogramToAudioFile(
-    Poco::SharedPtr<Matrix> magnitudeSpectrum,
-    const std::string& outputFile) const
+void SeparationTask::revertTransforms(Poco::SharedPtr<Matrix> spectrogram) const
 {
     // Revert any transformations, in reverse order.
     vector<MatrixTransform*>::const_reverse_iterator tflast(transforms().end());
@@ -331,9 +327,17 @@ void SeparationTask::spectrogramToAudioFile(
                windowSize() * sampleRate() / 1000 / 2 + 1);
         }
         // Let Poco::SharedPtr do the dirty work of pointer handling!
-        magnitudeSpectrum = (*rit)->inverseTransform(magnitudeSpectrum);
+        spectrogram = (*rit)->inverseTransform(spectrogram);
     }
+}
 
+
+// XXX: maybe merge with AudioObject code?
+
+void SeparationTask::spectrogramToAudioFile(
+    Poco::SharedPtr<Matrix> magnitudeSpectrum,
+    const std::string& outputFile) const
+{
     // Create an AudioData object.
     BasicApplication::lockFFTW();
     Poco::SharedPtr<AudioData> pAd;
@@ -387,14 +391,20 @@ void SeparationTask::exportComponents() const
         else {
             magnitudeSpectraMatrix(0).multWithMatrix(gainsMatrix(), reconst);
         }
+        // revert transform to reconst
+        revertTransforms(reconst);
     }
+
+    logger().debug("reverted transforms.");
 
     // Retrieve desired component indices.
     vector<vector<int> > compIndices = _exportComponentIndices;
     if (compIndices.empty()) {
+        vector<int> compIndicesSource;
         for (int i = 1; i <= _nrOfComponents; i++) {
-            compIndices[0].push_back(i);
+            compIndicesSource.push_back(i);
         }
+        compIndices.push_back(compIndicesSource);
     }
 
     // Reconstruct components and mix, if desired.
@@ -404,11 +414,11 @@ void SeparationTask::exportComponents() const
     {
         // Holds the mixed spectrogram if mixing is desired.
         Poco::SharedPtr<Matrix> mixedSpectrogram;
-        if (_mixExportedComponents) {
+        /*if (_mixExportedComponents) {
             mixedSpectrogram = new Matrix(magnitudeSpectraMatrix(0).rows(),
                 gainsMatrix().cols());
             mixedSpectrogram->zero();
-        }
+        }*/
 
         logger().debug("Exporting components for source #" +
             Poco::NumberFormatter::format(sourceIndex));
@@ -444,6 +454,9 @@ void SeparationTask::exportComponents() const
                 *magnitudeSpectrum = componentSpectrum * componentGains;
             }
 
+            // revert transformation to component spectrogram
+            revertTransforms(magnitudeSpectrum);
+
             if (wienerRec) {
                 // (Component/Whole) reconstruction
                 magnitudeSpectrum->elementWiseDivision(*reconst, magnitudeSpectrum);
@@ -455,6 +468,11 @@ void SeparationTask::exportComponents() const
             // Mix the components to a single spectrogram that is exported after
             // the loop.
             if (_mixExportedComponents) {
+                if (mixedSpectrogram.isNull()) {
+                    mixedSpectrogram = new Matrix(magnitudeSpectrum->rows(), 
+                        magnitudeSpectrum->cols());
+                    mixedSpectrogram->zero();
+                }
                 mixedSpectrogram->add(*magnitudeSpectrum);
             }
             // Export components individually.

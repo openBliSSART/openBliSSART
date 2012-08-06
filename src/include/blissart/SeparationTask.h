@@ -333,6 +333,12 @@ protected:
 
 
     /**
+     * TODO
+     */
+    void revertTransforms(Poco::SharedPtr<linalg::Matrix> spectrogram) const;
+
+
+    /**
      * Converts a magnitude spectrogram to a time signal, using the original
      * phase matrix, and save the result as a WAV file.
      */
