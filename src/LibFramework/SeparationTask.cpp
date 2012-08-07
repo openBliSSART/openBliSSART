@@ -415,12 +415,12 @@ void SeparationTask::exportComponents() const
         compIndices.push_back(compIndicesSource);
     }
 
-                cout << "W = " << endl;
+                /*cout << "W = " << endl;
                 cout << magnitudeSpectraMatrix(0) << endl;
                 cout << "H = " << endl;
                 cout << gainsMatrix() << endl;
                 cout << "WH = " << endl;
-                cout << (magnitudeSpectraMatrix(0) * gainsMatrix()) << endl;
+                cout << (magnitudeSpectraMatrix(0) * gainsMatrix()) << endl;*/
     // Reconstruct components and mix, if desired.
     int sourceIndex = 1;
     for (vector<vector<int> >::const_iterator sourceIt = compIndices.begin();
@@ -465,22 +465,22 @@ void SeparationTask::exportComponents() const
             else {
                 ColVector componentSpectrum = magnitudeSpectraMatrix(0).nthColumn(i);
                 RowVector componentGains = gainsMatrix().nthRow(i);
-                cout << "w_i = " << componentSpectrum << endl;
-                cout << "h_i = " << componentGains << endl;
+                //cout << "w_i = " << componentSpectrum << endl;
+                //cout << "h_i = " << componentGains << endl;
                 //cout << "w_i h_i = " << (componentSpectrum * componentGains) << endl;
-                Matrix x(magnitudeSpectraMatrix(0).rows(), gainsMatrix().cols());
-                magnitudeSpectraMatrix(0).multWithMatrix(gainsMatrix(), &x, false, false, x.rows(), 1, x.cols(), 0, i, i, 0, 0, 0);
+                //Matrix x(magnitudeSpectraMatrix(0).rows(), gainsMatrix().cols());
+                //magnitudeSpectraMatrix(0).multWithMatrix(gainsMatrix(), &x, false, false, x.rows(), 1, x.cols(), 0, i, i, 0, 0, 0);
                 //cout << "w_i h_i (2) = " << x << endl;
-                magnitudeSpectraMatrix(0).multWithMatrix(gainsMatrix(), magnitudeSpectrum, false, false, magnitudeSpectrum->rows(), 1, magnitudeSpectrum->cols(), 0, i, i, 0, 0, 0);
-                //*magnitudeSpectrum = componentSpectrum * componentGains;
+                //magnitudeSpectraMatrix(0).multWithMatrix(gainsMatrix(), magnitudeSpectrum, false, false, magnitudeSpectrum->rows(), 1, magnitudeSpectrum->cols(), 0, i, i, 0, 0, 0);
+                *magnitudeSpectrum = componentSpectrum * componentGains;
             }
 
                 //cout << magnitudeSpectrum->rows() << " x " << magnitudeSpectrum->cols() << endl;
-                cout << *magnitudeSpectrum << endl << endl << endl;
+                //cout << *magnitudeSpectrum << endl << endl << endl;
             // revert transformation to component spectrogram
             magnitudeSpectrum = revertTransforms(magnitudeSpectrum);
                 //cout << magnitudeSpectrum->rows() << " x " << magnitudeSpectrum->cols() << endl;
-                cout << *magnitudeSpectrum << endl << endl << endl;
+                //cout << *magnitudeSpectrum << endl << endl << endl;
 
             if (wienerRec) {
                 reconst->floor(1e-6);
@@ -491,8 +491,8 @@ void SeparationTask::exportComponents() const
                 //cout << "ft mag matrix: " << ftMagMatrix().rows() << " x " << ftMagMatrix().cols() << endl;
                 magnitudeSpectrum->elementWiseMultiplication(ftMagMatrix(),
                                                        magnitudeSpectrum);
-                cout << "after wiener:" << endl;
-                cout << *magnitudeSpectrum << endl << endl << endl;
+                //cout << "after wiener:" << endl;
+                //cout << *magnitudeSpectrum << endl << endl << endl;
             }
 
             // Mix the components to a single spectrogram that is exported after
