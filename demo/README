@@ -1,5 +1,5 @@
-openBliSSART demonstrator
-=========================
+openBliSSART drum beat demonstrator
+===================================
 
 
 This directory contains the files that are required to perform drum beat 
@@ -97,3 +97,19 @@ deleting the lines corresponding to feature extraction (starting with
 "blissart.features"), or by setting the option value to "false". (The default
 is "true" for MFCCs and "false" for all other features). Then you can use
 either of the above commands again.
+
+====
+
+openBliSSART speaker separation demo
+====================================
+
+This is a demo of supervised speaker separation using NMF.  It requires wave
+files from the TIMIT database which cannot be distributed for copyright
+reasons.
+
+Instructions:
+
+- Copy TIMIT files from speakers dr1_m_cpm0 and dr1_f_aks0 in the openBliSSART
+  "bin" directory.
+- Copy the shell script speaker_separation_timit.sh in the same directory.
+- Execute speaker_separation_timit.sh.
