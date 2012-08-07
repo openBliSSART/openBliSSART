@@ -88,6 +88,10 @@ FTTask::~FTTask()
         delete _audioData;
         _audioData = 0;
     }
+    if (_ftMagMatrix && _ftMagMatrix != _amplitudeMatrix) {
+        delete _ftMagMatrix;
+        _ftMagMatrix = 0;
+    }
     if (_amplitudeMatrix) {
         delete _amplitudeMatrix;
         _amplitudeMatrix = 0;
@@ -200,6 +204,8 @@ void FTTask::computeSpectrogram()
     }
     BasicApplication::unlockFFTW();
 
+    _ftMagMatrix = _amplitudeMatrix;
+
     // Add transformations if specified in the configuration.
     // Keep in mind that the transformations are executed in the order in
     // which they were added, thus the order of these statements is vital!
@@ -222,6 +228,11 @@ void FTTask::computeSpectrogram()
 
 void FTTask::doAdditionalTransformations()
 {
+    // Backup FT magnitude matrix if transformations are applied afterwards.
+    if (!_transforms.empty()) {
+        _ftMagMatrix = new Matrix(*_amplitudeMatrix);
+    }
+    // Apply transformations in specified order.
     for (vector<MatrixTransform*>::const_iterator it = _transforms.begin();
          it != _transforms.end() && !isCancelled(); ++it)
     {

@@ -242,10 +242,19 @@ public:
 
 
     /**
-     * Returns a reference to the computed amplitude matrix.
+     * Returns a reference to the computed amplitude matrix after possible
+     * transformations.
      * @return                  a Matrix reference
      */
     inline linalg::Matrix& amplitudeMatrix() const;
+
+
+    /**
+     * Returns a reference to the computed amplitude matrix before possible.
+     * transformations.
+     * @return                  a Matrix reference
+     */
+    inline linalg::Matrix& ftMagMatrix() const;
 
 
     /**
@@ -346,6 +355,7 @@ private:
     unsigned int            _sampleRate;
 
     linalg::Matrix*         _amplitudeMatrix;
+    linalg::Matrix*         _ftMagMatrix;
     linalg::Matrix*         _phaseMatrix;
 };
 
@@ -407,6 +417,13 @@ inline linalg::Matrix& FTTask::amplitudeMatrix() const
 {
     assert(_amplitudeMatrix != 0);
     return *_amplitudeMatrix;
+}
+
+
+inline linalg::Matrix& FTTask::ftMagMatrix() const
+{
+    assert(_ftMagMatrix != 0);
+    return *_ftMagMatrix;
 }
 
 

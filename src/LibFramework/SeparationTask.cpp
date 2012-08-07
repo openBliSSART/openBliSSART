@@ -146,6 +146,7 @@ void SeparationTask::runTask()
             break;
 
         doAdditionalTransformations();
+        //cout << *_amplitudeMatrix << endl;
         // Mandatory check.
         if (isCancelled())
             break;
@@ -326,9 +327,9 @@ SeparationTask::revertTransforms(Poco::SharedPtr<Matrix> spectrogram) const
     {
         if (string((*rit)->name()) == "Mel filter") {
             int bins = windowSize() * sampleRate() / 1000 / 2 + 1;
-            Poco::LogStream ls(logger());
+            /*Poco::LogStream ls(logger());
             ls.debug();
-            ls << "# of bins: " << bins << std::endl;
+            ls << "# of bins: " << bins << std::endl;*/
             ((transforms::MelFilterTransform*)(*rit))->setBins(bins);
                //windowSize() * sampleRate() / 1000 / 2 + 1);
         }
@@ -386,7 +387,9 @@ void SeparationTask::exportComponents() const
     // Compute the reconstructed matrix (WH) in case of wiener reconstruction.
     Poco::SharedPtr<Matrix> reconst;
     if (wienerRec) {
-        reconst = new Matrix(phaseMatrix().rows(), phaseMatrix().cols());
+        //reconst = new Matrix(phaseMatrix().rows(), phaseMatrix().cols());
+        reconst = new Matrix(magnitudeSpectraMatrix(0).rows(),
+            gainsMatrix().cols());
         if (_nrOfSpectra > 1) {
             reconst->zero();
             Matrix hShifted = gainsMatrix();
@@ -412,6 +415,12 @@ void SeparationTask::exportComponents() const
         compIndices.push_back(compIndicesSource);
     }
 
+                cout << "W = " << endl;
+                cout << magnitudeSpectraMatrix(0) << endl;
+                cout << "H = " << endl;
+                cout << gainsMatrix() << endl;
+                cout << "WH = " << endl;
+                cout << (magnitudeSpectraMatrix(0) * gainsMatrix()) << endl;
     // Reconstruct components and mix, if desired.
     int sourceIndex = 1;
     for (vector<vector<int> >::const_iterator sourceIt = compIndices.begin();
@@ -456,18 +465,34 @@ void SeparationTask::exportComponents() const
             else {
                 ColVector componentSpectrum = magnitudeSpectraMatrix(0).nthColumn(i);
                 RowVector componentGains = gainsMatrix().nthRow(i);
-                *magnitudeSpectrum = componentSpectrum * componentGains;
+                cout << "w_i = " << componentSpectrum << endl;
+                cout << "h_i = " << componentGains << endl;
+                //cout << "w_i h_i = " << (componentSpectrum * componentGains) << endl;
+                Matrix x(magnitudeSpectraMatrix(0).rows(), gainsMatrix().cols());
+                magnitudeSpectraMatrix(0).multWithMatrix(gainsMatrix(), &x, false, false, x.rows(), 1, x.cols(), 0, i, i, 0, 0, 0);
+                //cout << "w_i h_i (2) = " << x << endl;
+                magnitudeSpectraMatrix(0).multWithMatrix(gainsMatrix(), magnitudeSpectrum, false, false, magnitudeSpectrum->rows(), 1, magnitudeSpectrum->cols(), 0, i, i, 0, 0, 0);
+                //*magnitudeSpectrum = componentSpectrum * componentGains;
             }
 
+                //cout << magnitudeSpectrum->rows() << " x " << magnitudeSpectrum->cols() << endl;
+                cout << *magnitudeSpectrum << endl << endl << endl;
             // revert transformation to component spectrogram
             magnitudeSpectrum = revertTransforms(magnitudeSpectrum);
+                //cout << magnitudeSpectrum->rows() << " x " << magnitudeSpectrum->cols() << endl;
+                cout << *magnitudeSpectrum << endl << endl << endl;
 
             if (wienerRec) {
+                reconst->floor(1e-6);
                 // (Component/Whole) reconstruction
                 magnitudeSpectrum->elementWiseDivision(*reconst, magnitudeSpectrum);
                 // Use as filter for original spectrogram
-                magnitudeSpectrum->elementWiseMultiplication(amplitudeMatrix(),
+                //cout << "amplitude matrix: " << amplitudeMatrix().rows() << " x " << amplitudeMatrix().cols() << endl;
+                //cout << "ft mag matrix: " << ftMagMatrix().rows() << " x " << ftMagMatrix().cols() << endl;
+                magnitudeSpectrum->elementWiseMultiplication(ftMagMatrix(),
                                                        magnitudeSpectrum);
+                cout << "after wiener:" << endl;
+                cout << *magnitudeSpectrum << endl << endl << endl;
             }
 
             // Mix the components to a single spectrogram that is exported after

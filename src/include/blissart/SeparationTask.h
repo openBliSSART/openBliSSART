@@ -457,7 +457,7 @@ inline void SeparationTask::setExportComponentIndices(
 inline void SeparationTask::setExportComponentIndices(
     const std::vector<int> &indices, int sourceIndex)
 {
-    _exportComponentIndices[0] = indices;
+    _exportComponentIndices[sourceIndex] = indices;
 }
 
 

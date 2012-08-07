@@ -542,6 +542,17 @@ void Matrix::apply(Elem (*func) (Elem, Elem), Elem other, Matrix* target) const
 }
 
 
+void Matrix::floor(double f)
+{
+    Elem *p1 = _data, *p1Max = _data + _rows * _cols;
+    while (p1 < p1Max) {
+        if (*p1 < f)
+            *p1 = f;
+        ++p1;
+    }
+}
+
+
 void Matrix::elementWiseDivision(const Matrix& other, Matrix* target) const
 {
     debug_assert(_rows == other._rows &&

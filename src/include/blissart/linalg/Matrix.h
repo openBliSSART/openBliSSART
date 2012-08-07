@@ -395,12 +395,20 @@ public:
 
 
     /**
+     * Ensures that all matrix elements are less or equal to the given floor
+     * value.
+     */
+    void floor(double f);
+
+
+    /**
      * Performs element-wise division of this matrix elements by another given
      * matrix elements and stores the result in the given target matrix.
      * @param   other       a Matrix
      * @param   target      a pointer to a Matrix that will hold the results
      */
     void elementWiseDivision(const Matrix& other, Matrix* target) const;
+
 
     /**
      * Computes the Hadamard product (element-wise multiplication) of this 
