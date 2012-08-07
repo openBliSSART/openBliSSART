@@ -352,6 +352,7 @@ protected:
                    "If range is given, only use the given component indices "
                    "(starting from 1).",
                    false, "<range>", false)
+            .repeatable(true)
             .validator(new RegExpValidator(
                        "(\\d+(\\.\\.\\d+)?,)*\\d+(\\.\\.\\d+)?")));
         
