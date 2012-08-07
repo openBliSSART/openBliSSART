@@ -335,7 +335,8 @@ protected:
     /**
      * TODO
      */
-    void revertTransforms(Poco::SharedPtr<linalg::Matrix> spectrogram) const;
+    Poco::SharedPtr<linalg::Matrix>
+    revertTransforms(Poco::SharedPtr<linalg::Matrix> spectrogram) const;
 
 
     /**

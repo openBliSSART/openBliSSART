@@ -47,6 +47,7 @@
 #include <Poco/NumberFormatter.h>
 #include <Poco/Path.h>
 #include <Poco/Util/LayeredConfiguration.h>
+#include <Poco/LogStream.h>
 
 #include <cmath>
 #include <fstream>
@@ -314,7 +315,8 @@ void SeparationTask::storeComponents() const
 }
 
 
-void SeparationTask::revertTransforms(Poco::SharedPtr<Matrix> spectrogram) const
+Poco::SharedPtr<Matrix>
+SeparationTask::revertTransforms(Poco::SharedPtr<Matrix> spectrogram) const
 {
     // Revert any transformations, in reverse order.
     vector<MatrixTransform*>::const_reverse_iterator tflast(transforms().end());
@@ -323,12 +325,17 @@ void SeparationTask::revertTransforms(Poco::SharedPtr<Matrix> spectrogram) const
          rit != tffirst; ++rit) // YES, it's operator ++ ;-)
     {
         if (string((*rit)->name()) == "Mel filter") {
-            ((transforms::MelFilterTransform*)(*rit))->setBins(
-               windowSize() * sampleRate() / 1000 / 2 + 1);
+            int bins = windowSize() * sampleRate() / 1000 / 2 + 1;
+            Poco::LogStream ls(logger());
+            ls.debug();
+            ls << "# of bins: " << bins << std::endl;
+            ((transforms::MelFilterTransform*)(*rit))->setBins(bins);
+               //windowSize() * sampleRate() / 1000 / 2 + 1);
         }
         // Let Poco::SharedPtr do the dirty work of pointer handling!
         spectrogram = (*rit)->inverseTransform(spectrogram);
     }
+    return spectrogram;
 }
 
 
@@ -392,10 +399,8 @@ void SeparationTask::exportComponents() const
             magnitudeSpectraMatrix(0).multWithMatrix(gainsMatrix(), reconst);
         }
         // revert transform to reconst
-        revertTransforms(reconst);
+        reconst = revertTransforms(reconst);
     }
-
-    logger().debug("reverted transforms.");
 
     // Retrieve desired component indices.
     vector<vector<int> > compIndices = _exportComponentIndices;
@@ -455,7 +460,7 @@ void SeparationTask::exportComponents() const
             }
 
             // revert transformation to component spectrogram
-            revertTransforms(magnitudeSpectrum);
+            magnitudeSpectrum = revertTransforms(magnitudeSpectrum);
 
             if (wienerRec) {
                 // (Component/Whole) reconstruction
