@@ -178,6 +178,33 @@ bool VectorTest::performTest()
             return false;
     }
 
+    // cv * rv larger test
+    {
+        int n_tests = 100;
+        for (int k = 0; k < n_tests; ++k) {
+            cout << "cv * rv #" << k << endl;
+            const int m = 25;
+            const int n = 500;
+            double* data1 = new double[m];
+            double* data2 = new double[n];
+            for (int i = 0; i < m; ++i)
+                data1[i] = generators::random(i);
+            for (int i = 0; i < n; ++i)
+                data2[i] = generators::random(i);
+            ColVector randomCv(m, data1);
+            RowVector randomRv(n, data2);
+            Matrix cvAsMatrix(m, 1, data1);
+            Matrix rvAsMatrix(1, n, data2);
+            Matrix ref(m, n);
+            cvAsMatrix.multWithMatrix(rvAsMatrix, &ref);
+            Matrix res(randomCv * randomRv);
+            if (ref != res) 
+                return false;
+            delete[] data2;
+            delete[] data1;
+        }
+    }
+
     // cv * 5
     {
         ColVector tmp = cv * 5;
