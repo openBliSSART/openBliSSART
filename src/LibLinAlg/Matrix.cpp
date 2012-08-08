@@ -171,7 +171,6 @@ Matrix::Matrix(const std::string& fileName) :
         _data = new Elem[_rows * _cols];
 #ifdef ISEP_ROW_MAJOR
         bool ok = true;
-        Elem* dataPtr = _data;
         for (unsigned int j = 0; ok && j < _cols; ++j) {
             for (unsigned int i = 0; i < _rows; ++i) {
                 if (br.fail() || br.eof()) {
@@ -200,6 +199,75 @@ Matrix::Matrix(const std::string& fileName) :
         delete _data;
     std::string msg("Error while reading matrix data from file ");
     msg.append(fileName);
+    throw std::runtime_error(msg);
+}
+
+
+std::vector<Matrix*> Matrix::arrayFromFile(const std::string& file)
+{
+    std::vector<Matrix*> result;
+
+    do {
+        std::ifstream fis(file.c_str(), std::ios::in | std::ios::binary);
+        if (fis.fail())
+            break;
+
+        BinaryReader br(fis, BinaryReader::LittleEndian);
+
+        uint32_t flag;
+        br >> flag;
+        if (flag != 2 && flag != 3)
+            break;
+
+        uint32_t nm = 1;
+        if (flag == 3) 
+            br >> nm;
+
+        uint32_t rows, cols;
+        br >> rows;
+        br >> cols;
+        if (rows <= 0 || cols <= 0)
+            break;
+
+        bool ok = true;
+        for (uint32_t mi = 0; mi < nm; ++mi) {
+            Elem* data = new Elem[rows * cols];
+#ifdef ISEP_ROW_MAJOR
+            for (unsigned int j = 0; ok && j < cols; ++j) {
+                for (unsigned int i = 0; i < rows; ++i) {
+                    if (br.fail() || br.eof()) {
+                        ok = false;
+                        break;
+                    }
+                    br >> at(i, j);
+                }
+            }
+            if (!ok) {
+                if (data) delete[] data;
+                break;
+            }
+#else
+#   ifdef BLISSART_SINGLE_PREC
+            ok = br.readFloats(data, rows * cols) == rows * cols;
+#   else
+            ok = br.readDoubles(data, rows * cols) == rows * cols;
+#   endif
+            if (!ok) {
+                if (data) delete[] data;
+                break;
+            }
+#endif
+            result.push_back(new Matrix(rows, cols, data, true));
+        }
+
+        if (!ok) break;
+
+        // Everything's ok, so return at this point.
+        return result;
+    } while (false);
+
+    std::string msg("Error while reading matrix data from file ");
+    msg.append(file);
     throw std::runtime_error(msg);
 }
 
@@ -1315,6 +1383,80 @@ void Matrix::dump(const std::string &fileName) const
     // Something went wrong.
     std::string msg("Error while writing matrix data to file ");
     msg.append(fileName);
+    throw std::runtime_error(msg);
+}
+
+
+void 
+Matrix::arrayToFile(const std::vector<Matrix*> mv, const std::string& file)
+{
+    do {
+        bool ok = true;
+
+        // Sanity check.
+        uint32_t rows = 0, cols = 0;
+        for (std::vector<Matrix*>::const_iterator it = mv.begin();
+             it != mv.end(); ++it) 
+        {
+            if (rows == 0 && cols == 0) {
+                rows = (*it)->rows();
+                cols = (*it)->cols();
+            }
+            else if (rows != (*it)->rows() || cols != (*it)->cols()) {
+                ok = false;
+                break;
+            }
+        }
+
+        if (!ok)
+            break;
+
+        std::ofstream fos(file.c_str(),
+            std::ios::out | std::ios::binary | std::ios_base::trunc);
+        if (fos.fail())
+            break;
+
+        BinaryWriter bw(fos, BinaryWriter::LittleEndian);
+
+        bw << uint32_t(3);
+        bw << uint32_t(rows);
+        bw << uint32_t(cols);
+        if (fos.fail())
+            break;
+
+        for (std::vector<Matrix*>::const_iterator it = mv.begin();
+             it != mv.end(); ++it)
+        {
+#ifdef ISEP_ROW_MAJOR
+            for (unsigned int j = 0; ok && j < (*it)->_cols; ++j) {
+                for (unsigned int i = 0; i < (*it)->_rows; ++i) {
+                    if (bw.fail()) {
+                        ok = false;
+                        break;
+                    }
+                    bw << (*it)->at(i, j);
+                }
+            }
+            if (!ok) break;
+#else
+#   ifdef BLISSART_SINGLE_PREC
+            ok = bw.writeFloats((*it)->_data, rows * cols) == rows * cols;
+#   else
+            ok = bw.writeDoubles((*it)->_data, rows * cols) == rows * cols;
+#   endif
+            if (!ok) break;
+#endif
+        }
+
+        if (!ok) break;
+
+        // Everything's ok, so return at this point.
+        return;
+    } while (false);
+
+    // Something went wrong.
+    std::string msg("Error while writing matrix data to file ");
+    msg.append(file);
     throw std::runtime_error(msg);
 }
 

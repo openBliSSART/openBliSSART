@@ -134,6 +134,14 @@ public:
     /* @} */
 
 
+    /** 
+     * Returns a vector of Matrix objects read from a binary file.
+     * The vector length will be one if the file contains a matrix,
+     * and greater or equal to one if the file contains a tensor.
+     */
+    static std::vector<Matrix*> arrayFromFile(const std::string& file);
+
+
     /**
      * Destroys the Matrix. Frees all memory used for data representation.
      */
@@ -734,6 +742,14 @@ public:
      * @throw               std::runtime_error
      */
     void dump(const std::string& fileName) const;
+
+
+    /**
+     * Writes a vector of Matrix objects to binary ("tensor") file.
+     * @param   fileName    the name of the destination file
+     * @throw               std::runtime_error
+     */
+    void arrayToFile(const std::vector<Matrix*> mv, const std::string& file);
 
 
     /**
