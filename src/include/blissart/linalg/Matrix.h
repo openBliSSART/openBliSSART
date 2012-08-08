@@ -749,7 +749,7 @@ public:
      * @param   fileName    the name of the destination file
      * @throw               std::runtime_error
      */
-    static void arrayToFile(const std::vector<Matrix*> mv, const std::string& file);
+    static void arrayToFile(const std::vector<const Matrix*> mv, const std::string& file);
 
 
     /**

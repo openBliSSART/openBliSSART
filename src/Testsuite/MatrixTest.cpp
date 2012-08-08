@@ -587,7 +587,7 @@ bool MatrixTest::performTest()
 
         B.at(1,1) = 24;
         B.at(2,2) = 7;
-        std::vector<Matrix*> mv1;
+        std::vector<const Matrix*> mv1;
         mv1.push_back(&A);
         mv1.push_back(&B);
         Matrix::arrayToFile(mv1, tmpFile.path());

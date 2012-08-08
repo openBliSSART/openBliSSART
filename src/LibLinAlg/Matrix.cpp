@@ -1388,14 +1388,14 @@ void Matrix::dump(const std::string &fileName) const
 
 
 void 
-Matrix::arrayToFile(const std::vector<Matrix*> mv, const std::string& file)
+Matrix::arrayToFile(const std::vector<const Matrix*> mv, const std::string& file)
 {
     do {
         bool ok = true;
 
         // Sanity check.
         uint32_t rows = 0, cols = 0;
-        for (std::vector<Matrix*>::const_iterator it = mv.begin();
+        for (std::vector<const Matrix*>::const_iterator it = mv.begin();
              it != mv.end(); ++it) 
         {
             if (rows == 0 && cols == 0) {
@@ -1425,7 +1425,7 @@ Matrix::arrayToFile(const std::vector<Matrix*> mv, const std::string& file)
         if (fos.fail())
             break;
 
-        for (std::vector<Matrix*>::const_iterator it = mv.begin();
+        for (std::vector<const Matrix*>::const_iterator it = mv.begin();
              it != mv.end(); ++it)
         {
 #ifdef ISEP_ROW_MAJOR

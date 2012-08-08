@@ -524,24 +524,35 @@ void SeparationTask::exportMatrices() const
     bool useHTKFormat = 
         cfg.getString("blissart.separation.export.format", "bin")
         .substr(0, 3) == "htk";
+    bool asTensor =
+        cfg.getBool("blissart.separation.export.format.bin.asTensor", true);
 
     // Construct the prefix.
     string prefix = getExportPrefix();
     if (_exportSpectra) {
-        for (unsigned int i = 0; i < _nrOfSpectra; ++i) {
-            const int numDigits = (int)(1 + log10f((float)_nrOfSpectra));
-            stringstream ss;
-            ss << prefix /* << '_' << taskID() */ << "_W_"
-               << setfill('0') << setw(numDigits) << i << ".dat";
-            // TODO: error handling?
-            logger().debug("Writing to " + ss.str());
-            if (useGnuplotFormat)
-                GnuplotWriter::writeMatrixGnuplot(magnitudeSpectraMatrix(i),
-                                                  ss.str(), false);
-            else if (useHTKFormat)
-                exportMatrixHTK(magnitudeSpectraMatrix(i), ss.str());
-            else
-                magnitudeSpectraMatrix(i).dump(ss.str());
+        if (useGnuplotFormat || useHTKFormat || !asTensor) {
+            for (unsigned int i = 0; i < _nrOfSpectra; ++i) {
+                const int numDigits = (int)(1 + log10f((float)_nrOfSpectra));
+                stringstream ss;
+                ss << prefix /* << '_' << taskID() */ << "_W_"
+                   << setfill('0') << setw(numDigits) << i << ".dat";
+                // TODO: error handling?
+                logger().debug("Writing to " + ss.str());
+                if (useGnuplotFormat)
+                    GnuplotWriter::writeMatrixGnuplot(magnitudeSpectraMatrix(i),
+                                                      ss.str(), false);
+                else if (useHTKFormat)
+                    exportMatrixHTK(magnitudeSpectraMatrix(i), ss.str());
+                else
+                    magnitudeSpectraMatrix(i).dump(ss.str());
+            }
+        }
+        else {
+            vector<const Matrix*> mv;
+            for (unsigned int i = 0; i < _nrOfSpectra; ++i) {
+                mv.push_back(&(magnitudeSpectraMatrix(i)));
+            }
+            Matrix::arrayToFile(mv, prefix + "_W.dat");
         }
     }
     if (_exportSpectrogram) {
