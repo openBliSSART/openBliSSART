@@ -160,23 +160,28 @@ TargetedDeconvolver::buildW(const vector<string>& matrices)
     for (vector<string>::const_iterator itr = matrices.begin(); 
         itr != matrices.end(); ++itr)
     {
-        Poco::SharedPtr<Matrix> spectrum;
-        spectrum = new Matrix(*itr);
-        BasicApplication::instance().logger().debug(
-            "Loaded matrix (" + (*itr) + ") (" + Poco::NumberFormatter::format(spectrum->rows()) + "x" + Poco::NumberFormatter::format(spectrum->cols()) + ")");
-        if (startComp + spectrum->cols() > _h.rows()) {
-            throw Poco::InvalidArgumentException(
-                "Too many columns in matrix file: " + (*itr));
+        vector<Matrix*> mv = Matrix::arrayFromFile(*itr);
+        for (unsigned int t = 0; t < (unsigned int)mv.size(); ++t) {
+            // This SharedPtr takes ownership of the pointer.
+            // Thus, the current matrix pointer is invalidated at the end of the loop!
+            Poco::SharedPtr<Matrix> spectrum(mv[t]);
+            //spectrum = new Matrix(*itr);
+            BasicApplication::instance().logger().debug(
+                "Loaded matrix (" + (*itr) + ") (" + Poco::NumberFormatter::format(spectrum->rows()) + "x" + Poco::NumberFormatter::format(spectrum->cols()) + ")");
+            if (startComp + spectrum->cols() > _h.rows()) {
+                throw Poco::InvalidArgumentException(
+                    "Too many columns in matrix file: " + (*itr));
+            }
+            if (_w[t]->rows() != spectrum->rows()) {
+                throw Poco::InvalidArgumentException(
+                    "Wrong dimension of spectrum in matrix file: " + (*itr));
+            }
+            for (unsigned int j = 0; j < spectrum->cols(); ++j)
+            {
+                _w[t]->setColumn(startComp + j, spectrum->nthColumn(j));
+            }
+            startComp += spectrum->cols();
         }
-        if (_w[0]->rows() != spectrum->rows()) {
-            throw Poco::InvalidArgumentException(
-                "Wrong dimension of spectrum in matrix file: " + (*itr));
-        }
-        for (unsigned int j = 0; j < spectrum->cols(); ++j)
-        {
-            _w[0]->setColumn(startComp + j, spectrum->nthColumn(j));
-        }
-        startComp += spectrum->cols();
     }
     BasicApplication::instance().logger().
         debug(Poco::NumberFormatter::format(startComp) +

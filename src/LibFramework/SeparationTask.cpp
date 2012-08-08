@@ -326,11 +326,7 @@ SeparationTask::revertTransforms(Poco::SharedPtr<Matrix> spectrogram) const
     {
         if (string((*rit)->name()) == "Mel filter") {
             int bins = windowSize() * sampleRate() / 1000 / 2 + 1;
-            /*Poco::LogStream ls(logger());
-            ls.debug();
-            ls << "# of bins: " << bins << std::endl;*/
             ((transforms::MelFilterTransform*)(*rit))->setBins(bins);
-               //windowSize() * sampleRate() / 1000 / 2 + 1);
         }
         // Let Poco::SharedPtr do the dirty work of pointer handling!
         spectrogram = (*rit)->inverseTransform(spectrogram);

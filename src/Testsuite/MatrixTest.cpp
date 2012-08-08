@@ -585,13 +585,20 @@ bool MatrixTest::performTest()
                 if (A(i,j) != B(i,j)) return false;
 
 
+        cout << "---" << endl
+             << "Read pseudo array from matrix file" << endl;
+        std::vector<Matrix*> mv3 = Matrix::arrayFromFile(tmpFile.path());
+        if (*mv3[0] != A) return false;
+        cout << *mv3[0] << endl;
+
+        Poco::TemporaryFile tmpFile2;
         B.at(1,1) = 24;
         B.at(2,2) = 7;
         std::vector<const Matrix*> mv1;
         mv1.push_back(&A);
         mv1.push_back(&B);
-        Matrix::arrayToFile(mv1, tmpFile.path());
-        std::vector<Matrix*> mv2 = Matrix::arrayFromFile(tmpFile.path());
+        Matrix::arrayToFile(mv1, tmpFile2.path());
+        std::vector<Matrix*> mv2 = Matrix::arrayFromFile(tmpFile2.path());
         cout << "---" << endl
              << "Write matrix array to file: " << endl 
              << *mv1[0] << endl << "--" << endl << *mv1[1] << endl
