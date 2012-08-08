@@ -33,7 +33,11 @@
 #include <blissart/BasicApplication.h>
 #include <blissart/StorageSubsystem.h>
 
+#include <blissart/BinaryReader.h>
+
 #include <Poco/NumberFormatter.h>
+
+#include <fstream>
 
 
 using namespace std;
@@ -59,7 +63,8 @@ TargetedDeconvolver::TargetedDeconvolver(Matrix& v, unsigned int r,
     Matrix::GeneratorFunction wGenerator,
     Matrix::GeneratorFunction hGenerator,
     bool keepConstant) :
-    nmf::Deconvolver(v, r, 1, wGenerator, hGenerator)
+    nmf::Deconvolver(v, r, getNrOfSpectra(*matrices.begin()),
+                     wGenerator, hGenerator)
 {
     int nInitializedCols = buildW(matrices);
     if (nInitializedCols == r) {
@@ -161,6 +166,12 @@ TargetedDeconvolver::buildW(const vector<string>& matrices)
         itr != matrices.end(); ++itr)
     {
         vector<Matrix*> mv = Matrix::arrayFromFile(*itr);
+        if (mv.size() != _t) {
+            throw Poco::InvalidArgumentException("File " + 
+                (*itr) + " contains " + Poco::NumberFormatter::format(mv.size()) + 
+                " matrices, but nrOfSpectra = " + Poco::NumberFormatter::format(_t) + "!");
+        }
+        int cols = 0;
         for (unsigned int t = 0; t < (unsigned int)mv.size(); ++t) {
             // This SharedPtr takes ownership of the pointer.
             // Thus, the current matrix pointer is invalidated at the end of the loop!
@@ -180,8 +191,9 @@ TargetedDeconvolver::buildW(const vector<string>& matrices)
             {
                 _w[t]->setColumn(startComp + j, spectrum->nthColumn(j));
             }
-            startComp += spectrum->cols();
+            if (cols == 0) cols = spectrum->cols();
         }
+        startComp += cols;
     }
     BasicApplication::instance().logger().
         debug(Poco::NumberFormatter::format(startComp) +
@@ -235,6 +247,33 @@ TargetedDeconvolver::getNrOfSpectra(ClassificationObjectPtr clObj)
             "Invalid classification object type for initialization");
     }
     return result;
+}
+
+
+int
+TargetedDeconvolver::getNrOfSpectra(const std::string &file)
+{
+    uint32_t nS;
+    std::ifstream fis(file.c_str(), std::ios::in | std::ios::binary);
+    if (fis.fail())
+        return 0;
+    BinaryReader br(fis, BinaryReader::LittleEndian);
+    uint32_t flag;
+    br >> flag;
+    cout << "flag: " << flag << endl;
+    if (flag == 2)
+        nS = 1;
+    else if (flag == 3) {
+        cout << "found tensor!" << endl;
+        br >> nS;
+    }
+    else {
+        throw Poco::InvalidArgumentException(
+            "Not a matrix file: " + file);
+    }
+    cout << "file: " << file << endl;
+    cout << "read: " << nS << endl;
+    return nS;
 }
 
 

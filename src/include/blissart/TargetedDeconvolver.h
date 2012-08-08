@@ -120,6 +120,7 @@ private:
     int buildW(const std::vector<std::string>& matrices);
     int getNrOfSpectra(int clObjID);
     int getNrOfSpectra(ClassificationObjectPtr clObj);
+    int getNrOfSpectra(const std::string &file);
 };
 
 
