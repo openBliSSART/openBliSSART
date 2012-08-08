@@ -1419,6 +1419,7 @@ Matrix::arrayToFile(const std::vector<Matrix*> mv, const std::string& file)
         BinaryWriter bw(fos, BinaryWriter::LittleEndian);
 
         bw << uint32_t(3);
+        bw << uint32_t(mv.size());
         bw << uint32_t(rows);
         bw << uint32_t(cols);
         if (fos.fail())

@@ -583,6 +583,36 @@ bool MatrixTest::performTest()
         for (unsigned int i = 0; i < 3; ++i)
             for (unsigned int j = 0; j < 4; ++j)
                 if (A(i,j) != B(i,j)) return false;
+
+
+        B.at(1,1) = 24;
+        B.at(2,2) = 7;
+        std::vector<Matrix*> mv1;
+        mv1.push_back(&A);
+        mv1.push_back(&B);
+        Matrix::arrayToFile(mv1, tmpFile.path());
+        std::vector<Matrix*> mv2 = Matrix::arrayFromFile(tmpFile.path());
+        cout << "---" << endl
+             << "Write matrix array to file: " << endl 
+             << *mv1[0] << endl << "--" << endl << *mv1[1] << endl
+             << "Read matrix array from file: " << endl
+             << *mv2[0] << endl << "--" << endl << *mv2[1] << endl;
+        for (unsigned int i = 0; i < 3; ++i) {
+            for (unsigned int j = 0; j < 4; ++j) {
+                if (mv1[0]->at(i,j) != mv2[0]->at(i,j)) {
+                    cout << "arrayFromFile: mismatch in matrix #1: " << endl;
+                    cout << *mv1[0] << endl;
+                    cout << *mv2[0] << endl;
+                    return false;
+                }
+                if (mv1[1]->at(i,j) != mv2[1]->at(i,j)) {
+                    cout << "arrayFromFile: mismatch in matrix #2: " << endl;
+                    cout << *mv1[1] << endl;
+                    cout << *mv2[1] << endl;
+                    return false;
+                }
+            }
+        }
     }
 
     // Inverse
