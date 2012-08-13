@@ -32,6 +32,7 @@
 using namespace std;
 using namespace blissart;
 using namespace blissart::linalg;
+using namespace blissart::nmf;
 
 
 namespace Testing {
@@ -52,7 +53,7 @@ bool NMDTest::performTest()
         cout << "Performing NMD using KL divergence" << endl;
 
         nmf::Deconvolver d(x, 10, t);
-        d.decompose(nmf::Deconvolver::KLDivergence, 100, 1e-5);
+        d.decompose(nmf::Deconvolver::KLDivergence, 5000, 1e-5);
         cout << "# steps: " << d.numSteps() << endl;
         cout << "absolute error: " << d.absoluteError() << endl;
         cout << "relative error: " << d.relativeError() << endl;
@@ -150,7 +151,7 @@ bool NMDTest::performTest()
              << "(beta = " << beta << ")" << endl;
 
         nmf::Deconvolver d(x, 10, t);
-        d.factorizeNMDBeta(5000, 1e-5, 0, beta);
+        d.factorizeNMDBeta(5000, 1e-5, beta, Deconvolver::NoSparsity);
         cout << "# steps: " << d.numSteps() << endl;
         cout << "absolute error: " << d.absoluteError() << endl;
         cout << "relative error: " << d.relativeError() << endl;
@@ -185,7 +186,7 @@ bool NMDTest::performTest()
         Matrix s(10, x.cols(), generators::unity);
         s.apply(Matrix::mul, sparsity);
         d.setSparsity(s);
-        d.factorizeNMDBeta(5000, 1e-5, 1, true, false);
+        d.factorizeNMDBeta(5000, 1e-5, 1, Deconvolver::NormalizedL1Norm, false);
         cout << "# steps: " << d.numSteps() << endl;
         cout << "absolute error: " << d.absoluteError() << endl;
         cout << "relative error: " << d.relativeError() << endl;
@@ -220,7 +221,7 @@ bool NMDTest::performTest()
         Matrix s(10, x.cols(), generators::unity);
         s.apply(Matrix::mul, continuity);
         d.setContinuity(s);
-        d.factorizeNMDBeta(100, 0.0, 1.0, false, true);
+        d.factorizeNMDBeta(5000, 0.0, 1.0, Deconvolver::NoSparsity, true);
         cout << "# steps: " << d.numSteps() << endl;
         cout << "absolute error: " << d.absoluteError() << endl;
         cout << "relative error: " << d.relativeError() << endl;

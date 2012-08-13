@@ -156,8 +156,23 @@ void NMDTask::performSeparation()
 
     logger().debug(nameAndTaskID() + " factorizing.");
     _deconvolver->normalizeMatrices(_normalizeMatrices);
+    nmf::Deconvolver::SparsityConstraint sparsity = nmf::Deconvolver::NoSparsity;
+    if (getSparsity() > 0.0) {
+        string sparsityStr = BasicApplication::instance().config().
+            getString("blissart.separation.sparsityConstraint", "L1Norm");
+        // TODO: move this conversion to Deconvolver class
+        if (sparsityStr == "L1Norm") {
+            sparsity = nmf::Deconvolver::L1Norm;
+        }
+        else if (sparsityStr == "NormalizedL1Norm") {
+            sparsity = nmf::Deconvolver::NormalizedL1Norm;
+        }
+        else if (sparsityStr == "Flatness") {
+            sparsity = nmf::Deconvolver::Flatness;
+        }
+    }
     _deconvolver->decompose(_cf, maxIterations(), epsilon(), 
-                            getSparsity() > 0.0, getContinuity() > 0.0, this);
+                            sparsity, getContinuity() > 0.0, this);
     _deconvolver->normalizeMatrices(_normalizeMatrices);
 }
 

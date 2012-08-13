@@ -82,6 +82,18 @@ public:
 
 
     /**
+     * Represents different sparsity constraints.
+     */
+    typedef enum
+    {
+        NoSparsity,
+        L1Norm,
+        NormalizedL1Norm,
+        Flatness
+    } SparsityConstraint;
+    
+    
+    /**
      * Returns a textual description for the given element of the 
      * NMDCostFunction enumeration.
      */
@@ -242,7 +254,8 @@ public:
      *                          iteration steps
      */
     void decompose(NMDCostFunction cf, unsigned int maxSteps, double eps,
-                   bool sparse = false, bool continuous = false,
+                   SparsityConstraint sparsity = NoSparsity, 
+                   bool continuous = false,
                    ProgressObserver *observer = 0);
 
 
@@ -292,7 +305,8 @@ public:
      * not be used in production code.
      */
     void factorizeNMDBeta(unsigned int maxSteps, double eps, double beta,
-                          bool sparse = false, bool continuous = false,
+                          SparsityConstraint sparsity = NoSparsity, 
+                          bool continuous = false,
                           ProgressObserver *observer = 0);
 
     // A more efficient implementation of NMD-ED for 1 spectrum (NMF case)

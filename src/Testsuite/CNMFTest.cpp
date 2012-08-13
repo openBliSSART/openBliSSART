@@ -133,12 +133,12 @@ bool CNMFTest::performTest()
         Matrix h(10, 5, nmf::gaussianRandomGenerator);
         d.setW(0, w);
         d.setH(h);
-        d.decompose(Deconvolver::KLDivergence, 1, 0.0, false, true);
+        d.decompose(Deconvolver::KLDivergence, 1, 0.0, Deconvolver::NoSparsity, true);
         d.computeApprox();
         Matrix wh1(d.getApprox());
         d.setW(0, w);
         d.setH(h);
-        d.decompose(Deconvolver::KLDivergence, 1, 0.0, false, false);
+        d.decompose(Deconvolver::KLDivergence, 1, 0.0, Deconvolver::NoSparsity, false);
         d.computeApprox();
         Matrix wh2(d.getApprox());
         cout << "1 iteration of continuous NMF (param = 0)" << endl;
@@ -170,7 +170,7 @@ bool CNMFTest::performTest()
         }
         d.setContinuity(c);
 
-        d.decompose(nmf::Deconvolver::KLDivergence, 1, 0.0, false, true);
+        d.decompose(nmf::Deconvolver::KLDivergence, 1, 0.0, Deconvolver::NoSparsity, true);
         d.computeApprox();
         cout << "absolute error: " << d.absoluteError() << endl;
         cout << "relative error: " << d.relativeError() << endl;
@@ -216,7 +216,7 @@ bool CNMFTest::performTest()
         d.setContinuity(c);
         d.setSparsity(c);
 
-        d.factorizeNMDBeta(1000, 1e-5, 2, true, true);
+        d.factorizeNMDBeta(1000, 1e-5, 2, Deconvolver::NormalizedL1Norm, true);
         d.computeApprox();
         cout << "absolute error: " << d.absoluteError() << endl;
         cout << "relative error: " << d.relativeError() << endl;

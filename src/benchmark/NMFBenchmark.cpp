@@ -114,7 +114,7 @@ void NMFBenchmark::run()
             logger().information(bnStr.str());
             {
                 ScopedStopwatch s(*this, bnStr.str());
-                d.decompose(Deconvolver::EuclideanDistance, _iter, 0.0, false, false, this);
+                d.decompose(Deconvolver::EuclideanDistance, _iter, 0.0, Deconvolver::NoSparsity, false, this);
             }
         }
         // NMF, Euclidean distance, optimized for incomplete fact.
@@ -127,7 +127,7 @@ void NMFBenchmark::run()
             logger().information(bnStr.str());
             {
                 ScopedStopwatch s(*this, bnStr.str());
-                d.decompose(Deconvolver::EuclideanDistance, _iter, 0.0, false, false, this);
+                d.decompose(Deconvolver::EuclideanDistance, _iter, 0.0, Deconvolver::NoSparsity, false, this);
             }
         }
     } // _cf == ed
@@ -142,7 +142,7 @@ void NMFBenchmark::run()
             logger().information(bnStr.str());
             {
                 ScopedStopwatch s(*this, bnStr.str());
-                d.decompose(Deconvolver::ISDivergence, _iter, 0.0, false, false, this);
+                d.decompose(Deconvolver::ISDivergence, _iter, 0.0, Deconvolver::NoSparsity, false, this);
             }
         }
     }
@@ -157,7 +157,7 @@ void NMFBenchmark::run()
             logger().information(bnStr.str());
             {
                 ScopedStopwatch s(*this, bnStr.str());
-                d.decompose(Deconvolver::KLDivergence, _iter, 0.0, false, false, this);
+                d.decompose(Deconvolver::KLDivergence, _iter, 0.0, Deconvolver::NoSparsity, false, this);
 #ifdef HAVE_CUDA
                 // Display GPU memory usage.
                 cudaMemGetInfo(&free, &total);

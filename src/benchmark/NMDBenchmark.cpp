@@ -95,7 +95,7 @@ void NMDBenchmark::run()
                 logger().information(bnStr.str());
                 {
                     ScopedStopwatch s(*this, bnStr.str());
-                    d.decompose(Deconvolver::EuclideanDistance, _iter, 0.0, false, false, this);
+                    d.decompose(Deconvolver::EuclideanDistance, _iter, 0.0, Deconvolver::NoSparsity, false, this);
                 }
             }
         }
@@ -113,7 +113,7 @@ void NMDBenchmark::run()
                 logger().information(bnStr.str());
                 {
                     ScopedStopwatch s(*this, bnStr.str());
-                    d.decompose(Deconvolver::KLDivergence, _iter, 0.0, false, false, this);
+                    d.decompose(Deconvolver::KLDivergence, _iter, 0.0, Deconvolver::NoSparsity, false, this);
                 }
             }
         }
@@ -131,7 +131,7 @@ void NMDBenchmark::run()
                 logger().information(bnStr.str());
                 {
                     ScopedStopwatch s(*this, bnStr.str());
-                    d.decompose(Deconvolver::ISDivergence, _iter, 0.0, false, false, this);
+                    d.decompose(Deconvolver::ISDivergence, _iter, 0.0, Deconvolver::NoSparsity, false, this);
                 }
             }
         }

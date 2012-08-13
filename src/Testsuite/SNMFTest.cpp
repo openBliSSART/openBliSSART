@@ -64,12 +64,12 @@ bool SNMFTest::performTest()
         Matrix h(10, 5, nmf::gaussianRandomGenerator);
         d.setW(0, w);
         d.setH(h);
-        d.decompose(Deconvolver::EuclideanDistance, 1, 0.0, true);
+        d.decompose(Deconvolver::EuclideanDistance, 1, 0.0, Deconvolver::L1Norm);
         d.computeApprox();
         Matrix wh1(d.getApprox());
         d.setW(0, w);
         d.setH(h);
-        d.decompose(Deconvolver::EuclideanDistance, 1, 0.0, false);
+        d.decompose(Deconvolver::EuclideanDistance, 1, 0.0, Deconvolver::NoSparsity);
         d.computeApprox();
         Matrix wh2(d.getApprox());
         cout << "1 iteration of sparse NMF (lambda = 0)" << endl;
@@ -88,12 +88,12 @@ bool SNMFTest::performTest()
         Matrix h(10, 5, nmf::gaussianRandomGenerator);
         d.setW(0, w);
         d.setH(h);
-        d.decompose(Deconvolver::KLDivergence, 1, 0.0, true);
+        d.decompose(Deconvolver::KLDivergence, 1, 0.0, Deconvolver::L1Norm);
         d.computeApprox();
         Matrix wh1(d.getApprox());
         d.setW(0, w);
         d.setH(h);
-        d.decompose(Deconvolver::KLDivergence, 1, 0.0, false);
+        d.decompose(Deconvolver::KLDivergence, 1, 0.0, Deconvolver::NoSparsity);
         d.computeApprox();
         Matrix wh2(d.getApprox());
         cout << "1 iteration of sparse NMF (lambda = 0)" << endl;
@@ -126,7 +126,7 @@ bool SNMFTest::performTest()
             }
             d.setSparsity(s);
 
-            d.factorizeNMDBeta(100, 0.0, 1, true, false);
+            d.factorizeNMDBeta(100, 0.0, 1, Deconvolver::L1Norm, false);
             //d.decompose(nmf::Deconvolver::KLDivergenceSparse, 100, 0.0);
             d.computeApprox();
             cout << "absolute error: " << d.absoluteError() << endl;
@@ -168,7 +168,7 @@ bool SNMFTest::performTest()
             }
             d.setSparsity(s);
 
-            d.factorizeNMDBeta(1000, 1e-5, 2, true, false);
+            d.factorizeNMDBeta(1000, 1e-5, 2, Deconvolver::L1Norm, false);
             //d.decompose(nmf::Deconvolver::EuclideanDistanceSparse, 1000, 1e-5);
             d.computeApprox();
             cout << "absolute error: " << d.absoluteError() << endl;
