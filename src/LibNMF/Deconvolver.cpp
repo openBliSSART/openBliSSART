@@ -670,8 +670,7 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
     /*cout << "W before iteration: " << endl << *_w[0] << endl;
     cout << "H before iteration: " << endl << _h << endl;*/
 
-    // TODO: proper normalization of NMD basis atoms
-    normalizeMatrices(_t > 1 ? NormHFrob : NormWColumnsEucl);
+    normalizeMatrices(NormWColumnsEucl);
 
     _numSteps = 0;
     while (1) {
@@ -905,7 +904,7 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
             }
         }
                 
-        normalizeMatrices(_t > 1 ? NormHFrob : NormWColumnsEucl);
+        normalizeMatrices(NormWColumnsEucl);
         nextItStep(observer, maxSteps);
     }
 
@@ -1239,17 +1238,23 @@ void Deconvolver::normalizeHFrob()
 
 void Deconvolver::normalizeWColumnsEucl()
 {
-    if (_t > 1) {
+    /*if (_t > 1) {
         throw std::runtime_error("Cannot normalize W columns for NMD");
-    }
+    }*/
 
     // just a shortcut
-    Matrix& w = *(_w[0]);
+    //Matrix& w = *(_w[0]);
     // Normalize W and H
-    for (unsigned int j = 0; j < w.cols(); ++j) {
-        double norm = sqrt(Matrix::dotColCol(w, j, w, j));
-        for (unsigned int i = 0; i < w.rows(); ++i) {
-            w(i, j) = w(i, j) / norm;
+    for (unsigned int j = 0; j < _h.rows(); ++j) {
+        double norm = 0;
+        for (unsigned int p = 0; p < _t; ++p) {
+            norm += Matrix::dotColCol(*_w[p], j, *_w[p], j);
+        }
+        norm = sqrt(norm);
+        for (unsigned int p = 0; p < _t; ++p) {
+            for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
+                _w[p]->at(i, j) = _w[p]->at(i, j) / norm;
+            }
         }
         for (unsigned int t = 0; t < _h.cols(); ++t) {
             _h(j, t) = _h(j, t) * norm;
