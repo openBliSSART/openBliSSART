@@ -88,11 +88,20 @@ public:
     {
         NoSparsity,
         L1Norm,
-        NormalizedL1Norm,
-        Flatness
+        NormalizedL1Norm
     } SparsityConstraint;
     
     
+    /**
+     * Various methods to normalize NMF matrices after computation.
+     */
+    typedef enum {
+        NoNorm,           // no normalization
+        NormHFrob,        // normalize H to unity Frobenius norm
+        NormWColumnsEucl  // normalize each column of W to unity Euclidean norm
+    } MatrixNormalization;
+
+
     /**
      * Returns a textual description for the given element of the 
      * NMDCostFunction enumeration.
@@ -137,6 +146,18 @@ public:
     inline NMDAlgorithm getAlgorithm() const;
 
     /**
+     * Controls the matrix normalization that is applied after each update 
+     * iteration.
+     */
+    inline void setNormalization(MatrixNormalization norm);
+
+    /**
+     * Returns the matrix normalization method that is used after each update
+     * iteration.
+     */
+    inline MatrixNormalization getNormalization() const;
+
+    /**
      * TODO
      */
     inline bool isOvercomplete() const;
@@ -168,22 +189,6 @@ public:
      * matrices.
      */
     inline void keepWColumnConstant(unsigned int index, bool flag);
-
-
-    /**
-     * Various methods to normalize NMF matrices after computation.
-     */
-    typedef enum {
-        NoNorm,           // no normalization
-        NormHFrob,        // normalize H to unity Frobenius norm
-        NormWColumnsEucl  // normalize each column of W to unity Euclidean norm
-    } MatrixNormalization;
-
-
-    /**
-     * Normalizes the matrices according to the given method.
-     */
-    void normalizeMatrices(MatrixNormalization method);
 
 
     /**
@@ -320,6 +325,12 @@ public:
                                   ProgressObserver *observer = 0);
 
 protected:
+    /**
+     * Normalizes the matrices according to the given method.
+     */
+    void normalizeMatrices(MatrixNormalization method);
+
+
     // GPU version of computeApprox used only locally during factorization 
     // - might be unified with computeApprox() in the future
 #ifdef HAVE_CUDA
@@ -377,6 +388,7 @@ protected:
     inline bool useOvercompleteAlg() const;
 
     NMDAlgorithm                    _alg;
+    MatrixNormalization             _norm;
     const blissart::linalg::Matrix& _v;
     blissart::linalg::Matrix _approx;
     blissart::linalg::Matrix*       _oldApprox;
@@ -428,6 +440,19 @@ inline void Deconvolver::setAlgorithm(Deconvolver::NMDAlgorithm a)
 inline Deconvolver::NMDAlgorithm Deconvolver::getAlgorithm() const
 {
     return _alg;
+}
+
+
+inline void 
+Deconvolver::setNormalization(Deconvolver::MatrixNormalization norm)
+{
+    _norm = norm;
+}
+
+
+Deconvolver::MatrixNormalization Deconvolver::getNormalization() const
+{
+    return _norm;
 }
 
 

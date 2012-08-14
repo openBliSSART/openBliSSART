@@ -22,6 +22,7 @@
 // openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+
 #include "NMFTest.h"
 #include <blissart/nmf/Deconvolver.h>
 #include <blissart/linalg/generators/generators.h>
@@ -94,20 +95,6 @@ bool NMFTest::performTest()
         cout << "relative error: " << d.relativeError() << endl;
         cout << endl;
 
-        if (!outputAndCheck(x, d)) return false;
-
-        cout << "Normalizing (H)" << endl;
-        d.normalizeMatrices(nmf::Deconvolver::NormHFrob);
-        if (!outputAndCheck(x, d)) return false;
-        double hfn = d.getH().frobeniusNorm();
-        if (!epsilonCheck(hfn, 1.000, 1e-3)) {
-            cout << "Error: Expected normalized H, norm is " << hfn << endl;
-            return false;
-        }
-
-        cout << endl;
-        cout << "Normalizing (W)" << endl;
-        d.normalizeMatrices(nmf::Deconvolver::NormWColumnsEucl);
         if (!outputAndCheck(x, d)) return false;
     }
 

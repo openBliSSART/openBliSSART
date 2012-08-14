@@ -22,6 +22,7 @@
 // openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+
 #include "NMDTest.h"
 #include <blissart/nmf/Deconvolver.h>
 #include <blissart/linalg/generators/generators.h>
@@ -84,8 +85,8 @@ bool NMDTest::performTest()
              << endl;
 
         nmf::Deconvolver d(x, 10, t);
+        d.setNormalization(nmf::Deconvolver::NormHFrob);
         d.decompose(nmf::Deconvolver::KLDivergence, 5000, 1e-5);
-        d.normalizeMatrices(nmf::Deconvolver::NormHFrob);
         cout << "# steps: " << d.numSteps() << endl;
         cout << "absolute error: " << d.absoluteError() << endl;
         cout << "relative error: " << d.relativeError() << endl;

@@ -155,7 +155,6 @@ void NMDTask::performSeparation()
     debug_assert(&amplitudeMatrix() && _deconvolver);
 
     logger().debug(nameAndTaskID() + " factorizing.");
-    _deconvolver->normalizeMatrices(_normalizeMatrices);
     nmf::Deconvolver::SparsityConstraint sparsity = nmf::Deconvolver::NoSparsity;
     if (getSparsity() > 0.0) {
         string sparsityStr = BasicApplication::instance().config().
@@ -167,13 +166,28 @@ void NMDTask::performSeparation()
         else if (sparsityStr == "NormalizedL1Norm") {
             sparsity = nmf::Deconvolver::NormalizedL1Norm;
         }
-        else if (sparsityStr == "Flatness") {
-            sparsity = nmf::Deconvolver::Flatness;
+        else {
+            logger().warning("Invalid sparsity constraint: " + sparsityStr);
         }
     }
+
+    nmf::Deconvolver::MatrixNormalization norm 
+        = nmf::Deconvolver::NormWColumnsEucl;
+    string normalizationStr = BasicApplication::instance().config().
+        getString("blissart.separation.normalization", "Wcol_L2Norm");
+    if (normalizationStr == "Wcol_L2Norm") {
+        norm = nmf::Deconvolver::NormWColumnsEucl;
+    }
+    else if (normalizationStr == "H_L2Norm") {
+        norm = nmf::Deconvolver::NormHFrob;
+    }
+    else if (normalizationStr == "none") {
+        norm = nmf::Deconvolver::NoNorm;
+    }
+    _deconvolver->setNormalization(norm);
+
     _deconvolver->decompose(_cf, maxIterations(), epsilon(), 
                             sparsity, getContinuity() > 0.0, this);
-    _deconvolver->normalizeMatrices(_normalizeMatrices);
 }
 
 
@@ -182,7 +196,8 @@ void NMDTask::setProcessParameters(ProcessPtr process) const
     SeparationTask::setProcessParameters(process);
     process->parameters["costFunction"] = nmf::Deconvolver::costFunctionName(_cf);
     process->parameters["sparsity"] = Process::formatDouble(_sparsity);
-    process->parameters["normalizeMatrices"] = _normalizeMatrices ? "true" : "false";
+    process->parameters["normalizeMatrices"] = BasicApplication::instance().config().
+        getString("blissart.separation.normalization", "Wcol_L2Norm");
 }
 
 

@@ -84,6 +84,7 @@ Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t,
                          Matrix::GeneratorFunction wGenerator,
                          Matrix::GeneratorFunction hGenerator) :
     _alg(Deconvolver::Auto),
+    _norm(Deconvolver::NormWColumnsEucl),
     _v(v),
     _approx(v.rows(), v.cols()), //, generators::zero),
     _oldApprox(0),
@@ -670,7 +671,7 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
     /*cout << "W before iteration: " << endl << *_w[0] << endl;
     cout << "H before iteration: " << endl << _h << endl;*/
 
-    normalizeMatrices(NormWColumnsEucl);
+    normalizeMatrices(_norm);
 
     _numSteps = 0;
     while (1) {
@@ -904,7 +905,7 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
             }
         }
                 
-        normalizeMatrices(NormWColumnsEucl);
+        normalizeMatrices(_norm);
         nextItStep(observer, maxSteps);
     }
 
