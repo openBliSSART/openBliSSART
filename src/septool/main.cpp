@@ -252,15 +252,6 @@ protected:
             .validator(new RangeValidator<double>(0.0)));
 
         options.addOption(
-            Option("normalize-matrices", "N",
-                   "Normalize NMF/NMD matrices: "
-                   "\"H\": normalize H such that it has unity Frobenius "
-                   "norm. \"W\": normalize columns of W to unity Euclidean "
-                   "norm (NMF only).",
-                   false, "<method>", true)
-            .validator(new RegExpValidator("W|H")));
-
-        options.addOption(
             Option("components", "c",
                    "The number of components. Default is " +
                    NumberFormatter::format(_nrComponents),
@@ -432,14 +423,6 @@ protected:
         }
         else if (name == "continuity") {
             _nmdContinuity = NumberParser::parseFloat(value);
-        }
-        else if (name == "normalize-matrices") {
-            if (value == "W") {
-                _nmdNormalize = nmf::Deconvolver::NormWColumnsEucl;
-            }
-            else if (value == "H") {
-                _nmdNormalize = nmf::Deconvolver::NormHFrob;
-            }
         }
         else if (name == "components") {
             _nrComponents = NumberParser::parse(value);
@@ -662,9 +645,6 @@ protected:
                 if (_nmdContinuity > 0) {
                     cout << setw(20) << "continuity: " << _nmdContinuity << endl;
                 }
-                cout << setw(20) << "normalize matrices: "
-                     << (_nmdNormalize == nmf::Deconvolver::NoNorm ? "False" : "True") 
-                     << endl;
             }
 
             cout << setw(20) << "Max. iterations: " << _maxIter << endl
