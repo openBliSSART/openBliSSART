@@ -675,6 +675,7 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
 
     _numSteps = 0;
     while (1) {
+        //cout << "computeApprox at start" << endl;
         computeApprox();
         
         //cout << "Entering iteration " << _numSteps << ". Approx = " << endl << _approx << endl;
@@ -738,23 +739,18 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
                 // need this below, too, but maybe to complicated to get into separate function
 
                 // W multiplicative update
-                if (beta == 1) {
-                    for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
-                        if (!_wColConstant[j]) {
-                            double hRowSum = _h.rowSum(j, 0, _h.cols() - p - 1);
-                            if (hRowSum <= 0.0) hRowSum = DIVISOR_FLOOR;
-                            for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
-                                _w[p]->at(i, j) *= (wUpdateNum(i, j) / hRowSum);
-                            }
+                for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
+                    if (!_wColConstant[j]) {
+                        double hRowSum;
+                        if (beta == 1) {
+                            hRowSum = _h.rowSum(j, 0, _h.cols() - p - 1);
                         }
-                    }
-                }
-                else {
-                    for (unsigned int j = 0; j < _w[p]->cols(); ++j) {
-                        if (!_wColConstant[j]) {
-                            for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
-                                _w[p]->at(i, j) *= (wUpdateNum(i, j) / wUpdateDenom(i, j));
-                            }
+                        for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
+                            double denom = beta == 1 ? hRowSum : wUpdateDenom(i, j);
+                            //cout << wUpdateNum(i, j) << "/" << denom << endl;
+                            // TODO: denom += W sparsity
+                            if (denom <= 0.0) denom = DIVISOR_FLOOR;
+                            _w[p]->at(i, j) *= (wUpdateNum(i, j) / denom);
                         }
                     }
                 }
@@ -774,6 +770,7 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
         // For T > 1, approximation has been calculated above.
         // For T = 1, this is more efficient for T = 1.
         if (_t == 1) {
+            //cout << "computeApprox after W update" << endl;
             computeApprox();
         }
 
@@ -901,9 +898,12 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
                 }
                 if (denom < DIVISOR_FLOOR)
                     denom = DIVISOR_FLOOR;
+                //cout << num << "/" << denom << endl;
                 _h(i, j) *= num / denom;
             }
         }
+
+        //cout << "H after update: " << endl << _h << endl;
                 
         normalizeMatrices(_norm);
         nextItStep(observer, maxSteps);
@@ -1095,6 +1095,7 @@ void Deconvolver::computeApprox()
 {
     if (_t == 1) {
         // this is much faster
+        //cout << *_w[0] << endl << " * " << endl << _h << endl;
         _w[0]->multWithMatrix(_h, &_approx);
     }
     else {
@@ -1252,13 +1253,15 @@ void Deconvolver::normalizeWColumnsEucl()
             norm += Matrix::dotColCol(*_w[p], j, *_w[p], j);
         }
         norm = sqrt(norm);
-        for (unsigned int p = 0; p < _t; ++p) {
-            for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
-                _w[p]->at(i, j) = _w[p]->at(i, j) / norm;
+        if (norm > 0.0) {
+            for (unsigned int p = 0; p < _t; ++p) {
+                for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
+                    _w[p]->at(i, j) = _w[p]->at(i, j) / norm;
+                }
             }
-        }
-        for (unsigned int t = 0; t < _h.cols(); ++t) {
-            _h(j, t) = _h(j, t) * norm;
+            for (unsigned int t = 0; t < _h.cols(); ++t) {
+                _h(j, t) = _h(j, t) * norm;
+            }
         }
     }
 }
