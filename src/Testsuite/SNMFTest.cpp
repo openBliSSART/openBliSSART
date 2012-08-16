@@ -118,13 +118,7 @@ bool SNMFTest::performTest()
             cout << "Sparsity parameter set to " << sparsity[si] << endl;
 
             nmf::Deconvolver d(x, 10, 1);
-            Matrix s(10, 5);
-            for (unsigned int j = 0; j < s.cols(); ++j) {
-                for (unsigned int i = 0; i < s.rows(); ++i) {
-                    s(i, j) = sparsity[si];
-                }
-            }
-            d.setSparsity(s);
+            d.setSparsity(nmf::Deconvolver::DefaultSparsityTemplate(sparsity[si]));
 
             d.factorizeNMDBeta(1000, 0.0, 1, Deconvolver::L1Norm, false);
             //d.decompose(nmf::Deconvolver::KLDivergenceSparse, 100, 0.0);
@@ -160,13 +154,7 @@ bool SNMFTest::performTest()
             cout << "Sparsity parameter set to " << sparsity[si] << endl;
 
             nmf::Deconvolver d(x, 10, 1);
-            Matrix s(10, 5);
-            for (unsigned int j = 0; j < s.cols(); ++j) {
-                for (unsigned int i = 0; i < s.rows(); ++i) {
-                    s(i, j) = sparsity[si];
-                }
-            }
-            d.setSparsity(s);
+            d.setSparsity(nmf::Deconvolver::DefaultSparsityTemplate(sparsity[si]));
 
             d.factorizeNMDBeta(1000, 1e-5, 2, Deconvolver::L1Norm, false);
             //d.decompose(nmf::Deconvolver::EuclideanDistanceSparse, 1000, 1e-5);
@@ -202,13 +190,7 @@ bool SNMFTest::performTest()
             cout << "Sparsity parameter set to " << sparsity[si] << endl;
 
             nmf::Deconvolver d(x, 10, 1);
-            Matrix s(10, 5);
-            for (unsigned int j = 0; j < s.cols(); ++j) {
-                for (unsigned int i = 0; i < s.rows(); ++i) {
-                    s(i, j) = sparsity[si];
-                }
-            }
-            d.setSparsity(s);
+            d.setSparsity(nmf::Deconvolver::DefaultSparsityTemplate(sparsity[si]));
 
             d.decompose(nmf::Deconvolver::NormalizedEuclideanDistance, 1000, 1e-5);
             d.computeApprox();
