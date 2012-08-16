@@ -109,7 +109,7 @@ bool SNMFTest::performTest()
     // functions.
 
     {
-        const double sparsity[] = { 0, 0.1, 0.25 };
+        const double sparsity[] = { 0, 0.001, 0.01 };
 
         for (unsigned int si = 0; si < 3; ++si) {
 
@@ -126,7 +126,7 @@ bool SNMFTest::performTest()
             }
             d.setSparsity(s);
 
-            d.factorizeNMDBeta(100, 0.0, 1, Deconvolver::L1Norm, false);
+            d.factorizeNMDBeta(1000, 0.0, 1, Deconvolver::L1Norm, false);
             //d.decompose(nmf::Deconvolver::KLDivergenceSparse, 100, 0.0);
             d.computeApprox();
             cout << "absolute error: " << d.absoluteError() << endl;
@@ -152,7 +152,7 @@ bool SNMFTest::performTest()
     }
 
     {
-        const double sparsity[] = { 0, 0.1, 0.25 };
+        const double sparsity[] = { 0, 0.001, 0.01 };
 
         for (unsigned int si = 0; si < 3; ++si) {
 
