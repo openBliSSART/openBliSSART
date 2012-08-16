@@ -58,7 +58,10 @@ NMDTask::NMDTask(const std::string &fileName,
     _cf(cf)
 {
     logger().debug(nameAndTaskID() + " initialized.");
-    // XXX: config option for normalization?
+    _sparsity = BasicApplication::instance().config().
+        getDouble("blissart.separation.activationSparsity.weight", 0.0);
+    logger().debug(nameAndTaskID() + ": activation sparsity weight = " 
+        + Poco::NumberFormatter::format(_sparsity));
 }
 
 
@@ -129,16 +132,27 @@ void NMDTask::initialize()
     );
 
     // Currently the sparsity and continuity parameters are the same for the
-    // whole H matrix, but the Deconvolver allows a different parameter for
-    // each entry.
+    // whole H matrix. 
+    _deconvolver->setSparsity(nmf::Deconvolver::DefaultSparsityTemplate(_sparsity));
 
-    Matrix s(nrOfComponents(), amplitudeMatrix().cols());
-    for (unsigned int j = 0; j < s.cols(); ++j) {
-        for (unsigned int i = 0; i < s.rows(); ++i) {
-            s(i, j) = _sparsity;
+    double wSparsity = BasicApplication::instance().config().
+        getDouble("blissart.separation.baseSparsity.weight", 0.0);
+    if (wSparsity > 0.0) {
+        logger().debug("Setting base sparsity weight to " 
+            + Poco::NumberFormatter::format(wSparsity));
+        double wSparsityExp = BasicApplication::instance().config().
+            getDouble("blissart.separation.baseSparsity.exp", 1.0);
+        if (wSparsityExp == 1.0) {
+            _deconvolver->setWSparsity(
+                nmf::Deconvolver::DefaultSparsityTemplate(wSparsity));
+        }
+        else {
+            logger().debug("Setting base sparsity exponentiation to " 
+                + Poco::NumberFormatter::format(wSparsityExp));
+            _deconvolver->setWSparsity(
+                nmf::Deconvolver::ExponentialSparsityTemplate(wSparsity, wSparsityExp));
         }
     }
-    _deconvolver->setSparsity(s);
 
     Matrix c(nrOfComponents(), amplitudeMatrix().cols());
     for (unsigned int j = 0; j < c.cols(); ++j) {
@@ -156,14 +170,16 @@ void NMDTask::performSeparation()
 
     logger().debug(nameAndTaskID() + " factorizing.");
     nmf::Deconvolver::SparsityConstraint sparsity = nmf::Deconvolver::NoSparsity;
-    if (getSparsity() > 0.0) {
+    if (_sparsity > 0.0) {
         string sparsityStr = BasicApplication::instance().config().
-            getString("blissart.separation.sparsityConstraint", "L1Norm");
+            getString("blissart.separation.activationSparsity.cost", "L1Norm");
         // TODO: move this conversion to Deconvolver class
         if (sparsityStr == "L1Norm") {
+            logger().debug("Penalizing activations by L1 sparsity constraint.");
             sparsity = nmf::Deconvolver::L1Norm;
         }
         else if (sparsityStr == "NormalizedL1Norm") {
+            logger().debug("Penalizing activations by normalized L1 sparsity constraint.");
             sparsity = nmf::Deconvolver::NormalizedL1Norm;
         }
         else {
@@ -176,9 +192,11 @@ void NMDTask::performSeparation()
     string normalizationStr = BasicApplication::instance().config().
         getString("blissart.separation.normalization", "Wcol_L2Norm");
     if (normalizationStr == "Wcol_L2Norm") {
+        logger().debug("Normalizing W columns by L2 norm.");
         norm = nmf::Deconvolver::NormWColumnsEucl;
     }
     else if (normalizationStr == "H_L2Norm") {
+        logger().debug("Normalizing H by Frobenius norm.");
         norm = nmf::Deconvolver::NormHFrob;
     }
     else if (normalizationStr == "none") {

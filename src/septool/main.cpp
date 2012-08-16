@@ -420,6 +420,8 @@ protected:
         }
         else if (name == "sparsity") {
             _nmdSparsity = NumberParser::parseFloat(value);
+            config().setDouble("blissart.separation.activationSparsity.weight",
+                _nmdSparsity);
         }
         else if (name == "continuity") {
             _nmdContinuity = NumberParser::parseFloat(value);
@@ -723,7 +725,7 @@ protected:
                     _nrComponents, _nrSpectra, _maxIter,_epsilon, _volatile
                 );
                 nmdTask->setGeneratorFunction(_matrixGenFunc);
-                nmdTask->setSparsity(_nmdSparsity);
+                //nmdTask->setSparsity(_nmdSparsity);
                 nmdTask->setContinuity(_nmdContinuity);
                 nmdTask->setNormalizeMatrices(_nmdNormalize);
                 newSepTask = nmdTask;
