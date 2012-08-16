@@ -58,6 +58,61 @@ class LibNMF_API Deconvolver
 {
 public:
     /**
+     * Represents a template to generate a sparsity matrix.
+     */
+    class SparsityTemplate
+    {
+    public:
+        virtual double sparsity(int p, int i, int j) const = 0;
+    };
+
+    class DefaultSparsityTemplate: public SparsityTemplate
+    {
+    public:
+        DefaultSparsityTemplate(double sparsity) : _sparsity(sparsity) { }
+        virtual double sparsity(int p, int i, int j) const 
+        { 
+            return _sparsity; 
+        }
+
+    private:
+        double _sparsity;
+    };
+
+    /**
+     * Sparsity template with exponential increase depending on the time
+     * index p.
+     */
+    class ExponentialSparsityTemplate:  public SparsityTemplate
+    {
+    public:
+        ExponentialSparsityTemplate(double sparsity, double decay) :
+            _sparsity(sparsity), _decay(decay) {}
+        virtual double sparsity(int p, int i, int j) const;
+    private:
+        double _sparsity;
+        double _decay;
+    };
+    
+    /**
+     * Sparsity template where the sparsity depends on the column.
+     * E.g., to use different W sparsity values for different components.
+     */
+    class ColumnSparsityTemplate: public SparsityTemplate
+    {
+        // TODO
+    };
+
+    /**
+     * Sparsity template where the sparsity depends on the row.
+     * E.g., to use different H sparsity values for different components.
+     */
+    class RowSparsityTemplate: public SparsityTemplate
+    {
+        // TODO
+    };
+
+    /**
      * An enumeration of cost functions which can be used for NMF/NMD.
      */
     typedef enum
@@ -219,9 +274,26 @@ public:
     inline void setSparsity(const blissart::linalg::Matrix& s);
 
     /**
+     * Sets the sparsity weight for each entry of H, given as a template.
+     */
+    void setSparsity(const SparsityTemplate& t);
+
+    /**
      * Returns the sparsity weight for each entry of H as a matrix.
      */
     inline const blissart::linalg::Matrix& getSparsity() const;
+
+    /**
+     * Sets the sparsity weight for each entry of W(p)
+     * given as a matrix.
+     */
+    inline void setWSparsity(unsigned int p, const blissart::linalg::Matrix& s);
+
+    /**
+     * Sets the sparsity weight for each entry of all W(p),
+     * given as a template.
+     */
+    void setWSparsity(const SparsityTemplate& t);
 
     /**
      * Sets the continuity weight for each entry of H, given as a matrix.
@@ -398,6 +470,7 @@ protected:
     unsigned int                _t;
     blissart::linalg::Matrix    _h;
     blissart::linalg::Matrix    _s;
+    blissart::linalg::Matrix**  _wS;
     blissart::linalg::Matrix    _c;   
     unsigned int                _numSteps;
     double                      _absoluteError;
@@ -511,6 +584,14 @@ void Deconvolver::setSparsity(const blissart::linalg::Matrix& s)
 const blissart::linalg::Matrix& Deconvolver::getSparsity() const
 {
     return _s;
+}
+
+
+void Deconvolver::setWSparsity(unsigned int p,
+    const blissart::linalg::Matrix& s)
+{
+    assert(s.rows() == _w[p]->rows() && s.cols() == _w[p]->cols());
+    *_w[p] = s;
 }
 
 

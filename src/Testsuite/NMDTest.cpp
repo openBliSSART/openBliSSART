@@ -51,6 +51,7 @@ bool NMDTest::performTest()
     unsigned int t = 3;
 
     {
+        srand(1);
         cout << "Performing NMD using KL divergence" << endl;
 
         nmf::Deconvolver d(x, 10, t);
@@ -78,9 +79,9 @@ bool NMDTest::performTest()
         }
     }
     
-    return true;
+    // TODO: find better way to enable/disable invididual tests!
 
-    {
+    /*{
         cout << "Performing NMD using KL divergence, with normalization" 
              << endl;
 
@@ -114,9 +115,9 @@ bool NMDTest::performTest()
             cout << "Error: Expected normalized H, norm is " << hfn << endl;
             return false;
         }
-    }
+    }*/
 
-    {
+    /*{
         srand(1);
         cout << "Performing NMD using Itakura-Saito divergence" << endl;
 
@@ -209,9 +210,43 @@ bool NMDTest::performTest()
                     return false;
             }
         }
-    }
+    }*/
 
     {
+        srand(1);
+        const double sparsity = 0.01;
+
+        cout << "Performing sparse NMD using KL divergence" << endl;
+
+        nmf::Deconvolver d(x, 10, t);
+        d.setWSparsity(Deconvolver::ExponentialSparsityTemplate(sparsity, 1.7));
+        //d.setSparsity(Deconvolver::DefaultSparsityTemplate(sparsity));
+        d.decompose(nmf::Deconvolver::KLDivergence, 5000, 1e-5, Deconvolver::NormalizedL1Norm, false);
+        cout << "# steps: " << d.numSteps() << endl;
+        cout << "absolute error: " << d.absoluteError() << endl;
+        cout << "relative error: " << d.relativeError() << endl;
+        cout << endl;
+        for (unsigned int i = 0; i < t; ++i) {
+            cout << "W[" << i << "] = " << endl;
+            cout << d.getW(i) << endl;
+        }
+        cout << "H = " << endl;
+        cout << d.getH() << endl;
+        cout << "Approx = " << endl;
+        d.computeApprox();
+        Matrix l(d.getApprox());
+        cout << l << endl;
+        
+        for (unsigned int i = 0; i < x.rows(); i++) {
+            for (unsigned int j = 0; j < x.cols(); j++) {
+                if (!epsilonCheck(x(i,j), l(i,j), 1e-2))
+                    return false;
+            }
+        }
+    }
+
+
+    /*{
         srand(1);
         const double continuity = 0.1;
 
@@ -238,13 +273,7 @@ bool NMDTest::performTest()
         Matrix l(d.getApprox());
         cout << l << endl;
         
-        /*for (unsigned int i = 0; i < x.rows(); i++) {
-            for (unsigned int j = 0; j < x.cols(); j++) {
-                if (!epsilonCheck(x(i,j), l(i,j), 1e-2))
-                    return false;
-            }
-        }*/
-    }
+    }*/
 
     return true;
 }

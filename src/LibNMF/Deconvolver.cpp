@@ -94,6 +94,7 @@ Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t,
     _t(t),
     _h(r, v.cols(), hGenerator),
     _s(r, v.cols(), generators::zero),      // zero --> no sparsity
+    _wS(new Matrix*[t]),
     _c(r, v.cols(), generators::zero),      // zero --> no continuity
     _numSteps(0),
     _absoluteError(-1),
@@ -107,8 +108,11 @@ Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t,
                << ": Matrix has only " << v.cols() << " columns!";
         throw std::runtime_error(errStr.str());
     }
-    for (unsigned int l = 0; l < _t; ++l) {
-        _w[l] = new Matrix(v.rows(), r);
+    for (unsigned int p = 0; p < _t; ++p) {
+        _w[p] = new Matrix(v.rows(), r);
+    }
+    for (unsigned int p = 0; p < _t; ++p) {
+        _wS[p] = new Matrix(v.rows(), r, generators::zero);
     }
     for (unsigned int c = 0; c < r; ++c) {
         _wColConstant[c] = false;
@@ -165,6 +169,36 @@ void Deconvolver::setH(const Matrix& h)
 {
     assert(h.cols() == _h.cols() && h.rows() == _h.rows());
     _h = h;
+}
+
+
+void Deconvolver::setSparsity(const Deconvolver::SparsityTemplate& t)
+{
+    for (unsigned int j = 0; j < _s.cols(); ++j) {
+        for (unsigned int i = 0; i < _s.rows(); ++i) {
+            _s(i, j) = t.sparsity(1, i, j);
+        }
+    }
+}
+
+
+void Deconvolver::setWSparsity(const Deconvolver::SparsityTemplate& t)
+{
+    for (unsigned int p = 0; p < _t; ++p) {
+        for (unsigned int j = 0; j < _wS[p]->cols(); ++j) {
+            for (unsigned int i = 0; i < _wS[p]->rows(); ++i) {
+                //cout << "p = " << p << " i = " << i << " j = " << j << " s = " << t.sparsity(p, i, j);
+                _wS[p]->at(i, j) = t.sparsity(p, i, j);
+            }
+        }
+    }
+}
+
+
+double Deconvolver::ExponentialSparsityTemplate::sparsity(int p, int i, int j)
+const
+{
+    return _sparsity * std::pow(_decay, p);
 }
 
 
@@ -748,7 +782,7 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
                         for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
                             double denom = beta == 1 ? hRowSum : wUpdateDenom(i, j);
                             //cout << wUpdateNum(i, j) << "/" << denom << endl;
-                            // TODO: denom += W sparsity
+                            denom += _wS[p]->at(i, j);
                             if (denom <= 0.0) denom = DIVISOR_FLOOR;
                             _w[p]->at(i, j) *= (wUpdateNum(i, j) / denom);
                         }
@@ -798,8 +832,16 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
             for (unsigned int i = 0; i < _h.rows(); ++i) {
                 hRowSumSq = Matrix::dotRowRow(_h, i, _h, i);
                 hRowLength = sqrt(hRowSumSq);
-                csplus->at(i)   = sqrtT / hRowLength;
-                csminus->at(i)  = sqrtT * _h.rowSum(i) / (hRowSumSq * hRowLength);
+                //cout << "h row length = " << hRowSumSq << endl;
+                if (hRowSumSq > 1e-6) {
+                    csplus->at(i)   = sqrtT / hRowLength;
+                    csminus->at(i)  = sqrtT * _h.rowSum(i) / (hRowSumSq * hRowLength);
+                }
+                else {
+                    csplus->at(i) = 0.0;
+                    csminus->at(i) = 0.0;
+                }
+                //cout << "sparsity: + " << csplus->at(i) << ", - " << csminus->at(i) << endl;
                 //wColSums->at(i) = w.colSum(i);
             }
         }
@@ -1253,6 +1295,7 @@ void Deconvolver::normalizeWColumnsEucl()
             norm += Matrix::dotColCol(*_w[p], j, *_w[p], j);
         }
         norm = sqrt(norm);
+        //cout << "norm = " << norm << endl;
         if (norm > 0.0) {
             for (unsigned int p = 0; p < _t; ++p) {
                 for (unsigned int i = 0; i < _w[p]->rows(); ++i) {
