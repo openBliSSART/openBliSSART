@@ -373,9 +373,20 @@ void SeparationTask::exportComponents() const
 
     logger().debug(nameAndTaskID() + " exporting the components.");
 
-    // Determine whether to use wiener reconstruction.
     Poco::Util::LayeredConfiguration& cfg =
         BasicApplication::instance().config();
+
+    // Determine whether to export components as WAV and/or as matrix files.
+    bool exportAsMatrix = cfg.getBool("blissart.separation.export.matrix",
+                                      false);
+    if (exportAsMatrix)
+        logger().debug("Exporting components as matrix file(s).");
+    bool exportAsWave = cfg.getBool("blissart.separation.export.wave",
+                                      true);
+    if (exportAsWave)
+        logger().debug("Exporting components as waveform file(s).");
+
+    // Determine whether to use wiener reconstruction.
     bool wienerRec = cfg.getBool("blissart.separation.export.wienerrec", 
                                     true);
 
@@ -485,10 +496,15 @@ void SeparationTask::exportComponents() const
                     const int numDigitsS = (int)(1 + log10f((float)compIndices.size()));
                     ss << '_' << setfill('0') << setw(numDigitsS) << sourceIndex;
                 }
-                ss << '_' << setfill('0') << setw(numDigits) << *it << ".wav";
+                ss << '_' << setfill('0') << setw(numDigits) << *it;
 
-                // Convert component spectrogram to time signal and save it as WAV.
-                spectrogramToAudioFile(magnitudeSpectrum, ss.str());
+                if (exportAsMatrix) {
+                    magnitudeSpectrum->dump(ss.str() + ".dat");
+                }
+                if (exportAsWave) {
+                    // Convert component spectrogram to time signal and save it as WAV.
+                    spectrogramToAudioFile(magnitudeSpectrum, ss.str() + ".wav");
+                }
             }
         }
         // Export the mixed source spectrogram to a single audio file.
@@ -497,13 +513,17 @@ void SeparationTask::exportComponents() const
             stringstream ss;
             ss << getExportPrefix();
             const int numDigitsS = (int)(1 + log10f((float)compIndices.size()));
-            ss << "_source" << setfill('0') << setw(numDigitsS) << sourceIndex 
-               << ".wav";
+            ss << "_source" << setfill('0') << setw(numDigitsS) << sourceIndex;
             // Convert component spectrogram to time signal and save it as WAV.
             string filename = ss.str();
             logger().debug(nameAndTaskID() + ": creating mixed audio file " +
                 filename);
-            spectrogramToAudioFile(mixedSpectrogram, filename);
+            if (exportAsMatrix) {
+                mixedSpectrogram->dump(filename + ".dat");
+            }
+            if (exportAsWave) {
+                spectrogramToAudioFile(mixedSpectrogram, filename + ".wav");
+            }
         }
     }
 
