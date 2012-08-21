@@ -178,7 +178,9 @@ TargetedDeconvolver::buildW(const vector<string>& matrices)
             Poco::SharedPtr<Matrix> spectrum(mv[t]);
             //spectrum = new Matrix(*itr);
             BasicApplication::instance().logger().debug(
-                "Loaded matrix (" + (*itr) + ") (" + Poco::NumberFormatter::format(spectrum->rows()) + "x" + Poco::NumberFormatter::format(spectrum->cols()) + ")");
+                "Loaded matrix (" + (*itr) + ") (" 
+                + Poco::NumberFormatter::format(spectrum->rows()) + "x" 
+                + Poco::NumberFormatter::format(spectrum->cols()) + ")");
             if (startComp + spectrum->cols() > _h.rows()) {
                 throw Poco::InvalidArgumentException(
                     "Too many columns in matrix file: " + (*itr));
@@ -260,19 +262,16 @@ TargetedDeconvolver::getNrOfSpectra(const std::string &file)
     BinaryReader br(fis, BinaryReader::LittleEndian);
     uint32_t flag;
     br >> flag;
-    cout << "flag: " << flag << endl;
-    if (flag == 2)
+    if (flag == 2) {
         nS = 1;
+    }
     else if (flag == 3) {
-        cout << "found tensor!" << endl;
         br >> nS;
     }
     else {
         throw Poco::InvalidArgumentException(
             "Not a matrix file: " + file);
     }
-    cout << "file: " << file << endl;
-    cout << "read: " << nS << endl;
     return nS;
 }
 
