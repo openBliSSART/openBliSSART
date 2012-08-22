@@ -83,6 +83,7 @@ public:
         _nrComponents(20),
         _nrSpectra(1),
         _preserveInit(false),
+        _preserveInitGains(false),
         _matrixGenFunc(nmf::gaussianRandomGenerator),
         _windowSize(25),
         _wfName("Square root of Hann function"),
@@ -277,14 +278,25 @@ protected:
         options.addOption(
             Option("init-files", "",
                    "A list of strings referring to matrix files with which "
-                   "to initialize the spectra (only for NMF).",
+                   "to initialize the spectra.",
                    false, "<file[,file,...]>", true)
                    .repeatable(true)
                    .validator(new RegExpValidator("\\w+(,\\w+)*")));
 
         options.addOption(
+            Option("init-gains", "",
+                   "A string referring to a matrix file with which "
+                   "to initialize the gains (activations).",
+                   false, "<file>", true));
+
+        options.addOption(
             Option("preserve", "P",
                    "Preserve initialization of the spectra during iteration.",
+                   false));
+
+        options.addOption(
+            Option("preserve-gains", "",
+                   "Preserve initialization of the gains during iteration.",
                    false));
 
         options.addOption(
@@ -456,8 +468,14 @@ protected:
                 }
             }
         }
+        else if (name == "init-gains") {
+            _gainsInitMatrix = value;
+        }
         else if (name == "preserve") {
             _preserveInit = true;
+        }
+        else if (name == "preserve-gains") {
+            _preserveInitGains = true;
         }
         else if (name == "generator") {
             _matrixGenFunc = nmf::randomGeneratorForName(value);
@@ -765,6 +783,11 @@ protected:
             }
             if (!_initMatrices.empty())
                 newSepTask->setInitializationMatrices(_initMatrices, _preserveInit);
+            if (!_gainsInitMatrix.empty()) {
+                newSepTask->setGainsInitializationMatrix(_gainsInitMatrix, 
+                    _preserveInitGains);
+            }
+
             // Now add the new SeparationTask.
             addTask(newSepTask);
 
@@ -864,7 +887,9 @@ private:
     int                _nrSpectra;
     vector<int>        _initObjectIDs;
     vector<string>     _initMatrices;
+    string             _gainsInitMatrix;
     bool               _preserveInit;
+    bool               _preserveInitGains;
     linalg::Matrix::GeneratorFunction _matrixGenFunc;
     int                _windowSize;
     string             _wfName;

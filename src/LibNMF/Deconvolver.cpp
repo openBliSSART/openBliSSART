@@ -711,6 +711,7 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
     while (1) {
         //cout << "computeApprox at start" << endl;
         computeApprox();
+        ensureNonnegativity(_approx);
         
         //cout << "Entering iteration " << _numSteps << ". Approx = " << endl << _approx << endl;
 
@@ -806,6 +807,7 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
         if (_t == 1) {
             //cout << "computeApprox after W update" << endl;
             computeApprox();
+            ensureNonnegativity(_approx);
         }
 
         // Now the approximation is up-to-date in any case.

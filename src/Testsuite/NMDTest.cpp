@@ -79,6 +79,44 @@ bool NMDTest::performTest()
         }
     }
     
+    {
+        srand(1);
+        cout << "Performing NMD using KL divergence with zero entries" << endl;
+
+        for (unsigned int i = 0; i < x.rows(); ++i) {
+            x.at(i, 3) = 0.0;
+            x.at(i, 4) = 0.0;
+        }
+        nmf::Deconvolver d(x, 10, t);
+        Matrix h(d.getH());
+        h.zero();
+        for (unsigned int i = 0; i < h.rows(); ++i) {
+            h.at(i, 0) = 1.0;
+        }
+        d.setH(h);
+        d.decompose(nmf::Deconvolver::KLDivergence, 5000, 1e-5);
+        cout << "# steps: " << d.numSteps() << endl;
+        cout << "absolute error: " << d.absoluteError() << endl;
+        cout << "relative error: " << d.relativeError() << endl;
+        cout << endl;
+        for (unsigned int i = 0; i < t; ++i) {
+            cout << "W[" << i << "] = " << endl;
+            cout << d.getW(i) << endl;
+        }
+        cout << "H = " << endl;
+        cout << d.getH() << endl;
+        cout << "Approx = " << endl;
+        d.computeApprox();
+        Matrix l(d.getApprox());
+        cout << l << endl;
+        
+        for (unsigned int i = 0; i < x.rows(); i++) {
+            for (unsigned int j = 0; j < x.cols(); j++) {
+                if (!epsilonCheck(x(i,j), l(i,j), 1e-2))
+                    return false;
+            }
+        }
+    }
     // TODO: find better way to enable/disable invididual tests!
 
     /*{

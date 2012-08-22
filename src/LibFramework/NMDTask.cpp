@@ -131,6 +131,21 @@ void NMDTask::initialize()
             getInt("blissart.separation.notificationSteps", 25)
     );
 
+    if (!_gainsInitMatrix.empty()) {
+        Matrix hInit(_gainsInitMatrix);
+        if (hInit.rows() != gainsMatrix().rows() || 
+            hInit.cols() != gainsMatrix().cols()) 
+        {
+            throw Poco::InvalidArgumentException(
+                "Matrix dimension mismatch in initialization!"
+                + Poco::NumberFormatter::format(hInit.rows()) + "x" + Poco::NumberFormatter::format(hInit.cols())
+                + " vs. " 
+                + Poco::NumberFormatter::format(gainsMatrix().rows()) + "x" + Poco::NumberFormatter::format(gainsMatrix().cols())
+                );
+        }
+        _deconvolver->setH(hInit);
+    }
+
     // Currently the sparsity and continuity parameters are the same for the
     // whole H matrix. 
     _deconvolver->setSparsity(nmf::Deconvolver::DefaultSparsityTemplate(_sparsity));

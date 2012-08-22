@@ -211,6 +211,11 @@ public:
                               bool constant = false);
 
 
+    void 
+    setGainsInitializationMatrix(const std::string& filename, 
+                                 bool constant = false);
+
+
     /**
      * Returns the objects used for targeted initialization.
      */
@@ -363,7 +368,7 @@ protected:
 
     double                  _relativeError;
 
-private:
+protected:
     // Forbid copy constructor and operator=.
     SeparationTask(const SeparationTask &other);
     SeparationTask& operator=(const SeparationTask &other);
@@ -375,7 +380,9 @@ private:
 
     std::vector<ClassificationObjectPtr> _initObjects;
     std::vector<std::string> _initMatrices;
+    std::string             _gainsInitMatrix;
     bool                    _constantInitializedComponentsSpectra;
+    bool                    _constantInitializedGains;
 
     linalg::Matrix::GeneratorFunction _genFunc;
 

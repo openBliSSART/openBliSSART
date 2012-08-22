@@ -73,6 +73,7 @@ SeparationTask::SeparationTask(const SeparationMethod sepMethod,
     _nrOfComponents(nrOfComponents),
     _nrOfSpectra(nrOfSpectra),
     _constantInitializedComponentsSpectra(true),
+    _constantInitializedGains(false),
     _genFunc(nmf::gaussianRandomGenerator),
     _maxIterations(maxIterations),
     _epsilon(epsilon),
@@ -634,6 +635,15 @@ setInitializationMatrices(const std::vector<std::string>& matrices,
 
     _initMatrices = matrices;
     _constantInitializedComponentsSpectra = constant;
+}
+
+
+void SeparationTask::
+setGainsInitializationMatrix(const std::string& filename,
+                             bool constant)
+{
+    _gainsInitMatrix = filename;
+    _constantInitializedGains = constant;
 }
 
 
