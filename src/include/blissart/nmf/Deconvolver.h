@@ -137,6 +137,16 @@ public:
 
 
     /**
+     *
+     */
+    typedef enum
+    {
+        HUpdateGradient,
+        HUpdateAverage
+    } HUpdateRule;
+
+
+    /**
      * Represents different sparsity constraints.
      */
     typedef enum
@@ -199,6 +209,12 @@ public:
      * TODO
      */
     inline NMDAlgorithm getAlgorithm() const;
+
+    /**
+     * Sets the type of H update rule. 
+     * (average update over all W timesteps, or gradient-based.)
+     */
+    inline void setHUpdateRule(HUpdateRule r);
 
     /**
      * Controls the matrix normalization that is applied after each update 
@@ -396,13 +412,13 @@ public:
     void factorizeNMFEDSparseNorm(unsigned int maxSteps, double eps,
                                   ProgressObserver *observer = 0);
 
-protected:
     /**
      * Normalizes the matrices according to the given method.
      */
     void normalizeMatrices(MatrixNormalization method);
 
 
+protected:
     // GPU version of computeApprox used only locally during factorization 
     // - might be unified with computeApprox() in the future
 #ifdef HAVE_CUDA
@@ -460,6 +476,7 @@ protected:
     inline bool useOvercompleteAlg() const;
 
     NMDAlgorithm                    _alg;
+    HUpdateRule                     _hUpdateRule;
     MatrixNormalization             _norm;
     const blissart::linalg::Matrix& _v;
     blissart::linalg::Matrix _approx;
@@ -513,6 +530,12 @@ inline void Deconvolver::setAlgorithm(Deconvolver::NMDAlgorithm a)
 inline Deconvolver::NMDAlgorithm Deconvolver::getAlgorithm() const
 {
     return _alg;
+}
+
+
+inline void Deconvolver::setHUpdateRule(Deconvolver::HUpdateRule r)
+{
+    _hUpdateRule = r;
 }
 
 

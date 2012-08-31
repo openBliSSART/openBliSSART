@@ -84,6 +84,7 @@ Deconvolver::Deconvolver(const Matrix &v, unsigned int r, unsigned int t,
                          Matrix::GeneratorFunction wGenerator,
                          Matrix::GeneratorFunction hGenerator) :
     _alg(Deconvolver::Auto),
+    _hUpdateRule(Deconvolver::HUpdateAverage),
     _norm(Deconvolver::NormWColumnsEucl),
     _v(v),
     _approx(v.rows(), v.cols()), //, generators::zero),
@@ -867,86 +868,167 @@ void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps,
             }
         }
 
-        // Compute numerator and denominator (not for KL) for H update.
-        hUpdateNum.zero();
-        hUpdateDenom.zero();
-        
-        // Sum of W[p] column sums used in H update for KL divergence.
-        if (beta == 1) {
-            wpColSums->zero();
-            for (unsigned int i = 0; i < _h.rows(); ++i) {
-                for (unsigned int p = 0; p < _t; ++p) {
-                    for (unsigned int p2 = 0; p2 <= p; ++p2) {
-                        wpColSums->at(p, i) += _w[p2]->colSum(i);
+        if (_hUpdateRule == HUpdateGradient) {
+            // Compute numerator and denominator (not for KL) for H update.
+            hUpdateNum.zero();
+            hUpdateDenom.zero();
+            
+            // Sum of W[p] column sums used in H update for KL divergence.
+            if (beta == 1) {
+                wpColSums->zero();
+                for (unsigned int i = 0; i < _h.rows(); ++i) {
+                    for (unsigned int p = 0; p < _t; ++p) {
+                        for (unsigned int p2 = 0; p2 <= p; ++p2) {
+                            wpColSums->at(p, i) += _w[p2]->colSum(i);
+                        }
                     }
                 }
             }
-        }
 
-        for (unsigned int p = 0; p < _t; ++p) {
-            Matrix hUpdateNumTmp(_h.rows(), _h.cols(), generators::zero);
+            for (unsigned int p = 0; p < _t; ++p) {
+                Matrix hUpdateNumTmp(_h.rows(), _h.cols(), generators::zero);
 
-            // Numerator
-            _w[p]->multWithMatrix(*vOverApprox, &hUpdateNumTmp,
-                // transpose W[p]
-                true, false, 
-                // target dimension: R x (N-p)
-                _w[p]->cols(), _w[p]->rows(), _v.cols() - p,
-                0, 0, 0, p, 0, 0);
-            hUpdateNum.add(hUpdateNumTmp);
-            // Denominator
-            if (beta != 1) {
-                Matrix hUpdateDenomTmp(_h.rows(), _h.cols(), generators::zero);
-                _w[p]->multWithMatrix(*approxInv, &hUpdateDenomTmp,
+                // Numerator
+                _w[p]->multWithMatrix(*vOverApprox, &hUpdateNumTmp,
                     // transpose W[p]
                     true, false, 
                     // target dimension: R x (N-p)
                     _w[p]->cols(), _w[p]->rows(), _v.cols() - p,
                     0, 0, 0, p, 0, 0);
-                //ensureNonnegativity(hUpdateDenom, DIVISOR_FLOOR);
-                hUpdateDenom.add(hUpdateDenomTmp);
+                hUpdateNum.add(hUpdateNumTmp);
+                // Denominator
+                if (beta != 1) {
+                    Matrix hUpdateDenomTmp(_h.rows(), _h.cols(), generators::zero);
+                    _w[p]->multWithMatrix(*approxInv, &hUpdateDenomTmp,
+                        // transpose W[p]
+                        true, false, 
+                        // target dimension: R x (N-p)
+                        _w[p]->cols(), _w[p]->rows(), _v.cols() - p,
+                        0, 0, 0, p, 0, 0);
+                    //ensureNonnegativity(hUpdateDenom, DIVISOR_FLOOR);
+                    hUpdateDenom.add(hUpdateDenomTmp);
+                }
+            }
+
+            for (unsigned int j = 0; j < _h.cols(); ++j) {
+                for (unsigned int i = 0; i < _h.rows(); ++i) {
+                    double num   = hUpdateNum(i, j);
+                    double denom;
+                    if (beta == 1) {
+                        unsigned int p = _h.cols() - j - 1;
+                        if (p > _t - 1)
+                            p = _t - 1;
+                        //cout << "p = " << p << endl;
+                        denom = wpColSums->at(p, i);
+                    }
+                    else {
+                        denom = hUpdateDenom(i, j);
+                    }
+                     
+                    // add sparsity and continuity terms to numerator
+                    // and denominator of multiplicative update
+                    // XXX: we might precompute the additive terms...
+                    if (sparsity == L1Norm) {
+                        denom += _s(i, j);
+                    }
+                    else if (sparsity == NormalizedL1Norm) {
+                        num   += _s(i, j) * _h(i, j) * csminus->at(i);
+                        denom += _s(i, j) * csplus->at(i);
+                    } 
+                    if (continuous) {
+                        double l = j == 0 ? 0.0 : oldH->at(i, j - 1);
+                        double r = j == _h.cols() - 1 ? 0.0 : _h(i, j + 1);
+                        num   += _c(i,j) * ((l + r)  * ctminus1->at(i) + 
+                                            _h(i, j) * ctminus2->at(i));
+                        denom += _c(i, j) * _h(i, j) * ctplus->at(i);
+                    }
+                    if (denom < DIVISOR_FLOOR)
+                        denom = DIVISOR_FLOOR;
+                    //cout << num << "/" << denom << endl;
+                    _h(i, j) *= num / denom;
+                }
             }
         }
 
-        for (unsigned int j = 0; j < _h.cols(); ++j) {
-            for (unsigned int i = 0; i < _h.rows(); ++i) {
-                double num   = hUpdateNum(i, j);
-                double denom;
+        else if (_hUpdateRule == HUpdateAverage) {
+            // Compute H update for each W[p] and average later
+            for (unsigned int p = 0; p < _t; ++p) {
                 if (beta == 1) {
-                    unsigned int p = _h.cols() - j - 1;
-                    if (p > _t - 1)
-                        p = _t - 1;
-                    //cout << "p = " << p << endl;
-                    denom = wpColSums->at(p, i);
+                    // Precalculation of column-sums of W_t
+                    for (unsigned int i = 0; i < _h.rows(); ++i) {
+                        wpColSums->at(p, i) = _w[p]->colSum(i);
+                    }
                 }
-                else {
-                    denom = hUpdateDenom(i, j);
+
+                // Numerator
+                _w[p]->multWithMatrix(*vOverApprox, &hUpdateNum,
+                    // transpose W[p]
+                    true, false, 
+                    // target dimension: R x (N-p)
+                    _w[p]->cols(), _w[p]->rows(), _v.cols() - p,
+                    0, 0, 0, p, 0, 0);
+                // Denominator
+                if (beta != 1) {
+                    _w[p]->multWithMatrix(*approxInv, &hUpdateDenom,
+                        // transpose W[p]
+                        true, false, 
+                        // target dimension: R x (N-p)
+                        _w[p]->cols(), _w[p]->rows(), _v.cols() - p,
+                        0, 0, 0, p, 0, 0);
+                    ensureNonnegativity(hUpdateDenom, DIVISOR_FLOOR);
                 }
-                 
-                // add sparsity and continuity terms to numerator
-                // and denominator of multiplicative update
-                // XXX: we might precompute the additive terms...
-                if (sparsity == L1Norm) {
-                    denom += _s(i, j);
+
+                for (unsigned int j = 0; j < _h.cols() - p; ++j) {
+                    for (unsigned int i = 0; i < _h.rows(); ++i) {
+                        double num   = hUpdateNum(i, j);
+                        double denom = beta == 1 ? 
+                                       wpColSums->at(p, i) : 
+                                       hUpdateDenom(i, j);
+                        // add sparsity and continuity terms to numerator
+                        // and denominator of multiplicative update
+                        // XXX: we might precompute the additive terms...
+                        if (sparsity == L1Norm) {
+                            denom += _s(i, j);
+                        }
+                        else if (sparsity == NormalizedL1Norm) {
+                            num   += _s(i, j) * _h(i, j) * csminus->at(i);
+                            denom += _s(i, j) * csplus->at(i);
+                        } 
+                        if (continuous) {
+                            double l = j == 0 ? 0.0 : oldH->at(i, j - 1);
+                            double r = j == _h.cols() - 1 ? 0.0 : _h(i, j + 1);
+                            num   += _c(i,j) * ((l + r)  * ctminus1->at(i) + 
+                                                _h(i, j) * ctminus2->at(i));
+                            denom += _c(i, j) * _h(i, j) * ctplus->at(i);
+                        }
+                        //cout << "p = " << p << "; num(" << i << "," << j << "): " << num << endl;
+                        //cout << "p = " << p << "; denom(" << i << "," << j << "): " << denom << endl;
+                        if (denom < DIVISOR_FLOOR)
+                            denom = DIVISOR_FLOOR;
+                        hUpdate(i, j) += num / denom;
+                        //cout << "p = " << p << "; hUpdate(" << i << "," << j << ") += " << num / denom << endl;
+                    }
                 }
-                else if (sparsity == NormalizedL1Norm) {
-                    num   += _s(i, j) * _h(i, j) * csminus->at(i);
-                    denom += _s(i, j) * csplus->at(i);
-                } 
-                if (continuous) {
-                    double l = j == 0 ? 0.0 : oldH->at(i, j - 1);
-                    double r = j == _h.cols() - 1 ? 0.0 : _h(i, j + 1);
-                    num   += _c(i,j) * ((l + r)  * ctminus1->at(i) + 
-                                        _h(i, j) * ctminus2->at(i));
-                    denom += _c(i, j) * _h(i, j) * ctplus->at(i);
+            }
+
+            // Apply average update to H
+            //cout << "H update matrix: " << hUpdate << endl;
+            double updateNorm = _t;
+            for (unsigned int j = 0; j <= _h.cols() - _t; ++j) {
+                for (unsigned int i = 0; i < _h.rows(); ++i) {
+                    //cout << "H update (" << i << "," << j << "): " << hUpdate(i, j) << endl;
+                    _h(i, j) *= hUpdate(i, j) / updateNorm;
                 }
-                if (denom < DIVISOR_FLOOR)
-                    denom = DIVISOR_FLOOR;
-                //cout << num << "/" << denom << endl;
-                _h(i, j) *= num / denom;
+            }
+            for (unsigned int j = _h.cols() - _t + 1; j < _h.cols(); ++j) {
+                --updateNorm;
+                for (unsigned int i = 0; i < _h.rows(); ++i) {
+                    //cout << "H update (" << i << "," << j << "): " << hUpdate(i, j) << endl;
+                    _h(i, j) *= hUpdate(i, j) / updateNorm;
+                }
+                //cout << "scale column " << j << " by " << (1.0f / (double) updateNorm) << endl;
             }
         }
-
         //cout << "H after update: " << endl << _h << endl;
                 
         normalizeMatrices(_norm);

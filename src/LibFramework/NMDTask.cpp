@@ -176,6 +176,20 @@ void NMDTask::initialize()
         }
     }
     _deconvolver->setContinuity(c);
+
+    string hUpdateStr = BasicApplication::instance().config().
+        getString("blissart.separation.hUpdate", "average");
+    if (hUpdateStr == "gradient") {
+        _deconvolver->setHUpdateRule(nmf::Deconvolver::HUpdateGradient);
+        logger().debug("Using gradient-based H update.");
+    }
+    else if (hUpdateStr == "average") {
+        _deconvolver->setHUpdateRule(nmf::Deconvolver::HUpdateAverage);
+        logger().debug("Using averaged H update.");
+    }
+    else {
+        logger().warning("Invalid H update rule: " + hUpdateStr);
+    }
 }
 
 
