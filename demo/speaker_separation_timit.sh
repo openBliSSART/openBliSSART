@@ -13,4 +13,4 @@ sox dr1_m_cpm0_si564.wav dr1_m_cpm0_si564_norm.wav norm -0.1
 sox dr1_f_aks0_sa1.wav dr1_f_aks0_sa1_norm.wav norm -0.1
 sox -m -v 1 dr1_f_aks0_sa1_norm.wav dr1_m_cpm0_si564_norm.wav dr1_f_aks0_sa1_vs_dr1_m_cpm0_si564.wav
 # separate!
-./septool -v --init-files=dr1_f_aks0_nosa1_W_0.dat,dr1_m_cpm0_nosi564_W_0.dat -P --export-components=1..25 --export-components=26..50 -c50 --mix dr1_f_aks0_sa1_vs_dr1_m_cpm0_si564.wav
+./septool -v --init-files=dr1_f_aks0_nosa1_W.dat,dr1_m_cpm0_nosi564_W.dat -P --export-components=1..25 --export-components=26..50 -c50 --mix dr1_f_aks0_sa1_vs_dr1_m_cpm0_si564.wav
