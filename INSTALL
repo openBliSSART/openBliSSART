@@ -88,15 +88,17 @@ popular Linux distributions (Section 1.1), as well as Microsoft Windows
 1.1 Instructions for specific Linux distributions
 
 
-1.1.1 Ubuntu 10.04
+1.1.1 Ubuntu 12.04
 
-Installation under 10.04 is very easy, as this distribution has pre-built 
+Installation under 12.04 is very easy, as this distribution has pre-built 
 packages for all libraries required by openBliSSART.
 
 Make sure that the following packages are installed prior to the compilation of
 openBliSSART:
 
 g++
+autoconf
+libtool
 libpoco-dev
 libfftw3-dev
 libsdl-sound1.2-dev
