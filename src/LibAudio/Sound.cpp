@@ -22,7 +22,7 @@
 // openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-
+#include <algorithm>
 #include <blissart/audio/Sound.h>
 #include <blissart/audio/audio.h>
 #include <SDL/SDL_audio.h>

@@ -30,6 +30,8 @@
 
 #include <Poco/File.h>
 #include <Poco/Data/SQLite/Connector.h>
+#include <Poco/Data/Binding.h>
+#include <Poco/Data/BulkExtraction.h>
 #include <Poco/Util/Application.h>
 
 #include <iostream>
@@ -40,8 +42,10 @@
 
 using namespace std;
 using namespace Poco::Data;
+using namespace Poco::Data::Keywords;
 using Poco::FastMutex;
 using Poco::RWLock;
+
 
 
 namespace blissart {
@@ -429,8 +433,8 @@ void DatabaseSubsystem::insertProcessParams(Session& session, ProcessPtr process
             "INSERT INTO process_param (process_id, param_name, param_value) "
             "VALUES (?, ?, ?)",
             use(process->processID),
-            use(itr->first),
-            use(itr->second),
+					bind(itr->first),
+					bind(itr->second),
             now;
     }
 }
@@ -634,7 +638,7 @@ DataDescriptorPtr DatabaseSubsystem::getDataDescriptor(int processID,
     session <<
         "SELECT * FROM data_descriptor WHERE process_id = ? "
         "AND type = ? AND idx = ? AND idx2 = ?",
-        use(processID), use(type), use(index), use(index2),
+        use(processID), bind(type), use(index), use(index2),
         range(1, 1),
         into(result),
         now;
@@ -749,7 +753,7 @@ FeaturePtr DatabaseSubsystem::getFeature(int descrID, const string &featureName,
         "SELECT * FROM data_feature WHERE descr_id = ? AND feature_name = ? "
         "  AND feature_param1 = ? AND feature_param2 = ? "
         "  AND feature_param3 = ?",
-        use(descrID), use(featureName), 
+        use(descrID), bind(featureName), 
         use(param1), use(param2), use(param3),
         into(result),
         now;
@@ -872,7 +876,7 @@ updateClassificationObjects(const vector<ClassificationObjectPtr>& clObjs)
         debug_assert((*itr)->type != ClassificationObject::Invalid);
         session <<
             "UPDATE classification_object SET type = ? WHERE object_id = ?",
-            use ((*itr)->type), use((*itr)->objectID),
+					bind ((*itr)->type), bind((*itr)->objectID),
             now;
     }
 
@@ -885,12 +889,12 @@ updateClassificationObjects(const vector<ClassificationObjectPtr>& clObjs)
     {
         session <<
             "SELECT label_id FROM classification_object_label WHERE object_id = ?",
-            use((*itr)->objectID),
+					bind((*itr)->objectID),
             into(currentLabels[(*itr)->objectID]),
             now;
         session <<
             "SELECT descr_id FROM classification_object_data WHERE object_id = ?",
-            use((*itr)->objectID),
+					bind((*itr)->objectID),
             into(currentDescrIDs[(*itr)->objectID]),
             now;
     }
@@ -921,8 +925,8 @@ updateClassificationObjects(const vector<ClassificationObjectPtr>& clObjs)
             session <<
                 "DELETE FROM classification_object_label WHERE object_id = ? "
                 "AND label_id = ?",
-                use((*oItr)->objectID),
-                use(*lItr),
+                bind((*oItr)->objectID),
+                bind(*lItr),
                 now;
         }
         for (set<int>::const_iterator dItr = descrIDsToDelete.begin();
@@ -931,8 +935,8 @@ updateClassificationObjects(const vector<ClassificationObjectPtr>& clObjs)
             session <<
                 "DELETE FROM classification_object_data WHERE object_id = ? "
                 "AND descr_id = ?",
-                use((*oItr)->objectID),
-                use(*dItr),
+                bind((*oItr)->objectID),
+                bind(*dItr),
                 now;
         }
     }
@@ -963,8 +967,8 @@ updateClassificationObjects(const vector<ClassificationObjectPtr>& clObjs)
             session <<
                 "INSERT INTO classification_object_label (object_id, label_id) "
                 "VALUES (?, ?)",
-                use((*oItr)->objectID),
-                use(*lItr),
+                bind((*oItr)->objectID),
+                bind(*lItr),
                 now;
         }
         for (set<int>::const_iterator dItr = descrIDsToInsert.begin();
@@ -973,8 +977,8 @@ updateClassificationObjects(const vector<ClassificationObjectPtr>& clObjs)
             session <<
                 "INSERT INTO classification_object_data (object_id, descr_id) "
                 "VALUES (?, ?)",
-                use((*oItr)->objectID),
-                use(*dItr),
+                bind((*oItr)->objectID),
+                bind(*dItr),
                 now;
         }
     }
@@ -1077,9 +1081,9 @@ DatabaseSubsystem::getClassificationObjectsByFilename(const string& filename)
             << "WHERE (cof.input_file LIKE ?) "
             << "OR (cof.input_file LIKE '%/' || ?) "
             << "OR (cof.input_file LIKE '%\\' || ?)",
-            use(filename),
-            use(filename),
-            use(filename),
+			bind(filename),
+			bind(filename),
+			bind(filename),
             into(result),
             now;
     for (vector<ClassificationObjectPtr>::iterator it = result.begin();
@@ -1102,7 +1106,7 @@ void DatabaseSubsystem::insertResponseLabels(Session& session,
         session <<
             "INSERT INTO response_label (response_id, object_id, label_id) "
             "VALUES (?, ?, ?)",
-            use(response->responseID), use(itr->first), use(itr->second),
+            use(response->responseID), bind(itr->first), bind(itr->second),
             now;
     }
 }
@@ -1219,11 +1223,11 @@ DatabaseSubsystem::getClassificationObjectsAndLabelsForResponse(ResponsePtr r)
         ClassificationObjectPtr clo;
         LabelPtr label;
         session << "SELECT * FROM classification_object WHERE object_id = ?",
-                   use(it->first), into(clo), now;
+					bind(it->first), into(clo), now;
         getClassificationObjectDescrIDs(session, clo);
         getClassificationObjectLabelIDs(session, clo);
         session << "SELECT * FROM label where label_id = ?",
-                   use(it->second), into(label), now;
+                   bind(it->second), into(label), now;
         result.push_back(pair<ClassificationObjectPtr, LabelPtr>(clo, label));
     }
     session.commit();
@@ -1265,7 +1269,7 @@ DataSet DatabaseSubsystem::getDataSet(ResponsePtr response,
             "  SELECT descr_id FROM classification_object_data "
             "  WHERE object_id = ?"
             ")",
-            use(labelItr->first),
+            bind(labelItr->first),
             range(0, 1),
             into(ddType), into(featureName), 
             into(featureParam1), into(featureParam2), into(featureParam3), 
@@ -1437,7 +1441,7 @@ vector<LabelPtr> DatabaseSubsystem::getLabelsByText(const string& text)
     vector<LabelPtr> result;
     Session session = getSession();
     session << "SELECT * FROM label WHERE label_text = ?", 
-               use(text), into(result), now;
+               bind(text), into(result), now;
     return result;
 }
 

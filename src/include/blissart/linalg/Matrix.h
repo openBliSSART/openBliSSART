@@ -791,7 +791,7 @@ private:
 /**
  * @}
  */
-
+/*
 
 template<class T>
 T Matrix::expectedValue(const T& iv, void* info,
@@ -799,11 +799,11 @@ T Matrix::expectedValue(const T& iv, void* info,
 {
     T result = iv;
     const double f = 1.0 / _cols;
-    for (unsigned int i = 0; i < _cols; i++)
-        result += f * callback(this->nthColumn(i), info);
+		for (unsigned int i = 0; i < _cols; i++)     
+		  result += f * callback(this->nthColumn(i), info);
     return result;
 }
-
+*/
 
 //
 // Inlines
