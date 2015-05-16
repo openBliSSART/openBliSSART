@@ -135,7 +135,7 @@ void Sound::pbCallback(void *user, Uint8 *buf, int size)
         s->_pos += bytesToCopy / 2;
     }
     // Fill the possibly remaining space with silence.
-    if (bytesToCopy >= 0 && bytesToCopy < (size_t)size)
+    if (bytesToCopy < (size_t)size)
         memset(buf + bytesToCopy, s->_audioSpec->silence, size - bytesToCopy);
 }
 

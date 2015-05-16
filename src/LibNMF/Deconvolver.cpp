@@ -1064,7 +1064,7 @@ void Deconvolver::factorizeNMFEDIncomplete(unsigned int maxSteps, double eps,
     assert(_t == 1);
 
     // helper variables
-    double denom;
+//    double denom;
     Matrix& w = *(_w[0]); // for convenience
 
     Matrix hUpdateNum  (_h.rows(), _h.cols());

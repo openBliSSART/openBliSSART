@@ -501,10 +501,10 @@ void Matrix::multWithMatrix(const Matrix& other, Matrix* target,
         for (unsigned int row = 0; row < m; row++) {
 #       endif // ISEP_ROW_MAJOR
             unsigned int ri = row + rowOffset;
-            unsigned int ci = col + colOffset;
+ //           unsigned int ci = col + colOffset;
             unsigned int riTarget = row + rowOffsetTarget;
             unsigned int ciTarget = col + colOffsetTarget;
-            unsigned int riOther = row + rowOffsetOther;
+ //           unsigned int riOther = row + rowOffsetOther;
             unsigned int ciOther = col + colOffsetOther;
             (*target)(riTarget, ciTarget) = 0;
             for (unsigned int index = 0; index < k; index++) {
@@ -872,7 +872,7 @@ void Matrix::linearSolve(const Matrix& m, const ColVector& b, ColVector* target)
 
     // Solve LSE
     A.gaussElimination();
-    for (unsigned int y=A._rows-1; y>=0; y--) {
+    for (unsigned int y=A._rows-1; y>0; y--) {
         (*target)(y) = A(y,m._cols);
         for (unsigned int i=y+1; i<m._cols; i++) {
             (*target)(y) -= A(y,i) * target->at(i);
