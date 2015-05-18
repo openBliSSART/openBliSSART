@@ -341,10 +341,12 @@ public:
     {
         TypeHandler<int>::extract(pos++, response.responseID,
             defVal.responseID, pExtract);
-        TypeHandler<std::string>::extract(pos++, response.name,
-            defVal.name, pExtract);
-        TypeHandler<std::string>::extract(pos++, response.description,
-            defVal.description, pExtract);
+        if (response.name != "") {
+            TypeHandler<std::string>::extract(pos++, response.name, defVal.name, pExtract);
+        }
+        if (response.description != "") {
+            TypeHandler<std::string>::extract(pos++, response.description, defVal.description, pExtract);
+        }
     }
 };
 

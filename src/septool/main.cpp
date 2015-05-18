@@ -35,11 +35,6 @@
 
 #include <Poco/Util/HelpFormatter.h>
 #include <Poco/Util/RegExpValidator.h>
-#include <Poco/DateTimeFormatter.h>
-#include <Poco/NumberFormatter.h>
-#include <Poco/DateTime.h>
-#include <Poco/Mutex.h>
-#include <Poco/LogStream.h>
 
 #include <iostream>
 #include <iomanip>
@@ -49,14 +44,10 @@
 #include <blissart/linalg/GPUUtil.h>
 #endif
 
-
 using namespace std;
 using namespace blissart;
 using namespace blissart::audio;
 using namespace blissart::validators;
-using namespace Poco;
-using namespace Poco::Util;
-
 
 class SeparationTool : public ThreadedApplication
 {
@@ -145,17 +136,17 @@ protected:
     }
 
 
-    virtual void defineOptions(OptionSet &options)
+    virtual void defineOptions(Poco::Util::OptionSet &options)
     {
         BasicApplication::defineOptions(options);
 
         options.addOption(
-            Option("help", "h",
+            Poco::Util::Option("help", "h",
                    "Displays usage screen",
                    false));
 
         options.addOption(
-            Option("random-seed", "R",
+            Poco::Util::Option("random-seed", "R",
                    "Provide a random seed for initialization of the NMF "
                    "components. If this option is not given, the current "
                    "time is used.", 
@@ -163,173 +154,173 @@ protected:
             validator(new RangeValidator<int>(0)));
 
         options.addOption(
-            Option("scripted", "S",
+            Poco::Util::Option("scripted", "S",
                    "Run in scripted mode, i.e. the input files contain "
                    "list of sound files to process.",
                    false));
 
         options.addOption(
-            Option("volatile", "v",
+            Poco::Util::Option("volatile", "v",
                    "Run in volatile mode, i.e. do not write anything to the "
                    "database.",
                    false));
 
         options.addOption(
-            Option("relative-error", "E",
+            Poco::Util::Option("relative-error", "E",
                    "Displays the relative error for each file.",
                    false));
 
         options.addOption(
-            Option("window-function", "w",
+            Poco::Util::Option("window-function", "w",
                    "The window function for creating the spectrogram. "
                    "Must be one of \"hann\", \"hamming\", \"sqhann\" or "
                    "\"rectangle\". Default is \"sqhann\"",
                    false, "<function>", true)
-            .validator(new RegExpValidator("hann|hamming|sqhann|rectangle")));
+            .validator(new Poco::Util::RegExpValidator("hann|hamming|sqhann|rectangle")));
 
         options.addOption(
-            Option("overlap", "o",
+            Poco::Util::Option("overlap", "o",
                    "Overlap (must be in the interval [0,1)). Default is " +
-                   NumberFormatter::format(_overlap), false, "<number>",
+                   Poco::NumberFormatter::format(_overlap), false, "<number>",
                    true)
             .validator(new RangeValidator<double>(0, false, 1, true)));
 
         options.addOption(
-            Option("window-size", "s",
+            Poco::Util::Option("window-size", "s",
                    "Window size in milliseconds. Default is " +
-                   NumberFormatter::format(_windowSize),
+                   Poco::NumberFormatter::format(_windowSize),
                    false, "<number>", true)
             .validator(new RangeValidator<int>(1)));
 
         options.addOption(
-            Option("reduce-mids", "r",
+            Poco::Util::Option("reduce-mids", "r",
                    "Subtract the right from the left channel when converting "
                    "from stereo to mono.",
                    false));
 
         options.addOption(
-            Option("preemphasis", "k",
+            Poco::Util::Option("preemphasis", "k",
                    "Performs preemphasis with the given 0 <= k < 1.",
                    false, "<k>", true)
             .validator(new RangeValidator<double>(0.0, false, 1, true)));
 
         options.addOption(
-            Option("remove-dc", "d",
+            Poco::Util::Option("remove-dc", "d",
                    "Removes the DC component from each frame.",
                    false));
 
         options.addOption(
-            Option("zero-padding", "z",
+            Poco::Util::Option("zero-padding", "z",
                    "Performs zero-padding before FFT.",
                    false));
 
         options.addOption(
-            Option("method", "m",
+            Poco::Util::Option("method", "m",
                    "The method to be used for component separation. "
                    "Use \"none\" to only perform STFT. No other methods "
                    "except \"nmd\" can be used at the moment.",
                    false, "<method>", true)
-            .validator(new RegExpValidator("nmd|none")));
+            .validator(new Poco::Util::RegExpValidator("nmd|none")));
 
         options.addOption(
-            Option("cost-function", "f",
+            Poco::Util::Option("cost-function", "f",
                    "NMF cost function. Must be one of the following: "
                    "\"ed\", \"kl\", \"is\", "
                    "or \"edn\". "
                    "Default is \"kl\".",
                    false, "<name>", true)
-            .validator(new RegExpValidator("eds?|kl(c|s)?|edsn|is")));
+            .validator(new Poco::Util::RegExpValidator("eds?|kl(c|s)?|edsn|is")));
 
         options.addOption(
-            Option("sparsity", "y",
+            Poco::Util::Option("sparsity", "y",
                    "Sparsity weight for NMF cost function. ",
                    false, "<number>", true)
             .validator(new RangeValidator<double>(0.0)));
 
         options.addOption(
-            Option("continuity", "t",
+            Poco::Util::Option("continuity", "t",
                    "Continuity weight for NMF cost function. ",
                    false, "<number>", true)
             .validator(new RangeValidator<double>(0.0)));
 
         options.addOption(
-            Option("components", "c",
+            Poco::Util::Option("components", "c",
                    "The number of components. Default is " +
-                   NumberFormatter::format(_nrComponents),
+                   Poco::NumberFormatter::format(_nrComponents),
                    false, "<number>", true)
             .validator(new RangeValidator<int>(1)));
 
         options.addOption(
-            Option("spectra", "T",
+            Poco::Util::Option("spectra", "T",
                    "The number of spectra per component (for NMD). Default is " +
-                   NumberFormatter::format(_nrSpectra),
+                   Poco::NumberFormatter::format(_nrSpectra),
                    false, "<number>", true)
             .validator(new RangeValidator<int>(1)));
 
         options.addOption(
-            Option("init", "I",
+            Poco::Util::Option("init", "I",
                    "A range of classification objects for initialization "
                    "of the spectra.",
                    false, "<range>", true)
             .repeatable(true)
-            .validator(new RegExpValidator(
+            .validator(new Poco::Util::RegExpValidator(
                        "(\\d+(\\.\\.\\d+)?,)*\\d+(\\.\\.\\d+)?")));
 
         options.addOption(
-            Option("init-files", "",
+            Poco::Util::Option("init-files", "",
                    "A list of strings referring to matrix files with which "
                    "to initialize the spectra.",
                    false, "<file[,file,...]>", true)
                    .repeatable(true)
-                   .validator(new RegExpValidator("\\w+(,\\w+)*")));
+                   .validator(new Poco::Util::RegExpValidator("\\w+(,\\w+)*")));
 
         options.addOption(
-            Option("init-gains", "",
+            Poco::Util::Option("init-gains", "",
                    "A string referring to a matrix file with which "
                    "to initialize the gains (activations).",
                    false, "<file>", true));
 
         options.addOption(
-            Option("preserve", "P",
+            Poco::Util::Option("preserve", "P",
                    "Preserve initialization of the spectra during iteration.",
                    false));
 
         options.addOption(
-            Option("preserve-gains", "",
+            Poco::Util::Option("preserve-gains", "",
                    "Preserve initialization of the gains during iteration.",
                    false));
 
         options.addOption(
-            Option("generator", "g",
+            Poco::Util::Option("generator", "g",
                    "Sets the generator function for initialization of the "
                    "matrices (gaussian, uniform or unity). "
                    "Default is gaussian.",
                    false, "<func>", true)
-            .validator(new RegExpValidator("(gaussian|uniform|unity)")));
+            .validator(new Poco::Util::RegExpValidator("(gaussian|uniform|unity)")));
 
         options.addOption(
-            Option("precision", "e",
+            Poco::Util::Option("precision", "e",
                    "The desired precision (epsilon) of the result. If set to "
                    "zero, perform the maximum number of iteration steps "
-                   "anyway. Default is " + NumberFormatter::format(_epsilon),
+                   "anyway. Default is " + Poco::NumberFormatter::format(_epsilon),
                    false, "<number>", true)
             .validator(new RangeValidator<double>(0.0)));
 
         options.addOption(
-            Option("max-iter", "i",
+            Poco::Util::Option("max-iter", "i",
                    "The maximum number of iterations to perform. Default is " +
-                   NumberFormatter::format(_maxIter),
+                   Poco::NumberFormatter::format(_maxIter),
                    false, "<number>", true)
             .validator(new RangeValidator<int>(1)));
 
         options.addOption(
-            Option("classify", "l",
+            Poco::Util::Option("classify", "l",
                    "Classify the components using the specified response.",
                    false, "<responseID>", true)
             .validator(new RangeValidator<int>(1)));
 
         options.addOption(
-            Option("preset-label", "L",
+            Poco::Util::Option("preset-label", "L",
                    "Assigns the given class label to the components which "
                    "have been initialized using the -I option, instead of the "
                    "class label predicted by the classifier.",
@@ -337,43 +328,43 @@ protected:
             .validator(new RangeValidator<int>(1)));
 
         options.addOption(
-            Option("num-threads", "n",
+            Poco::Util::Option("num-threads", "n",
                    "The number of concurrent threads (max 16). Default is " +
-                   NumberFormatter::format(numThreads()),
+                   Poco::NumberFormatter::format(numThreads()),
                    false, "<number>", true)
             .validator(new RangeValidator<int>(1)));
 
         options.addOption(
-            Option("export-prefix", "",
+            Poco::Util::Option("export-prefix", "",
                    "The prefix to be used for export of the separated "
                    "components. Default is input file name without extension",
                    false, "<prefix>", true));
 
         options.addOption(
-            Option("export-components", "p",
+            Poco::Util::Option("export-components", "p",
                    "Export the separated components to WAV files. "
                    "If range is given, only use the given component indices "
                    "(starting from 1).",
                    false, "<range>", false)
             .repeatable(true)
-            .validator(new RegExpValidator(
+            .validator(new Poco::Util::RegExpValidator(
                        "(\\d+(\\.\\.\\d+)?,)*\\d+(\\.\\.\\d+)?")));
         
         options.addOption(
-            Option("mix", "M",
+            Poco::Util::Option("mix", "M",
                    "Mix the exported components into a single WAV file.",
                    false));
 
         options.addOption(
-            Option("export-matrices", "",
+            Poco::Util::Option("export-matrices", "",
                    "Export the separation matrices. Use \"V\" for the spectrogram, "
                    "\"W\" for spectra, "
                    "\"H\" for gains or \"WH\" for both (not the product!)",
                    false, "<name>", true)
-            .validator(new RegExpValidator("(V|W|H|WH)")));
+            .validator(new Poco::Util::RegExpValidator("(V|W|H|WH)")));
 
         options.addOption(
-            Option("phase-matrix", "X",
+            Poco::Util::Option("phase-matrix", "X",
                    "Binary file giving the phase matrix.",
                    false, "<name>", true));
     }
@@ -389,7 +380,7 @@ protected:
         }
         else if (name == "random-seed") {
             _haveRandomSeed = true;
-            _randomSeed = NumberParser::parse(value);
+            _randomSeed = Poco::NumberParser::parse(value);
         }
         else if (name == "scripted") {
             _scripted = true;
@@ -405,15 +396,15 @@ protected:
         }
         else if (name == "window-size") {
             config().setInt("blissart.fft.windowsize", 
-                            NumberParser::parse(value));
+                            Poco::NumberParser::parse(value));
         }
         else if (name == "overlap") {
             config().setDouble("blissart.fft.overlap", 
-                               NumberParser::parseFloat(value));
+                               Poco::NumberParser::parseFloat(value));
         }
         else if (name == "preemphasis") {
             config().setDouble("blissart.audio.preemphasis", 
-                               NumberParser::parseFloat(value));
+                               Poco::NumberParser::parseFloat(value));
         }
         else if (name == "cost-function") {
             if (value == "ed") {
@@ -431,18 +422,18 @@ protected:
             _cfName = nmf::Deconvolver::costFunctionName(_nmfCostFunction);
         }
         else if (name == "sparsity") {
-            _nmdSparsity = NumberParser::parseFloat(value);
+            _nmdSparsity = Poco::NumberParser::parseFloat(value);
             config().setDouble("blissart.separation.activationSparsity.weight",
                 _nmdSparsity);
         }
         else if (name == "continuity") {
-            _nmdContinuity = NumberParser::parseFloat(value);
+            _nmdContinuity = Poco::NumberParser::parseFloat(value);
         }
         else if (name == "components") {
-            _nrComponents = NumberParser::parse(value);
+            _nrComponents = Poco::NumberParser::parse(value);
         }
         else if (name == "spectra") {
-            _nrSpectra = NumberParser::parse(value);
+            _nrSpectra = Poco::NumberParser::parse(value);
         }
         else if (name == "init") {
             if (!value.empty()) {
@@ -481,20 +472,20 @@ protected:
             _matrixGenFunc = nmf::randomGeneratorForName(value);
         }
         else if (name == "precision") {
-            _epsilon = NumberParser::parseFloat(value);
+            _epsilon = Poco::NumberParser::parseFloat(value);
         }
         else if (name == "max-iter") {
-            _maxIter = NumberParser::parse(value);
+            _maxIter = Poco::NumberParser::parse(value);
         }
         else if (name == "classify") {
             _classify = true;
-            _clResponseID = NumberParser::parse(value);
+            _clResponseID = Poco::NumberParser::parse(value);
         }
         else if (name == "preset-label") {
-            _presetLabelID = NumberParser::parse(value);
+            _presetLabelID = Poco::NumberParser::parse(value);
         }
         else if (name == "num-threads") {
-            setNumThreads(NumberParser::parse(value));
+            setNumThreads(Poco::NumberParser::parse(value));
         }
         else if (name == "reduce-mids") {
             _reduceMids = true;
@@ -539,7 +530,7 @@ protected:
             else if (value == "none") 
                 _doSeparation = false;
             else
-                throw Poco::NotImplementedException("Unknown separation method.");
+							throw ; //("Unknown separation method.");
         }
     }
 
@@ -591,7 +582,7 @@ protected:
     virtual int main(const vector<string> &args)
     {
         if (_displayUsage || args.empty()) {
-            HelpFormatter formatter(this->options());
+					Poco::Util::HelpFormatter formatter(this->options());
             formatter.setUnixStyle(true);
             formatter.setAutoIndent();
             formatter.setUsage(this->commandName() +
@@ -605,11 +596,9 @@ protected:
 
 #ifdef HAVE_CUDA
         if (_doSeparation) {
-            Poco::LogStream ls(logger());
             // Display GPU memory usage.
             size_t free, total;
             cudaMemGetInfo(&free, &total);
-            ls.information() << "Free: " << free << " / total: " << total << endl;
             // Initialize CUBLAS.
             logger().information("Initializing CUBLAS.");
             blissart::linalg::GPUStart();
@@ -617,7 +606,7 @@ protected:
 #endif
 
         cout << "SepTool, "
-             << DateTimeFormatter::format(LocalDateTime(), "%Y/%m/%d %H:%M:%S")
+             << Poco::DateTimeFormatter::format(Poco::LocalDateTime(), "%Y/%m/%d %H:%M:%S")
              << endl << endl
              << setw(20) << "Method: ";
         if (_doSeparation) {
@@ -629,7 +618,7 @@ protected:
                     cout << "Non-Negative Matrix Deconvolution";
                 break;
             default:
-                throw Poco::NotImplementedException("Unknown separation method.");
+							throw 1; //Poco::NotImplementedException("Unknown separation method.");
             }
         }
         else {
@@ -749,7 +738,7 @@ protected:
                 newSepTask = nmdTask;
                 break;
             default:
-                throw Poco::NotImplementedException("Unhandled method type.");
+							throw 1; //Poco::NotImplementedException("Unhandled method type.");
             }
 
             newSepTask->setComputeRelativeError(_displayRelativeError);
@@ -774,9 +763,7 @@ protected:
                 {
                     objects.push_back(dbs.getClassificationObject(*itr));
                     if (objects.back().isNull()) {
-                        throw Poco::InvalidArgumentException(
-                            "No classification object found with ID " +
-                            Poco::NumberFormatter::format(*itr));
+											throw 1; //Poco::InvalidArgumentException("No classification object found with ID " +                           Poco::NumberFormatter::format(*itr));
                     }
                 }
                 newSepTask->setInitializationObjects(objects, _preserveInit);
@@ -853,10 +840,8 @@ protected:
             logger().information("Stopping CUBLAS.");
             blissart::linalg::GPUStop();
             // Display memory usage.
-            Poco::LogStream ls(logger());
             size_t free, total;
             cudaMemGetInfo(&free, &total);
-            ls.information() << "Free: " << free << " / total: " << total << endl;
         }
 #endif
 
@@ -924,7 +909,7 @@ private:
     ErrorMap                           _errorMap;
 
     // The following mutex is used to lock both _failedFilesNames and _tasksMap.
-    FastMutex                          _genMutex;
+	Poco::FastMutex                          _genMutex;
 };
 
 

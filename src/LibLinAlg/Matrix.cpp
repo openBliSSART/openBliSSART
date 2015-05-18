@@ -196,7 +196,7 @@ Matrix::Matrix(const std::string& fileName) :
 
     // Something went wrong.
     if (_data)
-        delete _data;
+        delete [] _data;
     std::string msg("Error while reading matrix data from file ");
     msg.append(fileName);
     throw std::runtime_error(msg);
