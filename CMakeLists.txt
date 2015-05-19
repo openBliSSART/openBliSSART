@@ -91,3 +91,33 @@ link_directories("/usr/local/lib")
 add_executable(septool ./src/septool/main.cpp)
 #set(link_flags "-L/usr/local/lib")
 target_link_libraries(septool bliss PocoFoundation PocoUtil PocoXML PocoData PocoSQLite SDLMain SDL SDL_sound fftw3)
+
+
+add_executable(testSuite
+	./src/Testsuite/BinaryReaderWriterTest.cpp
+	./src/Testsuite/CNMFTest.cpp
+	./src/Testsuite/DatabaseSubsystemTest.cpp
+	./src/Testsuite/FeatureExtractionTest.cpp
+	./src/Testsuite/FeatureSelectionTest.cpp
+	./src/Testsuite/HTKWriterTest.cpp
+#	./src/Testsuite/ICATest.cpp
+	./src/Testsuite/main.cpp
+	./src/Testsuite/MatrixTest.cpp
+	./src/Testsuite/MelFilterTest.cpp
+	./src/Testsuite/MFCCTest.cpp
+	./src/Testsuite/MinHeapTest.cpp
+	./src/Testsuite/MTrTest.cpp
+	./src/Testsuite/NMDTest.cpp
+	./src/Testsuite/NMFTest.cpp
+	./src/Testsuite/PCATest.cpp
+	./src/Testsuite/ScalingTest.cpp
+	./src/Testsuite/SNMFTest.cpp
+	./src/Testsuite/SpectralAnalysisTest.cpp
+	./src/Testsuite/StorageSubsystemTest.cpp
+	./src/Testsuite/SVMModelTest.cpp
+	./src/Testsuite/TaskDepsTest.cpp
+	./src/Testsuite/Testable.cpp
+	./src/Testsuite/VectorTest.cpp
+	./src/Testsuite/WaveTest.cpp
+	)
+target_link_libraries(testSuite PocoFoundation PocoUtil PocoXML PocoData PocoSQLite SDLMain SDL SDL_sound fftw3 bliss)
