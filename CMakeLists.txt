@@ -90,7 +90,7 @@ link_directories("/usr/local/lib")
 
 add_executable(septool ./src/septool/main.cpp)
 #set(link_flags "-L/usr/local/lib")
-target_link_libraries(septool bliss PocoFoundation PocoUtil PocoXML PocoData PocoSQLite SDLMain SDL SDL_sound fftw3)
+target_link_libraries(septool pthread bliss PocoFoundation PocoUtil PocoXML PocoData PocoSQLite SDLmain SDL SDL_sound fftw3)
 
 
 add_executable(testSuite
@@ -120,4 +120,4 @@ add_executable(testSuite
 	./src/Testsuite/VectorTest.cpp
 	./src/Testsuite/WaveTest.cpp
 	)
-target_link_libraries(testSuite PocoFoundation PocoUtil PocoXML PocoData PocoSQLite SDLMain SDL SDL_sound fftw3 bliss)
+target_link_libraries(testSuite pthread PocoFoundation PocoUtil PocoXML PocoData PocoSQLite SDLmain SDL SDL_sound fftw3 bliss)
