@@ -800,7 +800,7 @@ void Matrix::zero()
 unsigned int Matrix::gaussElimination(bool reducedRowEchelonForm)
 {
     unsigned int swappedRows = 0;
-
+    
     for (unsigned int i=0; i<_rows-1; i++) {
         // Spalten-Pivot-Suche
         unsigned int maxIndex = i;
@@ -824,7 +824,7 @@ unsigned int Matrix::gaussElimination(bool reducedRowEchelonForm)
             }
             swappedRows++;
         }
-
+        
         // Die unteren Eintraege der aktuellen Spalte nullieren
         const Elem pivot = this->at(i,i);
         for (unsigned int j=i+1; j<_rows; j++) {
@@ -872,7 +872,7 @@ void Matrix::linearSolve(const Matrix& m, const ColVector& b, ColVector* target)
 
     // Solve LSE
     A.gaussElimination();
-    for (unsigned int y=A._rows-1; y>0; y--) {
+    for (int y=A._rows-1; y>=0; y--) {
         (*target)(y) = A(y,m._cols);
         for (unsigned int i=y+1; i<m._cols; i++) {
             (*target)(y) -= A(y,i) * target->at(i);
