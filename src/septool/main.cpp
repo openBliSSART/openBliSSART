@@ -35,6 +35,8 @@
 
 #include <Poco/Util/HelpFormatter.h>
 #include <Poco/Util/RegExpValidator.h>
+#include <Poco/NumberFormatter.h>
+#include <Poco/DateTimeFormatter.h>
 
 #include <iostream>
 #include <iomanip>
