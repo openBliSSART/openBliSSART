@@ -114,7 +114,8 @@ AudioData* AudioObject::getAudioObject(ClassificationObjectPtr clo,
             throw Poco::InvalidArgumentException(
                 "Either the amplitude- or phase-matrix "
                 "are missing for this classification object!");
-            return false;
+            //return false;
+	    return nullptr;
         }
     }
 

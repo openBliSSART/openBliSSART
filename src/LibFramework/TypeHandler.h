@@ -25,8 +25,11 @@
 //
 // TypeHandlers allow use of objects as targets for Poco's "into" modifier.
 
+#ifndef BLISSART_TYPEHANDLER_INCLUDE
+#define BLISSART_TYPEHANDLER_INCLUDE 
 
-#include <Poco/Data/TypeHandler.h>
+
+//#include <Poco/Data/TypeHandler.h>
 
 #include <blissart/DataDescriptor.h>
 #include <blissart/Process.h>
@@ -455,3 +458,4 @@ public:
 
 
 } } // namespace Poco::Data
+#endif // BLISSART_TYPEHANDLER_INCLUDED
