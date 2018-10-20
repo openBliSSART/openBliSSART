@@ -1,3 +1,22 @@
+Modified to use Ubuntu 18.04, g++ 7.3 -std=c++11, poco-1.9.0-release, with
+cmake only.
+
+
+Current issues:
+
+src/LibFramework/DatabaseSubsystem.cpp
+
+and
+
+AudioData.cpp:(.text+0x1b18): undefined reference to `Sound_NewSampleFromFile'
+AudioData.cpp:(.text+0x1b35): undefined reference to `Sound_GetError'
+AudioData.cpp:(.text+0x1b62): undefined reference to `Sound_DecodeAll'
+AudioData.cpp:(.text+0x1b8f): undefined reference to `Sound_GetError'
+AudioData.cpp:(.text+0x1b9f): undefined reference to `Sound_FreeSample'
+AudioData.cpp:(.text+0x1c3c): undefined reference to `Sound_FreeSample'
+AudioData.cpp:(.text+0x1cef): undefined reference to `Sound_FreeSample'
+--------------------------------------------------------------------------
+
 openBliSSART is a C++ framework and toolbox that provides "Blind Source
 Separation for Audio Recognition Tasks". Its areas of application include
 instrument separation (e.g. extraction of drum tracks from popular music),
