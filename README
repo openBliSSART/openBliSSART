@@ -1,4 +1,4 @@
-Modified to use Ubuntu 18.04, g++ 7.3 -std=c++11, poco-1.9.0-release, with
+Modified to use Ubuntu 18.04, g++ 7.3 -std=c++11, using https://github.com/pocoproject/poco, with
 cmake only.
 
 

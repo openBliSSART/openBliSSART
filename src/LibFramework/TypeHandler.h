@@ -29,7 +29,7 @@
 #define BLISSART_TYPEHANDLER_INCLUDE 
 
 
-//#include <Poco/Data/TypeHandler.h>
+//#include <Poco/SQL/TypeHandler.h>
 
 #include <blissart/DataDescriptor.h>
 #include <blissart/Process.h>

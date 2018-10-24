@@ -42,7 +42,7 @@
 #include <Poco/Logger.h>
 #include <Poco/Mutex.h>
 #include <Poco/RWLock.h>
-#include <Poco/Data/SessionPool.h>
+#include <Poco/SQL/SessionPool.h>
 #include <Poco/Util/Subsystem.h>
 
 
@@ -423,13 +423,13 @@ protected:
     /**
      * Returns the id of the last inserted table row for the given session.
      */
-    int lastInsertID(Poco::Data::Session& session);
+    int lastInsertID(Poco::SQL::Session& session);
 
 
     /**
      * Returns a Session object from the SessionPool.
      */
-    inline Poco::Data::Session getSession();
+    inline Poco::SQL::Session getSession();
 
 
     /**
@@ -440,40 +440,40 @@ protected:
      */
 
 
-    void insertProcessParams(Poco::Data::Session& session,
+    void insertProcessParams(Poco::SQL::Session& session,
                              ProcessPtr process);
 
 
-    void getProcessParams(Poco::Data::Session &session, ProcessPtr process);
+    void getProcessParams(Poco::SQL::Session &session, ProcessPtr process);
 
 
-    void insertClassificationObjectDescrIDs(Poco::Data::Session& session,
+    void insertClassificationObjectDescrIDs(Poco::SQL::Session& session,
                                             ClassificationObjectPtr& clObj);
 
 
-    void insertClassificationObjectLabelIDs(Poco::Data::Session& session,
+    void insertClassificationObjectLabelIDs(Poco::SQL::Session& session,
                                             ClassificationObjectPtr& clObj);
 
 
-    void getClassificationObjectDescrIDs(Poco::Data::Session &session,
+    void getClassificationObjectDescrIDs(Poco::SQL::Session &session,
                                          ClassificationObjectPtr& clObj);
 
 
-    void getClassificationObjectLabelIDs(Poco::Data::Session &session,
+    void getClassificationObjectLabelIDs(Poco::SQL::Session &session,
                                          ClassificationObjectPtr& clObj);
 
 
-    void insertResponseLabels(Poco::Data::Session& session,
+    void insertResponseLabels(Poco::SQL::Session& session,
                               ResponsePtr& response);
 
 
-    void getResponseLabels(Poco::Data::Session& session, ResponsePtr& response);
+    void getResponseLabels(Poco::SQL::Session& session, ResponsePtr& response);
 
 
-    void saveFeature(Poco::Data::Session& session, FeaturePtr feature);
+    void saveFeature(Poco::SQL::Session& session, FeaturePtr feature);
 
 
-    void getAvailableFeatures(Poco::Data::Session& session,
+    void getAvailableFeatures(Poco::SQL::Session& session,
                               const std::map<int, int>& clObjMap,
                               FeatureSet& featureSet);
 
@@ -493,7 +493,7 @@ private:
 
 
     std::string              _dbFilename;
-    Poco::Data::SessionPool* _pPool;
+    Poco::SQL::SessionPool* _pPool;
     Poco::FastMutex          _poolLock;
     Poco::Logger&            _logger;
 };
@@ -509,7 +509,7 @@ private:
 //
 
 
-inline Poco::Data::Session DatabaseSubsystem::getSession()
+inline Poco::SQL::Session DatabaseSubsystem::getSession()
 {
     Poco::FastMutex::ScopedLock lock(_poolLock);
     poco_check_ptr(_pPool);

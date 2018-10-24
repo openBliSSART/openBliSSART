@@ -24,15 +24,14 @@
 
 
 //#include "TypeHandler.h"
-#include <Poco/Data/TypeHandler.h>
-
+#include <Poco/SQL/TypeHandler.h>
 #include <blissart/DatabaseSubsystem.h>
 #include <blissart/FeatureSet.h>
 
 #include <Poco/File.h>
-#include <Poco/Data/SQLite/Connector.h>
-//#include <Poco/Data/Binding.h>
-//#include <Poco/Data/BulkExtraction.h>
+#include <Poco/SQL/SQLite/Connector.h>
+//#include <Poco/SQL/Binding.h>
+//#include <Poco/SQL/BulkExtraction.h>
 #include <Poco/Util/Application.h>
 
 #include <iostream>
@@ -42,8 +41,8 @@
 
 
 using namespace std;
-using namespace Poco::Data;
-using namespace Poco::Data::Keywords;
+using namespace Poco::SQL;
+using namespace Poco::SQL::Keywords;
 using Poco::FastMutex;
 using Poco::RWLock;
 
@@ -77,7 +76,7 @@ void DatabaseSubsystem::connect(const std::string& dbFilename)
     _poolLock.lock();
     if (_pPool)
         delete _pPool;
-    _pPool = new Poco::Data::SessionPool("SQLite", dbFilename);
+    _pPool = new Poco::SQL::SessionPool("SQLite", dbFilename);
     _poolLock.unlock();
     _dbFilename = dbFilename;
     setup();
