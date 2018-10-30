@@ -23,14 +23,14 @@
 //
 
 
-//#include "TypeHandler.h"
-#include <Poco/SQL/TypeHandler.h>
+#include "TypeHandler.h"
+//#include <Poco/SQL/TypeHandler.h>
 #include <blissart/DatabaseSubsystem.h>
 #include <blissart/FeatureSet.h>
 
 #include <Poco/File.h>
 #include <Poco/SQL/SQLite/Connector.h>
-//#include <Poco/SQL/Binding.h>
+#include <Poco/SQL/Binding.h>
 //#include <Poco/SQL/BulkExtraction.h>
 #include <Poco/Util/Application.h>
 
