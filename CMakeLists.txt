@@ -91,7 +91,7 @@ link_directories("/usr/local/lib")
 add_executable(septool ./src/septool/main.cpp)
 #set(link_flags "-L/usr/local/lib" "-L/usr/lib/x86_64-link-gnu")
 set(link_flags "-L/usr/local/lib" )
-target_link_libraries(septool bliss PocoFoundation PocoUtil PocoXML PocoData PocoDataSQLite SDLmain SDL SDL_sound fftw3 pthread)
+target_link_libraries(septool bliss PocoFoundation PocoUtil PocoXML PocoSQL PocoSQLSQLite SDLmain SDL SDL_sound fftw3 pthread)
 
 find_package(Threads)
 add_executable(testSuite
@@ -121,4 +121,4 @@ add_executable(testSuite
 	./src/Testsuite/VectorTest.cpp
 	./src/Testsuite/WaveTest.cpp
 	)
-target_link_libraries(testSuite PocoFoundation PocoUtil PocoXML PocoData PocoDataSQLite SDLmain SDL SDL_sound fftw3 bliss ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(testSuite PocoFoundation PocoUtil PocoXML PocoSQL PocoSQLSQLite SDLmain SDL SDL_sound fftw3 bliss ${CMAKE_THREAD_LIBS_INIT})
