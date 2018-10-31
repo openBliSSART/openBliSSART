@@ -120,7 +120,7 @@ public:
 
 
     static void bind(std::size_t pos, const Poco::Timestamp& data,
-        AbstractBinder* pBinder,  AbstractBinder::Direction dir = 0)
+        AbstractBinder* pBinder,  AbstractBinder::Direction dir = AbstractBinder::Direction::Default)
     {
         TypeHandler<int>::bind(pos++, (int) data.epochTime(), pBinder, dir);
     }
@@ -162,7 +162,7 @@ public:
 
 
     static void bind(std::size_t pos, const DataDescriptor& data,
-        AbstractBinder* pBinder, AbstractBinder::Direction dir=0)
+        AbstractBinder* pBinder, AbstractBinder::Direction dir = AbstractBinder::Direction::Default)
     {
         TypeHandler<int>::bind(pos++, data.descrID, pBinder, dir);
         TypeHandler<int>::bind(pos++, data.processID, pBinder, dir);
@@ -221,7 +221,7 @@ public:
 
 
     static void bind(std::size_t pos, const Process& process,
-        AbstractBinder* pBinder,  AbstractBinder::Direction dir = 0)
+        AbstractBinder* pBinder,  AbstractBinder::Direction dir = AbstractBinder::Direction::Default)
     {
         TypeHandler<int>::bind(pos++, process.processID, pBinder, dir);
         TypeHandler<std::string>::bind(pos++, process.name, pBinder, dir);
@@ -276,7 +276,7 @@ public:
 
 
     static void bind(std::size_t pos, const Feature& feature,
-        AbstractBinder* pBinder, AbstractBinder::Direction dir = 0)
+        AbstractBinder* pBinder, AbstractBinder::Direction dir = AbstractBinder::Direction::Default)
     {
         TypeHandler<int>::bind(pos++, feature.descrID, pBinder, dir);
         TypeHandler<std::string>::bind(pos++, feature.name, pBinder, dir);
@@ -335,7 +335,7 @@ public:
 
 
     static void bind(std::size_t pos, const ClassificationObject& clObj,
-        AbstractBinder* pBinder,  AbstractBinder::Direction dir = 0)
+        AbstractBinder* pBinder,  AbstractBinder::Direction dir = AbstractBinder::Direction::Default)
     {
         TypeHandler<int>::bind(pos++, clObj.objectID, pBinder, dir);
         TypeHandler<int>::bind(pos++, clObj.type, pBinder, dir);
@@ -378,7 +378,7 @@ public:
 
 
     static void bind(std::size_t pos, const Response& response,
-        AbstractBinder* pBinder,  AbstractBinder::Direction dir = 0)
+        AbstractBinder* pBinder,  AbstractBinder::Direction dir = AbstractBinder::Direction::Default)
     {
         TypeHandler<int>::bind(pos++, response.responseID, pBinder, dir);
         TypeHandler<std::string>::bind(pos++, response.name, pBinder, dir);
@@ -426,7 +426,7 @@ public:
 
 
     static void bind(std::size_t pos, const Label& label,
-        AbstractBinder* pBinder,  AbstractBinder::Direction dir = 0)
+        AbstractBinder* pBinder, AbstractBinder::Direction dir = AbstractBinder::Direction::Default)
     {
         TypeHandler<int>::bind(pos++, label.labelID, pBinder, dir);
         TypeHandler<std::string>::bind(pos++, label.text, pBinder, dir);
