@@ -25,7 +25,7 @@
 #include <algorithm>
 #include <blissart/audio/Sound.h>
 #include <blissart/audio/audio.h>
-#include <SDL/SDL_audio.h>
+#include <SDL2/SDL_audio.h>
 #include <cassert>
 
 

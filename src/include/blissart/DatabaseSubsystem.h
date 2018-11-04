@@ -42,9 +42,16 @@
 #include <Poco/Logger.h>
 #include <Poco/Mutex.h>
 #include <Poco/RWLock.h>
+#include <Poco/SQL/Session.h>
+#include <Poco/SQL/Statement.h>
 #include <Poco/SQL/SessionPool.h>
 #include <Poco/Util/Subsystem.h>
+#include <Poco/SQL/SQLite/SQLite.h>
+#include <Poco/SQL/SQLite/Connector.h>
+#include <Poco/File.h>
+#include <Poco/Util/Application.h>
 
+using namespace Poco::SQL::SQLite;
 
 namespace blissart {
 
@@ -63,6 +70,7 @@ class FeatureSet;
 class LibFramework_API DatabaseSubsystem : public Poco::Util::Subsystem
 {
 public:
+
     /**
      * Default constructor. Registers the SQLite connector.
      */

@@ -9,7 +9,7 @@
 #define HAVE_ATEXIT 1
 
 /* Define to 1 if you have the <cblas.h> header file. */
-/* #undef HAVE_CBLAS_H */
+#define HAVE_CBLAS_H 1
 
 /* Define to 1 if you have CUDA installed and want to use it for extra-fast
    NMF. */
@@ -22,7 +22,7 @@
 #define HAVE_FLOAT_H 1
 
 /* Define to 1 if you have the `floor' function. */
-#define HAVE_FLOOR 1
+/* #undef HAVE_FLOOR */
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
@@ -37,14 +37,14 @@
 #define HAVE_MEMSET 1
 
 /* Define to 1 if you have the `pow' function. */
-#define HAVE_POW 1
+/* #undef HAVE_POW */
 
 /* Define to 1 if your system has a GNU libc compatible `realloc' function,
    and to 0 otherwise. */
 #define HAVE_REALLOC 1
 
 /* Define to 1 if you have the `sqrt' function. */
-#define HAVE_SQRT 1
+/* #undef HAVE_SQRT */
 
 /* Define to 1 if stdbool.h conforms to C99. */
 #define HAVE_STDBOOL_H 1

@@ -27,7 +27,7 @@
 #include <blissart/linalg/Matrix.h>
 #include <cassert>
 #include <cstdio>
-#include <SDL/SDL_sound.h>
+#include <SDL2/SDL_sound.h>
 #include "wave.h"
 
 

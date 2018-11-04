@@ -4,6 +4,12 @@
 #
 #-------------------------------------------------
 
+#QMAKE_CXX               = /path/to/custom/g++
+#QMAKE_LINK              = /path/to/custom/g++
+#QMAKE_LFLAGS            += -custom-link-flags-here
+#QMAKE_CC                = /path/to/custom/gcc
+#QMAKE_LINK_C            = /path/to/custom/gcc
+
 QT       -= core gui
 
 TARGET = openBlis
@@ -22,11 +28,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-INCLUDEPATH += ./src/include
-
+INCLUDEPATH = ./src/include
 INCLUDEPATH += /usr/local/include
 
-QMAKE_CXXFLAGS += -std=c++11 -fpic -Wall -Wextra -fpermissive \
+QMAKE_CXXFLAGS = -std=c++11 -fpic -Wall -Wextra -fpermissive \
 # -Woverloaded-virtual \
  -Wformat-nonliteral -Wformat-security -Winit-self -Wswitch-enum \
  -Wconversion -DNDEBUG -DBUILD_RELEASE \
@@ -232,7 +237,7 @@ QMAKE_CXXFLAGS += -std=c++11 -fpic -Wall -Wextra -Woverloaded-virtual \
 
 
 unix:LIBS += -L/usr/local/lib -lpthread -lPocoFoundation -lPocoUtil -lPocoXML -lPocoData \
-    -lPocoDataSQLite -lSDLmain -lSDL -lSDL_sound -lfftw3
+    -lPocoDataSQLite -lSDLmain -lSDL2 -lSDL2_sound -lfftw3
 
 unix {
     target.path = /usr/local/lib

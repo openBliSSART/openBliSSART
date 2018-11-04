@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 2.8.4)
 
 #set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules")
+include_directories (BEFORE "/usr/local/include")
+
+#include_directories(${CMAKE_SOURCE_DIR}/inc)
+#link_directories(${CMAKE_SOURCE_DIR}/lib)
+
 
 PROJECT(Bliss)
 
@@ -67,6 +72,7 @@ set(Bliss_SOURCES
 )
 
 include_directories(
+    /usr/local/include
     ${CMAKE_SOURCE_DIR}
     ./src/benchmark
     ./src/browser
@@ -82,16 +88,16 @@ include_directories(
     ./src/include/libsvm
     ./src/LibAudio
     ./src/LibFramework
-    /usr/local/include
+    /usr/include
 )
 
 add_library(bliss ${Bliss_SOURCES})
-link_directories("/usr/local/lib")
+link_directories("/usr/local/lib" "/usr/lib/x86_64-linux-gnu")
 
 add_executable(septool ./src/septool/main.cpp)
-#set(link_flags "-L/usr/local/lib" "-L/usr/lib/x86_64-link-gnu")
-set(link_flags "-L/usr/local/lib" )
-target_link_libraries(septool bliss PocoFoundation PocoUtil PocoXML PocoSQL PocoSQLSQLite SDLmain SDL SDL_sound fftw3 pthread)
+#set(link_flags "-L/usr/local/lib" "-L/usr/lib/x86_64-linux-gnu")
+#set(link_flags "-L/usr/local/lib" )
+target_link_libraries(septool bliss PocoFoundation PocoUtil PocoXML PocoSQL PocoSQLSQLite SDL2_sound SDL2main SDL2 fftw3 pthread)
 
 find_package(Threads)
 add_executable(testSuite
@@ -121,4 +127,4 @@ add_executable(testSuite
 	./src/Testsuite/VectorTest.cpp
 	./src/Testsuite/WaveTest.cpp
 	)
-target_link_libraries(testSuite PocoFoundation PocoUtil PocoXML PocoSQL PocoSQLSQLite SDLmain SDL SDL_sound fftw3 bliss ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(testSuite PocoFoundation PocoUtil PocoXML PocoSQL PocoSQLSQLite SDL2_sound SDL2main SDL2 fftw3 bliss ${CMAKE_THREAD_LIBS_INIT})

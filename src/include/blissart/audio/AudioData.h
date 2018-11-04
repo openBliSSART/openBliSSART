@@ -40,9 +40,9 @@
 // it has been defined before, we assume that the user knows what he's doing
 // and leave it untouched.
 #ifdef main
-#  include <SDL/SDL_sound.h>
+#  include <SDL2/SDL_sound.h>
 #else
-#  include <SDL/SDL_sound.h>
+#  include <SDL2/SDL_sound.h>
 #  undef main
 #endif
 
