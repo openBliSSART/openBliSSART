@@ -31,7 +31,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH = ./src/include
 INCLUDEPATH += /usr/local/include
 
-QMAKE_CXXFLAGS = -std=c++11 -fpic -Wall -Wextra -fpermissive \
+QMAKE_CXXFLAGS = -std=c++11 -fPIC -DPIC -O3 -MD -MT -MF -Wall -Wextra -fpermissive \
 # -Woverloaded-virtual \
  -Wformat-nonliteral -Wformat-security -Winit-self -Wswitch-enum \
  -Wconversion -DNDEBUG -DBUILD_RELEASE \
@@ -236,8 +236,8 @@ QMAKE_CXXFLAGS += -std=c++11 -fpic -Wall -Wextra -Woverloaded-virtual \
  -I/usr/local/include -pthread
 
 
-unix:LIBS += -L/usr/local/lib -lpthread -lPocoFoundation -lPocoUtil -lPocoXML -lPocoData \
-    -lPocoDataSQLite -lSDLmain -lSDL2 -lSDL2_sound -lfftw3
+unix:LIBS += -L/usr/local/lib -lpthread -lPocoFoundation -lPocoUtil -lPocoXML -lPocoSQL \
+    -lPocoSQLSQLite -lSDLmain -lSDL2 -lSDL2_sound -lfftw3
 
 unix {
     target.path = /usr/local/lib
@@ -264,7 +264,7 @@ SOURCES += \
         ./src/Testsuite/FeatureExtractionTest.cpp \
         ./src/Testsuite/FeatureSelectionTest.cpp \
         ./src/Testsuite/HTKWriterTest.cpp \
-#	./src/Testsuite/ICATest.cpp \
+        ./src/Testsuite/ICATest.cpp \
         ./src/Testsuite/main.cpp \
         ./src/Testsuite/MatrixTest.cpp \
         ./src/Testsuite/MelFilterTest.cpp \

@@ -25,7 +25,7 @@
 #ifndef __BLISSART_ICA_FASTICA_H__
 #define __BLISSART_ICA_FASTICA_H__
 
-
+#include <cmath>
 #include <common.h>
 
 

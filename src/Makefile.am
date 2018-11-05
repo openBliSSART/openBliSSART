@@ -23,7 +23,7 @@
 ##
 
 SUBDIRS = LibLinAlg \
-          LibAudio \
+	  LibAudio \
           LibFeature \
           LibICA \
           LibNMF \

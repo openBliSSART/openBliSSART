@@ -38,7 +38,6 @@ using namespace std;
 
 using namespace blissart::linalg;
 
-
 namespace blissart {
 
 namespace ica {
@@ -191,7 +190,7 @@ void FastICA::computeMixingMatrix(const unsigned int maxIterations)
             wt = w.transposed();
             info.w = &w;
             info.wt = &wt;
-            wn = _data->expectedValue<ColVector>(zeroVector,
+            wn = _data->expectedValue<blissart::linalg::ColVector>(zeroVector,
                                                  &info,
                                                  expValCallBack);
             wn.normalize();
