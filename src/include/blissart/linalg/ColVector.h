@@ -25,7 +25,6 @@
 #ifndef __BLISSART_LINALG_COLVECTOR_H__
 #define __BLISSART_LINALG_COLVECTOR_H__
 
-#include <blissart/linalg/ColVector.h>
 #include <blissart/linalg/common.h>
 #include <blissart/linalg/Vector.h>
 

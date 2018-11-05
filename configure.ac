@@ -23,7 +23,7 @@
 #
 
 AC_PREREQ(2.13)
-AC_INIT([openBliSSART], [1.2], [lehmanna@in.tum.de], [openBliSSART])
+AC_INIT([openBliSSART], [2.0], [lehmanna@in.tum.de], [openBliSSART])
 AC_CONFIG_SRCDIR([src/septool/main.cpp])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([acbuild])
@@ -63,7 +63,7 @@ AX_DETERMINE_FLOAT_TYPE
 
 # Checks for libraries.
 AX_CHECK_FFTW3(:, AC_ERROR([Need fftw3!]))
-AX_CHECK_POCO([yes], :, AC_ERROR([Need Poco Enterprise v1.3.6+!]))
+AX_CHECK_POCO([no], :, AC_ERROR([Need Poco Enterprise v1.3.6+!]))
 # TODO: Actually, Qt is only neccessary for the building the browser application.
 #       This should be taken into account as someone might only want to build the
 #       libraries and/or command-line tools.

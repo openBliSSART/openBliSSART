@@ -68,11 +68,11 @@ AC_DEFUN([AX_CHECK_POCO],
                 ], [], [NO_POCO=yes]
             )], 
            [dnl Enterprise.
-            LIBS="-lPocoFoundation -lPocoSQLite -lPocoData"
+            LIBS="-lPocoFoundation -lPocoSQLSQLite -lPocoSQL"
             AC_LINK_IFELSE(
                 [AC_LANG_PROGRAM(
                     [[
-                      #include <Poco/Data/SQLite/Utility.h>
+                      #include <Poco/SQL/SQLite/Utility.h>
                       #include <Poco/Foundation.h>
                     ]],
                     [[
