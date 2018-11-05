@@ -1,8 +1,17 @@
 Modified to use Ubuntu 18.04, g++ 7.3 -std=c++11, using https://github.com/pocoproject/poco, with
 cmake only.
 
+Using SDL2 and SDL2_sound.
+
+Modified `configure` and using 
+./bootstrap.sh
+./configure
+make
 
 Current issues:
+1. undefined reference to `blissart::ica::PCA::compute(blissart::linalg::Matrix*, unsigned int, bool)'
+
+2. cmake build does not work properly.  Issues arise mainly with:
 
 src/LibFramework/DatabaseSubsystem.cpp
 
