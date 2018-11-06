@@ -63,13 +63,13 @@ AX_DETERMINE_FLOAT_TYPE
 
 # Checks for libraries.
 AX_CHECK_FFTW3(:, AC_ERROR([Need fftw3!]))
-AX_CHECK_POCO([no], :, AC_ERROR([Need Poco Enterprise v1.3.6+!]))
+AX_CHECK_POCO([no], :, AC_ERROR([Need Poco Enterprise v2.0.0+!]))
 # TODO: Actually, Qt is only neccessary for the building the browser application.
 #       This should be taken into account as someone might only want to build the
 #       libraries and/or command-line tools.
-AX_CHECK_QT([4.4.2], :, AC_ERROR([Need Qt 4.4.2+!]))
-AX_CHECK_SDL([1.2.12], :, AC_ERROR([Need SDL 1.2.12+!]))
-AX_CHECK_SDL_SOUND(:, AC_ERROR([Need SDL_sound!]))
+AX_CHECK_QT([5.6.0], :, AC_ERROR([Need Qt 5.6.0+!]))
+AX_CHECK_SDL([2.0.0], :, AC_ERROR([Need SDL2 2.0.0+!]))
+AX_CHECK_SDL_SOUND(:, AC_ERROR([Need SDL2_sound!]))
 AX_CHECK_MATLAB
 #echo NO_MATLAB=$NO_MATLAB
 if test "$NO_MATLAB" == "yes"; then
