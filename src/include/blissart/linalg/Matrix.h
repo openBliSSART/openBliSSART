@@ -32,7 +32,8 @@
 #include <iomanip>
 #include <vector>
 #include <blissart/linalg/common.h>
-
+#include <blissart/linalg/ColVector.h>
+#include <blissart/linalg/RowVector.h>
 
 namespace blissart {
 

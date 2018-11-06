@@ -5,7 +5,14 @@ include_directories (BEFORE "/usr/local/include")
 
 #include_directories(${CMAKE_SOURCE_DIR}/inc)
 #link_directories(${CMAKE_SOURCE_DIR}/lib)
-
+SET(GCC_COVERAGE_COMPILE_FLAGS "-std=c++11 -fPIC -DPIC -O3 -MD -MT -MF -Wall -Wextra -fpermissive \
+ -Woverloaded-virtual \
+ -Wformat-nonliteral -Wformat-security -Winit-self -Wswitch-enum \
+ -Wconversion -DNDEBUG -DBUILD_RELEASE \
+ -I/usr/local/include -pthread")
+#SET(GCC_COVERAGE_LINK_FLAGS    "-lgcov")
+SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
+#SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}")
 
 PROJECT(Bliss)
 

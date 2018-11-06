@@ -162,9 +162,9 @@ void FastICA::performWhitening(bool isCentered)
 }
 
 
-ColVector FastICA::expValCallBack(const ColVector& cv, void* info)
+ColVector FastICA::expValCallBack(const ColVector& cv, void *info)
 {
-    struct info_t* i = (struct info_t*)info;
+    struct info_t* i = (struct info_t*) info;
     double t = tanh(*(i->wt) * cv);
     return cv * t - (1.0 - t * t) * *(i->w);
 }
@@ -190,7 +190,7 @@ void FastICA::computeMixingMatrix(const unsigned int maxIterations)
             wt = w.transposed();
             info.w = &w;
             info.wt = &wt;
-            wn = _data->expectedValue<blissart::linalg::ColVector>(zeroVector,
+            wn = _data->expectedValue<ColVector>(zeroVector,
                                                  &info,
                                                  expValCallBack);
             wn.normalize();
