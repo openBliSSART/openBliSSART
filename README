@@ -1,29 +1,30 @@
-Modified to use Ubuntu 18.04, g++ 7.3 -std=c++11, using https://github.com/pocoproject/poco, with
-cmake only.
+Modified to use Ubuntu 18.04, g++ 7.3 -std=c++11, using https://github.com/pocoproject/poco built with cmake, SDL2 and SDL2_sound, and Qt5.9.5.
 
-Using SDL2 and SDL2_sound.
+openBliSSART build uses the following steps:
 
-Modified `configure` and using 
+git clone https://github.com/sildeag/openBliSSART.git
+cd openBliSSART
 ./bootstrap.sh
 ./configure
 make
 
 Current issues:
-1. undefined reference to `blissart::ica::PCA::compute(blissart::linalg::Matrix*, unsigned int, bool)'
 
-2. cmake build does not work properly.  Issues arise mainly with:
+The above build is almost completed but only Poco2 development, SDL2, SDL2_sound, and Qt5.
 
-src/LibFramework/DatabaseSubsystem.cpp
+1.  /usr/bin/ld: warning: libPocoFoundation.so.80, needed by ../LibFramework/.libs/libFramework.so, may conflict with libPocoFoundation.so.50
 
-and
+2.  /usr/bin/ld: ../../build/release/ThreadedDialog.o: undefined reference to symbol '_ZN4Poco5Event8waitImplEl'
 
-AudioData.cpp:(.text+0x1b18): undefined reference to `Sound_NewSampleFromFile'
-AudioData.cpp:(.text+0x1b35): undefined reference to `Sound_GetError'
-AudioData.cpp:(.text+0x1b62): undefined reference to `Sound_DecodeAll'
-AudioData.cpp:(.text+0x1b8f): undefined reference to `Sound_GetError'
-AudioData.cpp:(.text+0x1b9f): undefined reference to `Sound_FreeSample'
-AudioData.cpp:(.text+0x1c3c): undefined reference to `Sound_FreeSample'
-AudioData.cpp:(.text+0x1cef): undefined reference to `Sound_FreeSample'
+3.  //usr/local/lib/libPocoFoundation.so.80: error adding symbols: DSO missing from command line
+
+Alternative build processes do not work.
+
+4.  openBlissart.pro project file has not been completed
+
+5.  CMakeLists.txt and cmake build has not been completely implemented
+
+
 --------------------------------------------------------------------------
 
 openBliSSART is a C++ framework and toolbox that provides "Blind Source
