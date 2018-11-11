@@ -12,17 +12,17 @@ Current issues:
 
 The above build is almost completed but only Poco2 development, SDL2, SDL2_sound, and Qt5.
 
-1.  /usr/bin/ld: warning: libPocoFoundation.so.80, needed by ../LibFramework/.libs/libFramework.so, may conflict with libPocoFoundation.so.50
+In `openBliSSART/src/browser/DataDescriptorItem.cpp`
 
-2.  /usr/bin/ld: ../../build/release/ThreadedDialog.o: undefined reference to symbol '_ZN4Poco5Event8waitImplEl'
+`vector<FeaturePtr> features = dbSubsystem().getFeatures(_ddesc->descrID);`
 
-3.  //usr/local/lib/libPocoFoundation.so.80: error adding symbols: DSO missing from command line
+generates a segmentation fault - not certain why but am investigating.
 
 Alternative build processes do not work.
 
-4.  openBlissart.pro project file has not been completed
+1.  openBlissart.pro project file as a subdirs project has not been completely implemented
 
-5.  CMakeLists.txt and cmake build has not been completely implemented
+2.  CMakeLists.txt and cmake build has not been completely implemented
 
 
 --------------------------------------------------------------------------
