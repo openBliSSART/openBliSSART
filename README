@@ -8,15 +8,74 @@ cd openBliSSART
 ./configure
 make
 
+Also I would draw your attention to the following from `INSTALL` files
+2.1.1.1 Shared Installation
+
+For this, we will be using the default prefix of /usr/local/blissart and install
+the software at this location. Then we will create a corresponding group and set
+the necessary access rights.
+
+.. `line removed as it continues from above`
+..
+$ sudo make install
+$ sudo groupadd blissart
+$ cd /usr/local/blissart
+$ sudo mkdir db etc storage
+$ sudo chown -R :blissart .
+$ sudo chmod -R g+w db etc storage
+
+What remains is adding the respective users to the group which e.g. can be done
+via
+
+$ sudo gpasswd -a <username> blissart
+
+You may have to re-login for the new permissions to take effect.
+
+
+2.1.1.2 User-Specific Installation
+
+Aside from the shared installation which requires superuser privileges,
+a user-specific installation is maybe easier to perform. It suffices to specify
+an installation prefix within the user's home directory.
+
+$ ./configure --prefix=${HOME}/blissart
+$ make
+$ make install
+
+
 Current issues:
 
-The above build is almost completed but only Poco2 development, SDL2, SDL2_sound, and Qt5.
+The above build is almost completed but only for Poco2 development, SDL2, SDL2_sound, and Qt5.
 
-In `openBliSSART/src/browser/DataDescriptorItem.cpp`
+![Screenshot from 2018-11-11 19-56-18](/home/gordon/Pictures/Screenshot from 2018-11-11 19-56-18.png)
 
-`vector<FeaturePtr> features = dbSubsystem().getFeatures(_ddesc->descrID);`
 
-generates a segmentation fault - not certain why but am investigating.
+
+
+
+![Screenshot from 2018-11-11 19-54-20](/home/gordon/Pictures/Screenshot from 2018-11-11 19-54-20.png)
+
+![Screenshot from 2018-11-11 19-54-00](/home/gordon/Pictures/Screenshot from 2018-11-11 19-54-00.png)
+
+![Screenshot from 2018-11-11 19-53-44](/home/gordon/Pictures/Screenshot from 2018-11-11 19-53-44.png)
+
+![Screenshot from 2018-11-11 19-53-00](/home/gordon/Pictures/Screenshot from 2018-11-11 19-53-00.png)
+
+![Screenshot from 2018-11-11 19-52-35](/home/gordon/Pictures/Screenshot from 2018-11-11 19-52-35.png)
+
+Issues:
+
+1.  In `openBliSSART/src/browser/DataDescriptorItem.cpp`
+
+   `vector<FeaturePtr> features = dbSubsystem().getFeatures(_ddesc->descrID);`
+
+   generates a segmentation fault - not certain why but am investigating.
+
+2.  `Gtk-Message: GtkDialog mapped without a transient parent.`
+
+   suggestion was `GtkWindow instead` when there is no parent.
+
+3. Not all .wav files import and .mp3 files do not work, I am investigating that.
 
 Alternative build processes do not work.
 
@@ -39,7 +98,7 @@ classification by Support Vector Machines (SVM) using common acoustic features
 from speech and music processing. For data set creation a Qt-based GUI is
 available. Furthermore, supervised NMF can be performed and used for audio
 feature extraction.
- 
+
 openBliSSART is fast: typical real-time factors are in the order of 0.1
 (Euclidean NMF) on a state-of-the-art desktop PC.
 
