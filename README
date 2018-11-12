@@ -48,9 +48,9 @@ Current issues:
 The above build is almost completed but only for Poco2 development, SDL2, SDL2_sound, and Qt5.
 
 ```
-![Image of initial `./browser` screen](https://github.com/sildeag/openBliSSART/screenshots/"Screenshot from 2018-11-11 19-54-20.png")
+![Image of initial `./browser` screen](https://github.com/sildeag/openBliSSART/screenshots/Screenshot_from_2018-11-11_19-54-20.png)
      
-![Image of `./browser` screen after `.wav` import](https://github.com/sildeag/openBliSSART/screenshots/"Screenshot from 2018-11-11 19-56-18.png")
+![Image of `./browser` screen after `.wav` import](https://github.com/sildeag/openBliSSART/screenshots/Screenshot_from_2018-11-11_19-56-18.png)
 ```
 
 
