@@ -25,8 +25,10 @@
 #ifndef __BLISSART_ICA_FASTICA_H__
 #define __BLISSART_ICA_FASTICA_H__
 
-
+#include <cmath>
 #include <common.h>
+#include <blissart/linalg/ColVector.h>
+#include <blissart/linalg/RowVector.h>
 
 
 namespace blissart {
@@ -164,8 +166,7 @@ private:
      * Static helper callback function for the neccessary expected value
      * computations during FastICA iteration.
      */
-    static linalg::ColVector expValCallBack(const linalg::ColVector& cv,
-                                            void* info);
+    static linalg::ColVector expValCallBack(const linalg::ColVector& cv, void *info);
 
 
     linalg::Matrix*     _data;

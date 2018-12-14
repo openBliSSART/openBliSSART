@@ -113,7 +113,7 @@ bool ICATest::performTest()
     // Construct a FastICA object from the mixed data and perform
     // the corresponding algorithm.
     cout << "Performing FastICA...";
-    SharedPtr<FastICA> f = FastICA::compute(&X, 2);
+    SharedPtr<FastICA> f = blissart::ica::FastICA::compute(&X, 2);
     cout << f->nrOfConvergenceErrors()
          << " convergence errors." << endl;
 

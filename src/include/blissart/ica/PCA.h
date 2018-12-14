@@ -67,7 +67,7 @@ public:
      * @return              a pointer to a PCA object holding information about
      *                      the basis change matrix, mean vector, etc.
      */
-    static PCA* compute(linalg::Matrix* data, unsigned int maxDim,
+    static PCA* compute(blissart::linalg::Matrix* data, unsigned int maxDim,
                         bool isCentered = false);
 
 

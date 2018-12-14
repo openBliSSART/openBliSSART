@@ -225,7 +225,7 @@ TargetedDeconvolver::getNrOfSpectra(ClassificationObjectPtr clObj)
         BasicApplication::instance().getSubsystem<DatabaseSubsystem>();
     vector<DataDescriptorPtr> dds = dbs.getDataDescriptors(clObj);
 
-    int result;
+    int result=0;
     if (clObj->type == ClassificationObject::NMDComponent) {
         ProcessPtr process = dbs.getProcess(clObj);
         result = process->spectra();

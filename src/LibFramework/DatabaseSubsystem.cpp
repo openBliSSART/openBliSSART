@@ -21,27 +21,66 @@
 // You should have received a copy of the GNU General Public License along with
 // openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 //
-
-
+/*
 #include "TypeHandler.h"
-
+//#include <Poco/SQL/TypeHandler.h>
 #include <blissart/DatabaseSubsystem.h>
 #include <blissart/FeatureSet.h>
 
 #include <Poco/File.h>
-#include <Poco/Data/SQLite/Connector.h>
+#include <Poco/SQL/Binding.h>
+#include <Poco/SQL/SQLite/Connector.h>
+#include <Poco/SQL/Statement.h>
+#include <Poco/SQL/Session.h>
+//#include <Poco/SQL/SessionPool.h>
+//#include <Poco/SQL/BulkExtraction.h>
 #include <Poco/Util/Application.h>
+//#include <Poco/SQL/SessionFactory.h>
 
+#include <vector>
 #include <iostream>
 #include <cassert>
 #include <algorithm>
 #include <iterator>
 
+//using namespace Poco;
+//using namespace Poco::Util;
+//using namespace Poco::SQL;
 
 using namespace std;
-using namespace Poco::Data;
+using namespace Poco::SQL::SQLite;
+using namespace Poco::SQL::Keywords;
+using namespace Poco::SQL;
+//using Poco::SQL::SQLite::Connector;
+//using Poco::SQL::Statement;
+using Poco::SQL::Session;
+using Poco::SQL::SessionPool;
+//using namespace Poco::SQL::Statement;
 using Poco::FastMutex;
 using Poco::RWLock;
+*/
+
+#include "TypeHandler.h"
+#include <blissart/DatabaseSubsystem.h>
+#include <blissart/FeatureSet.h>
+#include <iostream>
+#include <cassert>
+#include <algorithm>
+#include <iterator>
+#include <vector>
+
+using namespace std;
+//using namespace Poco::SQL;
+using namespace Poco::SQL::SQLite;
+using namespace Poco::SQL::Keywords;
+using namespace Poco::SQL;
+using Poco::SQL::Session;
+using Poco::SQL::SessionPool;
+using Poco::SQL::Statement;
+using Poco::SQL::Connector;
+using Poco::FastMutex;
+using Poco::RWLock;
+
 
 
 namespace blissart {
@@ -51,13 +90,18 @@ DatabaseSubsystem::DatabaseSubsystem() :
     _pPool(0),
     _logger(Poco::Logger::get("openBliSSART.DatabaseSubsystem"))
 {
-    SQLite::Connector::registerConnector();
+    //SQLiteConnectorRegistrator(); works
+    // register SQLite connector
+    Poco::SQL::SQLite::Connector::registerConnector();
+
 }
 
 
 DatabaseSubsystem::~DatabaseSubsystem()
 {
-    SQLite::Connector::unregisterConnector();
+    // constructor will be destroyed when it goes out of scope automatically
+
+    //Poco::SQL::SQLite::Connector::unregisterConnector();
 }
 
 
@@ -67,12 +111,12 @@ const char* DatabaseSubsystem::name() const
 }
 
 
-void DatabaseSubsystem::connect(const std::string& dbFilename)
+void DatabaseSubsystem::connect(const string& dbFilename)
 {
     _poolLock.lock();
     if (_pPool)
         delete _pPool;
-    _pPool = new Poco::Data::SessionPool("SQLite", dbFilename);
+    _pPool = new Poco::SQL::SessionPool("SQLite", dbFilename);
     _poolLock.unlock();
     _dbFilename = dbFilename;
     setup();
@@ -109,13 +153,12 @@ void DatabaseSubsystem::destroy()
     Poco::File(_dbFilename).remove();
 }
 
-
 void DatabaseSubsystem::setup()
 {
     RWLock::ScopedLock lock(_dbLock, true);
 
     _logger.debug("Creating tables and indices, if neccessary.");
-    Session session = getSession();
+    Poco::SQL::Session session = getSession();
     session.begin();
     session <<
         "CREATE TABLE IF NOT EXISTS process ("
@@ -316,7 +359,7 @@ void DatabaseSubsystem::setupTriggers()
     // Automatic trigger generation for foreign keys
 
     // Get a list of all tables.
-    vector<string> tables;
+    std::vector<string> tables;
     session << "SELECT tbl_name FROM sqlite_master WHERE type = 'table' AND "
             << "name <> 'sqlite_sequence'",
             into(tables), now;
@@ -326,14 +369,15 @@ void DatabaseSubsystem::setupTriggers()
     // children of each relation. See the SQLite documentation for further
     // explanations of the PRAGMA directive.
     map<string, string> parentDeletes, parentUpdates;
-    for (vector<string>::const_iterator it = tables.begin();
+    for (std::vector<string>::const_iterator it = tables.begin();
          it != tables.end(); ++it)
     {
-        vector<int> garbage1, garbage2;
-        vector<string> dest, from, to;
+        std::vector<int> garbage1, garbage2;
+        std::vector<string> dest, from, to;
         session << "PRAGMA foreign_key_list(" << *it << ")",
                    into(garbage1), into(garbage2),
-                   into(dest), into(from), into(to), now;
+                   into(dest), into(from),
+                   into(to), now;
 
         // Dropping is only neccessary when the tables' layout has changed.
         // Please do not delete the following lines, but leave them commented
@@ -426,11 +470,11 @@ void DatabaseSubsystem::insertProcessParams(Session& session, ProcessPtr process
          ++itr)
     {
         session <<
-            "INSERT INTO process_param (process_id, param_name, param_value) "
+            "INSERT into process_param (process_id, param_name, param_value) "
             "VALUES (?, ?, ?)",
-            use(process->processID),
-            use(itr->first),
-            use(itr->second),
+            useRef(process->processID),
+        useRef(itr->first),
+            useRef(itr->second),
             now;
     }
 }
@@ -443,12 +487,12 @@ void DatabaseSubsystem::createProcess(ProcessPtr process)
     Session session = getSession();
     session.begin();
     session <<
-        "INSERT INTO process (process_name, input_file, start_time, sample_freq) "
+        "INSERT into process (process_name, input_file, start_time, sample_freq) "
         "VALUES (?, ?, ?, ?)",
-        use(process->name),
-        use(process->inputFile),
-        use(process->startTime),
-        use(process->sampleFreq),
+        useRef(process->name),
+        useRef(process->inputFile),
+        useRef(process->startTime),
+        useRef(process->sampleFreq),
         now;
     process->processID = lastInsertID(session);
     insertProcessParams(session, process);
@@ -465,14 +509,14 @@ void DatabaseSubsystem::updateProcess(ProcessPtr process)
     session <<
         "UPDATE process SET process_name = ?, input_file = ?, start_time = ?, "
         "sample_freq = ?",
-        use(process->name),
-        use(process->inputFile),
-        use(process->startTime),
-        use(process->sampleFreq),
+        useRef(process->name),
+        useRef(process->inputFile),
+        useRef(process->startTime),
+        useRef(process->sampleFreq),
         now;
     session <<
         "DELETE FROM process_param WHERE process_id = ?",
-        use(process->processID),
+        useRef(process->processID),
         now;
     insertProcessParams(session, process);
     session.commit();
@@ -491,9 +535,9 @@ void DatabaseSubsystem::removeProcess(ProcessPtr process)
     session << "DELETE FROM classification_object WHERE object_id IN "
                "(SELECT object_id FROM classification_object_data WHERE descr_id IN "
                " (SELECT descr_id FROM data_descriptor WHERE process_id = ?))",
-               use(process->processID), now;
+               useRef(process->processID), now;
     session << "DELETE FROM process WHERE process_id = ?",
-               use(process->processID), now;
+               useRef(process->processID), now;
     session.commit();
 }
 
@@ -501,9 +545,10 @@ void DatabaseSubsystem::removeProcess(ProcessPtr process)
 void DatabaseSubsystem::getProcessParams(Session& session, ProcessPtr process)
 {
     string paramName, paramValue;
-    Statement stmt = (session <<
+    Poco::SQL::Statement stmt = (session <<
         "SELECT param_name, param_value FROM process_param WHERE process_id = ?",
-        use(process->processID), range(0, 1), into(paramName), into(paramValue));
+        useRef(process->processID), range(0, 1),
+                      into(paramName), into(paramValue));
     while (!stmt.done()) {
         if (stmt.execute() == 1) {
             process->parameters[paramName] = paramValue;
@@ -519,7 +564,7 @@ ProcessPtr DatabaseSubsystem::getProcess(int processID)
     ProcessPtr result;
     Session session = getSession();
     session << "SELECT * FROM process WHERE process_id = ?",
-               use(processID), into(result), now;
+               useRef(processID), into(result), now;
     if (!result.isNull())
         getProcessParams(session, result);
     return result;
@@ -538,21 +583,21 @@ ProcessPtr DatabaseSubsystem::getProcess(ClassificationObjectPtr clo)
                "  (SELECT descr_id FROM classification_object_data WHERE"
                "   object_id = ?)"
                "LIMIT 1",
-            use(clo->objectID), into(result), now;
+            useRef(clo->objectID), into(result), now;
     if (!result.isNull())
         getProcessParams(session, result);
     return result;
 }
 
 
-vector<ProcessPtr> DatabaseSubsystem::getProcesses()
+std::vector<ProcessPtr> DatabaseSubsystem::getProcesses()
 {
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<ProcessPtr> result;
+    std::vector<ProcessPtr> result;
     Session session = getSession();
     session << "SELECT * FROM process", into(result), now;
-    for (vector<ProcessPtr>::const_iterator it = result.begin();
+    for (std::vector<ProcessPtr>::const_iterator it = result.begin();
         it != result.end(); it++) {
         getProcessParams(session, *it);
     }
@@ -568,13 +613,13 @@ void DatabaseSubsystem::createDataDescriptor(DataDescriptorPtr data)
 
     Session session = getSession();
     session <<
-        "INSERT INTO data_descriptor (process_id, type, idx, idx2, available) "
+        "INSERT into data_descriptor (process_id, type, idx, idx2, available) "
         "VALUES (?, ?, ?, ?, ?)",
-        use(data->processID),
-        use(data->type),
-        use(data->index),
-        use(data->index2),
-        use(data->available),
+        useRef(data->processID),
+        useRef(data->type),
+        useRef(data->index),
+        useRef(data->index2),
+        useRef(data->available),
         now;
     data->descrID = lastInsertID(session);
 }
@@ -591,12 +636,12 @@ void DatabaseSubsystem::updateDataDescriptor(DataDescriptorPtr data)
         "UPDATE data_descriptor SET process_id = ?, type = ?, "
         "idx = ?, idx2 = ?, available = ? "
         "WHERE descr_id = ?",
-        use(data->processID),
-        use(data->type),
-        use(data->index),
-        use(data->index2),
-        use(data->available),
-        use(data->descrID),
+        useRef(data->processID),
+        useRef(data->type),
+        useRef(data->index),
+        useRef(data->index2),
+        useRef(data->available),
+        useRef(data->descrID),
         now;
 }
 
@@ -606,7 +651,7 @@ void DatabaseSubsystem::removeDataDescriptor(DataDescriptorPtr data)
     RWLock::ScopedLock lock(_dbLock, true);
 
     getSession() << "DELETE FROM data_descriptor WHERE descr_id = ?",
-                    use(data->descrID), now;
+                    useRef(data->descrID), now;
 }
 
 
@@ -618,7 +663,7 @@ DataDescriptorPtr DatabaseSubsystem::getDataDescriptor(int descrID)
     Session session = getSession();
     session <<
         "SELECT * FROM data_descriptor WHERE descr_id = ?",
-        use(descrID), into(result),
+        useRef(descrID), into(result),
         now;
     return result;
 }
@@ -634,7 +679,7 @@ DataDescriptorPtr DatabaseSubsystem::getDataDescriptor(int processID,
     session <<
         "SELECT * FROM data_descriptor WHERE process_id = ? "
         "AND type = ? AND idx = ? AND idx2 = ?",
-        use(processID), use(type), use(index), use(index2),
+        useRef(processID), useRef(type), useRef(index), useRef(index2),
         range(1, 1),
         into(result),
         now;
@@ -642,29 +687,29 @@ DataDescriptorPtr DatabaseSubsystem::getDataDescriptor(int processID,
 }
 
 
-vector<DataDescriptorPtr> DatabaseSubsystem::getDataDescriptors(int processID)
+std::vector<DataDescriptorPtr> DatabaseSubsystem::getDataDescriptors(int processID)
 {
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<DataDescriptorPtr> result;
+    std::vector<DataDescriptorPtr> result;
     getSession() <<
         "SELECT * FROM data_descriptor WHERE process_id = ? ",
-        use(processID), into(result),
+        useRef(processID), into(result),
         now;
     return result;
 }
 
 
-vector<DataDescriptorPtr> 
+std::vector<DataDescriptorPtr>
 DatabaseSubsystem::getDataDescriptors(ClassificationObjectPtr clo)
 {
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<DataDescriptorPtr> result;
+    std::vector<DataDescriptorPtr> result;
     getSession() <<
         "SELECT * FROM data_descriptor WHERE descr_id "
         "IN (SELECT descr_id FROM classification_object_data WHERE object_id = ?)",
-        use(clo->objectID), into(result),
+        useRef(clo->objectID), into(result),
         now;
     return result;
 }
@@ -677,12 +722,12 @@ void DatabaseSubsystem::saveFeature(Session& session, FeaturePtr feature)
         "INTO data_feature (descr_id, feature_name,"
         " feature_param1, feature_param2, feature_param3, feature_value) "
         "VALUES (?, ?, ?, ?, ?, ?)",
-        use(feature->descrID),
-        use(feature->name),
-        use(feature->params[0]),
-        use(feature->params[1]),
-        use(feature->params[2]),
-        use(feature->value),
+        useRef(feature->descrID),
+        useRef(feature->name),
+        useRef(feature->params[0]),
+        useRef(feature->params[1]),
+        useRef(feature->params[2]),
+        useRef(feature->value),
         now;
 }
 
@@ -696,14 +741,14 @@ void DatabaseSubsystem::saveFeature(FeaturePtr feature)
 }
 
 
-void DatabaseSubsystem::saveFeatures(const vector<FeaturePtr>& features)
+void DatabaseSubsystem::saveFeatures(const std::vector<FeaturePtr>& features)
 {
     RWLock::ScopedLock lock(_dbLock, true);
 
     Session session = getSession();
     session.begin();
 
-    for (vector<FeaturePtr>::const_iterator itr = features.begin();
+    for (std::vector<FeaturePtr>::const_iterator itr = features.begin();
         itr != features.end(); ++itr)
     {
         saveFeature(session, *itr);
@@ -720,11 +765,11 @@ void DatabaseSubsystem::removeFeature(FeaturePtr feature)
     getSession() << "DELETE FROM data_feature WHERE descr_id = ? "
                     "AND feature_name = ? AND feature_param1 = ? "
                     "AND feature_param2 = ? AND feature_param3 = ? ",
-                    use(feature->descrID),
-                    use(feature->name),
-                    use(feature->params[0]),
-                    use(feature->params[1]),
-                    use(feature->params[2]),
+                    useRef(feature->descrID),
+                    useRef(feature->name),
+                    useRef(feature->params[0]),
+                    useRef(feature->params[1]),
+                    useRef(feature->params[2]),
                     now;
 }
 
@@ -734,7 +779,7 @@ void DatabaseSubsystem::removeFeatures(int descrID)
     RWLock::ScopedLock lock(_dbLock, true);
 
     getSession() << "DELETE FROM data_feature WHERE descr_id = ?",
-                    use(descrID), now;
+                    useRef(descrID), now;
 }
 
 
@@ -749,22 +794,22 @@ FeaturePtr DatabaseSubsystem::getFeature(int descrID, const string &featureName,
         "SELECT * FROM data_feature WHERE descr_id = ? AND feature_name = ? "
         "  AND feature_param1 = ? AND feature_param2 = ? "
         "  AND feature_param3 = ?",
-        use(descrID), use(featureName), 
-        use(param1), use(param2), use(param3),
+        useRef(descrID), useRef(featureName),
+        useRef(param1), useRef(param2), useRef(param3),
         into(result),
         now;
     return result;
 }
 
 
-vector<FeaturePtr> DatabaseSubsystem::getFeatures(int descrID)
+std::vector<FeaturePtr> DatabaseSubsystem::getFeatures(int descrID)
 {
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<FeaturePtr> result;
+    std::vector<FeaturePtr> result;
     getSession() <<
         "SELECT * FROM data_feature WHERE descr_id = ?",
-        use(descrID),
+        useRef(descrID),
         into(result),
         now;
     return result;
@@ -781,9 +826,9 @@ void DatabaseSubsystem::insertClassificationObjectDescrIDs(Session& session,
     {
         descrID = *itr;
         session <<
-            "INSERT INTO classification_object_data (object_id, descr_id) "
+            "INSERT into classification_object_data (object_id, descr_id) "
             "VALUES (?, ?)",
-            use(clObj->objectID), use(descrID),
+            useRef(clObj->objectID), useRef(descrID),
             now;
     }
 }
@@ -799,9 +844,9 @@ void DatabaseSubsystem::insertClassificationObjectLabelIDs(Session& session,
     {
         labelID = *itr;
         session <<
-            "INSERT INTO classification_object_label (object_id, label_id) "
+            "INSERT into classification_object_label (object_id, label_id) "
             "VALUES (?, ?)",
-            use(clObj->objectID), use(labelID),
+            useRef(clObj->objectID), useRef(labelID),
             now;
     }
 }
@@ -812,7 +857,7 @@ void DatabaseSubsystem::getClassificationObjectDescrIDs(Session& session,
 {
     session << "SELECT descr_id FROM classification_object_data "
                "WHERE object_id = ?",
-               use(clObj->objectID),
+               useRef(clObj->objectID),
                into(clObj->descrIDs),
                now;
 }
@@ -823,7 +868,7 @@ void DatabaseSubsystem::getClassificationObjectLabelIDs(Session& session,
 {
     session << "SELECT label_id FROM classification_object_label "
                "WHERE object_id = ?",
-               use(clObj->objectID),
+               useRef(clObj->objectID),
                into(clObj->labelIDs),
                now;
 }
@@ -838,8 +883,8 @@ void DatabaseSubsystem::createClassificationObject(ClassificationObjectPtr clObj
     Session session = getSession();
     session.begin();
     session <<
-        "INSERT INTO classification_object (type) VALUES (?)",
-        use (clObj->type),
+        "INSERT into classification_object (type) VALUES (?)",
+        useRef(clObj->type),
         now;
     clObj->objectID = lastInsertID(session);
     insertClassificationObjectDescrIDs(session, clObj);
@@ -850,14 +895,14 @@ void DatabaseSubsystem::createClassificationObject(ClassificationObjectPtr clObj
 
 void DatabaseSubsystem::updateClassificationObject(ClassificationObjectPtr clObj)
 {
-    vector<ClassificationObjectPtr> clObjVec(1);
+    std::vector<ClassificationObjectPtr> clObjVec(1);
     clObjVec[0] = clObj;
     updateClassificationObjects(clObjVec);
 }
 
 
 void DatabaseSubsystem::
-updateClassificationObjects(const vector<ClassificationObjectPtr>& clObjs)
+updateClassificationObjects(const std::vector<ClassificationObjectPtr>& clObjs)
 {
     RWLock::ScopedLock lock(_dbLock, true);
 
@@ -866,13 +911,13 @@ updateClassificationObjects(const vector<ClassificationObjectPtr>& clObjs)
 
     // UPDATE
     // Update basic information (currently only type)
-    for (vector<ClassificationObjectPtr>::const_iterator itr = clObjs.begin();
+    for (std::vector<ClassificationObjectPtr>::const_iterator itr = clObjs.begin();
         itr != clObjs.end(); ++itr)
     {
         debug_assert((*itr)->type != ClassificationObject::Invalid);
         session <<
             "UPDATE classification_object SET type = ? WHERE object_id = ?",
-            use ((*itr)->type), use((*itr)->objectID),
+                    useRef((*itr)->type), useRef((*itr)->objectID),
             now;
     }
 
@@ -880,17 +925,17 @@ updateClassificationObjects(const vector<ClassificationObjectPtr>& clObjs)
     // Determine current labels and data descriptor IDs of the objects
     map<int, set<int> > currentLabels;
     map<int, set<int> > currentDescrIDs;
-    for (vector<ClassificationObjectPtr>::const_iterator itr = clObjs.begin();
+    for (std::vector<ClassificationObjectPtr>::const_iterator itr = clObjs.begin();
         itr != clObjs.end(); ++itr)
     {
         session <<
             "SELECT label_id FROM classification_object_label WHERE object_id = ?",
-            use((*itr)->objectID),
+                    useRef((*itr)->objectID),
             into(currentLabels[(*itr)->objectID]),
             now;
         session <<
             "SELECT descr_id FROM classification_object_data WHERE object_id = ?",
-            use((*itr)->objectID),
+                    useRef((*itr)->objectID),
             into(currentDescrIDs[(*itr)->objectID]),
             now;
     }
@@ -898,7 +943,7 @@ updateClassificationObjects(const vector<ClassificationObjectPtr>& clObjs)
     // DELETE
     // Delete labels in set currentLabels - newLabels and
     // data descriptor IDs in set currentDescrIDs - newDescrIDs
-    for (vector<ClassificationObjectPtr>::const_iterator oItr = clObjs.begin();
+    for (std::vector<ClassificationObjectPtr>::const_iterator oItr = clObjs.begin();
         oItr != clObjs.end(); ++oItr)
     {
         set<int> labelsToDelete;
@@ -921,8 +966,8 @@ updateClassificationObjects(const vector<ClassificationObjectPtr>& clObjs)
             session <<
                 "DELETE FROM classification_object_label WHERE object_id = ? "
                 "AND label_id = ?",
-                use((*oItr)->objectID),
-                use(*lItr),
+                useRef((*oItr)->objectID),
+                useRef(*lItr),
                 now;
         }
         for (set<int>::const_iterator dItr = descrIDsToDelete.begin();
@@ -931,8 +976,8 @@ updateClassificationObjects(const vector<ClassificationObjectPtr>& clObjs)
             session <<
                 "DELETE FROM classification_object_data WHERE object_id = ? "
                 "AND descr_id = ?",
-                use((*oItr)->objectID),
-                use(*dItr),
+                useRef((*oItr)->objectID),
+                useRef(*dItr),
                 now;
         }
     }
@@ -940,7 +985,7 @@ updateClassificationObjects(const vector<ClassificationObjectPtr>& clObjs)
     // INSERT
     // Insert labels in set newLabels - currentLabels
     // and data descriptor IDs in set newDescrIDs - currentDescrIDs
-    for (vector<ClassificationObjectPtr>::const_iterator oItr = clObjs.begin();
+    for (std::vector<ClassificationObjectPtr>::const_iterator oItr = clObjs.begin();
         oItr != clObjs.end(); ++oItr)
     {
         set<int> labelsToInsert;
@@ -961,20 +1006,20 @@ updateClassificationObjects(const vector<ClassificationObjectPtr>& clObjs)
             lItr != labelsToInsert.end(); ++lItr)
         {
             session <<
-                "INSERT INTO classification_object_label (object_id, label_id) "
+                "INSERT into classification_object_label (object_id, label_id) "
                 "VALUES (?, ?)",
-                use((*oItr)->objectID),
-                use(*lItr),
+                useRef((*oItr)->objectID),
+                useRef(*lItr),
                 now;
         }
         for (set<int>::const_iterator dItr = descrIDsToInsert.begin();
             dItr != descrIDsToInsert.end(); ++dItr)
         {
             session <<
-                "INSERT INTO classification_object_data (object_id, descr_id) "
+                "INSERT into classification_object_data (object_id, descr_id) "
                 "VALUES (?, ?)",
-                use((*oItr)->objectID),
-                use(*dItr),
+                useRef((*oItr)->objectID),
+                useRef(*dItr),
                 now;
         }
     }
@@ -988,7 +1033,7 @@ void DatabaseSubsystem::removeClassificationObject(ClassificationObjectPtr clObj
     RWLock::ScopedLock lock(_dbLock, true);
 
     getSession() << "DELETE FROM classification_object WHERE object_id = ?",
-                    use(clObj->objectID), now;
+                    useRef(clObj->objectID), now;
 }
 
 
@@ -1001,7 +1046,7 @@ ClassificationObjectPtr DatabaseSubsystem::getClassificationObject(int clObjID)
     session.begin();
     session <<
         "SELECT * FROM classification_object WHERE object_id = ?",
-        use(clObjID), into(result),
+        useRef(clObjID), into(result),
         now;
     if (!result.isNull()) {
         getClassificationObjectDescrIDs(session, result);
@@ -1012,18 +1057,18 @@ ClassificationObjectPtr DatabaseSubsystem::getClassificationObject(int clObjID)
 }
 
 
-vector<ClassificationObjectPtr>
+std::vector<ClassificationObjectPtr>
 DatabaseSubsystem::getClassificationObjects()
 {
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<ClassificationObjectPtr> result;
+    std::vector<ClassificationObjectPtr> result;
     Session session = getSession();
     session.begin();
     session << "SELECT * FROM classification_object",
                into(result),
                now;
-    for (vector<ClassificationObjectPtr>::iterator it = result.begin();
+    for (std::vector<ClassificationObjectPtr>::iterator it = result.begin();
         it != result.end(); ++it)
     {
         getClassificationObjectDescrIDs(session, *it);
@@ -1034,21 +1079,21 @@ DatabaseSubsystem::getClassificationObjects()
 }
 
 
-vector<ClassificationObjectPtr>
+std::vector<ClassificationObjectPtr>
 DatabaseSubsystem::getClassificationObjectsForLabel(int labelID)
 {
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<ClassificationObjectPtr> result;
+    std::vector<ClassificationObjectPtr> result;
     Session session = getSession();
     session.begin();
     session << "SELECT * FROM classification_object WHERE object_id "
                "IN (SELECT object_id FROM classification_object_label WHERE "
                "label_id = ?)",
-               use(labelID),
+               useRef(labelID),
                into(result),
                now;
-    for (vector<ClassificationObjectPtr>::iterator it = result.begin();
+    for (std::vector<ClassificationObjectPtr>::iterator it = result.begin();
         it != result.end(); ++it)
     {
         getClassificationObjectDescrIDs(session, *it);
@@ -1059,7 +1104,7 @@ DatabaseSubsystem::getClassificationObjectsForLabel(int labelID)
 }
 
 
-vector<ClassificationObjectPtr>
+std::vector<ClassificationObjectPtr>
 DatabaseSubsystem::getClassificationObjectsByFilename(const string& filename)
 {
     // FIXME: This is erroneous if files with the same name exist in 
@@ -1068,7 +1113,7 @@ DatabaseSubsystem::getClassificationObjectsByFilename(const string& filename)
 
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<ClassificationObjectPtr> result;
+    std::vector<ClassificationObjectPtr> result;
     Session session = getSession();
     session.begin();
     session << "SELECT cof.object_id, co.type "
@@ -1077,12 +1122,12 @@ DatabaseSubsystem::getClassificationObjectsByFilename(const string& filename)
             << "WHERE (cof.input_file LIKE ?) "
             << "OR (cof.input_file LIKE '%/' || ?) "
             << "OR (cof.input_file LIKE '%\\' || ?)",
-            use(filename),
-            use(filename),
-            use(filename),
+            useRef(filename),
+            useRef(filename),
+            useRef(filename),
             into(result),
             now;
-    for (vector<ClassificationObjectPtr>::iterator it = result.begin();
+    for (std::vector<ClassificationObjectPtr>::iterator it = result.begin();
         it != result.end(); ++it)
     {
         getClassificationObjectDescrIDs(session, *it);
@@ -1100,9 +1145,9 @@ void DatabaseSubsystem::insertResponseLabels(Session& session,
          itr != response->labels.end(); ++itr)
     {
         session <<
-            "INSERT INTO response_label (response_id, object_id, label_id) "
+            "INSERT into response_label (response_id, object_id, label_id) "
             "VALUES (?, ?, ?)",
-            use(response->responseID), use(itr->first), use(itr->second),
+            useRef(response->responseID), useRef(itr->first), useRef(itr->second),
             now;
     }
 }
@@ -1115,8 +1160,8 @@ void DatabaseSubsystem::createResponse(ResponsePtr response)
     Session session = getSession();
     session.begin();
     session <<
-        "INSERT INTO response (name, description) VALUES (?, ?)",
-        use(response->name), use(response->description),
+        "INSERT into response (name, description) VALUES (?, ?)",
+        useRef(response->name), useRef(response->description),
         now;
     response->responseID = lastInsertID(session);
     insertResponseLabels(session, response);
@@ -1132,12 +1177,12 @@ void DatabaseSubsystem::updateResponse(ResponsePtr response)
     session.begin();
     session <<
         "UPDATE response SET name = ?, description = ? WHERE response_id = ?",
-        use(response->name), use(response->description),
-        use(response->responseID),
+        useRef(response->name), useRef(response->description),
+        useRef(response->responseID),
         now;
     session <<
         "DELETE FROM response_label WHERE response_id = ?",
-        use(response->responseID),
+        useRef(response->responseID),
         now;
     insertResponseLabels(session, response);
     session.commit();
@@ -1149,7 +1194,7 @@ void DatabaseSubsystem::removeResponse(ResponsePtr response)
     RWLock::ScopedLock lock(_dbLock, true);
 
     getSession() << "DELETE FROM response WHERE response_id = ?",
-                    use(response->responseID), now;
+                    useRef(response->responseID), now;
 }
 
 
@@ -1158,9 +1203,9 @@ void DatabaseSubsystem::getResponseLabels(Session& session,
 {
     int objectID;
     int labelID;
-    Statement stmt = (session <<
+    Poco::SQL::Statement stmt = (session <<
         "SELECT object_id, label_id FROM response_label WHERE response_id = ?",
-        use(response->responseID), range(0, 1), into(objectID), into(labelID));
+        useRef(response->responseID), range(0, 1), into(objectID), into(labelID));
     while (!stmt.done()) {
         if (stmt.execute() == 1)
             response->labels[objectID] = labelID;
@@ -1177,7 +1222,7 @@ ResponsePtr DatabaseSubsystem::getResponse(int responseID)
     session.begin();
     session <<
         "SELECT * FROM response WHERE response_id = ?",
-        use(responseID),
+        useRef(responseID),
         into(result),
         now;
     if (!result.isNull()) {
@@ -1188,15 +1233,15 @@ ResponsePtr DatabaseSubsystem::getResponse(int responseID)
 }
 
 
-vector<ResponsePtr> DatabaseSubsystem::getResponses()
+std::vector<ResponsePtr> DatabaseSubsystem::getResponses()
 {
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<ResponsePtr> result;
+    std::vector<ResponsePtr> result;
     Session session = getSession();
     session.begin();
     session << "SELECT * FROM response", into(result), now;
-    for (vector<ResponsePtr>::iterator itr = result.begin();
+    for (std::vector<ResponsePtr>::iterator itr = result.begin();
         itr != result.end(); ++itr)
     {
         getResponseLabels(session, *itr);
@@ -1206,12 +1251,12 @@ vector<ResponsePtr> DatabaseSubsystem::getResponses()
 }
 
 
-vector<pair<ClassificationObjectPtr, LabelPtr> >
+std::vector<pair<ClassificationObjectPtr, LabelPtr> >
 DatabaseSubsystem::getClassificationObjectsAndLabelsForResponse(ResponsePtr r)
 {
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<pair<ClassificationObjectPtr, LabelPtr> > result;
+    std::vector<pair<ClassificationObjectPtr, LabelPtr> > result;
     Session session = getSession();
     session.begin();
     for (map<int, int>::const_iterator it = r->labels.begin();
@@ -1219,11 +1264,11 @@ DatabaseSubsystem::getClassificationObjectsAndLabelsForResponse(ResponsePtr r)
         ClassificationObjectPtr clo;
         LabelPtr label;
         session << "SELECT * FROM classification_object WHERE object_id = ?",
-                   use(it->first), into(clo), now;
+                    useRef(it->first), into(clo), now;
         getClassificationObjectDescrIDs(session, clo);
         getClassificationObjectLabelIDs(session, clo);
         session << "SELECT * FROM label where label_id = ?",
-                   use(it->second), into(label), now;
+                   useRef(it->second), into(label), now;
         result.push_back(pair<ClassificationObjectPtr, LabelPtr>(clo, label));
     }
     session.commit();
@@ -1255,7 +1300,7 @@ DataSet DatabaseSubsystem::getDataSet(ResponsePtr response,
         point.objectID = labelItr->first;
         point.classLabel = labelItr->second;
 
-        Statement stmt = (session <<
+        Poco::SQL::Statement stmt = (session <<
             "SELECT data_descriptor.type, data_feature.feature_name, "
             "  data_feature.feature_param1, data_feature.feature_param2, "
             "  data_feature.feature_param3, data_feature.feature_value "
@@ -1265,10 +1310,10 @@ DataSet DatabaseSubsystem::getDataSet(ResponsePtr response,
             "  SELECT descr_id FROM classification_object_data "
             "  WHERE object_id = ?"
             ")",
-            use(labelItr->first),
+            useRef(labelItr->first),
             range(0, 1),
-            into(ddType), into(featureName), 
-            into(featureParam1), into(featureParam2), into(featureParam3), 
+            into(ddType), into(featureName),
+            into(featureParam1), into(featureParam2), into(featureParam3),
             into(featureValue)
         );
 
@@ -1337,7 +1382,7 @@ void DatabaseSubsystem::getAvailableFeatures(Session& session,
         clObjIDs << itr->first;
     }
 
-    Statement stmt = (session <<
+    Poco::SQL::Statement stmt = (session <<
         "SELECT DISTINCT "
         "  data_descriptor.type, data_feature.feature_name, "
         "  data_feature.feature_param1, data_feature.feature_param2, "
@@ -1349,7 +1394,7 @@ void DatabaseSubsystem::getAvailableFeatures(Session& session,
         << clObjIDs.str()
         << "))",
         range(0, 1),
-        into(ddType), into(featureName), into(featureParam1), 
+        into(ddType), into(featureName), into(featureParam1),
         into(featureParam2), into(featureParam3));
 
     while (!stmt.done()) {
@@ -1376,8 +1421,8 @@ void DatabaseSubsystem::createLabel(LabelPtr label)
 
     Session session = getSession();
     session <<
-        "INSERT INTO label (label_text) VALUES (?)",
-        use(label->text),
+        "INSERT into label (label_text) VALUES (?)",
+        useRef(label->text),
         now;
     label->labelID = lastInsertID(session);
 }
@@ -1390,7 +1435,7 @@ void DatabaseSubsystem::updateLabel(LabelPtr label)
     Session session = getSession();
     session <<
         "UPDATE label SET label_text = ? WHERE label_id = ?",
-        use(label->text), use(label->labelID),
+        useRef(label->text), useRef(label->labelID),
         now;
 }
 
@@ -1400,7 +1445,7 @@ void DatabaseSubsystem::removeLabel(LabelPtr label)
     RWLock::ScopedLock lock(_dbLock, true);
 
     getSession() << "DELETE FROM label WHERE label_id = ?",
-                    use(label->labelID), now;
+                    useRef(label->labelID), now;
 }
 
 
@@ -1412,45 +1457,45 @@ LabelPtr DatabaseSubsystem::getLabel(int labelID)
     Session session = getSession();
     session <<
         "SELECT * FROM label WHERE label_id = ?",
-        use(labelID),
+        useRef(labelID),
         into(result),
         now;
     return result;
 }
 
 
-vector<LabelPtr> DatabaseSubsystem::getLabels()
+std::vector<LabelPtr> DatabaseSubsystem::getLabels()
 {
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<LabelPtr> result;
+    std::vector<LabelPtr> result;
     Session session = getSession();
     session << "SELECT * FROM label", into(result), now;
     return result;
 }
 
 
-vector<LabelPtr> DatabaseSubsystem::getLabelsByText(const string& text)
+std::vector<LabelPtr> DatabaseSubsystem::getLabelsByText(const string& text)
 {
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<LabelPtr> result;
+    std::vector<LabelPtr> result;
     Session session = getSession();
     session << "SELECT * FROM label WHERE label_text = ?", 
-               use(text), into(result), now;
+               useRef(text), into(result), now;
     return result;
 }
 
 
-vector<LabelPtr> DatabaseSubsystem::getLabelsForResponse(blissart::ResponsePtr r)
+std::vector<LabelPtr> DatabaseSubsystem::getLabelsForResponse(blissart::ResponsePtr r)
 {
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<LabelPtr> result;
+    std::vector<LabelPtr> result;
     Session session = getSession();
     session << "SELECT * FROM label WHERE label_id "
                "IN (SELECT label_id FROM response_label WHERE response_id = ?)",
-               use(r->responseID), into(result), now;
+               useRef(r->responseID), into(result), now;
     return result;
 }
 

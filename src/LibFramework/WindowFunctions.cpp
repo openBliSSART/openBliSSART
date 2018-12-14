@@ -53,7 +53,7 @@ double HammingFunction(unsigned int index, unsigned int count)
 
 double RectangleFunction(unsigned int index, unsigned int count)
 {
-    if (index < 0 || index >= count) return 0.0;
+    if (index >= count) return 0.0;
     else return 1.0;
 }
 

@@ -35,13 +35,13 @@ AC_DEFUN([AX_CHECK_SDL],
     ) dnl AC_ARG_WITH
 
     if test -n "$SDL_PREFIX"; then
-        SDL_CONFIG=$SDL_PREFIX/bin/sdl-config
+        SDL_CONFIG=$SDL_PREFIX/bin/sdl2-config
     else
         dnl The user didn't provide a prefix, so we have to look for sdl-config.
-        AC_PATH_PROG(SDL_CONFIG, sdl-config, no)
+        AC_PATH_PROG(SDL_CONFIG, sdl2-config, no)
     fi
 
-    AC_MSG_CHECKING([for SDL >= $1])
+    AC_MSG_CHECKING([for SDL2 >= $1])
     if test "$SDL_CONFIG" = "no" ; then
         NO_SDL=yes
     else

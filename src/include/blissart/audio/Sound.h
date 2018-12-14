@@ -33,9 +33,9 @@
 // Get rid of SDL's "main" macro if it hasn't been defined beforehand.  For a
 // more detailed description why this is done see AudioData.h.
 #ifdef main
-#  include <SDL/SDL_stdinc.h>
+#  include <SDL2/SDL_stdinc.h>
 #else
-#  include <SDL/SDL_stdinc.h>
+#  include <SDL2/SDL_stdinc.h>
 #  undef main
 #endif
 

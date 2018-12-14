@@ -52,7 +52,7 @@ bool WaveTest::performTest()
         {
             const std::string testFileName = "test_1.wav";
             cout << "Reading '" << _filename << "' (all channels) ... ";
-            auto_ptr<AudioData> adata = auto_ptr<AudioData>(AudioData::fromFile(_filename));
+            unique_ptr<AudioData> adata = unique_ptr<AudioData>(AudioData::fromFile(_filename));
             cout << "ok." << endl
                  << "Saving '" << testFileName << "'... ";
             if (!WaveEncoder::saveAsWav(*adata, testFileName)) {
@@ -66,7 +66,7 @@ bool WaveTest::performTest()
         {
             const std::string testFileName = "test_2.wav";
             cout << "Reading '" << _filename << "' (mono) ... ";
-            auto_ptr<AudioData> adata = auto_ptr<AudioData>(AudioData::fromFile(_filename));
+            unique_ptr<AudioData> adata = unique_ptr<AudioData>(AudioData::fromFile(_filename));
             cout << "ok." << endl
                  << "Saving '" << testFileName << "'... ";
             if (!WaveEncoder::saveAsWav(*adata, testFileName)) {
@@ -80,16 +80,16 @@ bool WaveTest::performTest()
         {
             const std::string testFileName = "test_3.wav";
             cout << "Reading '" << _filename << "' (mono) ... ";
-            auto_ptr<AudioData> adata = auto_ptr<AudioData>(AudioData::fromFile(_filename));
+            unique_ptr<AudioData> adata = unique_ptr<AudioData>(AudioData::fromFile(_filename));
             cout << "ok." << endl;
             cout << "Transformation ... ";
             pair<Matrix*, Matrix*> sp = adata->computeSpectrogram(HammingFunction,
                 25, 0.6, 0);
-            auto_ptr<Matrix> amplSp(sp.first);
-            auto_ptr<Matrix> phaseSp(sp.second);
+            unique_ptr<Matrix> amplSp(sp.first);
+            unique_ptr<Matrix> phaseSp(sp.second);
             cout << "ok." << endl;
             cout << "Backtransformation ... ";
-            auto_ptr<AudioData> adataRec(AudioData::fromSpectrogram(
+            unique_ptr<AudioData> adataRec(AudioData::fromSpectrogram(
                 *amplSp, *phaseSp, HammingFunction, 25, 0.6, adata->sampleRate()));
             cout << "ok." << endl
                  << "Saving '" << testFileName << "'...";

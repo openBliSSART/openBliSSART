@@ -21,6 +21,7 @@
 # You should have received a copy of the GNU General Public License along with
 # openBliSSART.  If not, see <http:#www.gnu.org/licenses/>.
 #
+QT += core widgets
 
 CONFIG += qt resources thread
 
@@ -125,7 +126,7 @@ unix {
             -L../LibAudio/.libs -lAudio \
             -L../LibNMF/.libs -lNMF \
             -L../LibFramework/.libs -lFramework \
-            -lPocoFoundation -lPocoData -lPocoUtil -lPocoXML -lPocoSQLite
+            -lPocoFoundation -lPocoSQL -lPocoUtil -lPocoXML -lPocoSQLSQLite
 }
 
 win32 {
