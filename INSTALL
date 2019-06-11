@@ -35,7 +35,17 @@ In case of installation problems or application crashes, please consult this
 section.
 
 
-0. Installation for the Impatient Linux User
+0.1. (Simplest Way) Running with Docker
+
+If you would like to run this application with Docker, simply download the Dockerfile from the root of this project and run the following:
+
+$ docker built -t blissart .
+$ docker run -it blissart
+$ ls
+
+You won't be able to run the browser GUI, but you will be able to use the CLI included with blissart. 
+
+0.2. Installation for the Impatient Linux User
 
 Given that you have recent versions of FFTW3, SDL, SDL_sound, Poco, Qt, and
 ATLAS (and the corresponding "developer" packages, or whatever your
