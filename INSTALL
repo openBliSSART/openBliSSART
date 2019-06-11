@@ -39,7 +39,7 @@ section.
 
 If you would like to run this application with Docker, simply download the Dockerfile from the root of this project and run the following:
 
-$ docker built -t blissart .
+$ docker build -t blissart .
 $ docker run -it blissart
 $ ls
 
