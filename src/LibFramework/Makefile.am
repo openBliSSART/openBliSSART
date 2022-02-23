@@ -28,7 +28,7 @@ libFramework_la_LIBADD = $(top_srcdir)/src/LibLinAlg/libLinAlg.la \
                          $(top_srcdir)/src/LibFeature/libFeature.la \
                          $(top_srcdir)/src/LibAudio/libAudio.la \
                          $(top_srcdir)/src/LibNMF/libNMF.la \
-                         @POCO_LDFLAGS@ -lPocoData -lPocoFoundation -lPocoSQLSQLite
+                         @POCO_LDFLAGS@ -lPocoData -lPocoFoundation -lPocoSQLite
 
 libFramework_la_CPPFLAGS = -I../include @POCO_CPPFLAGS@ @CUDA_CPPFLAGS@
 

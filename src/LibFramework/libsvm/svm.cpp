@@ -81,7 +81,7 @@ void info_flush()
 	fflush(stdout);
 }
 #else
-void info(const char *fmt,...) {}
+void info(char *fmt,...) {}
 void info_flush() {}
 #endif
 

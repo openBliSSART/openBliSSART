@@ -114,12 +114,12 @@ AudioData* AudioObject::getAudioObject(ClassificationObjectPtr clo,
             throw Poco::InvalidArgumentException(
                 "Either the amplitude- or phase-matrix "
                 "are missing for this classification object!");
-            //return false;
-	    return nullptr;
+            return (AudioData*) false;
         }
     }
 
     // NMFComponent | NMDComponent
+
     else if (clo->type == ClassificationObject::NMDComponent)
     {
         // Iterate over all data descriptors in order to get the spectrum- and

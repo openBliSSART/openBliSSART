@@ -51,7 +51,7 @@ bool PCATest::performTest()
     cout << "---" << endl
          << "Matrix M:" << endl << M;
 
-    unique_ptr<PCA> p(PCA::compute(&M, 2, false));
+    auto_ptr<PCA> p(PCA::compute(&M, 2, false));
 
     // Mean vector
     cout << "Mean vector: " << p->expectedValue() << endl;

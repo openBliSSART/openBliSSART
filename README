@@ -1,4 +1,4 @@
-Modified to use Ubuntu 18.04, g++ 7.3 -std=c++11, using https://github.com/pocoproject/poco built with cmake, SDL2 and SDL2_sound, and Qt5.9.5.
+Modified to use Ubuntu 21.10 using https://github.com/pocoproject/poco built with cmake, SDL2 and SDL2_sound.
 
 openBliSSART build uses the following steps:
 

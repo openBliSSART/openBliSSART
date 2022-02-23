@@ -32,7 +32,7 @@ testsuite_LDADD = $(top_srcdir)/src/LibAudio/libAudio.la \
                   $(top_srcdir)/src/LibFeature/libFeature.la \
                   $(top_srcdir)/src/LibICA/libICA.la \
                   $(top_srcdir)/src/LibNMF/libNMF.la \
-                  @POCO_LDFLAGS@ -lPocoFoundation -lPocoSQL -lPocoSQLSQLite -lPocoUtil -lPocoXML -lSDL2 -L/usr/lib/x84_64-linux-gnu -lfftw3  -lpthread
+                  @POCO_LDFLAGS@ -lPocoFoundation -lPocoUtil -lPocoXML
 
 testsuite_SOURCES = BinaryReaderWriterTest.cpp \
 					BinaryReaderWriterTest.h \

@@ -30,7 +30,7 @@ fextool_LDADD = $(top_srcdir)/src/LibFeature/libFeature.la \
                 $(top_srcdir)/src/LibLinAlg/libLinAlg.la \
                 $(top_srcdir)/src/LibFramework/libFramework.la \
                 @POCO_LDFLAGS@ -lPocoFoundation -lPocoUtil \
-                -lPocoXML -lPocoSQLSQLite -lfftw3
+                -lPocoXML -lPocoSQLite -lfftw3
 
 fextool_SOURCES = main.cpp
 

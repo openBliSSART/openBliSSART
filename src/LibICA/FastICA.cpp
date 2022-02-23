@@ -38,6 +38,7 @@ using namespace std;
 
 using namespace blissart::linalg;
 
+
 namespace blissart {
 
 namespace ica {
@@ -162,9 +163,9 @@ void FastICA::performWhitening(bool isCentered)
 }
 
 
-ColVector FastICA::expValCallBack(const ColVector& cv, void *info)
+ColVector FastICA::expValCallBack(const ColVector& cv, void* info)
 {
-    struct info_t* i = (struct info_t*) info;
+    struct info_t* i = (struct info_t*)info;
     double t = tanh(*(i->wt) * cv);
     return cv * t - (1.0 - t * t) * *(i->w);
 }

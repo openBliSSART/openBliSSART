@@ -80,8 +80,8 @@ bool SpectralAnalysisTest::performTest(int nSamples, int windowSize)
 
     pair<Matrix*, Matrix*> spectrogram =
         audioData.computeSpectrogram(SqHannFunction, windowSize, overlap, 0);
-    unique_ptr<Matrix> pAmplitudeMatrix(spectrogram.first);
-    unique_ptr<Matrix> pPhaseMatrix(spectrogram.second);
+    auto_ptr<Matrix> pAmplitudeMatrix(spectrogram.first);
+    auto_ptr<Matrix> pPhaseMatrix(spectrogram.second);
     
     cout << "Amplitude spectrogram:" << endl;
     cout << *pAmplitudeMatrix << endl;
@@ -89,7 +89,7 @@ bool SpectralAnalysisTest::performTest(int nSamples, int windowSize)
     cout << "Phase spectrogram:" << endl;
     cout << *pPhaseMatrix << endl;
 
-    unique_ptr<AudioData> pAudioData2(AudioData::fromSpectrogram(*pAmplitudeMatrix, *pPhaseMatrix,
+    auto_ptr<AudioData> pAudioData2(AudioData::fromSpectrogram(*pAmplitudeMatrix, *pPhaseMatrix,
         SqHannFunction, windowSize, overlap, 1000));
 
     fftwMutex.unlock();

@@ -26,10 +26,11 @@
 // TypeHandlers allow use of objects as targets for Poco's "into" modifier.
 
 
-#include <Poco/SQL/TypeHandler.h>
-//#include "Poco/SQL/AbstractBinder.h"
-//#include "Poco/SQL/AbstractExtractor.h"
-//#include "Poco/SQL/AbstractPreparator.h"
+#include <Poco/Data/TypeHandler.h>
+#include <Poco/Data/AbstractPreparation.h>
+#include "Poco/Data/AbstractBinder.h"
+#include "Poco/Data/AbstractExtractor.h"
+#include "Poco/Data/AbstractPreparator.h"
 
 #include <blissart/DataDescriptor.h>
 #include <blissart/Process.h>
@@ -38,48 +39,88 @@
 #include <blissart/Response.h>
 #include <blissart/Label.h>
 
-
 /**
  * Classes that inherit the Poco (Portable Components) framework classes
  */
 namespace Poco {
 
-
+    
 /**
  * Classes that inherit the Poco database access classes
  */
-namespace SQL {
+namespace Data {
+
 
 /**
  * \addtogroup framework
  * @{
  */
 
-// **
-// * TypeHandler specialization for Poco::AutoPtr.
-// *
-/*
-template<class C>
-class TypeHandler<Poco::AutoPtr<C> >
+/**
+ * TypeHandler specialization for Poco::AutoPtr.
+ */
+
+/****************************************************8
+template <class T>
+class TypeHandler<Poco::AutoPtr<T>>: public AbstractTypeHandler
+    /// Specialization of type handler for Poco::AutoPtr
 {
 public:
-    typedef Poco::AutoPtr<C> CPtr;
-
+    static void bind(std::size_t pos, const Poco::AutoPtr<T>& obj, AbstractBinder::Ptr pBinder, AbstractBinder::Direction dir)
+    {
+        // *obj will trigger a nullpointer exception if empty: this is on purpose
+        TypeHandler<T>::bind(pos, *obj, pBinder, dir);
+    }
 
     static std::size_t size()
     {
-        return TypeHandler<C>::size();
+        return static_cast<std::size_t>(TypeHandler<T>::size());
     }
 
-
-    static void bind(std::size_t pos, const CPtr& ptr,
-        AbstractBinder* pBinder)
+    static void extract(std::size_t pos, Poco::AutoPtr<T>& obj, const Poco::AutoPtr<T>& defVal, AbstractExtractor::Ptr pExt)
     {
-        poco_assert (!ptr.isNull());
-        TypeHandler<C>::bind(pos, *ptr, pBinder);
+        poco_assert_dbg (!pExt.isNull());
+
+        obj = Poco::AutoPtr<T>(new T());
+        if (defVal)
+            TypeHandler<T>::extract(pos, *obj, *defVal, pExt);
+        else
+            TypeHandler<T>::extract(pos, *obj, *obj, pExt);
     }
 
+    static void prepare(std::size_t pos, const Poco::AutoPtr<T>&, AbstractPreparator::Ptr pPreparator)
+    {
+        poco_assert_dbg (!pPreparator.isNull());
+        TypeHandler<T>::prepare(pos, T(), pPreparator);
+    }
 
+private:
+    TypeHandler(const TypeHandler&);
+    TypeHandler& operator = (const TypeHandler&);
+};
+
+***********************************************************************/
+//template<class C>
+//class TypeHandler<AutoPtr<C> >: public AbstractTypeHandler
+//{
+//public:
+//    typedef AutoPtr<C> CPtr;
+//
+
+    //static std::size_t size()
+    //{
+    //    return TypeHandler<C>::size();
+    //}
+
+
+ //   static void bind(std::size_t pos, const CPtr& ptr,
+ //       AbstractBinder* pBinder)
+ //   {
+ //       poco_assert (!ptr.isNull());
+ //       TypeHandler<C>::bind(pos, *ptr, pBinder);
+ //   }
+
+/****************************
     static void prepare(std::size_t pos, const CPtr& ptr,
         AbstractPreparation* pPrepare)
     {
@@ -94,17 +135,17 @@ public:
         // Create new objects on demand
         if (ptr.isNull())
             ptr = new C();
-
+        
         CPtr pDefault;
         if (pDefVal.isNull())
             pDefault = new C();
         else
             pDefault = pDefVal;
-
+        
         TypeHandler<C>::extract(pos, *ptr, *pDefault, pExtract);
     }
 };
-*/
+*************************************/
 
 /**
  * TypeHandler specialization for Poco::Timestamp.
@@ -118,9 +159,9 @@ public:
         return 1;
     }
 
-
+    // bind has a direction PD_IN = 0, PD_OUT = 1, PD_IN_OUT =2
     static void bind(std::size_t pos, const Poco::Timestamp& data,
-        AbstractBinder* pBinder,  AbstractBinder::Direction dir = AbstractBinder::Direction::Default)
+        AbstractBinder* pBinder, AbstractBinder::Direction dir)
     {
         TypeHandler<int>::bind(pos++, (int) data.epochTime(), pBinder, dir);
     }
@@ -162,7 +203,7 @@ public:
 
 
     static void bind(std::size_t pos, const DataDescriptor& data,
-        AbstractBinder* pBinder, AbstractBinder::Direction dir = AbstractBinder::Direction::Default)
+        AbstractBinder* pBinder, AbstractBinder::Direction dir)
     {
         TypeHandler<int>::bind(pos++, data.descrID, pBinder, dir);
         TypeHandler<int>::bind(pos++, data.processID, pBinder, dir);
@@ -185,18 +226,18 @@ public:
     }
 
 
-    static void extract(std::size_t pos, DataDescriptor& data,
+    static void extract(std::size_t pos, DataDescriptor& data, 
         const DataDescriptor& defVal, AbstractExtractor* pExtract)
     {
-        TypeHandler<int>::extract(pos++, data.descrID,
+        TypeHandler<int>::extract(pos++, data.descrID, 
             defVal.descrID, pExtract);
-        TypeHandler<int>::extract(pos++, data.processID,
+        TypeHandler<int>::extract(pos++, data.processID, 
             defVal.processID, pExtract);
-        TypeHandler<int>::extract(pos++, (int&)data.type,
+        TypeHandler<int>::extract(pos++, (int&)data.type, 
             defVal.type, pExtract);
-        TypeHandler<int>::extract(pos++, data.index,
+        TypeHandler<int>::extract(pos++, data.index, 
             defVal.index, pExtract);
-        TypeHandler<int>::extract(pos++, data.index2,
+        TypeHandler<int>::extract(pos++, data.index2, 
             defVal.index, pExtract);
         TypeHandler<bool>::extract(pos++, data.available,
             defVal.available, pExtract);
@@ -221,7 +262,7 @@ public:
 
 
     static void bind(std::size_t pos, const Process& process,
-        AbstractBinder* pBinder,  AbstractBinder::Direction dir = AbstractBinder::Direction::Default)
+        AbstractBinder* pBinder, AbstractBinder::Direction dir)
     {
         TypeHandler<int>::bind(pos++, process.processID, pBinder, dir);
         TypeHandler<std::string>::bind(pos++, process.name, pBinder, dir);
@@ -242,16 +283,16 @@ public:
     }
 
 
-    static void extract(std::size_t pos, Process& process,
+    static void extract(std::size_t pos, Process& process, 
         const Process& defVal, AbstractExtractor* pExtract)
     {
         TypeHandler<int>::extract(pos++, process.processID,
             defVal.processID, pExtract);
         TypeHandler<std::string>::extract(pos++, process.name,
             defVal.name, pExtract);
-        TypeHandler<std::string>::extract(pos++, process.inputFile,
+        TypeHandler<std::string>::extract(pos++, process.inputFile, 
             defVal.inputFile, pExtract);
-        TypeHandler<Poco::Timestamp>::extract(pos++, process.startTime,
+        TypeHandler<Poco::Timestamp>::extract(pos++, process.startTime, 
             defVal.startTime, pExtract);
         TypeHandler<int>::extract(pos++, process.sampleFreq,
             defVal.sampleFreq, pExtract);
@@ -276,7 +317,7 @@ public:
 
 
     static void bind(std::size_t pos, const Feature& feature,
-        AbstractBinder* pBinder, AbstractBinder::Direction dir = AbstractBinder::Direction::Default)
+        AbstractBinder* pBinder, AbstractBinder::Direction dir)
     {
         TypeHandler<int>::bind(pos++, feature.descrID, pBinder, dir);
         TypeHandler<std::string>::bind(pos++, feature.name, pBinder, dir);
@@ -299,20 +340,20 @@ public:
     }
 
 
-    static void extract(std::size_t pos, Feature& feature,
+    static void extract(std::size_t pos, Feature& feature, 
         const Feature& defVal, AbstractExtractor* pExtract)
     {
         TypeHandler<int>::extract(pos++, feature.descrID,
             defVal.descrID, pExtract);
         TypeHandler<std::string>::extract(pos++, feature.name,
             defVal.name, pExtract);
-        TypeHandler<double>::extract(pos++, feature.params[0],
+        TypeHandler<double>::extract(pos++, feature.params[0], 
             defVal.params[0], pExtract);
-        TypeHandler<double>::extract(pos++, feature.params[1],
+        TypeHandler<double>::extract(pos++, feature.params[1], 
             defVal.params[1], pExtract);
-        TypeHandler<double>::extract(pos++, feature.params[2],
+        TypeHandler<double>::extract(pos++, feature.params[2], 
             defVal.params[2], pExtract);
-        TypeHandler<double>::extract(pos++, feature.value,
+        TypeHandler<double>::extract(pos++, feature.value, 
             defVal.value, pExtract);
     }
 };
@@ -335,7 +376,7 @@ public:
 
 
     static void bind(std::size_t pos, const ClassificationObject& clObj,
-        AbstractBinder* pBinder,  AbstractBinder::Direction dir = AbstractBinder::Direction::Default)
+        AbstractBinder* pBinder, AbstractBinder::Direction dir)
     {
         TypeHandler<int>::bind(pos++, clObj.objectID, pBinder, dir);
         TypeHandler<int>::bind(pos++, clObj.type, pBinder, dir);
@@ -350,12 +391,12 @@ public:
     }
 
 
-    static void extract(std::size_t pos, ClassificationObject& clObj,
+    static void extract(std::size_t pos, ClassificationObject& clObj, 
         const ClassificationObject& defVal, AbstractExtractor* pExtract)
     {
-        TypeHandler<int>::extract(pos++, clObj.objectID,
+        TypeHandler<int>::extract(pos++, clObj.objectID, 
             defVal.objectID, pExtract);
-        TypeHandler<int>::extract(pos++, (int&)clObj.type,
+        TypeHandler<int>::extract(pos++, (int&)clObj.type, 
             defVal.objectID, pExtract);
     }
 };
@@ -378,7 +419,7 @@ public:
 
 
     static void bind(std::size_t pos, const Response& response,
-        AbstractBinder* pBinder,  AbstractBinder::Direction dir = AbstractBinder::Direction::Default)
+        AbstractBinder* pBinder, AbstractBinder::Direction dir)
     {
         TypeHandler<int>::bind(pos++, response.responseID, pBinder, dir);
         TypeHandler<std::string>::bind(pos++, response.name, pBinder, dir);
@@ -391,12 +432,12 @@ public:
     {
         TypeHandler<int>::prepare(pos++, response.responseID, pPrepare);
         TypeHandler<std::string>::prepare(pos++, response.name, pPrepare);
-        TypeHandler<std::string>::prepare(pos++, response.description,
+        TypeHandler<std::string>::prepare(pos++, response.description, 
             pPrepare);
     }
 
 
-    static void extract(std::size_t pos, Response& response,
+    static void extract(std::size_t pos, Response& response, 
         const Response& defVal, AbstractExtractor* pExtract)
     {
         TypeHandler<int>::extract(pos++, response.responseID,
@@ -426,7 +467,7 @@ public:
 
 
     static void bind(std::size_t pos, const Label& label,
-        AbstractBinder* pBinder, AbstractBinder::Direction dir = AbstractBinder::Direction::Default)
+        AbstractBinder* pBinder, AbstractBinder::Direction dir)
     {
         TypeHandler<int>::bind(pos++, label.labelID, pBinder, dir);
         TypeHandler<std::string>::bind(pos++, label.text, pBinder, dir);
@@ -441,7 +482,7 @@ public:
     }
 
 
-    static void extract(std::size_t pos, Label& label,
+    static void extract(std::size_t pos, Label& label, 
         const Label& defVal, AbstractExtractor* pExtract)
     {
         TypeHandler<int>::extract(pos++, label.labelID,
@@ -457,4 +498,4 @@ public:
  */
 
 
-} } // namespace Poco::SQL
+} } // namespace Poco::Data

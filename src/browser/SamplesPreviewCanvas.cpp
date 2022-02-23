@@ -153,7 +153,7 @@ void SamplesPreviewCanvas::paintEvent(QPaintEvent *ev)
         // the ev->rect() can be bigger than the samplesRect and thus may cause
         // errors, we must only work inside the intersection of ev->rect() and
         // samplesRect.
-        const QRect ir = samplesRect.intersected(ev->rect());
+        const QRect ir = samplesRect.intersect(ev->rect());
         // _tMin and _tMax define the displayed portion of the samples.
         const size_t minIndex = (size_t)(_tMin * (_nSamples - 1));
         const size_t maxIndex = (size_t)(_tMax * (_nSamples - 1));

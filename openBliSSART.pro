@@ -236,8 +236,8 @@ QMAKE_CXXFLAGS += -std=c++11 -fpic -Wall -Wextra -Woverloaded-virtual \
  -I/usr/local/include -pthread
 
 
-unix:LIBS += -L/usr/local/lib -lpthread -lPocoFoundation -lPocoUtil -lPocoXML -lPocoSQL \
-    -lPocoSQLSQLite -lSDLmain -lSDL2 -lSDL2_sound -lfftw3
+unix:LIBS += -L/usr/local/lib -lpthread -lPocoFoundation -lPocoUtil -lPocoXML \
+    -lPocoDataSQLite -lPocoData -lSDL2main -lSDL2 -lSDL2_sound -lfftw3
 
 unix {
     target.path = /usr/local/lib

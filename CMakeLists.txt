@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.4)
+cmake_minimum_required(VERSION 3.22.0)
 
 #set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules")
 include_directories (BEFORE "/usr/local/include")
@@ -6,8 +6,8 @@ include_directories (BEFORE "/usr/local/include")
 #include_directories(${CMAKE_SOURCE_DIR}/inc)
 #link_directories(${CMAKE_SOURCE_DIR}/lib)
 SET(GCC_COVERAGE_COMPILE_FLAGS "-std=c++11 -fPIC -DPIC -O3 -MD -MT -MF -Wall -Wextra -fpermissive \
- -Woverloaded-virtual \
- -Wformat-nonliteral -Wformat-security -Winit-self -Wswitch-enum \
+ -Woverloaded-virtual -Wstrict-aliasing -Wmaybe-uninitialized -Wstringop-truncation \
+ -Wformat-nonliteral -Wformat-security -Winit-self -Wswitch-enum -Wtype-limits -Wsign-compare \
  -Wconversion -DNDEBUG -DBUILD_RELEASE \
  -I/usr/local/include -pthread")
 #SET(GCC_COVERAGE_LINK_FLAGS    "-lgcov")
@@ -79,6 +79,7 @@ set(Bliss_SOURCES
 )
 
 include_directories(
+    /usr/local/include/SDL2
     /usr/local/include
     ${CMAKE_SOURCE_DIR}
     ./src/benchmark
@@ -99,12 +100,13 @@ include_directories(
 )
 
 add_library(bliss ${Bliss_SOURCES})
-link_directories("/usr/local/lib" "/usr/lib/x86_64-linux-gnu")
+link_directories("/usr/local/lib" "/usr/local/lib/Poco" "/usr/lib/x86_64-linux-gnu")
+#set(link_flags "-L/usr/local/lib" "-L/usr/local/lib/Poco" "-L/usr/lib/x86_64-linux-gnu")
 
 add_executable(septool ./src/septool/main.cpp)
-#set(link_flags "-L/usr/local/lib" "-L/usr/lib/x86_64-linux-gnu")
+
 #set(link_flags "-L/usr/local/lib" )
-target_link_libraries(septool bliss PocoFoundation PocoUtil PocoXML PocoSQL PocoSQLSQLite SDL2_sound SDL2main SDL2 fftw3 pthread)
+target_link_libraries(septool bliss PocoDataSQLite PocoData PocoFoundation PocoUtil PocoXML SDL2_sound SDL2main SDL2 fftw3 pthread)
 
 find_package(Threads)
 add_executable(testSuite
@@ -134,4 +136,8 @@ add_executable(testSuite
 	./src/Testsuite/VectorTest.cpp
 	./src/Testsuite/WaveTest.cpp
 	)
-target_link_libraries(testSuite PocoFoundation PocoUtil PocoXML PocoSQL PocoSQLSQLite SDL2_sound SDL2main SDL2 fftw3 bliss ${CMAKE_THREAD_LIBS_INIT})
+
+link_directories("/usr/local/lib" "/usr/local/lib/Poco" "/usr/lib/x86_64-linux-gnu")
+#set(link_flags "-L/usr/local/lib" "/usr/local/lib/Poco" "-L/usr/lib/x86_64-linux-gnu")
+
+target_link_libraries(testSuite bliss SDL2_sound SDL2main SDL2 fftw3 pthread PocoDataSQLite PocoData PocoFoundation PocoUtil PocoXML ${CMAKE_THREAD_LIBS_INIT})

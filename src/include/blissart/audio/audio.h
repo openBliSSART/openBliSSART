@@ -53,8 +53,9 @@ namespace audio {
 class AudioException : public std::runtime_error
 {
 public:
-	AudioException(const std::string &what) :    std::runtime_error(what)    {}
-	AudioException(const char * what)  : std::runtime_error(what) {}
+    AudioException(const std::string &what) :
+        std::runtime_error(what)
+    {}
 };
 
 
@@ -62,10 +63,11 @@ public:
  * An exception that is thrown when LibAudio functions are used before
  * initialization of the library.
  */
-	class AudioNotInitializedException : AudioException
+class AudioNotInitializedException : public AudioException
 {
 public:
-	AudioNotInitializedException() :		  AudioException("LibAudio has not been initialized.")
+    AudioNotInitializedException() :
+        AudioException("LibAudio has not been initialized.")
     {}
 };
 

@@ -174,8 +174,8 @@ protected:
             pushTest(new VectorTest());
         if (name == "all" || name == "wave")
             pushTest(new WaveTest(value));
-				//        if (name == "all" || name == "ica")
-				//            pushTest(new ICATest());
+        if (name == "all" || name == "ica")
+            pushTest(new ICATest());
         if (name == "all" || name == "pca")
             pushTest(new PCATest());
         if (name == "all" || name == "mfcc")

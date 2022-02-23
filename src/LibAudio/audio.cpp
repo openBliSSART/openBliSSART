@@ -45,8 +45,15 @@ bool initialize()
 
     do {
         // First initialize the mothership.
+        //use sdl2::audio::{AudioCallback, AudioSpecDesired};
+        
+        // Initialize SDL.
+	//if (SDL_Init(SDL_INIT_AUDIO) < 0)
+	//		return 1;
+
         bool audioInitDone =
-            ((SDL_WasInit(SDL_INIT_AUDIO) & SDL_INIT_AUDIO) == SDL_INIT_AUDIO);
+            ((SDL_Init(SDL_INIT_AUDIO) & SDL_INIT_AUDIO) == SDL_INIT_AUDIO);
+            
         if (!audioInitDone && SDL_Init(SDL_INIT_AUDIO) != 0)
             break;
         // Then it's allied forces.

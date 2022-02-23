@@ -42,16 +42,9 @@
 #include <Poco/Logger.h>
 #include <Poco/Mutex.h>
 #include <Poco/RWLock.h>
-#include <Poco/SQL/Session.h>
-#include <Poco/SQL/Statement.h>
-#include <Poco/SQL/SessionPool.h>
+#include <Poco/Data/SessionPool.h>
 #include <Poco/Util/Subsystem.h>
-#include <Poco/SQL/SQLite/SQLite.h>
-#include <Poco/SQL/SQLite/Connector.h>
-#include <Poco/File.h>
-#include <Poco/Util/Application.h>
 
-using namespace Poco::SQL::SQLite;
 
 namespace blissart {
 
@@ -70,7 +63,6 @@ class FeatureSet;
 class LibFramework_API DatabaseSubsystem : public Poco::Util::Subsystem
 {
 public:
-
     /**
      * Default constructor. Registers the SQLite connector.
      */
@@ -431,13 +423,13 @@ protected:
     /**
      * Returns the id of the last inserted table row for the given session.
      */
-    int lastInsertID(Poco::SQL::Session& session);
+    int lastInsertID(Poco::Data::Session& session);
 
 
     /**
      * Returns a Session object from the SessionPool.
      */
-    inline Poco::SQL::Session getSession();
+    inline Poco::Data::Session getSession();
 
 
     /**
@@ -448,40 +440,40 @@ protected:
      */
 
 
-    void insertProcessParams(Poco::SQL::Session& session,
+    void insertProcessParams(Poco::Data::Session& session,
                              ProcessPtr process);
 
 
-    void getProcessParams(Poco::SQL::Session &session, ProcessPtr process);
+    void getProcessParams(Poco::Data::Session &session, ProcessPtr process);
 
 
-    void insertClassificationObjectDescrIDs(Poco::SQL::Session& session,
+    void insertClassificationObjectDescrIDs(Poco::Data::Session& session,
                                             ClassificationObjectPtr& clObj);
 
 
-    void insertClassificationObjectLabelIDs(Poco::SQL::Session& session,
+    void insertClassificationObjectLabelIDs(Poco::Data::Session& session,
                                             ClassificationObjectPtr& clObj);
 
 
-    void getClassificationObjectDescrIDs(Poco::SQL::Session &session,
+    void getClassificationObjectDescrIDs(Poco::Data::Session &session,
                                          ClassificationObjectPtr& clObj);
 
 
-    void getClassificationObjectLabelIDs(Poco::SQL::Session &session,
+    void getClassificationObjectLabelIDs(Poco::Data::Session &session,
                                          ClassificationObjectPtr& clObj);
 
 
-    void insertResponseLabels(Poco::SQL::Session& session,
+    void insertResponseLabels(Poco::Data::Session& session,
                               ResponsePtr& response);
 
 
-    void getResponseLabels(Poco::SQL::Session& session, ResponsePtr& response);
+    void getResponseLabels(Poco::Data::Session& session, ResponsePtr& response);
 
 
-    void saveFeature(Poco::SQL::Session& session, FeaturePtr feature);
+    void saveFeature(Poco::Data::Session& session, FeaturePtr feature);
 
 
-    void getAvailableFeatures(Poco::SQL::Session& session,
+    void getAvailableFeatures(Poco::Data::Session& session,
                               const std::map<int, int>& clObjMap,
                               FeatureSet& featureSet);
 
@@ -501,7 +493,7 @@ private:
 
 
     std::string              _dbFilename;
-    Poco::SQL::SessionPool* _pPool;
+    Poco::Data::SessionPool* _pPool;
     Poco::FastMutex          _poolLock;
     Poco::Logger&            _logger;
 };
@@ -517,7 +509,7 @@ private:
 //
 
 
-inline Poco::SQL::Session DatabaseSubsystem::getSession()
+inline Poco::Data::Session DatabaseSubsystem::getSession()
 {
     Poco::FastMutex::ScopedLock lock(_poolLock);
     poco_check_ptr(_pPool);

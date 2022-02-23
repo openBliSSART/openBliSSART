@@ -61,9 +61,9 @@ FTTask::FTTask(const std::string& typeIdentifier,
     _fileName(fileName),
     _isVolatile(isVolatile),
     _audioData(0),
+    _ftMagMatrix(0),
     _sampleRate(0),
     _amplitudeMatrix(0),
-    _ftMagMatrix(0),
     _phaseMatrix(0)
 {
     logger().debug(nameAndTaskID() + " reading configuration.");

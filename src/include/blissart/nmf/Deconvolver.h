@@ -29,8 +29,7 @@
 
 #include <common.h>
 #include <blissart/linalg/Matrix.h>
-//#include <config.h>
-#include "../../config.h"
+#include <config.h>
 #ifdef HAVE_CUDA
 #include <blissart/linalg/GPUMatrix.h>
 typedef blissart::linalg::GPUMatrix Matrix_t;
