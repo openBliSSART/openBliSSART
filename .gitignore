@@ -1,7 +1,17 @@
 !acbuild/m4
+*.o
+*.a
+*.d
+*.db
+*.wav
 *.ncb
 *.suo
 *.user
+*.dat
+.qmake.*
+err.txt
+*/err.txt
+*/*/err.txt
 Makefile
 Makefile.in
 acbuild/*
@@ -31,6 +41,8 @@ doc/latex
 libtool
 m4/*.m4
 mmd.sh
+cmake-build/*
+build/*
 src/*/*.la
 src/*/*.lo
 src/*/*.o

@@ -100,20 +100,23 @@ HEADERS += \
         config.h
 
 release {
-    unix:LIBS += -L/usr/local/lib -lPocoFoundation -lPocoUtil -lPocoXML -lPocoData \
-        -lPocoDataSQLite \
+    unix:LIBS += -L/usr/local/lib -lPocoFoundation -lPocoUtil -lPocoXML \
+        -lPocoDataSQLite -lPocoData \
         -L../LibLinAlg -lLinAlg \
         -L../LibFeature -lFeature \
         -L../LibNMF -lNMF \
         -L/usr/local/lib -lSDL2main -lSDL2 -lSDL2_sound -lfftw3 -lGL -lpthread
     }
 debug {
-    unix:LIBS += -L/usr/local/lib -lPocoFoundationd -lPocoUtild -lPocoXMLd -lPocoDatad \
-        -lPocoDataSQLited \
+    unix:LIBS += -L/usr/local/lib -lPocoFoundationd -lPocoUtild -lPocoXMLd \
+        -lPocoDataSQLited -lPocoDatad \
         -L../LibLinAlg -lLinAlgd \
         -L../LibFeature -lFeatured \
         -L../LibNMF -lNMFd \
-        -L/usr/local/lib -lSDL2main -lSDL2 -lSDL2_sound -lfftw3 -lGL -lpthread
+        -L/usr/local/lib -lSDL2main \
+        -L/usr/local/lib -lSDL2 \
+        -L/usr/local/lib -lSDL2_sound \
+        -lfftw3 -lGL -lpthread
     }
 
 

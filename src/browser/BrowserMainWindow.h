@@ -27,7 +27,7 @@
 #define __BROWSERMAINWINDOW_H__
 
 
-#include <QMainWindow>
+#include "mainwindow.h"
 
 
 namespace blissart {

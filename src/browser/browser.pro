@@ -22,7 +22,8 @@
 # openBliSSART.  If not, see <http:#www.gnu.org/licenses/>.
 #
 
-CONFIG += qt resources thread
+CONFIG += resources thread
+QT += widgets
 
 SOURCES = main.cpp \
           BrowserController.cpp \
@@ -91,6 +92,7 @@ FORMS = BrowserForm.ui \
 TARGET = browser
 
 INCLUDEPATH += ../include
+#/usr/include/x86_64-linux-gnu/qt5
 
 CONFIG(debug, debug|release) {
     IMDIR = ../../build/debug
@@ -121,11 +123,19 @@ unix {
     QMAKE_CXXFLAGS += '$${CPPFLAGS}'
     QMAKE_LFLAGS += '$${POCOLDFLAGS}'
     QMAKE_LFLAGS += '$${LDFLAGS}'
-    LIBS += -L../LibLinAlg/.libs -lLinAlg \
-            -L../LibAudio/.libs -lAudio \
-            -L../LibNMF/.libs -lNMF \
-            -L../LibFramework/.libs -lFramework \
-            -lPocoFoundation -lPocoData -lPocoUtil -lPocoXML -lPocoSQLite
+#    LIBS += -L../LibLinAlg/.libs -lLinAlg \
+#            -L../LibAudio/.libs -lAudio \
+#            -L../LibNMF/.libs -lNMF \
+#            -L../LibFramework -lFramework \
+#            -lPocoFoundation -lPocoDataSQLite -lPocoData -lPocoUtil -lPocoXML
+    LIBS += -L/usr/local/blissart/lib -lLinAlg \
+            -L/usr/local/blissart/lib -lAudio \
+            -L/usr/local/blissart/lib -lNMF \
+            -L/usr/local/lib -lSDL2main \
+            -L/usr/local/lib -lSDL2 \
+            -L/usr/local/lib -lSDL2_sound \
+            -L../LibFramwork -lFramework \
+            -lPocoFoundation -lPocoDataSQLite -lPocoData -lPocoUtil -lPocoXML
 }
 
 win32 {
