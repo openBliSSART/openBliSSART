@@ -22,7 +22,6 @@
 // openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-
 #include <blissart/nmf/Deconvolver.h>
 #include <blissart/nmf/randomGenerator.h>
 #include <blissart/linalg/generators/generators.h>
