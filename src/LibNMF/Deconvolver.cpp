@@ -35,7 +35,7 @@
 #include <cmath>
 #include <vector>
 
-#include <config.h>
+//#include <config.h>
 #ifdef HAVE_CUDA
 # include <blissart/nmf/DeconvolverKernels.h>
 #endif

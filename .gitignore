@@ -8,6 +8,12 @@
 *.suo
 *.user
 *.dat
+*.so
+*/*.so
+*/*.so*
+*/*/*.so*
+src/*/*.Debug
+src/*/*.Release
 .qmake.*
 err.txt
 */err.txt
