@@ -22,7 +22,6 @@ dnl You should have received a copy of the GNU General Public License along with
 dnl openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 dnl
 
-
 dnl AX_CHECK_CBLAS([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 dnl Test for the dnl availability of CBLAS and set HAVE_CBLAS_H and CBLAS_LIBS
 dnl accordingly.

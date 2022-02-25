@@ -12,8 +12,8 @@
 */*.so
 */*.so*
 */*/*.so*
-src/*/*.Debug
 src/*/*.Release
+src/*/*.Debug
 .qmake.*
 err.txt
 */err.txt
