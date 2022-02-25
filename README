@@ -1,4 +1,6 @@
 Modified to use Ubuntu 21.10 using https://github.com/pocoproject/poco built with cmake, SDL2 and SDL2_sound.
+Qt 5.18 and CUDA 11.6 used but not tested.  CUDA stills generates linker errors.  SDL2 is implemented not SDL1.
+Qt Creator used to debug and .pro files not totally complete.
 
 openBliSSART build uses the following steps:
 
