@@ -55,10 +55,11 @@ AC_DEFUN([AX_CHECK_CUDA],
         save_LIBS="$LIBS"
         save_LDFLAGS="$LDFLAGS"
         save_CPPFLAGS="$CPPFLAGS"
-        LIBS="$LIBS -lcuda -lcublas"
+        LIBS="$LIBS -L/usr/local/cuda/lib64 -lcuda -L/usr/local/cuda/lib64 -lcublas"
         CPPFLAGS="$CPPFLAGS -I$CUDA_INCLUDE"
-        LDFLAGS="$LDFLAGS -L$CUDA_LIB -Wl,-rpath,$CUDA_LIB"
-        dnl LDFLAGS="$LDFLAGS -L$CUDA_LIB"
+        #LDFLAGS="$LDFLAGS -L$CUDA_LIB -Wl,-rpath,$CUDA_LIB"
+        #dnl LDFLAGS="$LDFLAGS -L$CUDA_LIB"
+        dnl LDFLAGS="$LDFLAGS $LIBS"
         AC_LANG_PUSH([C])
         AC_RUN_IFELSE(
             AC_LANG_PROGRAM(

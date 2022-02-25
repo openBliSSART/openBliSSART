@@ -2,6 +2,38 @@ Modified to use Ubuntu 21.10 using https://github.com/pocoproject/poco built wit
 Qt 5.18 and CUDA 11.6 used but not tested.  CUDA stills generates linker errors.  SDL2 is implemented not SDL1.
 Qt Creator used to debug and .pro files not totally complete.
 
+Poco changes:
+--------------------------------------------------------------------------------------------
+Data/include/Poco/Data/binding.h
+inline AbstractBinding::Ptr use(T& t, const std::string& name = "")
+ {
+ 	// If this fails to compile, a const ref was passed to use().
+ 	// This can be resolved by either (a) using bind (which will copy the value),
+ 	// or (b) if the const ref is guaranteed to exist when execute is called 
+ 	// (which can be much later!), by using the "useRef" keyword instead
+-	poco_static_assert (!IsConst<T>::VALUE);
++	//poco_static_assert (!IsConst<T>::VALUE);  remove line
+ 	return new Binding<T>(t, name, AbstractBinding::PD_IN);
+ }
+Data/include/Poco/Data/TypeHandler.h
+private:
+ template <class T>
+ class TypeHandler<Poco::AutoPtr<T>>: public AbstractTypeHandler
+ 	/// Specialization of type handler for Poco::AutoPtr
+ {
+ public:
++	typedef AutoPtr<T> TPtr; // new code here
++	
+
+cmake/FindODBC.cmake
+find_path(ODBC_INCLUDE_DIR
+ 		${ODBC_ROOT_DIR}/include
+ 		${ODBC_ROOT_INCLUDE_DIRS}
+ 	PATHS
+ 		${PC_ODBC_INCLUDE_DIRS}
+ 		/usr/include
++		/usr/local/unixODBC/include
+-----------------------------------------------------------------------------------------------
 openBliSSART build uses the following steps:
 
 git clone https://github.com/sildeag/openBliSSART.git
