@@ -76,7 +76,15 @@ void ProcessItem::expand()
     QTreeWidgetItem *stItem = new QTreeWidgetItem(this);
     stItem->setText(0, QObject::tr("Startup time"));
     stItem->setText(1,
-            QDateTime::fromTime_t(_process->startTime.epochTime()).toString());
+    //        QDateTime::fromTime_t(_process->startTime.epochTime()).toString());
+        QDateTime::fromMSecsSinceEpoch(_process->startTime.epochTime()).toString());
+    //time_t elapsedTime;
+    //QDateTime t(QDateTime::fromTime_t(elapsedTime));
+    //or
+    //time_t elapsedTime;
+    //QDateTime t;
+    //t.setTime_t(elapsedTime);
+
     
     // Get the associated process parameters.
     _rootParameters =

@@ -21,23 +21,24 @@
 // You should have received a copy of the GNU General Public License along with
 // openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 //
-
-
-#include <stdexcept>
-#include <blissart/linalg/ColVector.h>
 #include <blissart/linalg/RowVector.h>
+#include <blissart/linalg/RowVector.h>
+#include <blissart/linalg/ColVector.h>
 #include <blissart/linalg/Matrix.h>
 #include <blissart/linalg/generators/generators.h>
+#include <stdexcept>
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+
 
 #ifdef HAVE_CBLAS_H
 extern "C" {
 #include <cblas.h>
 }
 #endif
+
 
 
 #ifdef BLISSART_SINGLE_PREC

@@ -51,7 +51,7 @@ TargetedDeconvolver::TargetedDeconvolver(Matrix& v, unsigned int r,
     const vector<ClassificationObjectPtr>& clObjs,
     Matrix::GeneratorFunction wGenerator,
     Matrix::GeneratorFunction hGenerator) :
-    nmf::Deconvolver(v, r, getNrOfSpectra(*clObjs.begin()), 
+    nmf::Deconvolver(v, r, (unsigned int) getNrOfSpectra(*clObjs.begin()),
                      wGenerator, hGenerator)
 {
     buildW(clObjs);
@@ -66,7 +66,7 @@ TargetedDeconvolver::TargetedDeconvolver(Matrix& v, unsigned int r,
     nmf::Deconvolver(v, r, getNrOfSpectra(*matrices.begin()),
                      wGenerator, hGenerator)
 {
-    int nInitializedCols = buildW(matrices);
+    unsigned int nInitializedCols = (unsigned int) buildW(matrices);
     if (nInitializedCols == r) {
         BasicApplication::instance().logger().
             debug("Keeping all spectra constant.");

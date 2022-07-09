@@ -25,7 +25,7 @@ dnl
 
 AC_DEFUN([AX_CHECK_CUDA],
 [
-    dnl Provide --with-cuda
+    #dnl Provide --with-cuda
     AC_ARG_WITH([cuda],
         [AS_HELP_STRING([--with-cuda],
                         [Use CUDA and CUBLAS libraries for GPU linear algebra operations in NMF.])],
@@ -44,6 +44,8 @@ AC_DEFUN([AX_CHECK_CUDA],
     ) dnl AC_ARG_WITH
 
     AC_MSG_CHECKING([whether to use CUDA])
+    dnl added line to suppress CUDA
+    CUDA="no"  
     if test "$CUDA" == "yes"; then
         AC_MSG_RESULT([yes])
     else
@@ -52,11 +54,11 @@ AC_DEFUN([AX_CHECK_CUDA],
 
     if test "$CUDA" == "yes"; then
         AC_MSG_CHECKING([for CUDA])
-        save_LIBS="$LIBS"
-        save_LDFLAGS="$LDFLAGS"
-        save_CPPFLAGS="$CPPFLAGS"
-        LIBS="$LIBS -L/usr/local/cuda/lib64 -lcuda -L/usr/local/cuda/lib64 -lcublas"
-        CPPFLAGS="$CPPFLAGS -I$CUDA_INCLUDE"
+        dnl save_LIBS="$LIBS"
+        dnl save_LDFLAGS="$LDFLAGS"
+        dnl save_CPPFLAGS="$CPPFLAGS"
+        dnl LIBS="$LIBS -L/usr/local/cuda/lib64 -lcuda -L/usr/local/cuda/lib64 -lcublas"
+        dnl CPPFLAGS="$CPPFLAGS -I$CUDA_INCLUDE"
         #LDFLAGS="$LDFLAGS -L$CUDA_LIB -Wl,-rpath,$CUDA_LIB"
         #dnl LDFLAGS="$LDFLAGS -L$CUDA_LIB"
         dnl LDFLAGS="$LDFLAGS $LIBS"
@@ -66,31 +68,34 @@ AC_DEFUN([AX_CHECK_CUDA],
                 [#include <cublas.h>],
                 [cublasHandle_t handle; return 0;]), :, [NO_CUDA=yes])
         AC_LANG_POP([C])
-        CPPFLAGS="$save_CPPFLAGS"
-        LDFLAGS="$save_LDFLAGS"
-        LIBS="$save_LIBS"
+        #CPPFLAGS="$save_CPPFLAGS"
+        #LDFLAGS="$save_LDFLAGS"
+        #LIBS="$save_LIBS"
         if test -z "$NO_CUDA"; then
             AC_MSG_RESULT([yes])
         else
             AC_MSG_RESULT([no])
         fi
     else
+    	CUDA_CPPFLAGS=""
         NO_CUDA=yes
     fi dnl whether to check for CUDA
 
-    if test -z "$NO_CUDA"; then
+    dnl if test -z "$NO_CUDA"; then
         dnl adapt LDFLAGS globally, because LibLinAlg and thus CUDA currently 
         dnl has to be linked in all libraries and executables.
         dnl Probably hack, but works for me (fw).
-        AC_DEFINE([HAVE_CUDA], [1], [Define to 1 if you have CUDA installed and want to use it for extra-fast NMF.])
-        LDFLAGS="$LDFLAGS -L$CUDA_LIB -Wl,-rpath,$CUDA_LIB"
-        LIBS="$LIBS -lcuda -lcublas"
-        CUDA_CPPFLAGS="-I$CUDA_INCLUDE"
-        ifelse([$1], [], :, [$1])     
-    else
-        ifelse([$2], [], :, [$2])
-    fi
-
+        dnl ----------
+        dnl AC_DEFINE([HAVE_CUDA], [1], [Define to 1 if you have CUDA installed and want to use it for extra-fast NMF.])
+        dnl LDFLAGS="$LDFLAGS -L$CUDA_LIB -Wl,-rpath,$CUDA_LIB"
+        dnl LIBS="$LIBS -lcuda -lcublas"
+        dnl CUDA_CPPFLAGS="-I$CUDA_INCLUDE"
+        dnl ifelse([$1], [], :, [$1])     
+    dnl else
+        dnl ifelse([$2], [], :, [$2])
+    dnl fi
+    dnl --------------------------------
+    dnl 2 lines removed 
     AC_SUBST(CUDA_CPPFLAGS)
     AC_SUBST(CUDA_LIBS)
 ])

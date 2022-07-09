@@ -21,7 +21,8 @@
 // You should have received a copy of the GNU General Public License along with
 // openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 //
-
+#undef HAVE_CUDA
+#ifdef HAVE_CUDA
 
 #include <cuda.h>
 #include <blissart/linalg/common.h>
@@ -177,4 +178,4 @@ void apply_floor(Elem* a, const Elem floor, int rows, int cols)
 
 
 } // namespace blissart
-
+#endif

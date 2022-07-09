@@ -26,7 +26,7 @@
 #ifndef __EDITWIDGETLABEL_H__
 #define __EDITWIDGETLABEL_H__
 
-
+#include "stddef.h"
 #include "ui_EditWidgetLabel.h"
 #include "EditWidget.h"
 #include <blissart/Label.h>

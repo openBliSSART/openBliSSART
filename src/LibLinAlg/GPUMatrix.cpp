@@ -22,7 +22,9 @@
 // openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#undef HAVE_CUDA
 
+#ifdef HAVE_CUDA
 #include <blissart/linalg/GPUMatrix.h>
 #include <blissart/linalg/GPUUtil.h>
 #include <blissart/linalg/GPUMatrixKernels.h>
@@ -277,4 +279,4 @@ void GPUMatrix::colSums(GPUMatrix* sums)
 
 
 } // namespace blissart
-
+#endif

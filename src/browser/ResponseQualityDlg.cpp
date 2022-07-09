@@ -68,7 +68,7 @@ ResponseQualityDlg::~ResponseQualityDlg()
 {
     if (_dpMatrix) {
         delete _dpMatrix;
-        _dpMatrix = NULL;
+        _dpMatrix = nullptr;
     }
 }
 

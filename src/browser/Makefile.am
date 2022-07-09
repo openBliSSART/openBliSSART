@@ -29,14 +29,14 @@ clean-local: Makefile.qt
 	$(MAKE) -f Makefile.qt $(AM_MAKEFLAGS) clean
 	-rm -f browser
 
-EXTRA_DIST = *.cpp *.h *.ui browser.pro browser.vcproj make_vcproj.bat
+EXTRA_DIST = *.cpp *.h *.ui sub_browser.pro browser.vcproj make_vcproj.bat
 
 .PHONY: install-exec-local Makefile.qt
 install-exec-local: all
 	$(mkdir_p) $(bindir)
 	$(install_sh_PROGRAM) browser $(bindir)/browser
 
-Makefile.qt: browser.pro
+Makefile.qt: sub_browser.pro
 if DEBUG_BUILD
 	$(QMAKE) -config debug 'POCOLDFLAGS=@POCO_LDFLAGS@' 'POCOCPPFLAGS=@POCO_CPPFLAGS@' 'CPPFLAGS=-DHAVE_CONFIG_H -I../.. $(CPPFLAGS)' 'LDFLAGS=$(LDFLAGS)' -o Makefile.qt
 else

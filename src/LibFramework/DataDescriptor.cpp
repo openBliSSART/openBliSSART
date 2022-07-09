@@ -75,6 +75,8 @@ std::string DataDescriptor::strForType(DataDescriptor::Type type)
     case FeatureMatrix:
         return "Feature matrix";
         break;
+    case Invalid:
+        throw NotImplementedException("Unknown data descriptor type.");
     default:
         throw NotImplementedException("Unknown data descriptor type.");
     }
@@ -100,6 +102,8 @@ std::string DataDescriptor::strForTypeShort(DataDescriptor::Type type)
     case FeatureMatrix:
         return "fmatr";
         break;
+    case Invalid:
+        throw NotImplementedException("Unknown data descriptor type.");
     default:
         throw NotImplementedException("Unknown data descriptor type.");
     }

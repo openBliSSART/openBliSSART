@@ -74,3 +74,17 @@ src/nmdtool/nmdtool
 stamp-h1
 win32/Setup_openBliSSART/Release
 win32/Setup_openBliSSART/Debug
+cmake-build
+build-cmake
+build
+CMakeCache
+browser
+cmake
+CMake
+.qt
+.qtc*
+Makefile
+CMakeFiles
+CMakeCache.txt
+build-Lib*
+valgrind*.txt

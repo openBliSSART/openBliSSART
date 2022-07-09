@@ -374,11 +374,18 @@ void EditWidgetResponse::setTableWidgets(const ClassificationObjectPtr &clo,
     
     // Remove possibly existing items.
     QTableWidgetItem *delItem = 0;
+    //if ((delItem == _ui.twRelations->takeItem(row, 0)))
+    //    delete delItem;
+    //if ((delItem == _ui.twRelations->takeItem(row, 1)))
+    //    delete delItem;
+    //if ((delItem == _ui.twRelations->takeItem(row, 2)))
+    //    delete delItem;
+
     if ((delItem == _ui.twRelations->takeItem(row, 0)))
         delete delItem;
-    if ((delItem == _ui.twRelations->takeItem(row, 1)))
+    else if ((delItem == _ui.twRelations->takeItem(row, 1)))
         delete delItem;
-    if ((delItem == _ui.twRelations->takeItem(row, 2)))
+    else if ((delItem == _ui.twRelations->takeItem(row, 2)))
         delete delItem;
     
     // Create new items.

@@ -393,7 +393,7 @@ public:
     /**
      * TODO
      */
-    void apply(Elem (*func) (Elem, Elem), const Matrix& other);
+    void apply(Elem (*func) (Elem, Elem), const Matrix& other, Matrix* target);
     void apply(Elem (*func) (Elem, Elem), const Matrix& other, Matrix* target) const;
     void apply(Elem (*func) (Elem, Elem), Elem other);
     void apply(Elem (*func) (Elem, Elem), Elem other, Matrix* target) const;

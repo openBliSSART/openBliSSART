@@ -26,7 +26,7 @@
 #ifndef __BLISSART_NMF_DECONVOLVER_H__
 #define __BLISSART_NMF_DECONVOLVER_H__
 
-
+#define HAVE_CUDA = 0
 #include <common.h>
 #include <blissart/linalg/Matrix.h>
 //#include <config.h>
@@ -408,7 +408,7 @@ public:
                                   ProgressObserver *observer = 0);
 
     // Sparse NMF minimizing Euclidean distance, measured using normalized
-    // basis vectors (Eggert and Körner 2004).
+    // basis vectors (Eggert and K\F6rner 2004).
     void factorizeNMFEDSparseNorm(unsigned int maxSteps, double eps,
                                   ProgressObserver *observer = 0);
 

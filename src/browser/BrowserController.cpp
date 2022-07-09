@@ -69,6 +69,7 @@ void BrowserController::handleRefreshTreeWidget()
     if (li) {
         li->widget()->hide();
         delete li->widget();
+        //li->widget() = nullptr;
     }
 
     // And then reinitialize the tree widget.
@@ -115,6 +116,7 @@ void BrowserController::on_treeWidget_currentItemChanged(QTreeWidgetItem *curren
     if (li) {
         li->widget()->hide();
         delete li->widget();
+        //li->widget() = nullptr;
     }
 
     // Perform a small sanity check.
@@ -122,7 +124,8 @@ void BrowserController::on_treeWidget_currentItemChanged(QTreeWidgetItem *curren
         return;
 
     // Determine the entity's type and create the corresponding edit widget.
-    EditWidget *editWidget = 0;
+    //EditWidget *editWidget = 0;
+    EditWidget *editWidget = nullptr;
 
     DatabaseEntityPtr dbe = static_cast<EntityItem *>(current)->entityPtr();
     switch (dbe->entityType()) {

@@ -84,7 +84,8 @@ int Process::windowSize() const
     map<string, string>::const_iterator it;
     if ((it = parameters.find("windowSize")) == parameters.end())
         throw Poco::NotFoundException("Missing windowSize.");
-    return (unsigned int)(Poco::NumberParser::parse(it->second.c_str()));
+    //return (unsigned int)(Poco::NumberParser::parse(it->second.c_str()));
+    return (int)(Poco::NumberParser::parse(it->second.c_str()));
 }
 
 

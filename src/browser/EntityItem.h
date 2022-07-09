@@ -26,7 +26,6 @@
 #ifndef __ENTITYITEM_H__
 #define __ENTITYITEM_H__
 
-
 #include <QTreeWidgetItem>
 #include <blissart/BasicApplication.h>
 #include <blissart/DatabaseSubsystem.h>

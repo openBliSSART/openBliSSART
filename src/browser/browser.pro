@@ -22,8 +22,11 @@
 # openBliSSART.  If not, see <http:#www.gnu.org/licenses/>.
 #
 
-CONFIG += resources thread
+#CONFIG = debug
+CONFIG += resources thread debug
 QT += widgets
+CONFIG += force_debug_info
+
 
 SOURCES = main.cpp \
           BrowserController.cpp \
@@ -94,20 +97,21 @@ TARGET = browser
 INCLUDEPATH += ../include
 #/usr/include/x86_64-linux-gnu/qt5
 
-CONFIG(debug, debug|release) {
-    IMDIR = ../../build/debug
-    DEFINES += _DEBUG
-    win32:DESTDIR = ../../bin/debug
-}
+##CONFIG(debug, debug|release) {
+##    IMDIR = ../../build/debug
+##    DEFINES += _DEBUG
+##    win32:DESTDIR = ../../bin/debug
+##}
 
-CONFIG(release, debug|release) {
-    IMDIR = ../../build/release
-    DEFINES += QT_NO_DEBUG_OUTPUT
-    win32:DESTDIR = ../../bin/release
-    unix {
-        QMAKE_POST_LINK = strip $${TARGET}
-    }
-}
+
+##CONFIG(release, debug|release) {
+##    IMDIR = ../../build/release
+##    DEFINES += QT_NO_DEBUG_OUTPUT
+##    win32:DESTDIR = ../../bin/release
+##    unix {
+##        QMAKE_POST_LINK = strip $${TARGET}
+##    }
+##}
 
 mac {
     INCLUDEPATH += /sw/include
@@ -119,8 +123,9 @@ mac {
 }
 
 unix {
-    QMAKE_CXXFLAGS += '$${POCOCPPFLAGS}'
-    QMAKE_CXXFLAGS += '$${CPPFLAGS}'
+    QMAKE_CXXFLAGS += -std=c++17 -fPIC -DPIC -g -O2 -MD -MT -MF -Wall -Wextra -fpermissive
+    QMAKE_CXXFLAGS += '-I/home/gordon/Qt/6.3.0/gcc_64/include -DDEBUG -DQT_DEBUG -DPIC $${POCOCPPFLAGS}'
+    QMAKE_CXXFLAGS += '-DDEBUG -DQT_DEBUG -DPIC $${CPPFLAGS}'
     QMAKE_LFLAGS += '$${POCOLDFLAGS}'
     QMAKE_LFLAGS += '$${LDFLAGS}'
 #    LIBS += -L../LibLinAlg/.libs -lLinAlg \
@@ -128,21 +133,30 @@ unix {
 #            -L../LibNMF/.libs -lNMF \
 #            -L../LibFramework -lFramework \
 #            -lPocoFoundation -lPocoDataSQLite -lPocoData -lPocoUtil -lPocoXML
-    LIBS += -L/usr/local/blissart/lib -lLinAlg \
+##    LIBS += -L/usr/local/blissart/lib -lLinAlg \
+##            -L/usr/local/blissart/lib -lAudio \
+##            -L/usr/local/blissart/lib -lNMF \
+##            -L/usr/local/lib -lSDL2main \
+##            -L/usr/local/lib -lSDL2 \
+##            -L/usr/local/lib -lSDL2_sound \
+##            -L../LibFramwork -lFramework \
+##            -lPocoFoundation -lPocoDataSQLite -lPocoData -lPocoUtil -lPocoXML
+
+    LIBS += -L/usr/local/blissart/lib -lLinAlgd \
             -L/usr/local/blissart/lib -lAudio \
-            -L/usr/local/blissart/lib -lNMF \
+            -L/usr/local/blissart/lib -lNMFd \
             -L/usr/local/lib -lSDL2main \
             -L/usr/local/lib -lSDL2 \
             -L/usr/local/lib -lSDL2_sound \
-            -L../LibFramwork -lFramework \
-            -lPocoFoundation -lPocoDataSQLite -lPocoData -lPocoUtil -lPocoXML
+            -L../LibFramwork -lFrameworkd \
+            -lPocoFoundationd -lPocoDataSQLited -lPocoDatad -lPocoUtild -lPocoXMLd
 }
 
-win32 {
-    # Add CONFIG += console for messages on std(out|err).
-    CONFIG += windows embed_manifest_exe
-    QMAKE_CXXFLAGS += /Fd$(IntDir)\$(ProjectName).pdb
-}
+##win32 {
+##    # Add CONFIG += console for messages on std(out|err).
+##    CONFIG += windows embed_manifest_exe
+##    QMAKE_CXXFLAGS += /Fd$(IntDir)\$(ProjectName).pdb
+##}
 
 UI_DIR = $$IMDIR
 MOC_DIR = $$IMDIR

@@ -1,6 +1,8 @@
-Modified to use Ubuntu 21.10 using https://github.com/pocoproject/poco built with cmake, SDL2 and SDL2_sound.
-Qt 5.18 and CUDA 11.6 used but not tested.  CUDA stills generates linker errors.  SDL2 is implemented not SDL1.
-Qt Creator used to debug and .pro files being worked on.
+Modified to use Ubuntu 22.04 using https://github.com/pocoproject/poco built with cmake, SDL2 and SDL2_sound.
+Dependencies required are doxygen, pdflatex, fft3w, and possibly others.  Qt6.3.0
+Qt5 will be added later and CUDA 11.6 not tested and not used.  CUDA stills generates linker errors.  SDL2 is implemented not SDL1.
+Qt Creator used to debug and .pro files were being worked on.
+CMake build added.
 
 Poco changes:
 --------------------------------------------------------------------------------------------
@@ -34,14 +36,30 @@ find_path(ODBC_INCLUDE_DIR
  		/usr/include
 +		/usr/local/unixODBC/include
 -----------------------------------------------------------------------------------------------
-openBliSSART build uses the following steps:
+openBliSSART original build uses the following steps:
 
 git clone https://github.com/sildeag/openBliSSART.git
 cd openBliSSART
 ./bootstrap.sh
 ./configure
 make
+----------------------------------------------------------------------
+New build:
+git clone https://github.com/sildeag/openBliSSART.git
+cd openBliSSART
+mkdir cmake-build
+cd cmake-build
+ccmake ..    (change build type to 'release' or 'debug' and configure 'c' and then generate 'g')
+make
+----------------------------------------------------------------------
+make -j4 (still be worked on as ordering changes)
+src/browser/CMakeLists.txt still being worked on and some memory faults in browser - valgrind is being used.
+c++17 used as default
 
+----------------------------------------------------------------------
+
+Documentation is built.  Issues with fonts and with bibliography.   
+----------------------------------------------------------------------
 Also I would draw your attention to the following from `INSTALL` files
 2.1.1.1 Shared Installation
 

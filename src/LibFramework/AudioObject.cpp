@@ -144,6 +144,18 @@ AudioData* AudioObject::getAudioObject(ClassificationObjectPtr clo,
             case DataDescriptor::PhaseMatrix:
                 phaseMatrix = new Matrix(sts.getLocation((*ddIt)).toString());
                 break;
+            case DataDescriptor::MagnitudeMatrix:
+                BasicApplication::instance().logger()
+                                            .warning("Unknown data descriptor!");
+                break;
+            case DataDescriptor::FeatureMatrix:
+                BasicApplication::instance().logger()
+                                            .warning("Unknown data descriptor!");
+                break;
+            case DataDescriptor::Invalid:
+                BasicApplication::instance().logger()
+                                            .warning("Unknown data descriptor!");
+                break;
             default:
                 BasicApplication::instance().logger()
                                             .warning("Unknown data descriptor!");

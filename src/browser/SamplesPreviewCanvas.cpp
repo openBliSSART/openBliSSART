@@ -77,7 +77,7 @@ SamplesPreviewCanvas::~SamplesPreviewCanvas()
 {
     if (_samples) {
         delete[] _samples;
-        _samples = NULL;
+        _samples = nullptr;
     }
 }
 

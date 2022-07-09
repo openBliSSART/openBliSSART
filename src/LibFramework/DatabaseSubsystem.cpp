@@ -22,6 +22,8 @@
 // openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 //
 //********************************
+
+//#include <QMessageBox>
 // * #include "TypeHandler.h"
 //// #include <Poco/SQL/TypeHandler.h>
 //#include <blissart/DatabaseSubsystem.h>
@@ -85,8 +87,8 @@
 
 //*************************/
 
+//#include <QMessageBox>
 #include "TypeHandler.h"
-
 #include <blissart/DatabaseSubsystem.h>
 #include <blissart/FeatureSet.h>
 
@@ -144,8 +146,10 @@ const char* DatabaseSubsystem::name() const
 void DatabaseSubsystem::connect(const std::string& dbFilename)
 {
     _poolLock.lock();
-    if (_pPool)
+    if (_pPool) {
         delete _pPool;
+        _pPool = nullptr;
+    }
     _pPool = new Poco::Data::SessionPool("SQLite", dbFilename);
     _poolLock.unlock();
     _dbFilename = dbFilename;
@@ -159,7 +163,7 @@ void DatabaseSubsystem::disconnect()
     FastMutex::ScopedLock lock(_poolLock);
     if (_pPool) {
         delete _pPool;
-        _pPool = 0;
+        _pPool = nullptr;
     }
 }
 
@@ -1269,10 +1273,12 @@ std::vector<ResponsePtr> DatabaseSubsystem::getResponses()
     std::vector<ResponsePtr> result;
     Session session = getSession();
     session.begin();
+    _logger.debug("...SELECT * FROM response.");
     session << "SELECT * FROM response", into(result), now;
     for (std::vector<ResponsePtr>::iterator itr = result.begin();
         itr != result.end(); ++itr)
     {
+        _logger.debug("...getResponseLabel.");
         getResponseLabels(session, *itr);
     }
     session.commit();

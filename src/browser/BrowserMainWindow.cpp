@@ -51,7 +51,10 @@ namespace blissart {
 
 BrowserMainWindow::BrowserMainWindow() : QMainWindow()
 {
+    QMessageBox::information(this, windowTitle(),
+            tr("Creating new Browser Controller."));
     setCentralWidget(new BrowserController(this));
+    
     setupMenu();
     setMinimumSize(MINIMUM_WIDTH, MINIMUM_HEIGHT);
 
@@ -83,11 +86,15 @@ void BrowserMainWindow::closeEvent(QCloseEvent *ev)
 
 void BrowserMainWindow::setupMenu()
 {
+    QMessageBox::information(this, windowTitle(),
+            tr("setupMenu."));
     QMenu *dbMenu = menuBar()->addMenu(tr("Database"));
 
 #ifdef Q_WS_MAC
     dbMenu->addAction(tr("Preferences"), this, SLOT(handlePreferences()));
 #else
+    QMessageBox::information(this, windowTitle(),
+            tr("addMenu Edit."));
     QMenu *editMenu = menuBar()->addMenu(tr("Edit"));
     editMenu->addAction(tr("Preferences"), this, SLOT(handlePreferences()));
 #endif

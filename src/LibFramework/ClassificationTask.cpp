@@ -100,7 +100,7 @@ ClassificationTask::~ClassificationTask()
         it != _spectraMap.end(); ++it)
     {
         delete it->second;
-    }
+     }
     _spectraMap.clear();
 }
 

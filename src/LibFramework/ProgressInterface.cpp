@@ -82,7 +82,7 @@ int ProgressInterface::retrieveUniqueID()
 
 float ProgressInterface::progress()
 {
-    if (_maxProgress + _progressPerTask.size() == 0) {
+    if (_maxProgress + (float) _progressPerTask.size() == 0) {
         return 1.0f;
     }
 

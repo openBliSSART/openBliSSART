@@ -214,7 +214,7 @@ void TreeWidgetController::initializeView()
     _rootLabels = new QTreeWidgetItem(this, QStringList(tr("Labels")));
     getLabels();
     
-    // Get the stored processes.
+     // Get the stored processes.
     _rootProcesses = new QTreeWidgetItem(this, QStringList(tr("Processes")));
     getProcesses();
     
@@ -237,38 +237,44 @@ void TreeWidgetController::initializeView()
 
 void TreeWidgetController::getResponses()
 {
+    ResponsePtr r;
     // First remove all possible previous children.
     removeAllChildren(_rootResponses);
     // Retrieve the list of available responses.
     vector<ResponsePtr> responses = dbSubsystem().getResponses();
     // Create a new ResponseItem for every response.
-    foreach (ResponsePtr r, QVector<ResponsePtr>::fromStdVector(responses))
-        new ResponseItem(_rootResponses, r);
+    for (auto& r : responses) { new ResponseItem(_rootResponses, r);}
 }
 
 
 void TreeWidgetController::getLabels()
 {
+    LabelPtr l;
     // First remove all possible previous children
     removeAllChildren(_rootLabels);
     // Retrieve the list of available labels.
+
     vector<LabelPtr> labels = dbSubsystem().getLabels();
     // Create a new LabelItem for every label.
-    foreach (LabelPtr l, QVector<LabelPtr>::fromStdVector(labels))
-        new LabelItem(_rootLabels, l);
+    for (auto& l : labels) {new LabelItem(_rootLabels, l);}
+
+    //foreach (LabelPtr l, QVector<LabelPtr>::fromStdVector(labels))
+    //    new LabelItem(_rootLabels, l);
 }
 
 
 void TreeWidgetController::getProcesses()
 {
+    ProcessPtr p;
     // First remove all possible previous children.
     removeAllChildren(_rootProcesses);
     // Retrieve the list of available processes.
     vector<ProcessPtr> processes = dbSubsystem().getProcesses();
     // Create a new ProcessItem for every process. Further data belonging to the
     // process will not be read until the first time the item is being expanded.
-    foreach (ProcessPtr p, QVector<ProcessPtr>::fromStdVector(processes))
-        new ProcessItem(_rootProcesses, p);
+    for (auto& p : processes) {new ProcessItem(_rootProcesses, p);}
+    //foreach (ProcessPtr p, QVector<ProcessPtr>::fromStdVector(processes))
+    //    new ProcessItem(_rootProcesses, p);
 }
 
 
@@ -293,6 +299,7 @@ void TreeWidgetController::removeAllChildren(QTreeWidgetItem *parent)
             q.push(child);
         if (item != parent)
             delete item;
+        item = nullptr;
     }
 }
 

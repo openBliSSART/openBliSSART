@@ -26,7 +26,10 @@
 #ifndef __BLISSART_LINALG_COMMON_H__
 #define __BLISSART_LINALG_COMMON_H__
 
-
+#define HAVE_CUDA = 0
+#ifdef HAVE_CUDA
+#undef HAVE_CUDA
+#endif 
 #include <common.h>
 
 

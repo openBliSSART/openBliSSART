@@ -1,0 +1,14 @@
+cmake_minimum_required(VERSION 3.22)
+set (project LibLinAlg)
+
+set(${project}_SOURCES
+	${CMAKE_CURRENT_SOURCE_DIR}/GPUUtil.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/GPUMatrix.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/RowVector.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Matrix.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Vector.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/ColVector.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/GPUMatrixKernels.cu
+)
+
+add_library(${project} STATIC ${${project}_SOURCES} )

@@ -22,7 +22,6 @@
 // openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-
 #include <blissart/linalg/Vector.h>
 #include <blissart/linalg/Matrix.h>
 #include <blissart/BinaryReader.h>

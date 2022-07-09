@@ -44,6 +44,7 @@
 #include <iostream>
 #include <iomanip>
 
+#undef HAVE_CUDA
 #ifdef HAVE_CUDA
 #include <cuda_runtime.h>
 #include <blissart/linalg/GPUUtil.h>

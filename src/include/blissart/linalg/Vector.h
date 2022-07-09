@@ -27,11 +27,11 @@
 #define __BLISSART_LINALG_VECTOR_H__
 
 
-#include <common.h>
-#include <types.h>
+#include "../../common.h"
+#include "../../types.h"
 #include <iostream>
 #include <iomanip>
-#include <blissart/linalg/common.h>
+#include "blissart/linalg/common.h"
 
 
 namespace blissart {

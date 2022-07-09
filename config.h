@@ -8,12 +8,11 @@
 /* Define to 1 if you have the `atexit' function. */
 #define HAVE_ATEXIT 1
 
+/* Define to 1 if you have CBLAS. */
+#define HAVE_CBLAS 1
+
 /* Define to 1 if you have the <cblas.h> header file. */
 #define HAVE_CBLAS_H 1
-
-/* Define to 1 if you have CUDA installed and want to use it for extra-fast
-   NMF. */
-/* #undef HAVE_CUDA */
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #define HAVE_DLFCN_H 1
@@ -30,18 +29,11 @@
 /* Define to 1 if you have Matlab and want to use it instead of ATLAS. */
 /* #undef HAVE_MATLAB */
 
-/* Define to 1 if you have the <memory.h> header file. */
-#define HAVE_MEMORY_H 1
-
 /* Define to 1 if you have the `memset' function. */
 #define HAVE_MEMSET 1
 
 /* Define to 1 if you have the `pow' function. */
 /* #undef HAVE_POW */
-
-/* Define to 1 if your system has a GNU libc compatible `realloc' function,
-   and to 0 otherwise. */
-#define HAVE_REALLOC 1
 
 /* Define to 1 if you have the `sqrt' function. */
 /* #undef HAVE_SQRT */
@@ -51,6 +43,9 @@
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
+
+/* Define to 1 if you have the <stdio.h> header file. */
+#define HAVE_STDIO_H 1
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #define HAVE_STDLIB_H 1
@@ -107,7 +102,9 @@
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "2.0"
 
-/* Define to 1 if you have the ANSI C header files. */
+/* Define to 1 if all of the C90 standard headers exist (not just the ones
+   required in a freestanding environment). This macro is provided for
+   backward compatibility; new code need not use it. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
@@ -133,9 +130,6 @@
 #ifndef __cplusplus
 /* #undef inline */
 #endif
-
-/* Define to rpl_realloc if the replacement function should be used. */
-/* #undef realloc */
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 /* #undef size_t */

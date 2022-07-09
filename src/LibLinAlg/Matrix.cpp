@@ -196,7 +196,7 @@ Matrix::Matrix(const std::string& fileName) :
 
     // Something went wrong.
     if (_data)
-        delete _data;
+        delete[] _data;
     std::string msg("Error while reading matrix data from file ");
     msg.append(fileName);
     throw std::runtime_error(msg);
@@ -558,7 +558,7 @@ Matrix Matrix::multWithTransposedMatrix(const Matrix& other) const
 }
 
 
-void Matrix::apply(Elem (*func) (Elem, Elem), const Matrix& other)
+void Matrix::apply(Elem (*func) (Elem, Elem), const Matrix& other, Matrix* target)
 {
     debug_assert(_rows == other._rows &&
                  _cols == other._cols &&

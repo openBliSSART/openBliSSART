@@ -1,0 +1,3 @@
+// the configured options and settings for cmakeBliSSART
+#define cmakeBliSSART_VERSION_MAJOR @cmakeBliSSART_VERSION_MAJOR@
+#define cmakeBliSSART_VERSION_MINOR @cmakeBliSSART_VERSION_MINOR@
