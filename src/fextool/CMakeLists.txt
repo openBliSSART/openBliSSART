@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 
 project(fextool)
 
-set(CMAKE_CXX_STANDARD 17) # This is equal to QMAKE_CXX_FLAGS += -std=c++0x
+set(CMAKE_CXX_STANDARD 20) # This is equal to QMAKE_CXX_FLAGS += -std=c++0x
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -54,10 +54,17 @@ add_executable(fextool ${SOURCES} )
 #    PROPERTIES COMPILE_FLAGS "-I../include "
 #)
 
+set(CMAKE_DEBUG_POSTFIX d)
+
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+#target_link_libraries(my_app PRIVATE Threads::Threads)
+
+
 set_target_properties(fextool
     PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
 
@@ -68,9 +75,9 @@ find_package(Threads REQUIRED)
 # note LinAlg then Feature then Framework
 target_link_libraries( fextool 
 PRIVATE Threads::Threads 
-${LIBRARY_OUTPUT_DIRECTORY}/libFrameworkd.so 
-${LIBRARY_OUTPUT_DIRECTORY}/libFeatured.so
-${LIBRARY_OUTPUT_DIRECTORY}/libLinAlgd.so 
+${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libLinAlg${CMAKE_DEBUG_POSTFIX}.so 
+${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libFeature${CMAKE_DEBUG_POSTFIX}.so 
+${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libFramework${CMAKE_DEBUG_POSTFIX}.so 
 #${LIBRARY_OUTPUT_DIRECTORY}/libAudiod.so 
 #${LIBRARY_OUTPUT_DIRECTORY}/libNMFd.so 
 #${LIBRARY_OUTPUT_DIRECTORY}/libICAd.so 

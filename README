@@ -49,12 +49,14 @@ git clone https://github.com/sildeag/openBliSSART.git
 cd openBliSSART
 mkdir cmake-build
 cd cmake-build
-ccmake ..    (change build type to 'release' or 'debug' and configure 'c' and then generate 'g')
+ccmake ..    (change build type to 'release' or 'debug' and configure 'c' and then generate 'g'
+	Note: CMakelists.txt for doc still has slight error so one may have to 'e' and then configure again 'c')
 make
 ----------------------------------------------------------------------
-make -j4 (still be worked on as ordering changes)
-src/browser/CMakeLists.txt still being worked on and some memory faults in browser - valgrind is being used.
-c++17 used as default
+make -jn (where n = number of processors, changes ordering of build and 
+   not sure how this affects dependent shared libraries)
+browser still being worked on as some memory faults persist in browser - valgrind is being used.
+c++20 used as default
 
 ----------------------------------------------------------------------
 
