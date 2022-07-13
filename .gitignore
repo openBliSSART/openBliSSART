@@ -136,3 +136,10 @@ src/build-LibFramework-Desktop-Release/libFramework.so
 src/build-LibFramework-Desktop-Release/libFramework.so.1
 src/build-LibFramework-Desktop-Release/libFramework.so.1.0
 src/build-LibFramework-Desktop-Release/libFramework.so.1.0.0
+doc/CMakeLists.bkup
+doc/manual_PDF
+doc/manual.aux
+doc/manual.log
+doc/manual.out
+doc/manual.toc
+doc/manual/manual.synctex.*

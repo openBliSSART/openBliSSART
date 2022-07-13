@@ -6,7 +6,7 @@ project(openBliSSART VERSION 1.0)
 configure_file(openBliSSARTconfig.h.in openBliSSARTconfig.h)
 
 # specify the C++ standard
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Option to Enable NO_CUDA
@@ -34,7 +34,7 @@ message(STATUS "Found CUDA ${CUDA_VERSION_STRING} at ${CUDA_TOOLKIT_ROOT_DIR}")
 
 # Setting the include directory for the application to find config.h
 include_directories( ${CMAKE_BINARY_DIR} )
-list(APPEND CMAKE_PREFIX_PATH "~/Qt/6.3.0/gcc_64")
+#list(APPEND CMAKE_PREFIX_PATH "~/Qt/6.3.0/gcc_64")
 # Since we have created a config.h add a global define for it
 add_definitions( "-DHAVE_CONFIG_H" )
 add_subdirectory( src )

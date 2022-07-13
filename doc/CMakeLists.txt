@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project ( doc )
+project ( doc NONE )
 
 # first we can indicate the documentation build as an option and set it to ON by default
 option(BUILD_DOC "Build documentation" ON)
@@ -24,3 +24,4 @@ if (DOXYGEN_FOUND)
 else (DOXYGEN_FOUND)
   message("Doxygen need to be installed to generate the doxygen documentation")
 endif (DOXYGEN_FOUND)
+add_subdirectory( manual )
