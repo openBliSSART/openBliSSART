@@ -235,19 +235,19 @@ int main(int argc, char **argv)
 
     try {
         // Prepare separator and exporter
-        auto_ptr<AbstractSeparator> separator;
-        auto_ptr<AbstractExporter> exporter;
+        unique_ptr<AbstractSeparator> separator;
+        unique_ptr<AbstractExporter> exporter;
         switch (format) {
             case FormatWave:
-                separator = auto_ptr<AbstractSeparator>(
+                separator = unique_ptr<AbstractSeparator>(
                     new SampleSeparator(nSources, inFiles, force, prec, maxIter));
-                exporter = auto_ptr<AbstractExporter>(new WaveExporter(prefix,
+                exporter = unique_ptr<AbstractExporter>(new WaveExporter(prefix,
                     (static_cast<SampleSeparator*>(separator.get()))->sampleRate()));
                 break;
             case FormatARFF:
-                separator = auto_ptr<AbstractSeparator>(
+                separator = unique_ptr<AbstractSeparator>(
                     new SampleSeparator(nSources, inFiles, force, prec, maxIter));
-                exporter = auto_ptr<AbstractExporter>(new ARFFExporter(prefix + ".arff"));
+                exporter = unique_ptr<AbstractExporter>(new ARFFExporter(prefix + ".arff"));
                 break;
             default:
                 throw runtime_error("Format NOT supported yet!");
