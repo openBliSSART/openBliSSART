@@ -62,7 +62,8 @@ const Matrix* AbstractSeparator::separate(int* numErrors)
 
     // Initialize and perform FastICA while storing the
     // # of convergence errors iff desired
-    auto_ptr<FastICA> f(FastICA::compute(_matrix, _nSources,
+    // changed auto_ptr to unique_ptr
+    unique_ptr<FastICA> f(FastICA::compute(_matrix, _nSources,
                                          false, // not centered yet
                                          _maxIter, _prec));
 

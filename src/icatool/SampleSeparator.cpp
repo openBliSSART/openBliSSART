@@ -47,13 +47,14 @@ SampleSeparator::SampleSeparator(unsigned int nSources,
 {
     unsigned int lastSampleRate = -1, maxNrOfSamples = -1;
     bool variableNrOfSamples = false;
-    auto_ptr<AudioData>* decoders = new auto_ptr<AudioData>[sourceFileNames.size()];
+    // changed auto_ptr to unique_ptr
+    unique_ptr<AudioData>* decoders = new unique_ptr<AudioData>[sourceFileNames.size()];
 
     try {
         cout << "Reading files..." << endl;
         for (unsigned int i = 0; i < sourceFileNames.size(); i++) {
             // First decode the files.
-            decoders[i] = auto_ptr<AudioData>(AudioData::fromFile(sourceFileNames.at(i)));
+            decoders[i] = unique_ptr<AudioData>(AudioData::fromFile(sourceFileNames.at(i)));
             // Print some information about the file.
             cout << "   file '" << sourceFileNames.at(i) << '\'' << endl;
             cout << "      # samples   = " << decoders[i]->nrOfSamples() << endl;
