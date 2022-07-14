@@ -217,7 +217,8 @@ void SamplesPreviewCanvas::paintEvent(QPaintEvent *ev)
 
 void SamplesPreviewCanvas::mouseReleaseEvent(QMouseEvent *ev)
 {
-    float pos = _tMin + (_tMax - _tMin) * ev->x() / rect().width();
+// was    float pos = _tMin + (_tMax - _tMin) * ev->x() / rect().width();
+    float pos = _tMin + (_tMax - _tMin) * ev->position().x() / rect().width();
     if (pos >= 0.0 && pos <= 1.0)
         emit posClicked(pos);
     ev->accept();
