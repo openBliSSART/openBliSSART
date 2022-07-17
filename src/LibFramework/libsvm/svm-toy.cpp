@@ -413,7 +413,7 @@ SvmToyWindow::~SvmToyWindow()
 
 void SvmToyWindow::mousePressEvent( QMouseEvent* event )
 {
-	point p = {(double)event->x()/XLEN, (double)event->y()/YLEN, current_value};
+    point p = {(double)event->position().x()/XLEN, (double)event->position().y()/YLEN, current_value};
 	point_list.push_back(p);
 	draw_point(p);
 }

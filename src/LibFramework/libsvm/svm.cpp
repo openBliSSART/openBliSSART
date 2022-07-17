@@ -9,31 +9,58 @@
 #include <locale.h>
 #include <libsvm/svm.h>
 int libsvm_version = LIBSVM_VERSION;
-typedef float Qfloat;
-typedef signed char schar;
+namespace {
+    typedef float Qfloat;
+    typedef signed char schar;
 #ifndef min
-template <class T> static inline T min(T x,T y) { return (x<y)?x:y; }
+    template <class T> inline T min(T x,T y) { return (x<y)?x:y; }
 #endif
 #ifndef max
-template <class T> static inline T max(T x,T y) { return (x>y)?x:y; }
+    template <class T> inline T max(T x,T y) { return (x>y)?x:y; }
 #endif
-template <class T> static inline void swap(T& x, T& y) { T t=x; x=y; y=t; }
-template <class S, class T> static inline void clone(T*& dst, S* src, int n)
-{
-	dst = new T[n];
-	memcpy((void *)dst,(void *)src,sizeof(T)*n);
-}
-static inline double powi(double base, int times)
-{
-	double tmp = base, ret = 1.0;
-
-	for(int t=times; t>0; t/=2)
+    template <class T> inline void swap(T& x, T& y) { T t=x; x=y; y=t; }
+    template <class S, class T> inline void clone(T*& dst, S* src, int n)
 	{
-		if(t%2==1) ret*=tmp;
-		tmp = tmp * tmp;
+	dst = new T[n];
+        memcpy ((void *)dst,(void *)src, sizeof(T)*n);
 	}
-	return ret;
+	inline double powi(double base, int times)
+		{
+		double tmp = base, ret = 1.0;
+
+		for(int t=times; t>0; t/=2)
+			{
+			if(t%2==1) ret*=tmp;
+			tmp = tmp * tmp;
+			}
+		return ret;
+		}
 }
+//typedef float Qfloat;
+//typedef signed char schar;
+//#ifndef min
+//template <class T> static inline T min(T x,T y) { return (x<y)?x:y; }
+//#endif
+//#ifndef max
+//template <class T> static inline T max(T x,T y) { return (x>y)?x:y; }
+//#endif
+//template <class T> static inline void swap(T& x, T& y) { T t=x; x=y; y=t; }
+//template <class S, class T> static inline void clone(T*& dst, S* src, int n)
+//{
+//	dst = new T[n];
+//	memcpy((void *)dst,(void *)src,sizeof(T)*n);
+//}
+//static inline double powi(double base, int times)
+//{
+//	double tmp = base, ret = 1.0;
+//
+//	for(int t=times; t>0; t/=2)
+//	{
+//		if(t%2==1) ret*=tmp;
+//		tmp = tmp * tmp;
+//	}
+//	return ret;
+//}
 #define INF HUGE_VAL
 #define TAU 1e-12
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
