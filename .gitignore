@@ -143,3 +143,13 @@ doc/manual.log
 doc/manual.out
 doc/manual.toc
 doc/manual/manual.synctex.*
+src/LibFramework/build-svm*
+src/LibFramework/libsvm/*.bkup
+src/LibFramework/libsvm/Makefile*
+src/LibFramework/libsvm/release*
+src/LibFramework/libsvm/*copy*
+src/LibFramework/libsvm/test
+src/LibFramework/libsvm/svm-toy
+src/include/libsvm/svm_h.bkup
+src/LibFramework/libsvm/svm.def
+src/LibFramework/libsvm/*.txt
