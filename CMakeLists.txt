@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-
+#cmake_policy(SET CMP0042 NEW)
 # set the project name and version
 project(openBliSSART VERSION 1.0)
 
@@ -8,7 +8,23 @@ configure_file(openBliSSARTconfig.h.in openBliSSARTconfig.h)
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-
+#SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Weffc++ -Wuninitialized -Werror -Wall -Wextra -Wpedantic -fstack-protector")
+#print_trace()
+#SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-pie -ggdb3 -O3 -no-pie -rdynamic -pedantic-errors")
+#Backtrace()
+#SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fpic -export-dynamic")
+#set(CMAKE_CXX_CPPCHECK "cppcheck")
+find_program(CMAKE_CXX_CPPCHECK NAMES cppcheck)
+if (CMAKE_CXX_CPPCHECK)
+    list(
+        APPEND CMAKE_CXX_CPPCHECK 
+            "--enable=warning"
+            "--inconclusive"
+            "--force" 
+            "--inline-suppr"
+#            "--suppressions-list=${CMAKE_SOURCE_DIR}/CppCheckSuppressions.txt"
+    )
+endif()
 # Option to Enable NO_CUDA
 option( NO_CUDA "Enable NO_CUDA" OFF )
 

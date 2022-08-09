@@ -46,8 +46,8 @@ NMFTest.cpp
 NMFTest.h 
 PCATest.cpp 
 PCATest.h 
-SNMFTest.cpp 
-SNMFTest.h 
+#SNMFTest.cpp
+#SNMFTest.h
 SVMModelTest.cpp 
 SVMModelTest.h 
 ScalingTest.cpp 
@@ -108,6 +108,7 @@ add_executable(testsuite ${SOURCES} )
 #    PROPERTIES COMPILE_FLAGS "-I../include "
 #)
 
+set(CMAKE_DEBUG_POSTFIX d)
 set_target_properties(testsuite
     PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
@@ -119,20 +120,23 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 #target_link_libraries(my_app PRIVATE Threads::Threads)
 
+set_property(TARGET testsuite PROPERTY VERSION "1.2.0")
+set_property(TARGET testsuite PROPERTY SOVERSION "1")
+
 target_link_libraries( testsuite 
  PRIVATE Threads::Threads 
-/usr/local/blissart/lib/libLinAlgd.so 
-/usr/local/blissart/lib/libAudiod.so 
-/usr/local/blissart/lib/libNMFd.so 
-/usr/local/blissart/lib/libICAd.so 
-/usr/local/blissart/lib/libFeatured.so 
-/usr/local/blissart/lib/libFrameworkd.so 
+${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libLinAlg${CMAKE_DEBUG_POSTFIX}.so
+${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libAudio${CMAKE_DEBUG_POSTFIX}.so
+${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libNMF${CMAKE_DEBUG_POSTFIX}.so
+${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libICA${CMAKE_DEBUG_POSTFIX}.so
+${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libFeature${CMAKE_DEBUG_POSTFIX}.so
+${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libFramework${CMAKE_DEBUG_POSTFIX}.so
 /usr/local/lib/libSDL2main.a
 /usr/local/lib/libSDL2.so
 /usr/local/lib/libSDL2_sound.so
-/usr/local/lib/libPocoFoundationd.so 
+/usr/local/lib/libPocoFoundation${CMAKE_DEBUG_POSTFIX}.so
 # /usr/local/lib/libPocoDataSQLited.so
 # /usr/local/lib/libPocoDatad.so
-/usr/local/lib/libPocoUtild.so 
-/usr/local/lib/libPocoXMLd.so 
+/usr/local/lib/libPocoUtil${CMAKE_DEBUG_POSTFIX}.so
+/usr/local/lib/libPocoXML${CMAKE_DEBUG_POSTFIX}.so
 )

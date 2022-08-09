@@ -1,11 +1,13 @@
-Modified to use Ubuntu 22.04 using https://github.com/pocoproject/poco built with cmake, SDL2 and SDL2_sound.
+Modified to use Ubuntu 22.04 using https://github.com/sildeag/poco built with cmake, SDL2 and SDL2_sound.
 Dependencies required are libsvm (version 3.25 is used), doxygen, pdflatex, fft3w, and possibly others.  Qt6.3.0
 Qt5 will be added later and CUDA 11.6 not tested and not used.  CUDA stills generates linker errors.  SDL2 is implemented not SDL1.
 Qt Creator used to debug and .pro files were being worked on.
 CMake build added.
 
-Poco changes:
+Poco changes (merge request with pocoproject not accepted at present):
 --------------------------------------------------------------------------------------------
+Futher changes were made to Poco/Format.h and Poco/Any.h since they created compile issues for Ubuntu.
+Otherwise:
 Data/include/Poco/Data/binding.h
 inline AbstractBinding::Ptr use(T& t, const std::string& name = "")
  {
@@ -44,7 +46,7 @@ cd openBliSSART
 ./configure
 make
 
-It still works but has been modified to exclude Cuda
+It still works but has been modified to exclude Cuda ** do not use**
 ----------------------------------------------------------------------
 **Preferred build** 
 New build:
@@ -53,16 +55,21 @@ cd openBliSSART
 mkdir cmake-build
 cd cmake-build
 ccmake ..    (change build type to 'release' or 'debug' and configure 'c', may have to 'e' and then configure again 'c', and then generate 'g')
-	Note: CMakelists.txt for doc generates html and manual_PDF folder which contains manual.pdf file.
+make
+
+Note: CMakelists.txt for doc generates html and manual_PDF folder which contains manual.pdf file.
 ----------------------------------------------------------------------
+More than one processor:
 make -jn (where n = number of processors, changes ordering of build and 
    not sure how this affects dependent shared libraries and two passes required to enirely build from source)
-browser still being worked on as some memory faults persist in browser - valgrind is being used.
+
+browser and many other areas are still being worked on as some memory faults persist in browser - valgrind is being used.
+some initialization issues and memory overwrite are being addressed
 c++20 used as default
 
 ----------------------------------------------------------------------
 
-Documentation is built.  Issues with fonts and with bibliography.   
+Documentation is built completely.  Some issues with fonts.   
 ----------------------------------------------------------------------
 Also I would draw your attention to the following from `INSTALL` files
 2.1.1.1 Shared Installation
@@ -87,6 +94,7 @@ $ sudo gpasswd -a <username> blissart
 
 You may have to re-login for the new permissions to take effect.
 
+Note: a lot of code has been added to debug and these are controlled by the files 'etc' folder.
 
 2.1.1.2 User-Specific Installation
 
@@ -94,20 +102,31 @@ Aside from the shared installation which requires superuser privileges,
 a user-specific installation is maybe easier to perform. It suffices to specify
 an installation prefix within the user's home directory.
 
+Do not use this:
 $ ./configure --prefix=${HOME}/blissart
 $ make
 $ make install
+Use:
+git clone https://github.com/sildeag/openBliSSART.git
+cd openBliSSART
+mkdir cmake-build
+cd cmake-build
 
+ccmake ..    (change build type to 'release' or 'debug' and configure 'c', may have to 'e' and then configure again 'c', and then generate 'g')
+
+make
 
 Current issues:
 1. LibLinAlg added virtual destructor default - created undefine memory issue.
-2. Converted Poco TimeStamp to string as current implementation prevented process and process_param tables from being loaded.
-3. Valkyrie required to resolve memory issues leading to jumps and meory leaks.
+2. Converted Poco TimeStamp to string as current implementation prevented database tables for 
+process and process_param tables from being loaded.
+3. Valkyrie (qt6 version) required to resolve memory issues leading to jumps and meory leaks.
 4. db created in db folder of openBliSSART, want this to be more flexible.
 5. re-use of openBliSSART.db creates some issues.
-6.  Support for Qt5.  (Qt6.3.0 is included in current CMake build)
+6. Support for Qt5.  (Qt6.3.0 is included in current CMake build)
 7. Have implemented libsvm 3.25 and am using svm-toy to explore code changes and to remove some memory issues.
-svm-toy app may be moved into testsuite
+svm-toy app may be moved into testsuite.  libsvm has numerous uninitised variables and uses unsafe memory functions causing
+issues.
 
 ```
 ![Image of initial `./browser` screen](https://raw.githubusercontent.com/sildeag/openBliSSART/master/screenshots/Screenshot_from_2018-11-11_19-54-20.png)
