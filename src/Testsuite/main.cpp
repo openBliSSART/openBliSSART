@@ -198,7 +198,7 @@ protected:
             pushTest(new NMDTest());
         if (name == "all" || name == "nmf")
             pushTest(new NMFTest());
-        if (name == "all" || name == "snmf") 
+        if (name == "all" || name == "snmf")
             pushTest(new SNMFTest());
         if (name == "all" || name == "cnmf")
             pushTest(new CNMFTest());
@@ -238,6 +238,7 @@ protected:
 
 
     int main(const vector<string>& args) {
+#undef HAVE_CUDA
 #ifdef HAVE_CUDA
         size_t free, total;
         cudaMemGetInfo(&free, &total);

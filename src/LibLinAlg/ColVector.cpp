@@ -107,9 +107,17 @@ ColVector ColVector::operator * (Elem s) const
 }
 
 
-ColVector& ColVector::operator = (const ColVector& other)
+//ColVector& ColVector::operator = (const ColVector& other)
+//{
+    //return static_cast<ColVector&>(Vector::operator=(other));
+//}
+ColVector &ColVector::operator = (const ColVector& other)
 {
-    return static_cast<ColVector&>(Vector::operator=(other));
+    debug_assert(other._dim == _dim);
+//    return static_cast<RowVector&>(Vector::operator=(other));
+    ColVector result(*this);
+    result.equal(other);
+    return *this;
 }
 
 

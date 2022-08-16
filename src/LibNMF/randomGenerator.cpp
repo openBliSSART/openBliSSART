@@ -44,7 +44,8 @@ Elem gaussianRandomGenerator(unsigned int, unsigned int)
     }
     else {
         Elem q = 2.0;
-        Elem x, y;
+        Elem x = 0.0;
+        Elem y = 0.0;
         // Use Polar Method to obtain normally distributed random numbers.
         while (q > 1.0) {
             x = ((Elem)rand() / RAND_MAX) * 2.0 - 1.0;

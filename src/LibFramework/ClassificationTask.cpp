@@ -167,6 +167,7 @@ void ClassificationTask::runTask()
 
     // Initialize the DataSet.
     createDataSet();
+    cout << "Class 1\n";
     incTotalProgress(0.25f);
 
     // Classify.
@@ -204,6 +205,7 @@ void ClassificationTask::runTask()
     }
     SVMModel model(trainingSet);
     model.classify(_dataSet);
+    cout << "Class 2\n";
     incTotalProgress(0.25f);
 
     // Build a map of the classes and spectra.
@@ -245,9 +247,11 @@ void ClassificationTask::runTask()
         }
     }
 
+    cout << "Class 3\n";
     incTotalProgress(0.25f);
 
     exportAsWav();
+    cout << "Class 4\n";
     incTotalProgress(0.25f);
 }
 

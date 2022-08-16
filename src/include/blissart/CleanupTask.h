@@ -97,8 +97,8 @@ private:
     void cleanup(const Poco::Path& directory);
 
     Poco::Path              _directory;
-    bool                    _simulate;
-    bool                    _removeNA;
+    bool                    _simulate = false;
+    bool                    _removeNA = false;
     std::set<int>           _validIDs;
     std::vector<Poco::Path> _removedFiles;
     StorageSubsystem&       _sts;

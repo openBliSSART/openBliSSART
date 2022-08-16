@@ -58,8 +58,8 @@ public:
     /**
      * Validates a DataSet using leave-one-out cross validation.
      */
-    double loocv(DataSet& dataSet, bool estimateProbabilities = false);
-
+    //double loocv(DataSet& dataSet, bool estimateProbabilities = false);
+    double loocv(DataSet& dataSet);
     /**
      * Returns the DataSet that was used to train the model in the fold with
      * the given index.

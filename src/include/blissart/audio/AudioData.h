@@ -30,6 +30,7 @@
 #include <common.h>
 #include <vector>
 #include <string>
+#include <iostream>
 
 
 // Since the authors of SDL_sound prefer typedef'ed anonymous structs we cannot
@@ -109,7 +110,6 @@ public:
      * Destructs an instance of AudioData and frees all allocated memory.
      */
     virtual ~AudioData();
-
 
     /**
      * Get the sample rate of this object's underlying audio data.
@@ -332,11 +332,11 @@ private:
     std::vector<double*> _data;
 #  pragma warning(pop)
 #else
-    std::vector<double*> _data;
+    std::vector<double*> _data = {};
 #endif
     const unsigned int   _nrOfSamples;
-    unsigned int         _sampleRate;
-    std::string          _fileName;
+    unsigned int         _sampleRate = 0;
+    std::string          _fileName = "";
 };
 
 

@@ -159,10 +159,10 @@ private:
     const linalg::Matrix*          _phaseMatrix;
     std::vector<linalg::Matrix*>   _componentSpectrograms;
     const linalg::Matrix*          _gainsMatrix;
-    unsigned int                   _sampleRate;
-    int                            _windowSize;
-    double                         _overlap;
-    std::string                    _fileName;
+    unsigned int                   _sampleRate = 0;
+    int                            _windowSize = 0;
+    double                         _overlap = 0;
+    std::string                    _fileName = "";
     DataSet                        _dataSet;
     std::map<int, int>             _presetClassLabels;
     std::map<int, linalg::Matrix*> _spectraMap;

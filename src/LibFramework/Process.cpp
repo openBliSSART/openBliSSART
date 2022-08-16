@@ -31,7 +31,7 @@
 #include <blissart/transforms/MelFilterTransform.h>
 #include <blissart/transforms/SlidingWindowTransform.h>
 
-
+#include<iostream>
 using namespace std;
 using namespace blissart::transforms;
 
@@ -56,6 +56,7 @@ Process::Process(const Process& other) :
   startTime(other.startTime),
   sampleFreq(other.sampleFreq)
 {
+    cout << "Process::Process 1\n";
 }
 
 
@@ -67,9 +68,24 @@ Process::Process(const std::string& processName,
   inputFile(inputFileName),
   sampleFreq(aSampleFreq)
 {
+    cout << "Process::Process 2\n";
     startTime.update();
 }
 
+Process::Process(int aprocess_id, const std::string& processName,
+                 const std::string& inputFileName,
+                 int astart_time,
+                 int aSampleFreq) :
+  DatabaseEntity(DatabaseEntity::Process),
+  processID(aprocess_id),
+  name(processName),
+  inputFile(inputFileName),
+  startTime(astart_time),
+  sampleFreq(aSampleFreq)
+{
+    cout << "Process::Process 2a\n";
+    //startTime.update();
+}
 
 // The following lines are neccessary to avoid superflous warnings about
 // the throw(...) declarations in Visual C++.
@@ -125,7 +141,9 @@ WindowFunction Process::windowFunction() const
 
 void Process::setWindowFunction(WindowFunction winFun)
 {
+    cout << "setWindowsFunction In\n";
     parameters["windowFunction"] = windowFunctionName(winFun);
+    cout << "setWindowsFunction Out\n";
 } 
 
 

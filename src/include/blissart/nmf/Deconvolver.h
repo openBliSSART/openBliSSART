@@ -503,8 +503,9 @@ private:
     void factorizeNMFEDUninitialize();
     // Some helper variables to make factorizeNMFED() more efficient.
     // They are not allocated if another factorization method is used.
-    blissart::linalg::Matrix *_hhT, *_wTw, 
-                             *_wUpdateMatrixNum, *_wUpdateMatrixDenom;
+    blissart::linalg::Matrix *_hhT = nullptr, *_wTw = nullptr,
+                             *_wUpdateMatrixNum = nullptr,
+                             *_wUpdateMatrixDenom = nullptr;
 
     // Forbid copy constructor and operator=.
     Deconvolver(const Deconvolver&);

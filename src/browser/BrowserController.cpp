@@ -38,6 +38,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QTimer>
+#include <QDebug>
 
 #include <cassert>
 
@@ -66,10 +67,12 @@ void BrowserController::handleRefreshTreeWidget()
 {
     // Remove a possible active edit widget.
     QLayoutItem *li = _ui.editWidgetContainer->layout()->takeAt(0);
-    if (li) {
+    qDebug() << li;
+    if (li)
+    {
         li->widget()->hide();
         delete li->widget();
-        //li->widget() = nullptr;
+
     }
 
     // And then reinitialize the tree widget.
@@ -289,8 +292,10 @@ void BrowserController::handleCreateResponse()
 
 void BrowserController::handleImportAudio()
 {
+    qDebug() << this;
     CreateProcessDialog dlg(this);
     if (QDialog::Accepted == dlg.exec()) {
+        qDebug() << "QDialog::Accepted\n";
         // Refresh the tree widget.
         handleRefreshTreeWidget();
     }

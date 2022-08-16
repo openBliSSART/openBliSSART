@@ -27,6 +27,7 @@
 
 
 #include <climits>
+#include <cstdint>
 
 
 namespace blissart {

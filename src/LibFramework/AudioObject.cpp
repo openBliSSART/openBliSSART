@@ -50,6 +50,7 @@ namespace blissart {
 AudioData* AudioObject::getAudioObject(ClassificationObjectPtr clo,
                                        ProgressObserver* obs)
 {
+    cout << "\nGetAudioObject\n";
     DatabaseSubsystem& dbs = BasicApplication::instance().
         getSubsystem<DatabaseSubsystem>();
     StorageSubsystem& sts = BasicApplication::instance().
@@ -64,9 +65,11 @@ AudioData* AudioObject::getAudioObject(ClassificationObjectPtr clo,
             "classification object!");
     }
 
+
     // Get the process information from the database.
     const int processID = dds.at(0)->processID;
     ProcessPtr process = dbs.getProcess(processID);
+    assert (process != nullptr);
 
     // Get some information about the window-function, window-size and
     // overlap that were used during the creation of the related process.

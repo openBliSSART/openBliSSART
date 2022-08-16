@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.20)
 
 project(Testsuite)
 
@@ -46,8 +46,8 @@ NMFTest.cpp
 NMFTest.h 
 PCATest.cpp 
 PCATest.h 
-#SNMFTest.cpp
-#SNMFTest.h
+SNMFTest.cpp
+SNMFTest.h
 SVMModelTest.cpp 
 SVMModelTest.h 
 ScalingTest.cpp 
@@ -124,7 +124,7 @@ set_property(TARGET testsuite PROPERTY VERSION "1.2.0")
 set_property(TARGET testsuite PROPERTY SOVERSION "1")
 
 target_link_libraries( testsuite 
- PRIVATE Threads::Threads 
+ PRIVATE Threads::Threads
 ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libLinAlg${CMAKE_DEBUG_POSTFIX}.so
 ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libAudio${CMAKE_DEBUG_POSTFIX}.so
 ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libNMF${CMAKE_DEBUG_POSTFIX}.so

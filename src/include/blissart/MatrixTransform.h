@@ -58,6 +58,7 @@ namespace transforms { }
 class LibFramework_API MatrixTransform
 {
 public:
+    virtual ~MatrixTransform() = default;
     /**
      * Returns a textual description of this MatrixTransform.
      * Must be implemented by subclasses.
@@ -93,6 +94,7 @@ public:
      * subclasses.
      */
     virtual TransformParameters getParameters() const;
+
 };
 
 

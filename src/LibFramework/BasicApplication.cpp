@@ -28,6 +28,7 @@
 #ifdef HAVE_CUDA
 # include <blissart/linalg/GPUUtil.h>
 #endif
+#include <Poco/Config.h>
 #include <Poco/Path.h>
 #include <Poco/File.h>
 #include <Poco/Mutex.h>
@@ -95,7 +96,7 @@ void BasicApplication::initialize(Application& self)
 {
     // Don't use logger here because it is not configured yet.
     if (_echoCommand) {
-        cout << "Executing: " << commandName() << _optionsString << endl;
+        //cout << "Executing: " << commandName() << _optionsString << endl;
     }
 
     initializeDirectories();
@@ -110,8 +111,9 @@ void BasicApplication::initialize(Application& self)
 
 void BasicApplication::initializeDirectories()
 {
+    //cout << "\nBasic 1\n";
     Path dir = Path::forDirectory(config().getString("application.dir"));
-
+   
     config().setString("blissart.binDir", dir.toString());
 
     dir.popDirectory();
@@ -136,6 +138,7 @@ void BasicApplication::initializeDirectories()
         dir.popDirectory();
     }
 
+    //cout << "\nBasic 2\n";
     // Where the database subsystem roams...
     if (!_dbFile.empty()) {
         Path dbFilePath(Path::expand(_dbFile));
@@ -143,16 +146,21 @@ void BasicApplication::initializeDirectories()
         if (dbFilePath.depth() > 0) {
             Path dbParentDir(dbFilePath);
             dbParentDir.setFileName("");
-            //dbParentDir.popDirectory();
+            dbParentDir.popDirectory();
             File(dbParentDir).createDirectories();
         }
+        //cout << "new db\n";
+        //cout << dbFilePath.toString();
         logger().information("Using database file: " + dbFilePath.toString());
         config().setString("blissart.databaseFile", dbFilePath.toString());
     }
     else {
+        //cout << "\nBasic 3\n";
         dir.pushDirectory("db");
         File(dir).createDirectory();
         config().setString("blissart.databaseDir", dir.toString());
+        //cout << "db already here\n";
+        //cout << dir.toString();
         dir.setFileName("openBliSSART.db");
         config().setString("blissart.databaseFile", dir.toString());
     }
@@ -202,6 +210,7 @@ void BasicApplication::handleOption(const string& name, const string& value)
         _storageDir = value;
     }
     else if (name == "db-file") {
+        //cout << "\nBasic 4\n";
         _dbFile = value;
     }
     _optionsString += " --" + name;
@@ -214,7 +223,7 @@ void BasicApplication::handleOption(const string& name, const string& value)
 void BasicApplication::defineOptions(OptionSet& options)
 {
     Application::defineOptions(options);
-
+    //cout << "\nBasic 5\n";
     options.addOption(Option("echo", "A", 
         "Echo the command that was used to start this application.",
         false));

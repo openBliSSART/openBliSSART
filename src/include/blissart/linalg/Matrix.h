@@ -32,7 +32,8 @@
 #include <iomanip>
 #include <vector>
 #include <blissart/linalg/common.h>
-
+#include <blissart/linalg/ColVector.h>
+#include <blissart/linalg/RowVector.h>
 
 namespace blissart {
 
@@ -393,7 +394,7 @@ public:
     /**
      * TODO
      */
-    void apply(Elem (*func) (Elem, Elem), const Matrix& other, Matrix* target);
+    void apply(Elem (*func) (Elem, Elem), const Matrix& other);
     void apply(Elem (*func) (Elem, Elem), const Matrix& other, Matrix* target) const;
     void apply(Elem (*func) (Elem, Elem), Elem other);
     void apply(Elem (*func) (Elem, Elem), Elem other, Matrix* target) const;
@@ -782,9 +783,9 @@ protected:
     Elem *dataPtr();
 
 private:
-    unsigned int _rows;
-    unsigned int _cols;
-    Elem *     _data;
+    unsigned int _rows = 0;
+    unsigned int _cols = 0;
+    Elem *     _data = nullptr;
 };
 
 
@@ -799,8 +800,8 @@ T Matrix::expectedValue(const T& iv, void* info,
 {
     T result = iv;
     const double f = 1.0 / _cols;
-    for (unsigned int i = 0; i < _cols; i++)
-        result += f * callback(this->nthColumn(i), info);
+		for (unsigned int i = 0; i < _cols; i++)     
+		  result += f * callback(this->nthColumn(i), info);
     return result;
 }
 

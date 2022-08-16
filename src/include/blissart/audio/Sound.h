@@ -125,7 +125,7 @@ private:
     static void pbCallback(void *user, Uint8 *buf, int size);
     
     
-    short              *_samples;
+    short              *_samples = nullptr;
     const size_t       _len;
     const unsigned int _sampleFreq;
     size_t             _pos;

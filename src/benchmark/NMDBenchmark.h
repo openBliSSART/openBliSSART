@@ -84,9 +84,9 @@ public:
 
 
 private:
-    unsigned int _rows;
-    unsigned int _iter;
-    std::string  _cf;
+    unsigned int _rows = 0;
+    unsigned int _iter = 0;
+    std::string  _cf = "";
 };
 
 

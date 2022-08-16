@@ -67,7 +67,7 @@ Matrix* SlidingWindowTransform::transform(Matrix* spectrogram) const
         ++outputCol, frameStart += _frameRate) 
     {
         unsigned int outputRow = 0;
-        for (unsigned int pos = 0; pos < _frameSize; ++pos)
+        for (unsigned int pos = 0; pos < (unsigned) _frameSize; ++pos)
         {
             for (unsigned int inputRow = 0; inputRow < spectrogram->rows(); 
                 ++inputRow, ++outputRow)

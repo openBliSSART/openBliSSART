@@ -29,7 +29,7 @@
 #include <blissart/StorageSubsystem.h>
 #include <Poco/DirectoryIterator.h>
 #include <iostream>
-
+#include <assert.h>
 
 using namespace std;
 
@@ -62,6 +62,7 @@ void CleanupTask::runTask()
     DatabaseSubsystem &dbs = app.getSubsystem<DatabaseSubsystem>();
 
     vector<ProcessPtr> processes = dbs.getProcesses();
+    cout << "assert (processes != nullptr)\n";
     for (vector<ProcessPtr>::const_iterator itr = processes.begin();
         itr != processes.end(); ++itr)
     {

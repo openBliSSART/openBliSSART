@@ -189,6 +189,7 @@ public:
     bool operator == (const Vector& other) const;
 
 
+
     /**
      * Compares this vectors' dimension and all of its entries with another
      * vector.
@@ -207,6 +208,8 @@ public:
      * @return              a reference to this object.
      */
     virtual Vector& operator = (const Vector& other);
+    void equal(const Vector& other);
+
 
 
     /**
@@ -364,7 +367,7 @@ protected:
 
     // The orientation flag which is set when constructing a Vector object 
     // from a file.
-    uint32_t _orientationFlag;
+    uint32_t _orientationFlag = 0;
 
 
     /**
@@ -376,7 +379,7 @@ protected:
     static Elem inner_prod(const Vector& a, const Vector& b);
 
 
-    unsigned int _dim;
+    unsigned int _dim = 0;
     Elem *     _data;
 };
 

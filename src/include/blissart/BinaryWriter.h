@@ -275,7 +275,7 @@ public:
 
 private:
     std::ostream& _os;
-    bool          _flip;
+    bool          _flip = 0;
 };
 
 

@@ -47,6 +47,7 @@ DatabaseSubsystemTest::DatabaseSubsystemTest() :
 
 bool DatabaseSubsystemTest::performTest()
 {
+    cout << "\nDB test 1\n";
     DatabaseSubsystem& database = 
         BasicApplication::instance().getSubsystem<DatabaseSubsystem>();
     
@@ -59,7 +60,9 @@ bool DatabaseSubsystemTest::performTest()
         const string processName = "Test process";
         const string processInputFile = "inputFile.wav";
         const int processSampleFreq = 8000;
+        cout << "\nDB test 2\n";
         map<string, string> processParameters;
+        cout << "\nDB test 3\n";
         processParameters["testParam"] = "testValue";
         processParameters["testParam2"] = "testValue2";
     
@@ -90,6 +93,7 @@ bool DatabaseSubsystemTest::performTest()
     
         cout << "Updating process #" << processID << "." << endl;
         {
+            cout << "\ngetProcess\n";
             ProcessPtr process = database.getProcess(processID);
             const string newProcName = "newTestProcess";
             process->name = newProcName;

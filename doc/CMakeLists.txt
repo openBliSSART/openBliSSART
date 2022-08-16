@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.20)
 project ( doc NONE )
 
 # first we can indicate the documentation build as an option and set it to ON by default

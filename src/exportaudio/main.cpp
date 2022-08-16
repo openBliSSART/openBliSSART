@@ -103,8 +103,8 @@ protected:
 
     
 private:
-    bool _displayUsage;
-    vector<int> _objectIDs;
+    bool _displayUsage = false;
+    vector<int> _objectIDs = {};
 };
 
 

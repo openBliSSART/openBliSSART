@@ -38,7 +38,9 @@
 #include <blissart/ClassificationObject.h>
 #include <blissart/Response.h>
 #include <blissart/Label.h>
-
+#ifndef _debug
+#define _debug
+#endif
 /**
  * Classes that inherit the Poco (Portable Components) framework classes
  */

@@ -140,11 +140,11 @@ protected:
 
 
 private:
-    std::string _optionsString;
-    std::string _userConfigFile;
-    bool        _echoCommand;
-    std::string _storageDir;
-    std::string _dbFile;
+    std::string _optionsString = "";
+    std::string _userConfigFile = "";
+    bool        _echoCommand = false;
+    std::string _storageDir = "";
+    std::string _dbFile = "";
 };
 
 

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.20)
 project(openBliSSART)
 add_subdirectory( LibLinAlg )
 add_subdirectory( LibAudio )

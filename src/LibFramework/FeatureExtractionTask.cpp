@@ -51,6 +51,7 @@ FeatureExtractionTask::FeatureExtractionTask() :
     _database(BasicApplication::instance().getSubsystem<DatabaseSubsystem>()),
     _storage(BasicApplication::instance().getSubsystem<StorageSubsystem>())
 {
+    cout << "\nFeatureExtractionTask\n";
     incMaxProgress(1.0f);
 }
 
@@ -83,17 +84,20 @@ void FeatureExtractionTask::runTask()
             ls << "Feature extraction failed for data descriptor #"
                << (*itr)->descrID << ": " << exc.what() << endl;
         }
+        cout << "Feature Extraction Task 1\n";
         incTotalProgress(1.0f);
         if (isCancelled())
             break;
     }
     _database.saveFeatures(_extractedFeatures);
+    cout << "Feature Extraction Task 1\n";
     incTotalProgress(1.0f);
 }
 
 
 void FeatureExtractionTask::extract(const DataDescriptorPtr descr)
 {
+    cout << "\nFeatureExtractionTask\n";
     ProcessMap::const_iterator itr = _processMap.find(descr->processID);
     ProcessPtr process;
     if (itr == _processMap.end()) {

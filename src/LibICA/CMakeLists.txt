@@ -1,15 +1,6 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.20)
 set (project LibICA)
 
-#set(${project}_SOURCES
-#	${CMAKE_CURRENT_SOURCE_DIR}/PCA.cpp
-#	${CMAKE_CURRENT_SOURCE_DIR}/FastICA.cpp
-#)
-
-#add_library(${project} STATIC ${${project}_SOURCES} )
-
-#cmake_minimum_required(VERSION 3.22)
-#set (project LibFeature)
 project(LibICA)
 
 #add_library(${project} SHARED ${${project}_SOURCES} )

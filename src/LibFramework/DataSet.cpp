@@ -239,7 +239,7 @@ void upsample(DataSet& dataSet, map<int, int>& factors)
     // on the original DataSet.
     DataSet::size_type originalSize = dataSet.size();
     for (unsigned int i = 0; i < originalSize; ++i) {
-        for (unsigned int j = 1; j < factors[dataSet[i].classLabel]; ++j) {
+        for (unsigned int j = 1; j < (unsigned)factors[dataSet[i].classLabel]; ++j) {
             dataSet.push_back(dataSet[i]);
         }
     }

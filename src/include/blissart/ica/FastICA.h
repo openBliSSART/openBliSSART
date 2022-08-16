@@ -172,9 +172,9 @@ private:
     linalg::Matrix*     _mixingMatrix;
     const unsigned int  _nSources;
     const double        _prec;
-    unsigned int        _nrOfConvergenceErrors;
-    bool                _dataCentered;
-    bool                _whiteningDone;
+    unsigned int        _nrOfConvergenceErrors = 0;
+    bool                _dataCentered = false;
+    bool                _whiteningDone = false;
 };
 
 

@@ -92,8 +92,8 @@ public:
     void setGainsFrequency(double freq);
 
 private:
-    double     _sampleFreq;
-    double     _gainsFreq;
+    double     _sampleFreq = 0;
+    double     _gainsFreq = 0;
 };
 
 

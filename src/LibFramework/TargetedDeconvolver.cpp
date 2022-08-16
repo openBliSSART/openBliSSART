@@ -54,6 +54,7 @@ TargetedDeconvolver::TargetedDeconvolver(Matrix& v, unsigned int r,
     nmf::Deconvolver(v, r, (unsigned int) getNrOfSpectra(*clObjs.begin()),
                      wGenerator, hGenerator)
 {
+    cout << "\nDecon 1\n";
     buildW(clObjs);
 }
 
@@ -66,6 +67,7 @@ TargetedDeconvolver::TargetedDeconvolver(Matrix& v, unsigned int r,
     nmf::Deconvolver(v, r, getNrOfSpectra(*matrices.begin()),
                      wGenerator, hGenerator)
 {
+    cout << "\nDecon 2\n";
     unsigned int nInitializedCols = (unsigned int) buildW(matrices);
     if (nInitializedCols == r) {
         BasicApplication::instance().logger().
@@ -92,6 +94,7 @@ TargetedDeconvolver::TargetedDeconvolver(Matrix& v, unsigned int r,
     nmf::Deconvolver(v, r, getNrOfSpectra(*clObjIDs.begin()),
                      wGenerator, hGenerator)
 {
+cout << "\nDecon 3\n";
     DatabaseSubsystem& dbs = 
         BasicApplication::instance().getSubsystem<DatabaseSubsystem>();
     vector<ClassificationObjectPtr> clObjs;
@@ -107,6 +110,7 @@ TargetedDeconvolver::TargetedDeconvolver(Matrix& v, unsigned int r,
 void 
 TargetedDeconvolver::buildW(const vector<ClassificationObjectPtr>& clObjs)
 {
+cout << "\nDecon 4\n";
     DatabaseSubsystem& dbs = 
         BasicApplication::instance().getSubsystem<DatabaseSubsystem>();
     StorageSubsystem& sts = 
@@ -207,6 +211,7 @@ TargetedDeconvolver::buildW(const vector<string>& matrices)
 int
 TargetedDeconvolver::getNrOfSpectra(int clObjID)
 {
+    cout << "\ngetNrOfSpectra 1\n";
     DatabaseSubsystem& dbs = 
         BasicApplication::instance().getSubsystem<DatabaseSubsystem>();
     ClassificationObjectPtr clObj = dbs.getClassificationObject(clObjID);
@@ -221,11 +226,12 @@ TargetedDeconvolver::getNrOfSpectra(int clObjID)
 int
 TargetedDeconvolver::getNrOfSpectra(ClassificationObjectPtr clObj)
 {
+    cout << "\ngetNrOfSpectra 2\n";
     DatabaseSubsystem& dbs = 
         BasicApplication::instance().getSubsystem<DatabaseSubsystem>();
     vector<DataDescriptorPtr> dds = dbs.getDataDescriptors(clObj);
 
-    int result;
+    int result = 0;
     if (clObj->type == ClassificationObject::NMDComponent) {
         ProcessPtr process = dbs.getProcess(clObj);
         result = process->spectra();

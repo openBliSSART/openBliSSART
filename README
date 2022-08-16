@@ -1,8 +1,8 @@
 Modified to use Ubuntu 22.04 using https://github.com/sildeag/poco built with cmake, SDL2 and SDL2_sound.
 Dependencies required are libsvm (version 3.25 is used), doxygen, pdflatex, fft3w, and possibly others.  Qt6.3.0
-Qt5 will be added later and CUDA 11.6 not tested and not used.  CUDA stills generates linker errors.  SDL2 is implemented not SDL1.
-Qt Creator used to debug and .pro files were being worked on.
-CMake build added.
+Qt5 has been added but is broken at moment, supporting Qt6 and Qt5 means CMake requires extra 'c' as both are turned OFF by default, and CUDA 11.6 not tested and not used.  CUDA stills generates linker errors.  SDL2 is implemented not SDL1.
+Qt Creator used to debug and .pro files were being worked on.  CMake build causes errors on Windows 10/11 not completely worked through.
+CMake build added.  Foreach macro being replaced as this was causing many failures.
 
 Poco changes (merge request with pocoproject not accepted at present):
 --------------------------------------------------------------------------------------------

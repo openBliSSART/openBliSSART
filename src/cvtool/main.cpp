@@ -350,7 +350,8 @@ protected:
             // Perform SCV.
             CrossValidator validator;
             if (_fold == 0) {
-                accuracy = validator.loocv(dataSet, _probabilities);
+                //accuracy = validator.loocv(dataSet, _probabilities);
+                accuracy = validator.loocv(dataSet);
             }
             else if (_fold > 0) {
                 accuracy = validator.nFoldCrossValidation(dataSet, _fold, 
