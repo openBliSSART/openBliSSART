@@ -54,52 +54,26 @@ using namespace std;
 namespace blissart {
 
 
-FTTask::FTTask(const std::string& typeIdentifier,
-               const std::string &fileName,
-               bool isVolatile) :
-    BasicTask(typeIdentifier),
-    _fileName(fileName),
-    _isVolatile(isVolatile),
-    _audioData(0),
-    _ftMagMatrix(0),
-    _sampleRate(0),
-    _amplitudeMatrix(0),
-    _phaseMatrix(0)
-{
-    logger().debug(nameAndTaskID() + " reading configuration.");
 
-    // Get audio processing and FFT parameters from configuration.
-    Poco::Util::LayeredConfiguration& cfg =
-        BasicApplication::instance().config();
-    _windowFunction = windowFunctionForShortName(
-        cfg.getString("blissart.fft.windowfunction", "sqhann"));
-    _windowSize = cfg.getInt("blissart.fft.windowsize", 25);
-    _overlap = cfg.getDouble("blissart.fft.overlap", 0.5);
-    _preemphasisCoeff = cfg.getDouble("blissart.audio.preemphasis", 0.0);
-    _zeroPadding = cfg.getBool("blissart.fft.zeropadding", false);
-    _removeDC = cfg.getBool("blissart.audio.remove_dc", false);
-    _reduceMids = cfg.getBool("blissart.audio.reduce_mids", false);
-
-}
 
 
 FTTask::~FTTask()
 {
     if (_audioData) {
         delete _audioData;
-        _audioData = 0;
+        _audioData = nullptr;
     }
     if (_ftMagMatrix && _ftMagMatrix != _amplitudeMatrix) {
         delete _ftMagMatrix;
-        _ftMagMatrix = 0;
+        _ftMagMatrix = nullptr;
     }
     if (_amplitudeMatrix) {
         delete _amplitudeMatrix;
-        _amplitudeMatrix = 0;
+        _amplitudeMatrix = nullptr;
     }
     if (_phaseMatrix) {
         delete _phaseMatrix;
-        _phaseMatrix = 0;
+        _phaseMatrix = nullptr;
     }
     for (vector<MatrixTransform*>::iterator it = _transforms.begin();
          it != _transforms.end(); ++it)
@@ -124,13 +98,17 @@ void FTTask::runTask()
     do {
         // Get the audio source, set the sample rate
         readAudioFile();
+
         incTotalProgress(1.0f);
 
+        cout << "Total Progress 100% for 1st audio source \n";
+        if (isCancelled() == false) cout << "is Cancelled == false";
         // Mandatory check.
         if (isCancelled())
             break;
 
         // Compute the spectrogram.
+        cout << "start compute Spectrogram\n";
         computeSpectrogram();
         incTotalProgress(1.0f);
 
@@ -158,7 +136,7 @@ void FTTask::runTask()
         if (_exportSpectrogram)
             exportSpectrogram();
 
-    } while (false);
+    } while (false && isCancelled()==false);
 }
 
 
@@ -166,27 +144,37 @@ void FTTask::readAudioFile()
 {
     logger().debug(nameAndTaskID() + " loading " + _fileName);
     _audioData = AudioData::fromFile(_fileName);
+    //cout << "finnished reading audio file \n";
     _sampleRate = _audioData->sampleRate();
+    //cout << "sample rate = " << _sampleRate << "\n";
+    //cout << "sample rate = " << _preemphasisCoeff << "\n";
     // XXX: preemphasis before mid-reduction? (makes sense)
     // Preemphasis with coefficient 0 does nothing, but causes overhead
     // - thus, we only call preemphasize() if coefficient is > 0
     if (_preemphasisCoeff > 0.0) {
         _audioData->preemphasize(_preemphasisCoeff);
     }
-    if (_audioData->nrOfChannels() > 1) {
+    cout << "ending preemphasize \n";
+    if (_audioData->nrOfChannels() > 1)
+    {
         logger().debug(nameAndTaskID() + " reducing audio to 1 channel.");
-        if (_reduceMids && _audioData->nrOfChannels() == 2) {
+        if (_reduceMids && _audioData->nrOfChannels() == 2)
+        {
             _audioData->subRightFromLeftChannel();
         }
-        else {
+        else
+        {
             _audioData->makeMono();
         }
     }
+    cout << "ending readAudio file 100%\n";
 }
 
 
 void FTTask::computeSpectrogram()
 {
+    cout << "computeSpectrogram in\n";
+
     debug_assert(!_amplitudeMatrix);
 
     BasicApplication::lockFFTW();
@@ -224,6 +212,7 @@ void FTTask::computeSpectrogram()
     if (cfg.getBool("blissart.fft.transformations.slidingWindow", false)) {
         addTransformation(new transforms::SlidingWindowTransform);
     }
+    cout << "computeSpectrogram out\n";
 }
 
 
@@ -248,7 +237,9 @@ void FTTask::doAdditionalTransformations()
 
 void FTTask::setProcessParameters(ProcessPtr process) const
 {
+    cout << "setProcessParam FTTask\n";
     process->setWindowFunction(_windowFunction);
+    cout << "setProcessParam FTTask 2\n";
     process->setOverlap(_overlap);
     process->setWindowSize(_windowSize);
     process->parameters["transformCount"] = 
@@ -279,6 +270,7 @@ void FTTask::storeComponents() const
     StorageSubsystem &sts =
         BasicApplication::instance().getSubsystem<StorageSubsystem>();
 
+    cout << nameAndTaskID() + " sotring the matrices";
     logger().debug(nameAndTaskID() + " storing the matrices.");
 
     // Store a Process entity in the database.
@@ -319,6 +311,7 @@ void FTTask::storeComponents() const
     if (magnitudeMatrixID > 0) {
         clObj->descrIDs.insert(magnitudeMatrixID);
     }
+    cout << "\ncreateClassif Obj\n";
     dbs.createClassificationObject(clObj);
 }
 
@@ -361,7 +354,7 @@ void FTTask::deletePhaseMatrix()
 {
     if (_phaseMatrix) {
         delete _phaseMatrix;
-        _phaseMatrix = 0;
+        _phaseMatrix = nullptr;
     }
 }
 
@@ -377,10 +370,12 @@ void FTTask::replaceAmplitudeMatrix(Matrix* amplitudeMatrix)
 
 void FTTask::deleteAmplitudeMatrix()
 {
+    cout << "\ndeleteAmp in\n";
     if (_amplitudeMatrix) {
         delete _amplitudeMatrix;
-        _amplitudeMatrix = 0;
+        _amplitudeMatrix = nullptr;
     }
+    cout << "deleteAmp out\n";
 }
 
 

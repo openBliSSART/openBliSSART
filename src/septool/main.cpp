@@ -44,6 +44,7 @@
 #include <iostream>
 #include <iomanip>
 
+#undef HAVE_CUDA
 #ifdef HAVE_CUDA
 #include <cuda_runtime.h>
 #include <blissart/linalg/GPUUtil.h>
@@ -743,7 +744,7 @@ protected:
                     _nrComponents, _nrSpectra, _maxIter,_epsilon, _volatile
                 );
                 nmdTask->setGeneratorFunction(_matrixGenFunc);
-                //nmdTask->setSparsity(_nmdSparsity);
+                nmdTask->setSparsity(_nmdSparsity);
                 nmdTask->setContinuity(_nmdContinuity);
                 nmdTask->setNormalizeMatrices(_nmdNormalize);
                 newSepTask = nmdTask;

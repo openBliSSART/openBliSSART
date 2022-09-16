@@ -38,6 +38,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QTimer>
+#include <QDebug>
 
 #include <cassert>
 
@@ -66,9 +67,12 @@ void BrowserController::handleRefreshTreeWidget()
 {
     // Remove a possible active edit widget.
     QLayoutItem *li = _ui.editWidgetContainer->layout()->takeAt(0);
-    if (li) {
+    qDebug() << li;
+    if (li)
+    {
         li->widget()->hide();
         delete li->widget();
+
     }
 
     // And then reinitialize the tree widget.
@@ -115,6 +119,7 @@ void BrowserController::on_treeWidget_currentItemChanged(QTreeWidgetItem *curren
     if (li) {
         li->widget()->hide();
         delete li->widget();
+        //li->widget() = nullptr;
     }
 
     // Perform a small sanity check.
@@ -122,7 +127,8 @@ void BrowserController::on_treeWidget_currentItemChanged(QTreeWidgetItem *curren
         return;
 
     // Determine the entity's type and create the corresponding edit widget.
-    EditWidget *editWidget = 0;
+    //EditWidget *editWidget = 0;
+    EditWidget *editWidget = nullptr;
 
     DatabaseEntityPtr dbe = static_cast<EntityItem *>(current)->entityPtr();
     switch (dbe->entityType()) {
@@ -286,8 +292,10 @@ void BrowserController::handleCreateResponse()
 
 void BrowserController::handleImportAudio()
 {
+    qDebug() << this;
     CreateProcessDialog dlg(this);
     if (QDialog::Accepted == dlg.exec()) {
+        qDebug() << "QDialog::Accepted\n";
         // Refresh the tree widget.
         handleRefreshTreeWidget();
     }

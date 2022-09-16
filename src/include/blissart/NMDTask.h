@@ -168,11 +168,11 @@ private:
     virtual void progressChanged(float);
 
 
-    nmf::Deconvolver*                      _deconvolver;
+    nmf::Deconvolver*                      _deconvolver = nullptr;
     nmf::Deconvolver::NMDCostFunction      _cf;
-    double                                 _sparsity;
-    double                                 _continuity;
-    nmf::Deconvolver::MatrixNormalization  _normalizeMatrices;
+    double                                 _sparsity = 0.0;
+    double                                 _continuity = 0.0;
+    nmf::Deconvolver::MatrixNormalization  _normalizeMatrices {};
 
 };
 

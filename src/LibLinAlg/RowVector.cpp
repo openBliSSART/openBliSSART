@@ -109,9 +109,14 @@ ColVector RowVector::transposed() const
 }
 
 
-RowVector& RowVector::operator = (const RowVector& other)
+//RowVector& RowVector::operator = (const RowVector& other)
+RowVector &RowVector::operator =(const RowVector& other)
 {
-    return static_cast<RowVector&>(Vector::operator=(other));
+    debug_assert(other._dim == _dim);
+//    return static_cast<RowVector&>(Vector::operator=(other));
+    RowVector result(*this);
+    result.equal(other);
+    return *this;
 }
 
 

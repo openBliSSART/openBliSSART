@@ -52,6 +52,8 @@
 #include <cmath>
 #include <fstream>
 #include <ctime>
+#include <stdio.h>
+#include <execinfo.h>
 
 
 using namespace blissart::audio;
@@ -69,6 +71,7 @@ SeparationTask::SeparationTask(const SeparationMethod sepMethod,
                  unsigned int maxIterations,
                  double epsilon, bool isVolatile) :
     FTTask(typeIdentifier, fileName, isVolatile),
+    _relativeError(0.0),
     _separationMethod(sepMethod),
     _nrOfComponents(nrOfComponents),
     _nrOfSpectra(nrOfSpectra),
@@ -77,17 +80,18 @@ SeparationTask::SeparationTask(const SeparationMethod sepMethod,
     _genFunc(nmf::gaussianRandomGenerator),
     _maxIterations(maxIterations),
     _epsilon(epsilon),
-    _relativeError(0.0),
     _exportComponents(false),
     _exportSpectra(false),
     _exportGains(false),
     _myUniqueID(retrieveUniqueID())
 {
+    cout << "Sep Task Constructor\n";
 }
 
 
 SeparationTask::~SeparationTask()
 {
+    cout << "Sep Task Destructor";
 }
 
 
@@ -113,6 +117,7 @@ void SeparationTask::runTask()
     do {
         bool pmf = processMatrixFile();
         if (pmf) {
+
             logger().debug("Processing matrix file: " + fileName());
             Poco::Util::LayeredConfiguration& cfg =
                 BasicApplication::instance().config();
@@ -122,6 +127,7 @@ void SeparationTask::runTask()
             logger().debug("Processing audio file: " + fileName());
             readAudioFile();
         }
+        cout << "Sparation Task 1\n";
         incTotalProgress(0.1f);
 
         // Mandatory check.
@@ -140,28 +146,33 @@ void SeparationTask::runTask()
         else {
             computeSpectrogram();
         }
+        cout << "Separation Task 2\n";
         incTotalProgress(0.1f);
 
         // Mandatory check.
         if (isCancelled())
             break;
-
+        cout << "doAdd Task\n";
         doAdditionalTransformations();
         // Mandatory check.
         if (isCancelled())
             break;
 
         // Raise hell ;-)
+        cout << "initialize\n";
         initialize();
         clock_t start = clock();
+        cout << "\nperform Separation\n";
         performSeparation();
         clock_t end = clock();
         double elapsed = (double) (end - start) / CLOCKS_PER_SEC;
-        logger().debug(nameAndTaskID() + ": separation and reconstruction took " + Poco::NumberFormatter::format(elapsed, 2) + " seconds");
+        logger().debug(nameAndTaskID() + ": separation and reconstruction took "
+                       + Poco::NumberFormatter::format(elapsed, 2) + " seconds");
 
         if (_computeRelativeError) {
             computeRelativeError();
         }
+        cout << "set Task Progress\n";
         setTaskProgress(_myUniqueID, 1, 1.0f);
 
         // Mandatory check.
@@ -171,7 +182,10 @@ void SeparationTask::runTask()
         // Store the components. We don't want cancellation during the storage
         // process.
         if (!isVolatile()) {
+
+            cout << "storeComponents\n";
             storeComponents();
+            cout << "Sep 3\n";
             incTotalProgress(0.1f);
         }
 
@@ -205,19 +219,35 @@ void SeparationTask::runTask()
     // This has to be done again since it is possible that due to user
     // cancellation the upper do-while block was left before the first
     // free-attempt.
-    //deleteAmplitudeMatrix();
+    deleteAmplitudeMatrix();
 }
 
 
 void SeparationTask::setProcessParameters(ProcessPtr process) const
 {
+    cout << "Sep Task FTTask\n";
     FTTask::setProcessParameters(process);
+    cout << "Sep Task FTTask 2\n";
     process->parameters["maxSteps"]   = Poco::NumberFormatter::format(_maxIterations);
     process->parameters["epsilon"]    = Process::formatDouble(_epsilon);
     process->parameters["components"] = Poco::NumberFormatter::format(_nrOfComponents);
     process->parameters["spectra"]    = Poco::NumberFormatter::format(_nrOfSpectra);
+    cout << process->parameters["spectra"];
+    cout << "\nSep Task FTTask 3\n";
 }
 
+void print_trace(void) {
+    char **strings;
+    size_t i, size;
+    enum Constexpr { MAX_SIZE = 1024 };
+    void *array[MAX_SIZE];
+    size = backtrace(array, MAX_SIZE);
+    strings = backtrace_symbols(array, size);
+    for (i = 0; i < size; i++)
+        printf("%s\n", strings[i]);
+    puts("");
+    free(strings);
+}
 
 void SeparationTask::storeComponents() const
 {
@@ -228,6 +258,7 @@ void SeparationTask::storeComponents() const
     StorageSubsystem &sts =
         BasicApplication::instance().getSubsystem<StorageSubsystem>();
 
+    cout << "dbs and sts completed\n";
     logger().debug(nameAndTaskID() + " storing the components.");
 
     // Store a Process entity in the database. We summarize SEP and FFT
@@ -235,12 +266,19 @@ void SeparationTask::storeComponents() const
     ProcessPtr newProcess;
     switch (_separationMethod) {
     case NMD:
+        cout << "Process NMD initiated In\n";
         newProcess = new Process("NMD", fileName(), sampleRate());
+        //print_trace();
+        cout << "Process NMD initiated Out\n";
         break;
     default:
         throw Poco::NotImplementedException("Unknown separation method!");
     }
+    cout << "setProcessParams\n";
     setProcessParameters(newProcess);
+    cout << "setdbs createProcess\n";
+    debug_assert(newProcess);
+    cout << sizeof(newProcess);
     dbs.createProcess(newProcess);
 
     Poco::Util::LayeredConfiguration& cfg =
@@ -267,7 +305,7 @@ void SeparationTask::storeComponents() const
         magnitudeMatrixID = magnMatrixDescr->descrID;
         sts.store(amplitudeMatrix(), magnMatrixDescr);
     }
-
+    cout << "here 1\n";
     // Store the components.
     for (unsigned int i = 0; i < _nrOfComponents; i++) {
         // Create a ClassificationObject for the current spectrum- and gains-
@@ -276,11 +314,13 @@ void SeparationTask::storeComponents() const
         if (phaseMatrixID > 0) {
             componentObject->descrIDs.insert(phaseMatrixID);
         }
+        cout << "here 2\n";
         if (magnitudeMatrixID > 0) {
             componentObject->descrIDs.insert(magnitudeMatrixID);
         }
 
         // Spectrum.
+        cout << "here 3\n";
         Matrix componentSpectrogram(magnitudeSpectraMatrix(0).rows(),
             _nrOfSpectra);
         for (unsigned int t = 0; t < _nrOfSpectra; t++) {
@@ -416,7 +456,7 @@ void SeparationTask::exportComponents() const
     vector<vector<int> > compIndices = _exportComponentIndices;
     if (compIndices.empty()) {
         vector<int> compIndicesSource;
-        for (int i = 1; i <= _nrOfComponents; i++) {
+        for (int i = 1; (unsigned) i <= _nrOfComponents; i++) {
             compIndicesSource.push_back(i);
         }
         compIndices.push_back(compIndicesSource);
@@ -435,7 +475,7 @@ void SeparationTask::exportComponents() const
         for (vector<int>::const_iterator it = sourceIt->begin();
             it != sourceIt->end(); ++it)
         {
-            if (*it < 1 || *it > _nrOfComponents) {
+            if (*it < 1 || (unsigned) *it > _nrOfComponents) {
                 logger().error(nameAndTaskID() + ": invalid component index: " +
                     Poco::NumberFormatter::format(*it));
                 continue;
@@ -490,13 +530,20 @@ void SeparationTask::exportComponents() const
             else {
                 // Construct the filename.
                 string prefix = getExportPrefix();
-                const int numDigits = (int)(1 + log10f((float)_nrOfComponents));
+                int numDigits = 0;
+                if (_nrOfComponents > 1)
+                    numDigits = (int)(1 + log10f((float)_nrOfComponents));
+                else
+                    numDigits = 1;
                 stringstream ss;
                 ss << prefix;
-                if (compIndices.size() > 1) {
-                    const int numDigitsS = (int)(1 + log10f((float)compIndices.size()));
+                int numDigitsS = 0;
+                if (compIndices.size() > 1)
+                {
+                    numDigitsS = (int)(1 + log10f((float)compIndices.size()));
                     ss << '_' << setfill('0') << setw(numDigitsS) << sourceIndex;
                 }
+
                 ss << '_' << setfill('0') << setw(numDigits) << *it;
 
                 if (exportAsMatrix) {
@@ -513,7 +560,11 @@ void SeparationTask::exportComponents() const
             // Construct the filename.
             stringstream ss;
             ss << getExportPrefix();
-            const int numDigitsS = (int)(1 + log10f((float)compIndices.size()));
+            int numDigitsS = 0;
+            if (compIndices.size() > 1)
+                numDigitsS = (int)(1 + log10f((float)compIndices.size()));
+            else
+                numDigitsS = 1;
             ss << "_source" << setfill('0') << setw(numDigitsS) << sourceIndex;
             // Convert component spectrogram to time signal and save it as WAV.
             string filename = ss.str();

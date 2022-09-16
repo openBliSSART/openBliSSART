@@ -62,15 +62,13 @@ AC_DEFUN([AX_CHECK_POCO],
                       #include <Poco/Foundation.h>
                     ]],
                     [[
-                      Poco::DateTime dt;
                       #if !(POCO_VERSION >= 0x01030600)
-                      # error Wrong Poco version!
                       #endif
                     ]])
                 ], [], [NO_POCO=yes]
             )], 
            [dnl Enterprise.
-            LIBS="-lPocoFoundation -lPocoSQLite -lPocoData"
+            LIBS="-lPocoFoundation -lPocoDataSQLite -lPocoData"
             AC_LINK_IFELSE(
                 [AC_LANG_PROGRAM(
                     [[
@@ -78,9 +76,7 @@ AC_DEFUN([AX_CHECK_POCO],
                       #include <Poco/Foundation.h>
                     ]],
                     [[
-                      Poco::Data::SQLite::Utility util;
                       #if !(POCO_VERSION >= 0x01030600)
-                      # error Wrong Poco version!
                       #endif
                     ]])
                 ], [], [NO_POCO=yes]

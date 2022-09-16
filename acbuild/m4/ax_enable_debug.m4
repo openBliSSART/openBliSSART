@@ -42,8 +42,8 @@ AC_DEFUN([AX_ENABLE_DEBUG],
         CFLAGS="-O3 $CFLAGS"
         CXXFLAGS="-O3 $CXXFLAGS"
     else
-        CFLAGS="-g -O2 -Wall -D_DEBUG $CFLAGS"
-        CXXFLAGS="-g -O2 -Wall -D_DEBUG $CXXFLAGS"
+        CFLAGS="-g -O2 -Wall -DDEBUG $CFLAGS"
+        CXXFLAGS="-g -O2 -Wall -DDEBUG $CXXFLAGS"
         AC_MSG_NOTICE([Compiler flags set for debugging.])
     fi
 

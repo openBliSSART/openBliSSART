@@ -35,6 +35,7 @@
 #include <cmath>
 #include <stdexcept>
 #include <cassert>
+#include <iostream>
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -196,7 +197,7 @@ Matrix::Matrix(const std::string& fileName) :
 
     // Something went wrong.
     if (_data)
-        delete _data;
+        delete[] _data;
     std::string msg("Error while reading matrix data from file ");
     msg.append(fileName);
     throw std::runtime_error(msg);
@@ -501,10 +502,10 @@ void Matrix::multWithMatrix(const Matrix& other, Matrix* target,
         for (unsigned int row = 0; row < m; row++) {
 #       endif // ISEP_ROW_MAJOR
             unsigned int ri = row + rowOffset;
-            unsigned int ci = col + colOffset;
+            //unsigned int ci = col + colOffset;
             unsigned int riTarget = row + rowOffsetTarget;
             unsigned int ciTarget = col + colOffsetTarget;
-            unsigned int riOther = row + rowOffsetOther;
+            //unsigned int riOther = row + rowOffsetOther;
             unsigned int ciOther = col + colOffsetOther;
             (*target)(riTarget, ciTarget) = 0;
             for (unsigned int index = 0; index < k; index++) {
@@ -872,7 +873,7 @@ void Matrix::linearSolve(const Matrix& m, const ColVector& b, ColVector* target)
 
     // Solve LSE
     A.gaussElimination();
-    for (unsigned int y=A._rows-1; y>=0; y--) {
+    for (int y=A._rows-1; y>=0; y--) {
         (*target)(y) = A(y,m._cols);
         for (unsigned int i=y+1; i<m._cols; i++) {
             (*target)(y) -= A(y,i) * target->at(i);
@@ -1108,6 +1109,7 @@ Elem Matrix::dotColCol(const Matrix &a, unsigned int aCol,
     Elem result = 0.0;
     for (unsigned int i = 0; i < a._rows; i++)
         result += a(i, aCol) * b(i, bCol);
+    //std::cout << result;
     return result;
 #   endif
 #endif

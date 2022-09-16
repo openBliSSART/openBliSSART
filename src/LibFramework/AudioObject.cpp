@@ -50,6 +50,7 @@ namespace blissart {
 AudioData* AudioObject::getAudioObject(ClassificationObjectPtr clo,
                                        ProgressObserver* obs)
 {
+    cout << "\nGetAudioObject\n";
     DatabaseSubsystem& dbs = BasicApplication::instance().
         getSubsystem<DatabaseSubsystem>();
     StorageSubsystem& sts = BasicApplication::instance().
@@ -64,9 +65,11 @@ AudioData* AudioObject::getAudioObject(ClassificationObjectPtr clo,
             "classification object!");
     }
 
+
     // Get the process information from the database.
     const int processID = dds.at(0)->processID;
     ProcessPtr process = dbs.getProcess(processID);
+    assert (process != nullptr);
 
     // Get some information about the window-function, window-size and
     // overlap that were used during the creation of the related process.
@@ -114,11 +117,12 @@ AudioData* AudioObject::getAudioObject(ClassificationObjectPtr clo,
             throw Poco::InvalidArgumentException(
                 "Either the amplitude- or phase-matrix "
                 "are missing for this classification object!");
-            return false;
+            return (AudioData*) false;
         }
     }
 
     // NMFComponent | NMDComponent
+
     else if (clo->type == ClassificationObject::NMDComponent)
     {
         // Iterate over all data descriptors in order to get the spectrum- and
@@ -142,6 +146,18 @@ AudioData* AudioObject::getAudioObject(ClassificationObjectPtr clo,
                 break;
             case DataDescriptor::PhaseMatrix:
                 phaseMatrix = new Matrix(sts.getLocation((*ddIt)).toString());
+                break;
+            case DataDescriptor::MagnitudeMatrix:
+                BasicApplication::instance().logger()
+                                            .warning("Unknown data descriptor!");
+                break;
+            case DataDescriptor::FeatureMatrix:
+                BasicApplication::instance().logger()
+                                            .warning("Unknown data descriptor!");
+                break;
+            case DataDescriptor::Invalid:
+                BasicApplication::instance().logger()
+                                            .warning("Unknown data descriptor!");
                 break;
             default:
                 BasicApplication::instance().logger()

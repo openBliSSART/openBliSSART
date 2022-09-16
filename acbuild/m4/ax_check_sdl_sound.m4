@@ -28,19 +28,19 @@ dnl Test for SDL_sound, and define SDL_SOUND_LIBS.
 AC_DEFUN([AX_CHECK_SDL_SOUND],
 [
     dnl First check for the existence of SDL_sound.h
-    AC_CHECK_HEADER([SDL/SDL_sound.h], [], [NO_SDL_SOUND=yes])
+    AC_CHECK_HEADER([SDL2/SDL_sound.h], [], [NO_SDL_SOUND=yes])
 
     dnl Now check for the presence of the symbol Sound_NewSampleFromFile in the
     dnl SDL_sound library.
     if test -z "$NO_SDL_SOUND"; then
         AC_LANG_PUSH([C])
-        AC_CHECK_LIB([SDL_sound], [Sound_NewSampleFromFile], :, [NO_SDL_SOUND=yes])
+        AC_CHECK_LIB([SDL2_sound], [Sound_NewSampleFromFile], :, [NO_SDL_SOUND=yes])
         AC_LANG_POP([C])
     fi
 
     dnl The result depends on $NO_SDL_SOUND
     if test -z "$NO_SDL_SOUND"; then
-        AC_SUBST([SDL_SOUND_LIBS], [-lSDL_sound])
+        AC_SUBST([SDL_SOUND_LIBS], [-lSDL2_sound])
         ifelse([$1], [], :, [$1])
     else
         ifelse([$2], [], :, [$2])

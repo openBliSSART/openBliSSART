@@ -22,7 +22,7 @@
 // openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-
+#ifdef HAVE_CUDA
 #include <cuda.h>
 #include <blissart/linalg/common.h>
 
@@ -82,4 +82,4 @@ void compute_KLHUpdate(const Elem *hUpdateNum, const Elem *wColSums, Elem* hUpda
 
 
 } // namespace blissart
-
+#endif

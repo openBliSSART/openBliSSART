@@ -24,7 +24,8 @@
 
 bin_PROGRAMS = testsuite
 
-testsuite_CPPFLAGS = -I../include @POCO_CPPFLAGS@ @CUDA_CPPFLAGS@
+##testsuite_CPPFLAGS = -I../include @POCO_CPPFLAGS@ @CUDA_CPPFLAGS@
+testsuite_CPPFLAGS = -I../include @POCO_CPPFLAGS@
 
 testsuite_LDADD = $(top_srcdir)/src/LibAudio/libAudio.la \
                   $(top_srcdir)/src/LibLinAlg/libLinAlg.la \
@@ -84,8 +85,8 @@ testsuite_SOURCES = BinaryReaderWriterTest.cpp \
 					WaveTest.h \
 					main.cpp
 
-if HAVE_CUDA
-testsuite_SOURCES += GPUMatrixTest.cpp GPUMatrixTest.h
-endif
+##if HAVE_CUDA
+##testsuite_SOURCES += GPUMatrixTest.cpp GPUMatrixTest.h
+##endif
 
 EXTRA_DIST = Testsuite.vcproj

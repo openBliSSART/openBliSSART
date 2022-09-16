@@ -33,7 +33,8 @@
 using namespace std;
 using namespace blissart;
 using namespace blissart::linalg;
-using nmf::Deconvolver;
+using namespace blissart::nmf;
+//using nmf::Deconvolver;
 
 
 namespace Testing {
@@ -119,6 +120,8 @@ bool SNMFTest::performTest()
 
             nmf::Deconvolver d(x, 10, 1);
             d.setSparsity(nmf::Deconvolver::DefaultSparsityTemplate(sparsity[si]));
+            //nmf::Deconvolver::DefaultSparsityTemplate tDST(sparsity[si]);
+            //d.setSparsity(tDST);
 
             d.factorizeNMDBeta(1000, 0.0, 1, Deconvolver::L1Norm, false);
             //d.decompose(nmf::Deconvolver::KLDivergenceSparse, 100, 0.0);
@@ -154,6 +157,8 @@ bool SNMFTest::performTest()
             cout << "Sparsity parameter set to " << sparsity[si] << endl;
 
             nmf::Deconvolver d(x, 10, 1);
+            //nmf::Deconvolver::DefaultSparsityTemplate tDST(sparsity[si]);
+            //d.setSparsity(tDST);
             d.setSparsity(nmf::Deconvolver::DefaultSparsityTemplate(sparsity[si]));
 
             d.factorizeNMDBeta(1000, 1e-5, 2, Deconvolver::L1Norm, false);
@@ -191,6 +196,8 @@ bool SNMFTest::performTest()
 
             nmf::Deconvolver d(x, 10, 1);
             d.setSparsity(nmf::Deconvolver::DefaultSparsityTemplate(sparsity[si]));
+            //nmf::Deconvolver::DefaultSparsityTemplate tDST(sparsity[si]);
+            //d.setSparsity(tDST);
 
             d.decompose(nmf::Deconvolver::NormalizedEuclideanDistance, 1000, 1e-5);
             d.computeApprox();

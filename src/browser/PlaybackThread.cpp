@@ -52,7 +52,7 @@ PlaybackThread::~PlaybackThread()
     if (_sound) {
         _sound->setPlaybackState(Sound::Pause);
         delete _sound;
-        _sound = NULL;
+        _sound = nullptr;
     }
     _mutex.unlock();
     _logger.debug("PlaybackThread terminated.");

@@ -33,9 +33,12 @@
 #include <blissart/linalg/RowVector.h>
 #include <blissart/linalg/ColVector.h>
 #include <blissart/linalg/Matrix.h>
+#include "../src/LibNMF/Deconvolver.cpp"
 
 #include <Poco/Exception.h>
 #include <Poco/NumberFormatter.h>
+#include <stdio.h>
+#include <execinfo.h>
 
 
 using namespace std;
@@ -43,6 +46,7 @@ using namespace blissart::linalg;
 
 
 namespace blissart {
+
 
 
 NMDTask::NMDTask(const std::string &fileName,
@@ -58,25 +62,45 @@ NMDTask::NMDTask(const std::string &fileName,
     _cf(cf)
 {
     logger().debug(nameAndTaskID() + " initialized.");
+    cout << nameAndTaskID() + " initialized\n";
     _sparsity = BasicApplication::instance().config().
         getDouble("blissart.separation.activationSparsity.weight", 0.0);
     logger().debug(nameAndTaskID() + ": activation sparsity weight = " 
         + Poco::NumberFormatter::format(_sparsity));
+    cout << nameAndTaskID() + ": activation sparsity weight = " + Poco::NumberFormatter::format(_sparsity);
 }
 
+#ifdef PRINT_TRACE
+void print_trace(void) {
+    char **strings;
+    size_t i, size;
+    enum Constexpr { MAX_SIZE = 1024 };
+    void *array[MAX_SIZE];
+    size = backtrace(array, MAX_SIZE);
+    strings = backtrace_symbols(array, size);
+    for (i = 0; i < size; i++)
+        printf("%s\n", strings[i]);
+    puts("");
+    free(strings);
+}
+#endif
 
 NMDTask::~NMDTask()
 {
+    //print_trace();
+
     if (_deconvolver) {
         delete _deconvolver;
-        _deconvolver = 0;
+        _deconvolver = nullptr;
     }
 }
 
 
 void NMDTask::initialize()
 {
+    cout << "NMDTask::Initialize In";
     debug_assert(!_deconvolver);
+
 
     // Targeted initialization desired?
     if (numInitializationObjects() > 0 || numInitializationMatrices() > 0) {
@@ -149,6 +173,8 @@ void NMDTask::initialize()
     // Currently the sparsity and continuity parameters are the same for the
     // whole H matrix. 
     _deconvolver->setSparsity(nmf::Deconvolver::DefaultSparsityTemplate(_sparsity));
+    //blissart::nmf::Deconvolver::DefaultSparsityTemplate tDST(_sparsity, 1);
+    //_deconvolver->setSparsity( tDST );
 
     double wSparsity = BasicApplication::instance().config().
         getDouble("blissart.separation.baseSparsity.weight", 0.0);
@@ -160,12 +186,16 @@ void NMDTask::initialize()
         if (wSparsityExp == 1.0) {
             _deconvolver->setWSparsity(
                 nmf::Deconvolver::DefaultSparsityTemplate(wSparsity));
+            //blissart::nmf::Deconvolver::DefaultSparsityTemplate tDST(wSparsity, 1);
+            //_deconvolver->setWSparsity( tDST );      
         }
         else {
             logger().debug("Setting base sparsity exponentiation to " 
                 + Poco::NumberFormatter::format(wSparsityExp));
             _deconvolver->setWSparsity(
                 nmf::Deconvolver::ExponentialSparsityTemplate(wSparsity, wSparsityExp));
+            //blissart::nmf::Deconvolver::ExponentialSparsityTemplate tEST(wSparsity, wSparsityExp, 1);
+            //_deconvolver->setWSparsity( tEST );
         }
     }
 
@@ -190,6 +220,8 @@ void NMDTask::initialize()
     else {
         logger().warning("Invalid H update rule: " + hUpdateStr);
     }
+    cout << "NMDTask::Initialize Out";
+
 }
 
 
@@ -240,11 +272,20 @@ void NMDTask::performSeparation()
 
 void NMDTask::setProcessParameters(ProcessPtr process) const
 {
+    cout << "NMDTask set ProcessParams 1\n";
+    debug_assert(process);
     SeparationTask::setProcessParameters(process);
+    cout << "NMDTask set ProcessParam 2\n";
     process->parameters["costFunction"] = nmf::Deconvolver::costFunctionName(_cf);
+    cout << process->parameters["costFunction"];
     process->parameters["sparsity"] = Process::formatDouble(_sparsity);
     process->parameters["normalizeMatrices"] = BasicApplication::instance().config().
         getString("blissart.separation.normalization", "Wcol_L2Norm");
+    cout << "\nNMDTask set ProcessParam 3\n";
+    cout << process->name;
+    cout << "\n";
+    cout << process->inputFile;
+    cout << "\nProcess pointer still exists\n";
 }
 
 
@@ -271,6 +312,5 @@ void NMDTask::computeRelativeError()
     if (_deconvolver != 0) 
         _relativeError = _deconvolver->relativeError();
 }
-
 
 } // namespace blissart

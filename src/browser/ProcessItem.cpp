@@ -28,7 +28,7 @@
 #include <map>
 #include <cassert>
 #include <QDateTime>
-
+#include <QDebug>
 
 using namespace std;
 
@@ -46,6 +46,7 @@ ProcessItem::ProcessItem(QTreeWidgetItem *parent, ProcessPtr process) :
 
 QVariant ProcessItem::data(int column, int role) const
 {
+    cout << "\nProcessItem\n";
     // We only care about Qt::DisplayRole and the first two columns.
     if (role == Qt::DisplayRole) {
         if (column == 0) {
@@ -69,14 +70,24 @@ void ProcessItem::expand()
 
     // Add an item for the sample frequency.
     QTreeWidgetItem *sfItem = new QTreeWidgetItem(this);
+    qDebug() << sfItem;
     sfItem->setText(0, QObject::tr("Sample freq."));
     sfItem->setText(1, QString::number(_process->sampleFreq));
     
     // Add an item for the startup time.
     QTreeWidgetItem *stItem = new QTreeWidgetItem(this);
+    qDebug() << stItem;
     stItem->setText(0, QObject::tr("Startup time"));
     stItem->setText(1,
-            QDateTime::fromTime_t(_process->startTime.epochTime()).toString());
+    //        QDateTime::fromTime_t(_process->startTime.epochTime()).toString());
+        QDateTime::fromMSecsSinceEpoch(_process->startTime.epochTime()).toString());
+    //time_t elapsedTime;
+    //QDateTime t(QDateTime::fromTime_t(elapsedTime));
+    //or
+    //time_t elapsedTime;
+    //QDateTime t;
+    //t.setTime_t(elapsedTime);
+
     
     // Get the associated process parameters.
     _rootParameters =
@@ -106,6 +117,7 @@ void ProcessItem::getProcessParameters()
 void ProcessItem::getDataDescriptors()
 {
     typedef QList<DataDescriptorPtr> ddlist_t;
+    cout << "\getDataD 1\n";
 
     // Get the data descriptors and group them by their labels.
     vector<DataDescriptorPtr> descriptors =
@@ -117,6 +129,8 @@ void ProcessItem::getDataDescriptors()
 
     // Create a corresponding group of tree widget items for every label.
     pair<DataDescriptor::Type, ddlist_t> kvp;
+    qDebug() << kvp;
+    qDebug() << map;
     foreach (kvp, map) {
         QString strRepr =
             QString::fromStdString(DataDescriptor::strForType(kvp.first));

@@ -24,15 +24,21 @@
 ## TODO: introduce flag for NVCC
 
 
-.cu.o:
-	/usr/local/cuda/bin/nvcc -o $@ -c $<
+##.cu.o:
+##	/usr/local/cuda/bin/nvcc -o $@ -c $<
 
-.cu.lo:
-	$(LIBTOOL) --tag=CXX --mode=compile /usr2/home/wen/bin/nvccf $(NVCC_OPTIONS) -DHAVE_CONFIG_H --compile -o $@ $^ -shared "--compiler-options -fPIC -DPIC" -I../include -I../..
+##.cu.lo:
+##	$(LIBTOOL) --tag=CXX --mode=compile /usr2/home/wen/bin/nvccf $(NVCC_OPTIONS) -DHAVE_CONFIG_H --compile -o $@ $^ -shared "--compiler-##options -fPIC -DPIC" -I../include -I../..
 
 lib_LTLIBRARIES = libLinAlg.la
+## CUDA version of library commented out
+##CBLAS_LIBS="-L/usr/local/cuda/lib64 -lcublas " 
+CBLAS_LIBS="-L/usr/lib/x86_64-linux-gnu -lcblas " \
+        "-L/usr/lib/x86_64-linux-gnu -lf77blas " \
+        "-L/usr/lib/x86_64-linux-gnu -latlas "
 
-libLinAlg_la_CPPFLAGS = -I../include @CUDA_CPPFLAGS@ @MATLAB_CPPFLAGS@
+##libLinAlg_la_CPPFLAGS = -I../include @CUDA_CPPFLAGS@ @MATLAB_CPPFLAGS@
+libLinAlg_la_CPPFLAGS = -I../include @MATLAB_CPPFLAGS@
 
 libLinAlg_la_LIBADD = @CBLAS_LIBS@ 
 
@@ -43,9 +49,9 @@ libLinAlg_la_SOURCES = ColVector.cpp \
                        RowVector.cpp \
                        Vector.cpp
 
-if HAVE_CUDA
-libLinAlg_la_SOURCES += GPUMatrixKernels.cu GPUMatrix.cpp GPUUtil.cpp
-endif
+##if HAVE_CUDA
+##libLinAlg_la_SOURCES += GPUMatrixKernels.cu GPUMatrix.cpp GPUUtil.cpp
+##endif
 
 EXTRA_DIST = LibLinAlg.vcproj
 

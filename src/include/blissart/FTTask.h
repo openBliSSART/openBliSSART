@@ -27,6 +27,10 @@
 #define __BLISSART_FTTASK_H__
 
 
+#include <Poco/Util/Application.h>
+#include <Poco/Util/LayeredConfiguration.h>
+#include <config.h>
+#include <blissart/BasicApplication.h>
 #include <blissart/BasicTask.h>
 #include <blissart/WindowFunctions.h>
 #include <blissart/MatrixTransform.h>
@@ -34,7 +38,6 @@
 #include <common.h>
 #include <cassert>
 #include <vector>
-
 
 namespace blissart {
 
@@ -62,8 +65,33 @@ public:
      * @param  typeIdentifier   Type identifier, e.g. "FTTask".
      * @param  fileName         the name of the input file
      */
-    FTTask(const std::string& typeIdentifier, const std::string &fileName, 
-        bool isVolatile);
+    FTTask(const std::string& typeIdentifier, const std::string &fileName,
+           bool isVolatile) :
+        BasicTask(typeIdentifier),
+        _fileName(fileName),
+        _isVolatile(isVolatile),
+        _audioData(0),
+        _sampleRate(0),
+        _amplitudeMatrix(0),
+        _ftMagMatrix(0),
+        _phaseMatrix(0)
+    {
+        logger().debug(nameAndTaskID() + " reading configuration.");
+
+
+        // Get audio processing and FFT parameters from configuration.
+        Poco::Util::LayeredConfiguration& cfg =
+                BasicApplication::instance().config();
+        _windowFunction = windowFunctionForShortName(
+                    cfg.getString("blissart.fft.windowfunction", "sqhann"));
+        _windowSize = cfg.getInt("blissart.fft.windowsize", 25);
+        _overlap = cfg.getDouble("blissart.fft.overlap", 0.5);
+        _preemphasisCoeff = cfg.getDouble("blissart.audio.preemphasis", 0.0);
+        _zeroPadding = cfg.getBool("blissart.fft.zeropadding", false);
+        _removeDC = cfg.getBool("blissart.audio.remove_dc", false);
+        _reduceMids = cfg.getBool("blissart.audio.reduce_mids", false);
+
+    }
 
 
     /**

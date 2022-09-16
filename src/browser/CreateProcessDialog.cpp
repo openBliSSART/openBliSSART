@@ -28,7 +28,7 @@
 #include <blissart/FTTask.h>
 
 #include <QMessageBox>
-
+#include <QDebug>
 
 using namespace std;
 using namespace Poco;
@@ -123,6 +123,9 @@ void CreateProcessDialog::accept()
 
     // Determine the desired window function.
     WindowFunction windowFunction;
+    cout << "\ncbWindowFunction = ";
+    cout << _ui.cbWindowFunction->currentIndex();
+    cout << "\n";
     switch (_ui.cbWindowFunction->currentIndex()) {
     case 0: windowFunction = SqHannFunction; break;
     case 1: windowFunction = HannFunction; break;
@@ -133,6 +136,9 @@ void CreateProcessDialog::accept()
 
     // Determine the desired cost function.
     nmf::Deconvolver::NMDCostFunction cf;
+    cout << "\ncbCostFunction = ";
+    cout << _ui.cbCostFunction->currentIndex();
+    cout << "\n";
     switch (_ui.cbCostFunction->currentIndex()) {
     case 0: 
         cf = nmf::Deconvolver::KLDivergence; 
@@ -147,17 +153,23 @@ void CreateProcessDialog::accept()
 
     // Set the number of threads.
     const unsigned int numThreads = _ui.sbNumThreads->value();
+
     setNumThreads(numThreads);
+    //qDebug() << "numThreads = " << numThreads << "\n";
 
     // Since it's possible that the user first cancels and then restarts the
     // process, the list of filenames during whose processing errors have
     // occured must be explictly cleared now.
     _failedFileNames.clear();
 
+    //int i = 0;
     // Create and start one task per file.
     foreach (const QString &fileName, fileNames) {
         // TODO: Data kind, ICA, other options (preemphasis etc.)
         FTTaskPtr task;
+
+        qDebug() << "filename =" << fileName << "\n";
+
         // STFT + NMD
         if (_ui.cbProcessing->currentIndex() == 0) {
             task = new NMDTask(fileName.toStdString(),
@@ -167,16 +179,22 @@ void CreateProcessDialog::accept()
                 _ui.sbMaxIterations->value(),
                 0,
                 false);
+            qDebug() << "cbProcessing =" << _ui.cbProcessing->currentIndex();
         }
         // STFT only
         else {
+            qDebug() << "FT only processing" << "\n";
             task = new FTTask("FT", fileName.toStdString(), false);
+
         }
         task->setWindowFunction(windowFunction);
         task->setWindowSize(_ui.sbWindowSize->value());
         task->setOverlap(_ui.dsbOverlap->value());
-
+        qDebug() << "going to addTask" << task << "\n";
         addTask(task);
+        qDebug() << "added addTask" << "\n";
+        qDebug() << "filename =" << fileName << "\n";
+
     }
 
     // Wait for completion.

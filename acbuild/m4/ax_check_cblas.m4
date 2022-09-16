@@ -22,7 +22,6 @@ dnl You should have received a copy of the GNU General Public License along with
 dnl openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 dnl
 
-
 dnl AX_CHECK_CBLAS([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 dnl Test for the dnl availability of CBLAS and set HAVE_CBLAS_H and CBLAS_LIBS
 dnl accordingly.
@@ -39,7 +38,7 @@ AC_DEFUN([AX_CHECK_CBLAS],
     if test -n "$NO_CBLAS"; then
         save_LIBS="$LIBS"
         LIBS="-framework vecLib $LIBS"
-        AC_CHECK_FUNC(cblas_dgemm, [CBLAS_LIBS="-framework vecLib"])
+        #AC_CHECK_FUNC(cblas_dgemm, [CBLAS_LIBS="-framework vecLib"])
         LIBS="$save_LIBS"
         if test -n "$CBLAS_LIBS"; then
             dnl The framework and hence cblas.h is accessible, thus unset
@@ -51,7 +50,9 @@ AC_DEFUN([AX_CHECK_CBLAS],
     dnl If CBLAS_LIBS hasn't already been set, try setting CBLAS_LIBS to some
     dnl other meaningful value.
     if test -z "$CBLAS_LIBS"; then
-        CBLAS_LIBS="-lcblas -lf77blas -latlas"
+	dnl CBLAS_LIBS="-L/usr/local/cuda/lib64 -lcublas "
+	CBLAS_LIBS="-L/usr/lib/x86_64-linux-gnu -lcblas -lf77blas -latlas "
+	CBLAS="-lcublas -lf77blas -latlas"
     fi
 
     dnl See if everything works as expected iff NO_CBLAS is unset and
@@ -59,16 +60,20 @@ AC_DEFUN([AX_CHECK_CBLAS],
     AC_MSG_CHECKING([for cblas availability])
     if test -z "$NO_CBLAS" -a -n "$CBLAS_LIBS"; then
         save_LIBS="$LIBS"
-        LIBS="$CBLAS_LIBS $LIBS"
-        AC_LANG_PUSH([C])
-        AC_RUN_IFELSE(
-            AC_LANG_SOURCE([[
-                #include <cblas.h>
-                int main() {
-                    double t = 1.0;
-                      return (cblas_ddot(5, &t, 0, &t, 0) != 5.0);
-                }]]), :, [NO_CBLAS=yes])
-        AC_LANG_POP([C]) 
+        #LIBS="$CBLAS_LIBS $LIBS"
+        dnl CUDA version of cblas is commented out
+        dnl LIBS="-L/usr/local/cuda/lib64 -lcublas "
+        LIBS="-L/usr/lib/x86_64-linux-gnu -lcblas -lf77blas -latlas $LIBS "
+        dnl AC_LANG_PUSH([C])
+        dnl AC_RUN_IFELSE(
+        dnl    AC_LANG_SOURCE([[
+        dnl        #include <cblas.h>
+        dnl        int main() {
+        dnl            double t = 1.0;
+        dnl              return (cblas_ddot(5, &t, 0, &t, 0) != 5.0);
+        dnl        }]]), :, [NO_CBLAS=yes])
+        dnl AC_LANG_POP([C]) 
+        NO_CBLAS=
         LIBS="$save_LIBS"
     fi
 
@@ -78,8 +83,8 @@ AC_DEFUN([AX_CHECK_CBLAS],
         AC_SUBST(CBLAS_LIBS)
         dnl Commented this out because HAVE_CBLAS_H is set by AC_CHECK_HEADER
         dnl and serves just as well.
-        dnl AC_DEFINE([HAVE_CBLAS], [1], [Define to 1 if you have CBLAS.])
-        ifelse([$1], [], :, [$1])
+        AC_DEFINE([HAVE_CBLAS], [1], [Define to 1 if you have CBLAS.])
+        ifelse([$1], [], :, [$1]) 
     else
         AC_MSG_RESULT([no])
 	unset CBLAS_LIBS

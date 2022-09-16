@@ -27,6 +27,10 @@
 
 
 #include <Poco/Data/TypeHandler.h>
+#include <Poco/Data/AbstractPreparation.h>
+#include "Poco/Data/AbstractBinder.h"
+#include "Poco/Data/AbstractExtractor.h"
+#include "Poco/Data/AbstractPreparator.h"
 
 #include <blissart/DataDescriptor.h>
 #include <blissart/Process.h>
@@ -34,8 +38,9 @@
 #include <blissart/ClassificationObject.h>
 #include <blissart/Response.h>
 #include <blissart/Label.h>
-
-
+#ifndef _debug
+#define _debug
+#endif
 /**
  * Classes that inherit the Poco (Portable Components) framework classes
  */
@@ -56,27 +61,68 @@ namespace Data {
 /**
  * TypeHandler specialization for Poco::AutoPtr.
  */
-template<class C>
-class TypeHandler<Poco::AutoPtr<C> >
+
+/****************************************************8
+template <class T>
+class TypeHandler<Poco::AutoPtr<T>>: public AbstractTypeHandler
+    /// Specialization of type handler for Poco::AutoPtr
 {
 public:
-    typedef Poco::AutoPtr<C> CPtr;
-
+    static void bind(std::size_t pos, const Poco::AutoPtr<T>& obj, AbstractBinder::Ptr pBinder, AbstractBinder::Direction dir)
+    {
+        // *obj will trigger a nullpointer exception if empty: this is on purpose
+        TypeHandler<T>::bind(pos, *obj, pBinder, dir);
+    }
 
     static std::size_t size()
     {
-        return TypeHandler<C>::size();
+        return static_cast<std::size_t>(TypeHandler<T>::size());
     }
 
-
-    static void bind(std::size_t pos, const CPtr& ptr,
-        AbstractBinder* pBinder)
+    static void extract(std::size_t pos, Poco::AutoPtr<T>& obj, const Poco::AutoPtr<T>& defVal, AbstractExtractor::Ptr pExt)
     {
-        poco_assert (!ptr.isNull());
-        TypeHandler<C>::bind(pos, *ptr, pBinder);
+        poco_assert_dbg (!pExt.isNull());
+
+        obj = Poco::AutoPtr<T>(new T());
+        if (defVal)
+            TypeHandler<T>::extract(pos, *obj, *defVal, pExt);
+        else
+            TypeHandler<T>::extract(pos, *obj, *obj, pExt);
     }
 
+    static void prepare(std::size_t pos, const Poco::AutoPtr<T>&, AbstractPreparator::Ptr pPreparator)
+    {
+        poco_assert_dbg (!pPreparator.isNull());
+        TypeHandler<T>::prepare(pos, T(), pPreparator);
+    }
 
+private:
+    TypeHandler(const TypeHandler&);
+    TypeHandler& operator = (const TypeHandler&);
+};
+
+***********************************************************************/
+//template<class C>
+//class TypeHandler<AutoPtr<C> >: public AbstractTypeHandler
+//{
+//public:
+//    typedef AutoPtr<C> CPtr;
+//
+
+    //static std::size_t size()
+    //{
+    //    return TypeHandler<C>::size();
+    //}
+
+
+ //   static void bind(std::size_t pos, const CPtr& ptr,
+ //       AbstractBinder* pBinder)
+ //   {
+ //       poco_assert (!ptr.isNull());
+ //       TypeHandler<C>::bind(pos, *ptr, pBinder);
+ //   }
+
+/****************************
     static void prepare(std::size_t pos, const CPtr& ptr,
         AbstractPreparation* pPrepare)
     {
@@ -101,7 +147,7 @@ public:
         TypeHandler<C>::extract(pos, *ptr, *pDefault, pExtract);
     }
 };
-
+*************************************/
 
 /**
  * TypeHandler specialization for Poco::Timestamp.
@@ -115,16 +161,16 @@ public:
         return 1;
     }
 
-
+    // bind has a direction PD_IN = 0, PD_OUT = 1, PD_IN_OUT =2
     static void bind(std::size_t pos, const Poco::Timestamp& data,
-        AbstractBinder* pBinder)
+        AbstractBinder* pBinder, AbstractBinder::Direction dir)
     {
-        TypeHandler<int>::bind(pos++, (int) data.epochTime(), pBinder);
+        TypeHandler<int>::bind(pos++, (int) data.epochTime(), pBinder, dir);
     }
 
 
     static void prepare(std::size_t pos, const Poco::Timestamp& data,
-        AbstractPreparation* pPrepare)
+        AbstractPreparator* pPrepare)
     {
         TypeHandler<int>::prepare(pos++, (int) data.epochTime(), pPrepare);
     }
@@ -159,19 +205,19 @@ public:
 
 
     static void bind(std::size_t pos, const DataDescriptor& data,
-        AbstractBinder* pBinder)
+        AbstractBinder* pBinder, AbstractBinder::Direction dir)
     {
-        TypeHandler<int>::bind(pos++, data.descrID, pBinder);
-        TypeHandler<int>::bind(pos++, data.processID, pBinder);
-        TypeHandler<int>::bind(pos++, data.type, pBinder);
-        TypeHandler<int>::bind(pos++, data.index, pBinder);
-        TypeHandler<int>::bind(pos++, data.index2, pBinder);
-        TypeHandler<bool>::bind(pos++, data.available, pBinder);
+        TypeHandler<int>::bind(pos++, data.descrID, pBinder, dir);
+        TypeHandler<int>::bind(pos++, data.processID, pBinder, dir);
+        TypeHandler<int>::bind(pos++, data.type, pBinder, dir);
+        TypeHandler<int>::bind(pos++, data.index, pBinder, dir);
+        TypeHandler<int>::bind(pos++, data.index2, pBinder, dir);
+        TypeHandler<bool>::bind(pos++, data.available, pBinder, dir);
     }
 
 
     static void prepare(std::size_t pos, const DataDescriptor& data,
-        AbstractPreparation* pPrepare)
+        AbstractPreparator* pPrepare)
     {
         TypeHandler<int>::prepare(pos++, data.descrID, pPrepare);
         TypeHandler<int>::prepare(pos++, data.processID, pPrepare);
@@ -218,18 +264,18 @@ public:
 
 
     static void bind(std::size_t pos, const Process& process,
-        AbstractBinder* pBinder)
+        AbstractBinder* pBinder, AbstractBinder::Direction dir)
     {
-        TypeHandler<int>::bind(pos++, process.processID, pBinder);
-        TypeHandler<std::string>::bind(pos++, process.name, pBinder);
-        TypeHandler<std::string>::bind(pos++, process.inputFile, pBinder);
-        TypeHandler<Poco::Timestamp>::bind(pos++, process.startTime, pBinder);
-        TypeHandler<int>::bind(pos++, process.sampleFreq, pBinder);
+        TypeHandler<int>::bind(pos++, process.processID, pBinder, dir);
+        TypeHandler<std::string>::bind(pos++, process.name, pBinder, dir);
+        TypeHandler<std::string>::bind(pos++, process.inputFile, pBinder, dir);
+        TypeHandler<Poco::Timestamp>::bind(pos++, process.startTime, pBinder, dir);
+        TypeHandler<int>::bind(pos++, process.sampleFreq, pBinder, dir);
     }
 
 
     static void prepare(std::size_t pos, const Process& process,
-        AbstractPreparation* pPrepare)
+        AbstractPreparator* pPrepare)
     {
         TypeHandler<int>::prepare(pos++, process.processID, pPrepare);
         TypeHandler<std::string>::prepare(pos++, process.name, pPrepare);
@@ -273,19 +319,19 @@ public:
 
 
     static void bind(std::size_t pos, const Feature& feature,
-        AbstractBinder* pBinder)
+        AbstractBinder* pBinder, AbstractBinder::Direction dir)
     {
-        TypeHandler<int>::bind(pos++, feature.descrID, pBinder);
-        TypeHandler<std::string>::bind(pos++, feature.name, pBinder);
-        TypeHandler<double>::bind(pos++, feature.params[0], pBinder);
-        TypeHandler<double>::bind(pos++, feature.params[1], pBinder);
-        TypeHandler<double>::bind(pos++, feature.params[2], pBinder);
-        TypeHandler<double>::bind(pos++, feature.value, pBinder);
+        TypeHandler<int>::bind(pos++, feature.descrID, pBinder, dir);
+        TypeHandler<std::string>::bind(pos++, feature.name, pBinder, dir);
+        TypeHandler<double>::bind(pos++, feature.params[0], pBinder, dir);
+        TypeHandler<double>::bind(pos++, feature.params[1], pBinder, dir);
+        TypeHandler<double>::bind(pos++, feature.params[2], pBinder, dir);
+        TypeHandler<double>::bind(pos++, feature.value, pBinder, dir);
     }
 
 
     static void prepare(std::size_t pos, const Feature& feature,
-        AbstractPreparation* pPrepare)
+        AbstractPreparator* pPrepare)
     {
         TypeHandler<int>::prepare(pos++, feature.descrID, pPrepare);
         TypeHandler<std::string>::prepare(pos++, feature.name, pPrepare);
@@ -332,15 +378,15 @@ public:
 
 
     static void bind(std::size_t pos, const ClassificationObject& clObj,
-        AbstractBinder* pBinder)
+        AbstractBinder* pBinder, AbstractBinder::Direction dir)
     {
-        TypeHandler<int>::bind(pos++, clObj.objectID, pBinder);
-        TypeHandler<int>::bind(pos++, clObj.type, pBinder);
+        TypeHandler<int>::bind(pos++, clObj.objectID, pBinder, dir);
+        TypeHandler<int>::bind(pos++, clObj.type, pBinder, dir);
     }
 
 
     static void prepare(std::size_t pos, const ClassificationObject& clObj,
-        AbstractPreparation* pPrepare)
+        AbstractPreparator* pPrepare)
     {
         TypeHandler<int>::prepare(pos++, clObj.objectID, pPrepare);
         TypeHandler<int>::prepare(pos++, clObj.type, pPrepare);
@@ -375,16 +421,16 @@ public:
 
 
     static void bind(std::size_t pos, const Response& response,
-        AbstractBinder* pBinder)
+        AbstractBinder* pBinder, AbstractBinder::Direction dir)
     {
-        TypeHandler<int>::bind(pos++, response.responseID, pBinder);
-        TypeHandler<std::string>::bind(pos++, response.name, pBinder);
-        TypeHandler<std::string>::bind(pos++, response.description, pBinder);
+        TypeHandler<int>::bind(pos++, response.responseID, pBinder, dir);
+        TypeHandler<std::string>::bind(pos++, response.name, pBinder, dir);
+        TypeHandler<std::string>::bind(pos++, response.description, pBinder, dir);
     }
 
 
     static void prepare(std::size_t pos, const Response& response,
-        AbstractPreparation* pPrepare)
+        AbstractPreparator* pPrepare)
     {
         TypeHandler<int>::prepare(pos++, response.responseID, pPrepare);
         TypeHandler<std::string>::prepare(pos++, response.name, pPrepare);
@@ -423,15 +469,15 @@ public:
 
 
     static void bind(std::size_t pos, const Label& label,
-        AbstractBinder* pBinder)
+        AbstractBinder* pBinder, AbstractBinder::Direction dir)
     {
-        TypeHandler<int>::bind(pos++, label.labelID, pBinder);
-        TypeHandler<std::string>::bind(pos++, label.text, pBinder);
+        TypeHandler<int>::bind(pos++, label.labelID, pBinder, dir);
+        TypeHandler<std::string>::bind(pos++, label.text, pBinder, dir);
     }
 
 
     static void prepare(std::size_t pos, const Label& label,
-        AbstractPreparation* pPrepare)
+        AbstractPreparator* pPrepare)
     {
         TypeHandler<int>::prepare(pos++, label.labelID, pPrepare);
         TypeHandler<std::string>::prepare(pos++, label.text, pPrepare);

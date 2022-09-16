@@ -21,10 +21,74 @@
 // You should have received a copy of the GNU General Public License along with
 // openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 //
+//********************************
+
+//#include <QMessageBox>
+// * #include "TypeHandler.h"
+//// #include <Poco/SQL/TypeHandler.h>
+//#include <blissart/DatabaseSubsystem.h>
+//#include <blissart/FeatureSet.h>
+
+//#include <Poco/File.h>
+//#include <Poco/SQL/Binding.h>
+//#include <Poco/SQL/SQLite/Connector.h>
+//#include <Poco/SQL/Statement.h>
+//#include <Poco/SQL/Session.h>
+////#include <Poco/SQL/SessionPool.h>
+////#include <Poco/SQL/BulkExtraction.h>
+//#include <Poco/Util/Application.h>
+////#include <Poco/SQL/SessionFactory.h>
+
+//#include <vector>
+//#include <iostream>
+//#include <cassert>
+//#include <algorithm>
+//#include <iterator>
+
+///using namespace Poco;
+///using namespace Poco::Util;
+///using namespace Poco::Data;
+
+//using namespace std;
+//using namespace Poco::SQL::SQLite;
+//using namespace Poco::SQL::Keywords;
+//using namespace Poco::SQL;
+////using Poco::Data::SQLite::Connector;
+//using Poco::SQL::Statement;
+//using Poco::SQL::Session;
+//using Poco::SQL::SessionPool;
+////using namespace Poco::SQL::Statement;
+//using Poco::FastMutex;
+//using Poco::RWLock;
+//*/
+
+//#include "TypeHandler.h"
+//#include <blissart/DatabaseSubsystem.h>
+//#include <blissart/FeatureSet.h>
+//#include <iostream>
+//#include <cassert>
+//#include <algorithm>
+//#include <iterator>
+//#include <vector>
+
+//using namespace std;
+////using namespace Poco::SQL;
+//using namespace Poco::SQL::SQLite;
+//using namespace Poco::SQL::Keywords;
+//using namespace Poco::SQL;
+//using Poco::SQL::Session;
+//using Poco::SQL::SessionPool;
+//using Poco::SQL::Statement;
+//using Poco::SQL::Connector;
+//using Poco::FastMutex;
+//using Poco::RWLock;
 
 
+
+//*************************/
+
+//#include <QMessageBox>
 #include "TypeHandler.h"
-
 #include <blissart/DatabaseSubsystem.h>
 #include <blissart/FeatureSet.h>
 
@@ -36,12 +100,33 @@
 #include <cassert>
 #include <algorithm>
 #include <iterator>
+#include <stdio.h>
+#include <execinfo.h> // for backtrace
+#include <dlfcn.h>    // for dladdr
+#include <cxxabi.h>   // for __cxa_demangle
 
+#include <cstdio>
+#include <cstdlib>
+#include <string>
+#include <sstream>
 
 using namespace std;
+//using namespace Poco;
 using namespace Poco::Data;
+using Poco::ReferenceCounter;
 using Poco::FastMutex;
 using Poco::RWLock;
+using namespace Poco::Data::SQLite;
+using namespace Poco::Data::Keywords;
+using Poco::Data::Session;
+using Poco::Data::SessionPool;
+using Poco::Data::Statement;
+//using Poco::Data::Session;
+//using Poco::Data::SessionPool;
+//using Poco::Data::Statement;
+using Poco::Data::SQLite::Connector;
+//using Poco::FastMutex;
+//using Poco::RWLock;
 
 
 namespace blissart {
@@ -70,12 +155,17 @@ const char* DatabaseSubsystem::name() const
 void DatabaseSubsystem::connect(const std::string& dbFilename)
 {
     _poolLock.lock();
-    if (_pPool)
+    if (_pPool) {
         delete _pPool;
+        _pPool = nullptr;
+    }
     _pPool = new Poco::Data::SessionPool("SQLite", dbFilename);
     _poolLock.unlock();
     _dbFilename = dbFilename;
+    _logger.debug("Database filename = " + dbFilename + "\n");
+    _logger.debug("Call setup()\n");
     setup();
+    _logger.debug("Call triggers()\n");
     setupTriggers();
 }
 
@@ -85,7 +175,7 @@ void DatabaseSubsystem::disconnect()
     FastMutex::ScopedLock lock(_poolLock);
     if (_pPool) {
         delete _pPool;
-        _pPool = 0;
+        _pPool = nullptr;
     }
 }
 
@@ -94,6 +184,7 @@ void DatabaseSubsystem::initialize(Poco::Util::Application& app)
 {
     string dbFilename = app.config().getString("blissart.databaseFile", "openBliSSART.db");
     connect(dbFilename);
+    _logger.debug("connected to db file\n");
 }
 
 
@@ -114,7 +205,8 @@ void DatabaseSubsystem::setup()
 {
     RWLock::ScopedLock lock(_dbLock, true);
 
-    _logger.debug("Creating tables and indices, if neccessary.");
+    _logger.debug("Creating tables and indices, if neccessary\n");
+
     Session session = getSession();
     session.begin();
     session <<
@@ -206,7 +298,8 @@ void DatabaseSubsystem::setup()
         "GROUP BY object_id",
         now;
     session.commit();
-    _logger.debug("Database setup successful.");
+
+    _logger.debug("Database setup successful\n");
 }
 
 
@@ -214,7 +307,7 @@ void DatabaseSubsystem::setupTriggers()
 {
     RWLock::ScopedLock lock(_dbLock, true);
 
-    _logger.debug("Setting up database triggers.");
+    _logger.debug("Setting up database triggers\n");
     Session session = getSession();
     session.begin();
 
@@ -316,7 +409,7 @@ void DatabaseSubsystem::setupTriggers()
     // Automatic trigger generation for foreign keys
 
     // Get a list of all tables.
-    vector<string> tables;
+    std::vector<string> tables;
     session << "SELECT tbl_name FROM sqlite_master WHERE type = 'table' AND "
             << "name <> 'sqlite_sequence'",
             into(tables), now;
@@ -326,11 +419,11 @@ void DatabaseSubsystem::setupTriggers()
     // children of each relation. See the SQLite documentation for further
     // explanations of the PRAGMA directive.
     map<string, string> parentDeletes, parentUpdates;
-    for (vector<string>::const_iterator it = tables.begin();
+    for (std::vector<string>::const_iterator it = tables.begin();
          it != tables.end(); ++it)
     {
-        vector<int> garbage1, garbage2;
-        vector<string> dest, from, to;
+        std::vector<int> garbage1, garbage2;
+        std::vector<string> dest, from, to;
         session << "PRAGMA foreign_key_list(" << *it << ")",
                    into(garbage1), into(garbage2),
                    into(dest), into(from), into(to), now;
@@ -415,6 +508,8 @@ int DatabaseSubsystem::lastInsertID(Session& session)
 {
     int id;
     session << "SELECT last_insert_rowid()", into(id), now;
+    _logger.debug("\nlast_insert_row id = "+std::to_string(id)+"\n");
+
     return id;
 }
 
@@ -425,6 +520,7 @@ void DatabaseSubsystem::insertProcessParams(Session& session, ProcessPtr process
          itr != process->parameters.end();
          ++itr)
     {
+        assert (process != nullptr);
         session <<
             "INSERT INTO process_param (process_id, param_name, param_value) "
             "VALUES (?, ?, ?)",
@@ -435,30 +531,124 @@ void DatabaseSubsystem::insertProcessParams(Session& session, ProcessPtr process
     }
 }
 
+#ifdef PRINT_TRACE
+void print_trace(void) {
+    char **strings;
+    size_t i, size;
+    enum Constexpr { MAX_SIZE = 1024 };
+    void *array[MAX_SIZE];
+    size = backtrace(array, MAX_SIZE);
+    strings = backtrace_symbols(array, size);
+    for (i = 0; i < size; i++)
+        printf("%s\n", strings[i]);
+    puts("");
+    free(strings);
+}
+#endif
+
+
+
+// This function produces a stack backtrace with demangled function & method names.
+std::string Backtrace(int skip = 1)
+{
+    void *callstack[128];
+    const int nMaxFrames = sizeof(callstack) / sizeof(callstack[0]);
+    char buf[1024];
+    int nFrames = backtrace(callstack, nMaxFrames);
+    char **symbols = backtrace_symbols(callstack, nFrames);
+
+    std::ostringstream trace_buf;
+    for (int i = skip; i < nFrames; i++) {
+        printf("%s\n", symbols[i]);
+
+        Dl_info info;
+        if (dladdr(callstack[i], &info) && info.dli_sname) {
+            char *demangled = NULL;
+            int status = -1;
+            if (info.dli_sname[0] == '_')
+                demangled = abi::__cxa_demangle(info.dli_sname, NULL, 0, &status);
+            snprintf(buf, sizeof(buf), "%-3d %*p %s + %zd\n",
+                     i, int(2 + sizeof(void*) * 2), callstack[i],
+                     status == 0 ? demangled :
+                     info.dli_sname == 0 ? symbols[i] : info.dli_sname,
+                     (char *)callstack[i] - (char *)info.dli_saddr);
+            free(demangled);
+        } else {
+            snprintf(buf, sizeof(buf), "%-3d %*p %s\n",
+                     i, int(2 + sizeof(void*) * 2), callstack[i], symbols[i]);
+        }
+        trace_buf << buf;
+    }
+    free(symbols);
+    if (nFrames == nMaxFrames)
+        trace_buf << "[truncated]\n";
+    return trace_buf.str();
+}
 
 void DatabaseSubsystem::createProcess(ProcessPtr process)
 {
+    _logger.debug("\nsetdbs createProcess 2\n");
+    _logger.debug( process->name);
+    _logger.debug(process->inputFile);
+    _logger.debug(std::to_string(process->sampleFreq));
+    assert (process != nullptr);
     RWLock::ScopedLock lock(_dbLock, true);
+    _logger.debug("setdbs createProcess 3 process pointer has been deleted\n");
+    //cout << Backtrace();
 
+    assert (process != nullptr);
+
+    //cout << process->name;
+    //cout << process->inputFile;
+
+    //std::ostringstream oss;
+    //std::ostream &os = oss;
+    //std::string str = oss.str();
+    _logger.debug("\nSession = ");
     Session session = getSession();
+    _logger.debug(std::to_string(lastInsertID(session)));
+    //Poco::Timestamp ts;
+
+    Poco::DateTime dt(process->startTime);
+    Poco::LocalDateTime ldt(dt);
+    unsigned long time_in_micros = process->startTime.utcTime()/1000000;
+
+    std::string str = Poco::DateTimeFormatter::format(ldt, Poco::DateTimeFormat::SORTABLE_FORMAT);
+    _logger.debug(str+"\n"+std::to_string(time_in_micros)+"\n");
     session.begin();
+    //session <<
+    //    "INSERT INTO process (process_name, input_file, start_time, sample_freq) "
+    //    "VALUES ('NFM','WAVE.WAV',101,44000)",
+    //    use('NMF'),
+    //    use('WAVE.WAV'),
+    //    use(process->startTime),
+    //    use(process->sampleFreq),
+    //    now;
+ //std::stoi(str),
     session <<
         "INSERT INTO process (process_name, input_file, start_time, sample_freq) "
         "VALUES (?, ?, ?, ?)",
         use(process->name),
         use(process->inputFile),
-        use(process->startTime),
+        use(time_in_micros),
         use(process->sampleFreq),
         now;
+    _logger.debug(std::to_string(process->processID));
     process->processID = lastInsertID(session);
     insertProcessParams(session, process);
+    _logger.debug("insert completed\n");
     session.commit();
+
 }
 
 
 void DatabaseSubsystem::updateProcess(ProcessPtr process)
 {
+    cout << "\nupdateProcess In\n";	
     RWLock::ScopedLock lock(_dbLock, true);
+    assert (process != nullptr);
+    unsigned long time_in_seconds = process->startTime.utcTime()/1000000;
+     _logger.debug("time in seconds = " + to_string(time_in_seconds) + "\n");
 
     Session session = getSession();
     session.begin();
@@ -467,7 +657,8 @@ void DatabaseSubsystem::updateProcess(ProcessPtr process)
         "sample_freq = ?",
         use(process->name),
         use(process->inputFile),
-        use(process->startTime),
+        use(time_in_seconds),
+        //use(process->startTime),
         use(process->sampleFreq),
         now;
     session <<
@@ -482,7 +673,7 @@ void DatabaseSubsystem::updateProcess(ProcessPtr process)
 void DatabaseSubsystem::removeProcess(ProcessPtr process)
 {
     RWLock::ScopedLock lock(_dbLock, true);
-
+    assert (process != nullptr);
     Session session = getSession();
     session.begin();
     // There's no "direct" relation between classification objects and
@@ -498,24 +689,32 @@ void DatabaseSubsystem::removeProcess(ProcessPtr process)
 }
 
 
-void DatabaseSubsystem::getProcessParams(Session& session, ProcessPtr process)
+void DatabaseSubsystem::getProcessParams(Session &session, ProcessPtr process)
 {
     string paramName, paramValue;
+    _logger.debug("\ngetProcessParams in\n");
+    //assert (process != nullptr);
     Statement stmt = (session <<
         "SELECT param_name, param_value FROM process_param WHERE process_id = ?",
         use(process->processID), range(0, 1), into(paramName), into(paramValue));
+     _logger.debug("\ngetProcessParams SELECT\n");
+    int i = 0;
     while (!stmt.done()) {
-        if (stmt.execute() == 1) {
+        if (stmt.execute() == 1)
+        {
             process->parameters[paramName] = paramValue;
         }
+        _logger.debug("\ngetProcessParams SELECT " + std::to_string(i++) + "\n");
     }
+   _logger.debug("\ngetProcessParams out\n");
 }
 
 
 ProcessPtr DatabaseSubsystem::getProcess(int processID)
 {
+    cout << "\ngetProcess\n";
     RWLock::ScopedLock lock(_dbLock);
-
+    cout << "here in dbs land\n";
     ProcessPtr result;
     Session session = getSession();
     session << "SELECT * FROM process WHERE process_id = ?",
@@ -539,23 +738,112 @@ ProcessPtr DatabaseSubsystem::getProcess(ClassificationObjectPtr clo)
                "   object_id = ?)"
                "LIMIT 1",
             use(clo->objectID), into(result), now;
-    if (!result.isNull())
+    //if (!result.isNull())
+    if (result != nullptr)
         getProcessParams(session, result);
+    assert (result != nullptr);
     return result;
+
 }
 
 
-vector<ProcessPtr> DatabaseSubsystem::getProcesses()
+std::vector<ProcessPtr> DatabaseSubsystem::getProcesses()
 {
+    _logger.debug("dbs getProcees in.");
     RWLock::ScopedLock lock(_dbLock);
+    _logger.debug("dbs lock.");
 
-    vector<ProcessPtr> result;
+    std::vector<ProcessPtr> result;
+    //std::vector<int> process_id;
+    //std::vector<std::string> process_name;
+    //std::vector<std::string> input_file;
+    //std::vector<int> start_time;
+    //std::vector<int> sample_freq;
+
+    //std::vector<ProcessPtr> resultR;
+    //std::vector<int> process_idR;
+    //std::vector<std::string> process_nameR;
+    //std::vector<std::string> input_fileR;
+    //std::vector<int> start_timeR;
+    //std::vector<int> sample_freqR;
+
+    //Process(const std::string& name, const std::string& inputFile,
+    //        int sampleFreq);
+
+    _logger.debug("result vector defined.");
     Session session = getSession();
+    _logger.debug("sessions obtained.");
+
+    //session << "SELECT * FROM process",
+    //        into(process_idR),
+    //        into(process_nameR),
+    //        into(input_fileR),
+    //        into(start_timeR),
+    //        into(sample_freqR),
+    //        now;
+
+    //assert (process_id == process_idR);
+    //assert (process_name == process_nameR);
+    //assert (input_file == input_fileR);
+    //assert (start_time == start_timesR);
+
+    int count = 0;
+    //session << "SELECT * FROM process", into(result), now;
+    session << "SELECT count(*) FROM process", into(count), now;
+    _logger.debug("SELECT * FROM process count = "+to_string(count)+"\n");
     session << "SELECT * FROM process", into(result), now;
-    for (vector<ProcessPtr>::const_iterator it = result.begin();
-        it != result.end(); it++) {
-        getProcessParams(session, *it);
+    if (count > 0)
+    {
+        ProcessPtr newProcess;
+        string paramName, paramValue;
+        newProcess = result[0];
+        _logger.debug("\ngetProcessParams SELECT = " + to_string(newProcess->processID) + "\n");
+        session <<
+            "SELECT param_name, param_value FROM process_param WHERE process_id = ?",
+            use(newProcess->processID), range(0, 1), into(paramName), into(paramValue), now;
+            _logger.debug("\ngetProcessParams SELECT\n");
+
+    //while (!stmt.done())
+    //{
+    //    if (stmt.execute() == 1)
+    //    {
+    //        newProcess->parameters[paramName] = paramValue;
+    //    }
+        _logger.debug("\ngetProcessParams SELECT " + paramName + " " + paramValue +"\n");
+    //}
+
+    //getProcessParams(session, newProcess);
+
+    //_logger.debug("\nNumber of processes = "+std::to_string(count)+"\n");
+    //_logger.debug("for loop.");
+
+    //int i = 0;
+    //for (i = 0; process_idR.size() != 0; i++)
+    //{
+    //    cout << process_idR[i];
+    //    newProcess = new Process(process_idR[i],process_nameR[i],input_fileR[i],start_timeR[i],sample_freqR[i]);
+    //    getProcessParams(session, newProcess);
+    //    result.push_back(newProcess);
+    //}
+
+
+    //assert(result.size()!=0);
+    //(result.size() != 0 && it != result.end()); it++)
+    //if (count != 0 && count > 1)
+    //{
+
+        //assertTrue (*result[0] == *newProcess[0]);
+        //assertTrue (*result[1] == *people[1]);
+    //    for (std::vector<ProcessPtr>::const_iterator it = result.begin();
+    //        (it != result.end()); it++)
+    //    {
+    //        getProcessParams(session, *it);
+    //    }
+    //}
+
+        _logger.debug("dbs getProcesses out.");
     }
+
     return result;
 }
 
@@ -565,7 +853,7 @@ void DatabaseSubsystem::createDataDescriptor(DataDescriptorPtr data)
     debug_assert(data->type != DataDescriptor::Invalid);
 
     RWLock::ScopedLock lock(_dbLock, true);
-
+    assert(data != nullptr);
     Session session = getSession();
     session <<
         "INSERT INTO data_descriptor (process_id, type, idx, idx2, available) "
@@ -585,7 +873,7 @@ void DatabaseSubsystem::updateDataDescriptor(DataDescriptorPtr data)
     debug_assert(data->type != DataDescriptor::Invalid);
 
     RWLock::ScopedLock lock(_dbLock, true);
-
+    assert (data != nullptr);
     Session session = getSession();
     session <<
         "UPDATE data_descriptor SET process_id = ?, type = ?, "
@@ -603,6 +891,7 @@ void DatabaseSubsystem::updateDataDescriptor(DataDescriptorPtr data)
 
 void DatabaseSubsystem::removeDataDescriptor(DataDescriptorPtr data)
 {
+    assert (data != nullptr);
     RWLock::ScopedLock lock(_dbLock, true);
 
     getSession() << "DELETE FROM data_descriptor WHERE descr_id = ?",
@@ -612,6 +901,7 @@ void DatabaseSubsystem::removeDataDescriptor(DataDescriptorPtr data)
 
 DataDescriptorPtr DatabaseSubsystem::getDataDescriptor(int descrID)
 {
+
     RWLock::ScopedLock lock(_dbLock);
 
     DataDescriptorPtr result;
@@ -620,6 +910,7 @@ DataDescriptorPtr DatabaseSubsystem::getDataDescriptor(int descrID)
         "SELECT * FROM data_descriptor WHERE descr_id = ?",
         use(descrID), into(result),
         now;
+    assert (result != nullptr);
     return result;
 }
 
@@ -638,34 +929,37 @@ DataDescriptorPtr DatabaseSubsystem::getDataDescriptor(int processID,
         range(1, 1),
         into(result),
         now;
+    assert (result != nullptr);
     return result;
 }
 
 
-vector<DataDescriptorPtr> DatabaseSubsystem::getDataDescriptors(int processID)
+std::vector<DataDescriptorPtr> DatabaseSubsystem::getDataDescriptors(int processID)
 {
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<DataDescriptorPtr> result;
+    std::vector<DataDescriptorPtr> result;
     getSession() <<
         "SELECT * FROM data_descriptor WHERE process_id = ? ",
         use(processID), into(result),
         now;
+    cout << "assert (result != nullptr)\n";
     return result;
 }
 
 
-vector<DataDescriptorPtr> 
+std::vector<DataDescriptorPtr>
 DatabaseSubsystem::getDataDescriptors(ClassificationObjectPtr clo)
 {
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<DataDescriptorPtr> result;
+    std::vector<DataDescriptorPtr> result;
     getSession() <<
         "SELECT * FROM data_descriptor WHERE descr_id "
         "IN (SELECT descr_id FROM classification_object_data WHERE object_id = ?)",
         use(clo->objectID), into(result),
         now;
+    cout << "assert (result != nullptr)\n";
     return result;
 }
 
@@ -696,14 +990,14 @@ void DatabaseSubsystem::saveFeature(FeaturePtr feature)
 }
 
 
-void DatabaseSubsystem::saveFeatures(const vector<FeaturePtr>& features)
+void DatabaseSubsystem::saveFeatures(const std::vector<FeaturePtr>& features)
 {
     RWLock::ScopedLock lock(_dbLock, true);
 
     Session session = getSession();
     session.begin();
 
-    for (vector<FeaturePtr>::const_iterator itr = features.begin();
+    for (std::vector<FeaturePtr>::const_iterator itr = features.begin();
         itr != features.end(); ++itr)
     {
         saveFeature(session, *itr);
@@ -757,11 +1051,11 @@ FeaturePtr DatabaseSubsystem::getFeature(int descrID, const string &featureName,
 }
 
 
-vector<FeaturePtr> DatabaseSubsystem::getFeatures(int descrID)
+std::vector<FeaturePtr> DatabaseSubsystem::getFeatures(int descrID)
 {
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<FeaturePtr> result;
+    std::vector<FeaturePtr> result;
     getSession() <<
         "SELECT * FROM data_feature WHERE descr_id = ?",
         use(descrID),
@@ -850,14 +1144,14 @@ void DatabaseSubsystem::createClassificationObject(ClassificationObjectPtr clObj
 
 void DatabaseSubsystem::updateClassificationObject(ClassificationObjectPtr clObj)
 {
-    vector<ClassificationObjectPtr> clObjVec(1);
+    std::vector<ClassificationObjectPtr> clObjVec(1);
     clObjVec[0] = clObj;
     updateClassificationObjects(clObjVec);
 }
 
 
 void DatabaseSubsystem::
-updateClassificationObjects(const vector<ClassificationObjectPtr>& clObjs)
+updateClassificationObjects(const std::vector<ClassificationObjectPtr>& clObjs)
 {
     RWLock::ScopedLock lock(_dbLock, true);
 
@@ -866,7 +1160,7 @@ updateClassificationObjects(const vector<ClassificationObjectPtr>& clObjs)
 
     // UPDATE
     // Update basic information (currently only type)
-    for (vector<ClassificationObjectPtr>::const_iterator itr = clObjs.begin();
+    for (std::vector<ClassificationObjectPtr>::const_iterator itr = clObjs.begin();
         itr != clObjs.end(); ++itr)
     {
         debug_assert((*itr)->type != ClassificationObject::Invalid);
@@ -880,7 +1174,7 @@ updateClassificationObjects(const vector<ClassificationObjectPtr>& clObjs)
     // Determine current labels and data descriptor IDs of the objects
     map<int, set<int> > currentLabels;
     map<int, set<int> > currentDescrIDs;
-    for (vector<ClassificationObjectPtr>::const_iterator itr = clObjs.begin();
+    for (std::vector<ClassificationObjectPtr>::const_iterator itr = clObjs.begin();
         itr != clObjs.end(); ++itr)
     {
         session <<
@@ -898,7 +1192,7 @@ updateClassificationObjects(const vector<ClassificationObjectPtr>& clObjs)
     // DELETE
     // Delete labels in set currentLabels - newLabels and
     // data descriptor IDs in set currentDescrIDs - newDescrIDs
-    for (vector<ClassificationObjectPtr>::const_iterator oItr = clObjs.begin();
+    for (std::vector<ClassificationObjectPtr>::const_iterator oItr = clObjs.begin();
         oItr != clObjs.end(); ++oItr)
     {
         set<int> labelsToDelete;
@@ -940,7 +1234,7 @@ updateClassificationObjects(const vector<ClassificationObjectPtr>& clObjs)
     // INSERT
     // Insert labels in set newLabels - currentLabels
     // and data descriptor IDs in set newDescrIDs - currentDescrIDs
-    for (vector<ClassificationObjectPtr>::const_iterator oItr = clObjs.begin();
+    for (std::vector<ClassificationObjectPtr>::const_iterator oItr = clObjs.begin();
         oItr != clObjs.end(); ++oItr)
     {
         set<int> labelsToInsert;
@@ -1012,18 +1306,18 @@ ClassificationObjectPtr DatabaseSubsystem::getClassificationObject(int clObjID)
 }
 
 
-vector<ClassificationObjectPtr>
+std::vector<ClassificationObjectPtr>
 DatabaseSubsystem::getClassificationObjects()
 {
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<ClassificationObjectPtr> result;
+    std::vector<ClassificationObjectPtr> result;
     Session session = getSession();
     session.begin();
     session << "SELECT * FROM classification_object",
                into(result),
                now;
-    for (vector<ClassificationObjectPtr>::iterator it = result.begin();
+    for (std::vector<ClassificationObjectPtr>::iterator it = result.begin();
         it != result.end(); ++it)
     {
         getClassificationObjectDescrIDs(session, *it);
@@ -1034,12 +1328,12 @@ DatabaseSubsystem::getClassificationObjects()
 }
 
 
-vector<ClassificationObjectPtr>
+std::vector<ClassificationObjectPtr>
 DatabaseSubsystem::getClassificationObjectsForLabel(int labelID)
 {
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<ClassificationObjectPtr> result;
+    std::vector<ClassificationObjectPtr> result;
     Session session = getSession();
     session.begin();
     session << "SELECT * FROM classification_object WHERE object_id "
@@ -1048,7 +1342,7 @@ DatabaseSubsystem::getClassificationObjectsForLabel(int labelID)
                use(labelID),
                into(result),
                now;
-    for (vector<ClassificationObjectPtr>::iterator it = result.begin();
+    for (std::vector<ClassificationObjectPtr>::iterator it = result.begin();
         it != result.end(); ++it)
     {
         getClassificationObjectDescrIDs(session, *it);
@@ -1059,7 +1353,7 @@ DatabaseSubsystem::getClassificationObjectsForLabel(int labelID)
 }
 
 
-vector<ClassificationObjectPtr>
+std::vector<ClassificationObjectPtr>
 DatabaseSubsystem::getClassificationObjectsByFilename(const string& filename)
 {
     // FIXME: This is erroneous if files with the same name exist in 
@@ -1068,7 +1362,7 @@ DatabaseSubsystem::getClassificationObjectsByFilename(const string& filename)
 
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<ClassificationObjectPtr> result;
+    std::vector<ClassificationObjectPtr> result;
     Session session = getSession();
     session.begin();
     session << "SELECT cof.object_id, co.type "
@@ -1082,7 +1376,7 @@ DatabaseSubsystem::getClassificationObjectsByFilename(const string& filename)
             use(filename),
             into(result),
             now;
-    for (vector<ClassificationObjectPtr>::iterator it = result.begin();
+    for (std::vector<ClassificationObjectPtr>::iterator it = result.begin();
         it != result.end(); ++it)
     {
         getClassificationObjectDescrIDs(session, *it);
@@ -1188,30 +1482,46 @@ ResponsePtr DatabaseSubsystem::getResponse(int responseID)
 }
 
 
-vector<ResponsePtr> DatabaseSubsystem::getResponses()
+std::vector<ResponsePtr> DatabaseSubsystem::getResponses()
 {
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<ResponsePtr> result;
+    std::vector<ResponsePtr> result;
     Session session = getSession();
     session.begin();
+    _logger.debug("...SELECT * FROM response.");
     session << "SELECT * FROM response", into(result), now;
-    for (vector<ResponsePtr>::iterator itr = result.begin();
-        itr != result.end(); ++itr)
+    _logger.debug("result vector populated.");
+    int count = 0;
+    session << "SELECT count(*) FROM response", into(count), now;
+    _logger.debug("SELECT * FROM response count = "+to_string(count)+"\n");
+    if (count > 0)
     {
-        getResponseLabels(session, *itr);
+        ResponsePtr newResponse;
+        string paramName, paramValue;
+        newResponse = result[0];
+        _logger.debug("\ngetProcessParams SELECT = " + to_string(newResponse->responseID) + "\n");
+
+
+        for (std::vector<ResponsePtr>::iterator itr = result.begin();
+            result.size() != 0 && itr != result.end(); ++itr)
+        {
+            _logger.debug("...getResponseLabel.");
+            getResponseLabels(session, *itr);
+        }
+        session.commit();
+        _logger.debug("session.commit.");
     }
-    session.commit();
     return result;
 }
 
 
-vector<pair<ClassificationObjectPtr, LabelPtr> >
+std::vector<pair<ClassificationObjectPtr, LabelPtr> >
 DatabaseSubsystem::getClassificationObjectsAndLabelsForResponse(ResponsePtr r)
 {
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<pair<ClassificationObjectPtr, LabelPtr> > result;
+    std::vector<pair<ClassificationObjectPtr, LabelPtr> > result;
     Session session = getSession();
     session.begin();
     for (map<int, int>::const_iterator it = r->labels.begin();
@@ -1419,22 +1729,22 @@ LabelPtr DatabaseSubsystem::getLabel(int labelID)
 }
 
 
-vector<LabelPtr> DatabaseSubsystem::getLabels()
+std::vector<LabelPtr> DatabaseSubsystem::getLabels()
 {
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<LabelPtr> result;
+    std::vector<LabelPtr> result;
     Session session = getSession();
     session << "SELECT * FROM label", into(result), now;
     return result;
 }
 
 
-vector<LabelPtr> DatabaseSubsystem::getLabelsByText(const string& text)
+std::vector<LabelPtr> DatabaseSubsystem::getLabelsByText(const string& text)
 {
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<LabelPtr> result;
+    std::vector<LabelPtr> result;
     Session session = getSession();
     session << "SELECT * FROM label WHERE label_text = ?", 
                use(text), into(result), now;
@@ -1442,11 +1752,11 @@ vector<LabelPtr> DatabaseSubsystem::getLabelsByText(const string& text)
 }
 
 
-vector<LabelPtr> DatabaseSubsystem::getLabelsForResponse(blissart::ResponsePtr r)
+std::vector<LabelPtr> DatabaseSubsystem::getLabelsForResponse(blissart::ResponsePtr r)
 {
     RWLock::ScopedLock lock(_dbLock);
 
-    vector<LabelPtr> result;
+    std::vector<LabelPtr> result;
     Session session = getSession();
     session << "SELECT * FROM label WHERE label_id "
                "IN (SELECT label_id FROM response_label WHERE response_id = ?)",

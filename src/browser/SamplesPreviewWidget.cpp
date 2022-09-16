@@ -76,7 +76,7 @@ SamplesPreviewWidget::~SamplesPreviewWidget()
             // Wait for the thread to terminate.
         }
         delete _playbackThread;
-        _playbackThread = NULL;
+        _playbackThread = nullptr;
     }
 }
 
@@ -92,7 +92,7 @@ bool SamplesPreviewWidget::setSamples(const double *samples,
     if (_playbackThread) {
         _playbackThread->setPlaybackState(Sound::Pause);
         delete _playbackThread;
-        _playbackThread = NULL;
+        _playbackThread = nullptr;
     }
     // Create a new PlaybackThread object if possible.
     if (sampleFreq >= Sound::MinSampleFreq && sampleFreq <= Sound::MaxSampleFreq) {

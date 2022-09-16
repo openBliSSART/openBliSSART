@@ -123,7 +123,7 @@ private:
 # pragma warning(push)
 # pragma warning(disable:4251)
 #endif
-    linalg::Matrix::EigenPairs _eigenPairs;
+    linalg::Matrix::EigenPairs _eigenPairs {};
 #if defined(_WIN32) || defined(_MSC_VER)
 # pragma warning(pop)
 #endif

@@ -50,9 +50,11 @@ void ProgressInterface::incMaxProgress(float delta)
 
 void ProgressInterface::incTotalProgress(float delta)
 {
+    std::cout << "Total Progress In \n";
     _mutex.lock();
     _progress = std::min<float>(_maxProgress, _progress + delta);
     _mutex.unlock();
+    std::cout << "Total Progress Out \n";
     onProgressChanged();
 }
 
@@ -82,7 +84,7 @@ int ProgressInterface::retrieveUniqueID()
 
 float ProgressInterface::progress()
 {
-    if (_maxProgress + _progressPerTask.size() == 0) {
+    if (_maxProgress + (float) _progressPerTask.size() == 0) {
         return 1.0f;
     }
 

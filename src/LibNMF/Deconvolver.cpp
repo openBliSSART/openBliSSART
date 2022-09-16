@@ -22,7 +22,9 @@
 // openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-
+#ifdef HAVE_CUDA
+#undef HAVE_CUDA
+#endif
 #include <blissart/nmf/Deconvolver.h>
 #include <blissart/nmf/randomGenerator.h>
 #include <blissart/linalg/generators/generators.h>
@@ -35,9 +37,12 @@
 #include <cmath>
 #include <vector>
 
-#include <config.h>
+
+
+//#define HAVE_CUDA = 0
+//#include <config.h>
 #ifdef HAVE_CUDA
-# include <blissart/nmf/DeconvolverKernels.h>
+#include <blissart/nmf/DeconvolverKernels.h>
 #endif
 
 
@@ -653,7 +658,6 @@ void Deconvolver::factorizeNMFEDIncomplete(unsigned int maxSteps, double eps,
 
 
 #else
-
 
 void Deconvolver::factorizeNMDBeta(unsigned int maxSteps, double eps, 
                                    double beta, SparsityConstraint sparsity, 

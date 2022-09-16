@@ -22,7 +22,7 @@
 // openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-
+#include <memory>
 #include <blissart/audio/AudioData.h>
 #include <blissart/audio/audio.h>
 #include <blissart/linalg/Matrix.h>
@@ -71,16 +71,20 @@ AudioData::AudioData(const vector<double*> &data,
 
 AudioData::~AudioData()
 {
+    std::cout << "Frees all allocated AudioData memory\n";
     removeAllChannels();
 }
 
 
 void AudioData::addChannel(const double* data, bool useRawPointer)
 {
-    if (useRawPointer) {
+    if (useRawPointer)
+    {
         // Simply store the pointer
         _data.push_back((double*)data);
-    } else {
+    }
+    else
+    {
         // Copy the data and store a pointer to the copy
         assert(_nrOfSamples > 0);
         double* buf = new double[_nrOfSamples];
@@ -176,6 +180,7 @@ void AudioData::normalize()
 void AudioData::preemphasize(double coeff)
 {
     assert(_nrOfSamples > 0);
+    cout << "preemphasize started \n";
     for (vector<double*>::iterator it = _data.begin(); it != _data.end(); 
         ++it)
     {
@@ -207,10 +212,12 @@ Matrix* AudioData::toMatrix() const
 
 void AudioData::removeAllChannels()
 {
+    cout << "Frees all channels in\n";
     vector<double*>::iterator it;
     for (it = _data.begin(); it != _data.end(); it++)
         delete[] (*it);
     _data.clear();
+    cout << "Frees all channels out\n";
 }
 
 
@@ -342,9 +349,10 @@ AudioData* AudioData::fromSpectrogram(const Matrix& amplitudeSpectrum,
 
     // If data has been transformed with zero-padding, the actual dimension
     // of the transformation might be greater than the actual window size.
-    unsigned int transformSize = (amplitudeSpectrum.rows() != windowSize / 2 + 1) ?
-    (amplitudeSpectrum.rows() * 2 - 1) :
-    windowSize;
+    unsigned int windowSizeUnsigned = windowSize;
+    unsigned int transformSize = (amplitudeSpectrum.rows() != windowSizeUnsigned / 2 + 1) ?
+        (amplitudeSpectrum.rows() * 2 - 1) :
+        windowSize;
     fftw_plan backtrafoPlan = fftw_plan_dft_c2r_1d(transformSize, windowSpectrum, windowData, 0);
     for (unsigned int frame = 0; frame < amplitudeSpectrum.cols(); frame++) {
         // Reconstruct complex number from amplitude + phase.
@@ -389,6 +397,7 @@ AudioData* AudioData::fromFile(const string& fileName, bool makeMono)
         const char* errorMsg = Sound_GetError();
         // Free the allocated sample
         Sound_FreeSample(sample);
+        cout << "Sound_FreeSample 1st\n";
         if (errorMsg) {
             throw AudioException(errorMsg);
         }
@@ -403,6 +412,7 @@ AudioData* AudioData::fromFile(const string& fileName, bool makeMono)
     if (!determineVitalSampleInfo(sample, &isEightBit, &isSigned,
                                   &isLittleEndian, &nrOfSamplesPerChannel)) {
         // Free the allocated sample.
+        cout << "Sound_FreeSample 2nd\n";
         Sound_FreeSample(sample);
         // Forward the exception.
         throw AudioException("Unknown sample format!");
@@ -420,7 +430,7 @@ AudioData* AudioData::fromFile(const string& fileName, bool makeMono)
 
     // Convert the raw sample data into real values within [-1,1]. The result
     // is an array of channels, each being a double array.
-    vector<double*> channels;
+    vector<double*> channels = {};
     rawToDouble(sample, &channels, isEightBit, isSigned, nrOfSamplesPerChannel, makeMono);
 
     // Make a backup of the sample rate before freeing Willy ;-)
@@ -433,6 +443,7 @@ AudioData* AudioData::fromFile(const string& fileName, bool makeMono)
                         nrOfSamplesPerChannel,
                         sampleRate,
                         true /* useRawPointer */);
+    cout << "Audio result " << nrOfSamplesPerChannel << " " << sampleRate << "\n" ;
     result->_fileName = fileName;
 
     // Et volia.
@@ -495,6 +506,8 @@ void AudioData::rawToDouble(const Sound_Sample* sample, vector<double*>* channel
 
     // Determine the final # of channels
     const unsigned int finalNrOfChannels = makeMono ? 1 : sample->actual.channels;
+    //cout << "finalNrOfChannels 1 = " << finalNrOfChannels << "\n";
+    //cout << "actual.channels = " << sample->actual.channels << "\n";
 
     // Allocate memory for all samples and all channels
     double** const buf = new double*[finalNrOfChannels];
@@ -578,6 +591,7 @@ void AudioData::rawToDouble(const Sound_Sample* sample, vector<double*>* channel
     }
 
     // Add the double arrays to the channels vector
+    //cout << "finalNrOfChannels 2 = " << finalNrOfChannels << "\n";
     for (unsigned int i = 0; i < finalNrOfChannels; i++)
         channels->push_back(buf[i]);
     // Delete only the array, not it's contents

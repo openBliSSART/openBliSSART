@@ -25,7 +25,7 @@
 #include <cmath>
 #include <stdexcept>
 #include <blissart/WindowFunctions.h>
-
+#include <iostream>
 
 namespace blissart {
 
@@ -60,6 +60,7 @@ double RectangleFunction(unsigned int index, unsigned int count)
 
 std::string windowFunctionName(WindowFunction wf) 
 {
+    std::cout << "windowsFunction In\n";
     if (wf == HannFunction)
         return "Hann function";
     else if (wf == SqHannFunction)
@@ -70,6 +71,9 @@ std::string windowFunctionName(WindowFunction wf)
         return "Rectangle function";
     else
         throw std::runtime_error("Unknown window function");
+    std::cout << "windowsFunction Out\n";
+    std::cout << wf;
+    std::cout << "\n";
 }   
 
 

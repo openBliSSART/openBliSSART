@@ -74,6 +74,13 @@ public:
             int sampleFreq);
 
     /**
+     * Creates a Process object.
+     */
+    Process(int process_id,const std::string& name, const std::string& inputFile,
+            int start_time, int sampleFreq);
+
+
+    /**
      * Unique process ID.
      */
     int processID;

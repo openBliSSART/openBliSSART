@@ -27,7 +27,8 @@
 #include <blissart/linalg/Matrix.h>
 #include <cassert>
 #include <cstdio>
-#include <SDL/SDL_sound.h>
+#include <algorithm>
+#include <SDL2/SDL_sound.h>
 #include "wave.h"
 
 
@@ -68,7 +69,10 @@ bool WaveEncoder::saveAsWav(const double* data, unsigned int nrOfSamples,
     wave::DataChunk dc;
 
     // FormatChunk
-    strncpy(fc.id, "fmt ", 4);
+
+    //memcpy(fc.id, "fmt ",4);
+    //strncpy(fc.id, "fmt ", 4);
+    std::copy_n("fmt ",4,fc.id);
     fc.lChunkSize = ISEP_MSB_TO_LSB_32(sizeof(fc) - 8);
     fc.wFormatTag = ISEP_MSB_TO_LSB_16(1);               // no compression
     fc.wChannels = ISEP_MSB_TO_LSB_16(nrOfChannels);
@@ -80,7 +84,9 @@ bool WaveEncoder::saveAsWav(const double* data, unsigned int nrOfSamples,
     fc.dwAvgBytesPerSec = ISEP_MSB_TO_LSB_32(fc.dwSamplesPerSec * fc.wBlockAlign);
 
     // DataChunk
-    strncpy(dc.id, "data", 4);
+    //memcpy(dc.id, "data",4);
+    //strncpy(dc.id, "data", 4);
+    std::copy_n("data",4, dc.id);
     try {
         short* buffer = new short[nrOfSamples];
         for (unsigned int i = 0; i < nrOfSamples; i++) {
@@ -99,8 +105,12 @@ bool WaveEncoder::saveAsWav(const double* data, unsigned int nrOfSamples,
     }
 
     // RiffHeader
-    strncpy(rh.id, "RIFF", 4);
-    strncpy(rh.type, "WAVE", 4);
+    //memcpy(rh.id,"RIFF",4);
+    //strncpy(rh.id, "RIFF", 4);
+    std::copy_n("RIFF",4,rh.id);
+    std::copy_n("WAVE",4,rh.type);
+    //memcpy(rh.type,"WAVE",4);
+    //strncpy(rh.type, "WAVE", 4);
     rh.lChunkSize = ISEP_MSB_TO_LSB_32(4 + fc.lChunkSize + 8 + dc.lChunkSize + 8);
 
     result = false;

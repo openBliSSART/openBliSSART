@@ -27,7 +27,8 @@
 #define __BROWSERCONTROLLER_H__
 
 
-#include "ui_BrowserForm.h"
+#include <ui_BrowserForm.h>
+#include <QtWidgets>
 #include <blissart/BasicApplication.h>
 #include <blissart/DatabaseSubsystem.h>
 

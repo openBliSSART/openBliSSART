@@ -52,7 +52,11 @@ ExportObjectsDlg::ExportObjectsDlg(const vector<ClassificationObjectPtr> &clos,
 {
     debug_assert(!_clos.empty());
 
-    setFileMode(QFileDialog::DirectoryOnly);
+    // was DirectoryOnly now Directory
+    setFileMode(QFileDialog::Directory);
+    setOption(QFileDialog::ShowDirsOnly, true);
+    //dialog.setFileMode(QtGui.QFileDialog.Directory)
+    //dialog.setOption(QtGui.QFileDialog.ShowDirsOnly, true)
     setAcceptMode(QFileDialog::AcceptSave);
 }
 

@@ -58,7 +58,7 @@ FeatureExtractionDialog::FeatureExtractionDialog(
 void FeatureExtractionDialog::accept()
 {
     const unsigned int numThreads = _ui.sbNumThreads->value();
-
+    fprintf(stderr, "numThread = %i\n", numThreads);
     // Set the number of threads and create the corresponding tasks.
     setNumThreads(numThreads);
     vector<BasicTaskPtr> tasks;

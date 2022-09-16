@@ -98,7 +98,9 @@ public:
      * @param   other       another ColVector
      * @return              a reference to this object
      */
-    virtual ColVector& operator = (const ColVector& other);
+    //virtual ColVector& operator = (const ColVector& other);
+    ColVector& operator = (const ColVector& other);
+
 
 
     /**

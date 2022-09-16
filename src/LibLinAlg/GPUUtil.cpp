@@ -22,6 +22,8 @@
 // openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#undef HAVE_CUDA
+#ifdef HAVE_CUDA
 
 #include <blissart/linalg/GPUUtil.h>
 #include <stdexcept>
@@ -61,4 +63,4 @@ void GPUStop()
 
 
 } // namespace blissart
-
+#endif

@@ -22,7 +22,6 @@
 // openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-
 #include <blissart/linalg/Vector.h>
 #include <blissart/linalg/Matrix.h>
 #include <blissart/BinaryReader.h>
@@ -33,6 +32,7 @@
 #include <cmath>
 #include <fstream>
 #include <stdexcept>
+#include <algorithm>
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -132,7 +132,7 @@ Vector::Vector(const std::string &fileName) :
 
     // Something went wrong.
     if (_data)
-        delete _data;
+        delete[] _data;
     std::string msg("Error while reading vector data from file ");
     msg.append(fileName);
     throw std::runtime_error(msg);
@@ -201,13 +201,34 @@ bool Vector::operator != (const Vector& other) const
 
 Vector& Vector::operator = (const Vector& other)
 {
+    debug_assert(other._dim == _dim);
+    size_t new_n = other._dim;
+    Elem *new_data = new Elem[new_n];
+    std::copy_n(other._data, _dim * sizeof(Elem), new_data );
+    _dim = new_n;
+    _data = new_data;
+    delete[] other._data;
+
+    //if (_dim != other._dim) {
+    //    delete[] _data;
+    //    _dim = other._dim;
+    //    _data = new Elem[_dim];
+    //}
+
+    //memcpy(_data, other._data, _dim * sizeof(Elem));
+    return *this;
+}
+
+
+void Vector::equal (const Vector& other)
+{
+    debug_assert(other._dim == _dim);
     if (_dim != other._dim) {
         delete[] _data;
         _dim = other._dim;
         _data = new Elem[_dim];
     }
     memcpy(_data, other._data, _dim * sizeof(Elem));
-    return *this;
 }
 
 

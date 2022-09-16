@@ -63,6 +63,9 @@ std::string ClassificationObject::strForType(ClassificationObject::Type type)
     case Spectrogram:
         return "Spectrogram";
         break;
+    case Invalid:
+        throw NotImplementedException("Unknown classification object type.");
+        break;
     default:
         throw NotImplementedException("Unknown classification object type.");
     }

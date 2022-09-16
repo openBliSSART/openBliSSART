@@ -22,10 +22,10 @@
 # openBliSSART.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-AC_PREREQ(2.13)
-AC_INIT([openBliSSART], [1.2], [lehmanna@in.tum.de], [openBliSSART])
+AC_PREREQ([2.71])
+AC_INIT([openBliSSART],[2.0],[lehmanna@in.tum.de],[openBliSSART])
 AC_CONFIG_SRCDIR([src/septool/main.cpp])
-AC_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([acbuild])
 AC_CONFIG_MACRO_DIR([m4])
 dnl AC_PRESERVE_HELP_ORDER
@@ -42,11 +42,14 @@ sinclude([acbuild/m4/ax_check_sdl_sound.m4])
 sinclude([acbuild/m4/ax_check_cblas.m4])
 sinclude([acbuild/m4/ax_check_matlab.m4])
 sinclude([acbuild/m4/ax_check_cuda.m4])
+sinclude([acbuild/m4/ax_enable_cpu.m4])
 sinclude([acbuild/m4/ax_enable_debug.m4])
 dnl sinclude([acbuild/m4/ax_get_os_and_machine_type.m4])
 
 # Provide support for debugging (--enable-debug).
+AX_ENABLE_CPU
 AX_ENABLE_DEBUG
+
 
 # Checks for programs.
 AC_PROG_AWK
@@ -54,7 +57,7 @@ AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_CXX
 AC_PROG_INSTALL
-AC_PROG_LIBTOOL
+LT_INIT
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 
@@ -62,22 +65,28 @@ AC_PROG_MAKE_SET
 AX_DETERMINE_FLOAT_TYPE
 
 # Checks for libraries.
-AX_CHECK_FFTW3(:, AC_ERROR([Need fftw3!]))
-AX_CHECK_POCO([yes], :, AC_ERROR([Need Poco Enterprise v1.3.6+!]))
+AX_CHECK_FFTW3(:, AC_MSG_ERROR([Need fftw3!]))
+AX_CHECK_POCO([no], :, AC_MSG_ERROR([Need Poco Enterprise v2.0.0+!]))
 # TODO: Actually, Qt is only neccessary for the building the browser application.
 #       This should be taken into account as someone might only want to build the
 #       libraries and/or command-line tools.
-AX_CHECK_QT([4.4.2], :, AC_ERROR([Need Qt 4.4.2+!]))
-AX_CHECK_SDL([1.2.12], :, AC_ERROR([Need SDL 1.2.12+!]))
-AX_CHECK_SDL_SOUND(:, AC_ERROR([Need SDL_sound!]))
+AX_CHECK_QT([6.3.0], :, AC_MSG_ERROR([Need Qt 6.3.0+!]))
+AX_CHECK_SDL([2.0.0], :, AC_MSG_ERROR([Need SDL2 2.0.0+!]))
+AX_CHECK_SDL_SOUND(:, AC_MSG_ERROR([Need SDL2_sound!]))
 AX_CHECK_MATLAB
 #echo NO_MATLAB=$NO_MATLAB
 if test "$NO_MATLAB" == "yes"; then
   AX_CHECK_CBLAS
 fi
 AX_CHECK_CUDA
-#AM_CONDITIONAL([AM_HAVE_CUDA], [test -z "$NO_CUDA"])
+##AM_CONDITIONAL([AM_HAVE_CUDA], [test -z "$NO_CUDA"])
+#NO_CUDA="yes"
+#HAVE_CUDA="no"
 AM_CONDITIONAL([HAVE_CUDA], [test -z "$NO_CUDA"])
+#NO_CUDA="yes"
+#HAVE_CUDA="no"
+#CUDA_CPPFLAGS=""
+#HAVE_CUDA_TRUE=""
 
 # Checks for header files.
 AC_CHECK_HEADERS([float.h stdlib.h string.h])
@@ -93,13 +102,16 @@ AC_TYPE_UINT8_T
 
 # Checks for library functions.
 AC_FUNC_ERROR_AT_LINE
-AC_FUNC_REALLOC
+#AC_FUNC_REALLOC
 AC_CHECK_FUNCS([floor sqrt strrchr atexit memset pow strchr])
 
 # Set the standard installation prefix to /usr/local/blissart.
 AC_PREFIX_DEFAULT([/usr/local/blissart])
 
 # Generate the Makefiles.
+AM_PROG_AR
+LT_INIT
+AC_LANG([C++])
 AC_CONFIG_FILES([Makefile
                  doc/Makefile
                  src/LibAudio/Makefile

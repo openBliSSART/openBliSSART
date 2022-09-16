@@ -28,7 +28,7 @@
 #include <blissart/linalg/generators/generators.h>
 #include <iostream>
 #include <cstdlib>
-
+#include "../src/LibNMF/Deconvolver.cpp"
 
 using namespace std;
 using namespace blissart;
@@ -327,7 +327,8 @@ bool NMDTest::performTest()
 
         nmf::Deconvolver d(x, 10, t);
         d.setWSparsity(Deconvolver::ExponentialSparsityTemplate(sparsity, 1.7));
-        //d.setSparsity(Deconvolver::DefaultSparsityTemplate(sparsity));
+        //blissart::nmf::Deconvolver::ExponentialSparsityTemplate tEST(sparsity, 1.7, 1);
+        //d.setWSparsity(tEST);
         d.decompose(nmf::Deconvolver::KLDivergence, 5000, 1e-5, Deconvolver::NormalizedL1Norm, false);
         cout << "# steps: " << d.numSteps() << endl;
         cout << "absolute error: " << d.absoluteError() << endl;

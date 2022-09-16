@@ -26,7 +26,6 @@
 #ifndef __ENTITYITEM_H__
 #define __ENTITYITEM_H__
 
-
 #include <QTreeWidgetItem>
 #include <blissart/BasicApplication.h>
 #include <blissart/DatabaseSubsystem.h>
@@ -50,8 +49,8 @@ public:
      * The following enum helps the outside-world to distinguish
      * EntityItems from plain QTreeWidgetItems.
      */
-    typedef enum { EntityType = QTreeWidgetItem::UserType };
-
+//  was  typedef enum { EntityType = QTreeWidgetItem::UserType };
+    enum { EntityType = QTreeWidgetItem::UserType };
 
     /**
      * Sets the encapsulated entity pointer to the given value.

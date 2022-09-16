@@ -1,3 +1,163 @@
+Modified to use Ubuntu 22.04 using https://github.com/sildeag/poco built with cmake, SDL2 and SDL2_sound.
+Dependencies required are libsvm (version 3.25 is used), doxygen, pdflatex, fft3w, and possibly others.  Qt6.3.0
+Qt5 has been added but is broken at moment, supporting Qt6 and Qt5 means CMake requires extra 'c' as both are turned OFF by default, and CUDA 11.6 not tested and not used.  CUDA stills generates linker errors.  SDL2 is implemented not SDL1.
+Qt Creator used to debug and .pro files were being worked on.  CMake build causes errors on Windows 10/11 not completely worked through.
+CMake build added.  Foreach macro being replaced as this was causing many failures.
+
+Poco changes (merge request with pocoproject not accepted at present):
+--------------------------------------------------------------------------------------------
+Futher changes were made to Poco/Format.h and Poco/Any.h since they created compile issues for Ubuntu.
+Otherwise:
+Data/include/Poco/Data/binding.h
+inline AbstractBinding::Ptr use(T& t, const std::string& name = "")
+ {
+ 	// If this fails to compile, a const ref was passed to use().
+ 	// This can be resolved by either (a) using bind (which will copy the value),
+ 	// or (b) if the const ref is guaranteed to exist when execute is called 
+ 	// (which can be much later!), by using the "useRef" keyword instead
+-	poco_static_assert (!IsConst<T>::VALUE);
++	//poco_static_assert (!IsConst<T>::VALUE);  remove line
+ 	return new Binding<T>(t, name, AbstractBinding::PD_IN);
+ }
+Data/include/Poco/Data/TypeHandler.h
+private:
+ template <class T>
+ class TypeHandler<Poco::AutoPtr<T>>: public AbstractTypeHandler
+ 	/// Specialization of type handler for Poco::AutoPtr
+ {
+ public:
++	typedef AutoPtr<T> TPtr; // new code here
++	
+
+cmake/FindODBC.cmake
+find_path(ODBC_INCLUDE_DIR
+ 		${ODBC_ROOT_DIR}/include
+ 		${ODBC_ROOT_INCLUDE_DIRS}
+ 	PATHS
+ 		${PC_ODBC_INCLUDE_DIRS}
+ 		/usr/include
++		/usr/local/unixODBC/include
+-----------------------------------------------------------------------------------------------
+openBliSSART original build uses the following steps:
+
+git clone https://github.com/sildeag/openBliSSART.git
+cd openBliSSART
+./bootstrap.sh
+./configure
+make
+
+It still works but has been modified to exclude Cuda ** do not use**
+----------------------------------------------------------------------
+**Preferred build** 
+New build:
+git clone https://github.com/sildeag/openBliSSART.git
+cd openBliSSART
+mkdir cmake-build
+cd cmake-build
+ccmake ..    (change build type to 'release' or 'debug' and configure 'c', may have to 'e' and then configure again 'c', and then generate 'g')
+make
+
+Note: CMakelists.txt for doc generates html and manual_PDF folder which contains manual.pdf file.
+----------------------------------------------------------------------
+More than one processor:
+make -jn (where n = number of processors, changes ordering of build and 
+   not sure how this affects dependent shared libraries and two passes required to enirely build from source)
+
+browser and many other areas are still being worked on as some memory faults persist in browser - valgrind is being used.
+some initialization issues and memory overwrite are being addressed
+c++20 used as default
+
+----------------------------------------------------------------------
+
+Documentation is built completely.  Some issues with fonts.   
+----------------------------------------------------------------------
+Also I would draw your attention to the following from `INSTALL` files
+2.1.1.1 Shared Installation
+
+For this, we will be using the default prefix of /usr/local/blissart and install
+the software at this location. Then we will create a corresponding group and set
+the necessary access rights.
+
+.. `line removed as it continues from above`
+..
+$ sudo make install
+$ sudo groupadd blissart
+$ cd /usr/local/blissart
+$ sudo mkdir db etc storage
+$ sudo chown -R :blissart .
+$ sudo chmod -R g+w db etc storage
+
+What remains is adding the respective users to the group which e.g. can be done
+via
+
+$ sudo gpasswd -a <username> blissart
+
+You may have to re-login for the new permissions to take effect.
+
+Note: a lot of code has been added to debug and these are controlled by the files 'etc' folder.
+
+2.1.1.2 User-Specific Installation
+
+Aside from the shared installation which requires superuser privileges,
+a user-specific installation is maybe easier to perform. It suffices to specify
+an installation prefix within the user's home directory.
+
+Do not use this:
+$ ./configure --prefix=${HOME}/blissart
+$ make
+$ make install
+Use:
+git clone https://github.com/sildeag/openBliSSART.git
+cd openBliSSART
+mkdir cmake-build
+cd cmake-build
+
+ccmake ..    (change build type to 'release' or 'debug' and configure 'c', may have to 'e' and then configure again 'c', and then generate 'g')
+
+make
+
+Current issues:
+1. LibLinAlg added virtual destructor default - created undefine memory issue.
+2. Converted Poco TimeStamp to string as current implementation prevented database tables for 
+process and process_param tables from being loaded.
+3. Valkyrie (qt6 version) required to resolve memory issues leading to jumps and meory leaks.
+4. db created in db folder of openBliSSART, want this to be more flexible.
+5. re-use of openBliSSART.db creates some issues.
+6. Support for Qt5.  (Qt6.3.0 is included in current CMake build)
+7. Have implemented libsvm 3.25 and am using svm-toy to explore code changes and to remove some memory issues.
+svm-toy app may be moved into testsuite.  libsvm has numerous uninitised variables and uses unsafe memory functions causing
+issues.
+8. Reason for the failure appears to be that the ProcessPtr is not std::vector<Process>.  The various tables are completely read into a
+vector using Poco and SQLite and while the first time ProcessPtr, appears to work and tables created, subsequent reads fail.  ProcessPtr 
+has therefore been redefined as std::vector<Process> and this affects most of the code.  Each element of the vector is a table record.
+
+```
+![Image of initial `./browser` screen](https://raw.githubusercontent.com/sildeag/openBliSSART/master/screenshots/Screenshot_from_2018-11-11_19-54-20.png)
+     
+![Image of `./browser` screen after `.wav` import](https://raw.githubusercontent.com/sildeag/openBliSSART/master/screenshots/Screenshot_from_2018-11-11_19-56-18.png)
+```
+
+Issues:
+
+1.  In `openBliSSART/src/browser/DataDescriptorItem.cpp`
+
+   `vector<FeaturePtr> features = dbSubsystem().getFeatures(_ddesc->descrID);`
+
+   generates a segmentation fault - not certain why but am investigating.
+
+2.  `Gtk-Message: GtkDialog mapped without a transient parent.`
+
+   suggestion was `GtkWindow instead` when there is no parent.
+
+3. Not all .wav files import and .mp3 files do not work, I am investigating that.
+
+Alternative Qt build process is not fully functional.
+
+1.  openBlissart.pro project file as a subdirs project has not been completely implemented
+
+
+--------------------------------------------------------------------------
+
 openBliSSART is a C++ framework and toolbox that provides "Blind Source
 Separation for Audio Recognition Tasks". Its areas of application include
 instrument separation (e.g. extraction of drum tracks from popular music),
@@ -10,7 +170,7 @@ classification by Support Vector Machines (SVM) using common acoustic features
 from speech and music processing. For data set creation a Qt-based GUI is
 available. Furthermore, supervised NMF can be performed and used for audio
 feature extraction.
- 
+
 openBliSSART is fast: typical real-time factors are in the order of 0.1
 (Euclidean NMF) on a state-of-the-art desktop PC.
 

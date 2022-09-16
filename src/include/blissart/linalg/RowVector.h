@@ -96,8 +96,9 @@ public:
      * @param   other       another RowVector
      * @return              a reference to this object
     */
-    virtual RowVector& operator = (const RowVector& other);
-    
+    //virtual RowVector& operator = (const RowVector& other);
+    RowVector &operator = (const RowVector& other);
+
     
     /**
      * Determines whether this object is a RowVector.

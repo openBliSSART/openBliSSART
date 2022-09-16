@@ -102,7 +102,8 @@ double CrossValidator::nFoldCrossValidation(DataSet& dataSet, int fold,
 }
 
 
-double CrossValidator::loocv(DataSet &dataSet, bool estimateProbabilities)
+//double CrossValidator::loocv(DataSet &dataSet, bool estimateProbabilities)
+double CrossValidator::loocv(DataSet &dataSet)
 {
     int nCorrect = 0;
 

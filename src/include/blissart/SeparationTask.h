@@ -366,7 +366,7 @@ protected:
                          const std::string& filename) const;
 
 
-    double                  _relativeError;
+    double                  _relativeError = 0;
 
 protected:
     // Forbid copy constructor and operator=.
@@ -375,14 +375,14 @@ protected:
 
 
     const SeparationMethod  _separationMethod;
-    const unsigned int      _nrOfComponents;
-    const unsigned int      _nrOfSpectra;
+    const unsigned int      _nrOfComponents = 0;
+    const unsigned int      _nrOfSpectra = 0;
 
     std::vector<ClassificationObjectPtr> _initObjects;
     std::vector<std::string> _initMatrices;
-    std::string             _gainsInitMatrix;
-    bool                    _constantInitializedComponentsSpectra;
-    bool                    _constantInitializedGains;
+    std::string             _gainsInitMatrix = "";
+    bool                    _constantInitializedComponentsSpectra = false;
+    bool                    _constantInitializedGains = false;
 
     linalg::Matrix::GeneratorFunction _genFunc;
 

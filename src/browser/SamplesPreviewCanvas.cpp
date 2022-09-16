@@ -26,6 +26,8 @@
 #include "SamplesPreviewCanvas.h"
 #include <QPaintEvent>
 #include <QPainter>
+#include <QPainterPath>
+#include <QRect>
 #include <cassert>
 #include <cmath>
 
@@ -75,7 +77,7 @@ SamplesPreviewCanvas::~SamplesPreviewCanvas()
 {
     if (_samples) {
         delete[] _samples;
-        _samples = NULL;
+        _samples = nullptr;
     }
 }
 
@@ -153,7 +155,7 @@ void SamplesPreviewCanvas::paintEvent(QPaintEvent *ev)
         // the ev->rect() can be bigger than the samplesRect and thus may cause
         // errors, we must only work inside the intersection of ev->rect() and
         // samplesRect.
-        const QRect ir = samplesRect.intersect(ev->rect());
+        const QRect ir = samplesRect.intersected(ev->rect());
         // _tMin and _tMax define the displayed portion of the samples.
         const size_t minIndex = (size_t)(_tMin * (_nSamples - 1));
         const size_t maxIndex = (size_t)(_tMax * (_nSamples - 1));
@@ -215,7 +217,8 @@ void SamplesPreviewCanvas::paintEvent(QPaintEvent *ev)
 
 void SamplesPreviewCanvas::mouseReleaseEvent(QMouseEvent *ev)
 {
-    float pos = _tMin + (_tMax - _tMin) * ev->x() / rect().width();
+// was    float pos = _tMin + (_tMax - _tMin) * ev->x() / rect().width();
+    float pos = _tMin + (_tMax - _tMin) * ev->position().x() / rect().width();
     if (pos >= 0.0 && pos <= 1.0)
         emit posClicked(pos);
     ev->accept();

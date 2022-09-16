@@ -229,7 +229,7 @@ public:
 
 private:
     std::istream& _is;
-    bool          _flip;
+    bool          _flip = 0;
 };
 
 

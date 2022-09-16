@@ -212,10 +212,10 @@ protected:
     }
 
 
-    vector<Benchmark*> _benchs;
-    string _logFile;
-    bool   _outputToFile;
-    map<string, string> _bOptions;
+    vector<Benchmark*> _benchs {};
+    string _logFile = "";
+    bool   _outputToFile = false;
+    map<string, string> _bOptions {};
 };
 
 

@@ -29,6 +29,7 @@
 
 #include <common.h>
 
+#include <Poco/Foundation.h>
 #include <Poco/Runnable.h>
 #include <Poco/Logger.h>
 #include <Poco/AutoPtr.h>
@@ -171,7 +172,7 @@ private:
     const int          _taskID;
     const std::string  _name;
     TaskState          _state;
-    bool               _cancelled;
+    bool               _cancelled = false;
     QueuedTaskManager* _taskManager;
 };
 

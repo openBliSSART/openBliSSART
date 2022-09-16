@@ -28,6 +28,8 @@
 #include "LabelItem.h"
 #include "ProcessItem.h"
 #include "ResponseItem.h"
+#include <Poco/Logger.h>
+
 
 #include <cassert>
 #include <map>
@@ -45,7 +47,8 @@ namespace blissart {
 
 
 TreeWidgetController::TreeWidgetController(QWidget *parent) :
-    QTreeWidget(parent)
+    QTreeWidget(parent),
+    _logger(BasicApplication::instance().logger())
 {
     initializeView();
     // To give items the possibility for further expansion we connect to the
@@ -93,6 +96,15 @@ void TreeWidgetController::updateEntityItems(DatabaseEntityPtr dbe)
     foreach (EntityItem *item, matchingItems(dbe))
         item->setEntityPtr(dbe);
 }
+//foreach (EntityItem *item, matchingItems(dbe))
+//    item->setEntityPtr(dbe);
+
+//if (labels.size() != 0)
+//{
+//    for (auto& l : labels) {new LabelItem(_rootLabels, l);}
+//}
+//foreach (LabelPtr l, QVector<LabelPtr>::fromStdVector(labels))
+//
 
 
 void TreeWidgetController::reinitialize()
@@ -203,24 +215,29 @@ void TreeWidgetController::handleItemExpanded(QTreeWidgetItem *item)
 
 void TreeWidgetController::initializeView()
 {
+    _logger.debug("TreeWidgetController::initializeView.");
     // Disable sorting.
     setSortingEnabled(false);
     
     // Get the stored responses.
     _rootResponses = new QTreeWidgetItem(this, QStringList(tr("Responses")));
+    _logger.debug("getResponses.");
     getResponses();
     
     // Get the stored labels.
     _rootLabels = new QTreeWidgetItem(this, QStringList(tr("Labels")));
+    _logger.debug("getLabels.");
     getLabels();
     
-    // Get the stored processes.
+     // Get the stored processes.
     _rootProcesses = new QTreeWidgetItem(this, QStringList(tr("Processes")));
+    _logger.debug("getProcesses.");
     getProcesses();
     
     // Get the stored classification objects.
     _rootClassificationObjects =
         new QTreeWidgetItem(this, QStringList(tr("Classification objects")));
+    _logger.debug("getClassificationObjects.");    
     getClassificationObjects();
     
     // "Prettify" the tree widget.
@@ -237,55 +254,74 @@ void TreeWidgetController::initializeView()
 
 void TreeWidgetController::getResponses()
 {
+    ResponsePtr r;
     // First remove all possible previous children.
     removeAllChildren(_rootResponses);
     // Retrieve the list of available responses.
     vector<ResponsePtr> responses = dbSubsystem().getResponses();
     // Create a new ResponseItem for every response.
-    foreach (ResponsePtr r, QVector<ResponsePtr>::fromStdVector(responses))
-        new ResponseItem(_rootResponses, r);
+    if (responses.size() != 0) 
+    {
+    	for (auto& r : responses) { new ResponseItem(_rootResponses, r);}
+    }
 }
 
 
 void TreeWidgetController::getLabels()
 {
+    LabelPtr l;
     // First remove all possible previous children
     removeAllChildren(_rootLabels);
     // Retrieve the list of available labels.
+
     vector<LabelPtr> labels = dbSubsystem().getLabels();
     // Create a new LabelItem for every label.
-    foreach (LabelPtr l, QVector<LabelPtr>::fromStdVector(labels))
-        new LabelItem(_rootLabels, l);
+    if (labels.size() != 0) 
+    {
+        for (auto& l : labels) {new LabelItem(_rootLabels, l);}
+    }	
+    //foreach (LabelPtr l, QVector<LabelPtr>::fromStdVector(labels))
+    //    new LabelItem(_rootLabels, l);
 }
 
 
 void TreeWidgetController::getProcesses()
 {
+    ProcessPtr p;
     // First remove all possible previous children.
     removeAllChildren(_rootProcesses);
     // Retrieve the list of available processes.
     vector<ProcessPtr> processes = dbSubsystem().getProcesses();
     // Create a new ProcessItem for every process. Further data belonging to the
     // process will not be read until the first time the item is being expanded.
-    foreach (ProcessPtr p, QVector<ProcessPtr>::fromStdVector(processes))
-        new ProcessItem(_rootProcesses, p);
+    if (processes.size() != 0) 
+    {
+    	for (auto& p : processes) {new ProcessItem(_rootProcesses, p);}
+    }
+    //foreach (ProcessPtr p, QVector<ProcessPtr>::fromStdVector(processes))
+    //    new ProcessItem(_rootProcesses, p);
 }
 
 
 void TreeWidgetController::getClassificationObjects()
 {
+    _logger.debug("removeAllChildren.");
     // First remove all possible previous children.
     removeAllChildren(_rootClassificationObjects);
     // Retrieve the list of available classification objects.
     vector<ClassificationObjectPtr> clos = dbSubsystem().getClassificationObjects();
     // Create and insert a new tree widget item for every classification object.
-    foreach (ClassificationObjectPtr clo, clos)
-        new ClassificationObjectItem(_rootClassificationObjects, clo);
+    if (clos.size() != 0)
+    {
+    	foreach (ClassificationObjectPtr clo, clos)
+    	    new ClassificationObjectItem(_rootClassificationObjects, clo);
+    }
 }
 
 
 void TreeWidgetController::removeAllChildren(QTreeWidgetItem *parent)
 {
+    _logger.debug("removeAllChildren in.");
     queue<QTreeWidgetItem *> q;
     for (q.push(parent); !q.empty(); q.pop()) {
         QTreeWidgetItem *item = q.front();
@@ -293,7 +329,9 @@ void TreeWidgetController::removeAllChildren(QTreeWidgetItem *parent)
             q.push(child);
         if (item != parent)
             delete item;
+        item = nullptr;
     }
+    _logger.debug("removeAllChildren out.");
 }
 
 

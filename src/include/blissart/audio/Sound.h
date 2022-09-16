@@ -33,9 +33,9 @@
 // Get rid of SDL's "main" macro if it hasn't been defined beforehand.  For a
 // more detailed description why this is done see AudioData.h.
 #ifdef main
-#  include <SDL/SDL_stdinc.h>
+#  include <SDL2/SDL_stdinc.h>
 #else
-#  include <SDL/SDL_stdinc.h>
+#  include <SDL2/SDL_stdinc.h>
 #  undef main
 #endif
 
@@ -125,7 +125,7 @@ private:
     static void pbCallback(void *user, Uint8 *buf, int size);
     
     
-    short              *_samples;
+    short              *_samples = nullptr;
     const size_t       _len;
     const unsigned int _sampleFreq;
     size_t             _pos;

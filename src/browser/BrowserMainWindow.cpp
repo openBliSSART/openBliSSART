@@ -51,7 +51,10 @@ namespace blissart {
 
 BrowserMainWindow::BrowserMainWindow() : QMainWindow()
 {
+    //QMessageBox::information(this, windowTitle(),
+    //        tr("Creating new Browser Controller."));
     setCentralWidget(new BrowserController(this));
+    
     setupMenu();
     setMinimumSize(MINIMUM_WIDTH, MINIMUM_HEIGHT);
 
@@ -83,11 +86,15 @@ void BrowserMainWindow::closeEvent(QCloseEvent *ev)
 
 void BrowserMainWindow::setupMenu()
 {
+    //QMessageBox::information(this, windowTitle(),
+    //        tr("setupMenu."));
     QMenu *dbMenu = menuBar()->addMenu(tr("Database"));
 
 #ifdef Q_WS_MAC
     dbMenu->addAction(tr("Preferences"), this, SLOT(handlePreferences()));
 #else
+    //QMessageBox::information(this, windowTitle(),
+    //        tr("addMenu Edit."));
     QMenu *editMenu = menuBar()->addMenu(tr("Edit"));
     editMenu->addAction(tr("Preferences"), this, SLOT(handlePreferences()));
 #endif
@@ -115,10 +122,26 @@ void BrowserMainWindow::setupMenu()
 
 void BrowserMainWindow::handleFeatureExtraction()
 {
+    cout << "\nDatabaseSubsystem Init\n";
     DatabaseSubsystem &dbs =
         BasicApplication::instance().getSubsystem<DatabaseSubsystem>();
-
+    cout << "\nDatabaseSubsytem Activated\n";
     set<DataDescriptorPtr> descriptors;
+    std::vector<ProcessPtr> pPtr;
+    //for (auto const& element : collection)
+    //{
+        // accessing an element with the direct syntax: element
+    //}
+    //for (auto element = collection.begin(); element != collection.end(): ++element))
+    //{
+        // accessing an element with the syntax: *element
+    //}
+    //for (size_t i = 0; i < collection.size(); ++i)
+    //{
+        // accessing an element with the syntax: collection[i]
+        // ...
+    //}
+    for (size_t i = 0; i < pPtr.size();i++)
     foreach (const ProcessPtr &pPtr, dbs.getProcesses()) {
         vector<DataDescriptorPtr> dd = dbs.getDataDescriptors(pPtr->processID);
         foreach (const DataDescriptorPtr &dPtr, dd) {

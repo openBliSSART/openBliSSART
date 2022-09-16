@@ -41,7 +41,7 @@ namespace blissart {
 QueuedTaskManager::QueuedTaskManager(unsigned int minThreads,
                                      unsigned int maxThreads) :
     _maxThreads(maxThreads),
-    _threadPool(new ThreadPool(minThreads, maxThreads + 1)),
+    _threadPool(new ThreadPool((int) minThreads, (int) (maxThreads + 1))),
     _logger(BasicApplication::instance().logger())
 {
     // It is neccessary to initialize the ThreadPool's capacity with the

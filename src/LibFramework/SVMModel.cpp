@@ -178,7 +178,8 @@ SVMModel::SVMModel(const DataSet& dataSet, bool probabilitySupport) :
 SVMModel::~SVMModel()
 {
     if (_svmModel) {
-        svm_destroy_model(_svmModel);
+        svm_free_and_destroy_model(&_svmModel);
+        //svm_destroy_model(_svmModel);
         _svmModel = 0;
     }
     delete[] _svmProblem.x;

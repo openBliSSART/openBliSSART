@@ -64,12 +64,12 @@ public:
     /**
      * Unique label ID.
      */
-    int labelID;
+    int labelID = 0;
     
     /**
      * The label's text.
      */
-    std::string text;
+    std::string text = "";
 };
 
 
